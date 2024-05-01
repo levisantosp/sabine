@@ -260,6 +260,6 @@ export default class ReadyListener extends Listener {
       await sendVCT24Matches()
       await sendVCBMatches()
       await sendVCBResults()
-    }, 2000)
+    }, 10000)
   }
 }
