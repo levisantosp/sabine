@@ -27,7 +27,7 @@ export const commands = {
     insert_player: 'Provide the name of a player.',
     no_player_found: 'No players have been found with that name.',
     embed: {
-      desc: 'Name: `{name}`\nCurrent team: {team}\nPast teams: {pt}'
+      desc: 'Name: `{name}`\nCurrent team: {team}\nPast teams: {pt}\nLast match: {lt}'
     }
   }
 }
