@@ -22,6 +22,13 @@ export const commands = {
       footer: 'Página {p1}/{p2}',
       desc: 'Palpites certos: `{right}`\nPalpites errados: `{wrong}`\nPalpites totais: `{t}`'
     }
+  },
+  player: {
+    insert_player: 'Informe o nome de um jogador.',
+    no_player_found: 'Nenhum jogador foi encontrado com esse nome.',
+    embed: {
+      desc: 'Nome: `{name}`\nEquipe atual: {team}\nEquipes passadas: {pt}'
+    }
   }
 }
 export const helper = {

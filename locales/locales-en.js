@@ -22,6 +22,13 @@ export const commands = {
       footer: 'Page {p1}/{p2}',
       desc: 'Right guesses: `{right}`\nWrong guesses: `{wrong}`\nTotal guesses: `{t}`'
     }
+  },
+  player: {
+    insert_player: 'Provide the name of a player.',
+    no_player_found: 'No players have been found with that name.',
+    embed: {
+      desc: 'Name: `{name}`\nCurrent team: {team}\nPast teams: {pt}'
+    }
   }
 }
 export const helper = {
