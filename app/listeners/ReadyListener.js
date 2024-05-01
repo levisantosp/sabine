@@ -84,6 +84,10 @@ export default class ReadyListener extends Listener {
             }
             else {
               user.guessesWrong += 1
+              let _guess = user.guesses.find(g => g.match === match.id)
+              let index = user.guesses.indexOf(_guess)
+              user.guesses = user.guesses.slice(index, 1)
+              user.save()
               user.save()
             }
           }
@@ -249,6 +253,10 @@ export default class ReadyListener extends Listener {
             }
             else {
               user.guessesWrong += 1
+              let _guess = user.guesses.find(g => g.match === match.id)
+              let index = user.guesses.indexOf(_guess)
+              user.guesses = user.guesses.slice(index, 1)
+              user.save()
               user.save()
             }
           }
