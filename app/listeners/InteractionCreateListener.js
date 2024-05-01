@@ -16,8 +16,8 @@ export default class InteractionCreateListener extends Listener {
       if(!interaction.data.custom_id.startsWith('guess-')) return
       const guild = await Guild.findById(interaction.guildID)
       const user = await User.findById(interaction.member.id) || new User({ _id: interaction.member.id })
-      await interaction.defer(64)
       if(user.guesses.filter(g => g.match === interaction.data.custom_id.slice(6))[0]?.match === interaction.data.custom_id.slice(6)) {
+        await interaction.defer(64)
         return interaction.createMessage(await get(guild.lang, 'helper.replied'))
       }
       const res = await (await fetch('https://vlr.orlandomm.net/api/v1/matches', {
@@ -25,6 +25,7 @@ export default class InteractionCreateListener extends Listener {
       })).json()
       const data = res.data.filter(d => d.id == interaction.data.custom_id.slice(6))[0]
       if(!data?.in) {
+        await interaction.defer(64)
         interaction.createMessage(await get(guild.lang, 'helper.started'))
         return
       }
