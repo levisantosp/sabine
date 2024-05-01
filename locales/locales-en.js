@@ -29,6 +29,13 @@ export const commands = {
     embed: {
       desc: 'Name: `{name}`\nCurrent team: {team}\nPast teams: {pt}\nLast match: {lt}'
     }
+  },
+  team: {
+    insert_team: 'Provide the name of a team.',
+    no_team_found: 'No teams have been found with that name.',
+    embed: {
+      desc: 'Players: {p}\nStaff: {s}\nLast match: {lt}\nNext match: {n}'
+    }
   }
 }
 export const helper = {
