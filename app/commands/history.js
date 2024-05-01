@@ -18,7 +18,7 @@ export default class HistoryCommand extends Command {
     .setAuthor(await this.locale('commands.history.embed.author'), ctx.message.author.avatarURL)
     .setDescription(await this.locale('commands.history.embed.desc', {
       right: ctx.db.user.guessesRight,
-      wrong: ctx.db.user.guessesRight - ctx.db.user.history.length < 0 ? 0 : ctx.db.user.guessesRight - ctx.db.user.history.length,
+      wrong: ctx.db.user.guessesWrong,
       t: ctx.db.user.history.length
     }))
     .setFooter(await this.locale('commands.history.embed.footer', { 
