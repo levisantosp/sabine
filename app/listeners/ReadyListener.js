@@ -88,7 +88,6 @@ export default class ReadyListener extends Listener {
               let index = user.guesses.indexOf(_guess)
               user.guesses = user.guesses.slice(index, 1)
               user.save()
-              user.save()
             }
           }
         }
