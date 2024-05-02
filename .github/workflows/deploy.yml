@@ -1,0 +1,21 @@
+name: Deployment
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  deploy:
+    name: "Deploy to production"
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Execute script SSH
+        uses: appleboy/ssh-action@v1.0.1
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            pm2 start sabine
