@@ -28,7 +28,7 @@ export default class TeamCommand extends Command {
       p: t.players.map(p => `[${p.user}](${p.url})`).join(', '),
       s: t.staff.map(s => `[${s.user}](${s.url})`).join(', '),
       lt: `[${t.results[0].teams[0].name} ${t.results[0].teams[0].points}-${t.results[0].teams[1].points} ${t.results[0].teams[1].name}](${t.results[0].match.url})`,
-      n: `[${t.upcoming[0].teams[0].name} x ${t.upcoming[0].teams[1].name}](${t.upcoming[0].match.url})`
+      n: `[${t.upcoming[0]?.teams[0].name} x ${t.upcoming[0]?.teams[1].name}](${t.upcoming[0]?.match.url})`
     }))
     ctx.reply(embed.build())
   }
