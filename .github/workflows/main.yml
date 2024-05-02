@@ -12,14 +12,14 @@ jobs:
       - name: Setup ssh
         run: |
           mkdir -p ~/.ssh/
-          echo "$SSH_KEY" > ~/.ssh/id_rsa.pub
-          chmod 600 ~/.ssh/id_rsa.pub
+          echo "$SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
           cat >>~/.ssh/config << END
           Host prod
             HostName $SSH_HOST
             User $SSH_USERNAME
             Port $SSH_PORT
-            IdentityFile ~/.ssh/id_rsa.pub
+            IdentityFile ~/.ssh/id_rsa
             StrictHostKeyChecking no
           END
         env:
