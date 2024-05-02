@@ -29,7 +29,8 @@ jobs:
           SSH_PORT: ${{ secrets.PORT }}
       - name: update sabine
         run:
-          ssh prod 'git pull'
+          ssh prod 'cd sabine'
+          ssh prod 'git pull origin main'
           ssh prod 'pm2 stop sabine'
           ssh prod 'npm i'
           ssh prod 'pm2 start sabine'
