@@ -32,5 +32,4 @@ jobs:
           ssh prod 'bash -i -c "cd sabine"'
           ssh prod 'bash -i -c "git pull"'
           ssh prod 'bash -i -c "npm i"'
-          ssh prod 'bash -i -c "pm2 stop sabine"'
-          ssh prod 'bash -i -c "pm2 start sabine"'
+          ssh prod 'bash -i -c "pm2 restart sabine"'
