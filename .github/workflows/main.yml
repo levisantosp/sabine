@@ -12,23 +12,21 @@ jobs:
       - name: Setup ssh
         run: |
           mkdir -p ~/.ssh/
-          echo "$SSH_KEY" > ~/.ssh/authorized_keys
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/authorized_keys
           chmod 600 ~/.ssh/authorized_keys
           cat >>~/.ssh/config << END
           Host prod
             HostName $SSH_HOST
             User $SSH_USERNAME
             Port $SSH_PORT
-            Password $SSH_PASSWORD
             IdentityFile ~/.ssh/authorized_keys
             StrictHostKeyChecking no
           END
         env:
           SSH_USERNAME: ${{ secrets.USERNAME }}
-          SSH_SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ secrets.HOST }}
           SSH_PORT: ${{ secrets.PORT }}
-          SSH_PASSWORD: ${{ secrets.PASSWORD }}
       - name: update sabine
         run:
           ssh prod 'cd sabine'
