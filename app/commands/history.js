@@ -23,7 +23,7 @@ export default class HistoryCommand extends Command {
     }))
     .setFooter(await this.locale('commands.history.embed.footer', { 
       p1: isNaN(ctx.args[0]) ? 1 : ctx.args[0],
-      p2: Math.ceil(history.length / 10)
+      p2: Math.ceil(ctx.db.user.history.length / 10)
     }))
 
     for (const guess of history) {
