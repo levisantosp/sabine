@@ -12,14 +12,14 @@ jobs:
       - name: Setup ssh
         run: |
           mkdir -p ~/.ssh/
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/authorized_keys
-          chmod 600 ~/.ssh/authorized_keys
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
           cat >>~/.ssh/config << END
           Host prod
             HostName $SSH_HOST
             User $SSH_USERNAME
             Port $SSH_PORT
-            IdentityFile ~/.ssh/authorized_keys
+            IdentityFile ~/.ssh/id_rsa
             StrictHostKeyChecking no
           END
         env:
@@ -28,8 +28,5 @@ jobs:
           SSH_HOST: ${{ secrets.HOST }}
           SSH_PORT: 22
       - name: update sabine
-        run:
-          ssh prod 'bash -i -c "cd sabine"'
-          ssh prod 'bash -i -c "git pull"'
-          ssh prod 'bash -i -c "npm i"'
-          ssh prod 'bash -i -c "pm2 restart sabine --force"'
+        run: |
+          ssh prod 'cd sabine && git pull && npm i && pm2 restart sabine --force'
