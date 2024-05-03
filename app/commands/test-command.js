@@ -4,7 +4,7 @@ export default class PingCommand extends Command {
   constructor(client) {
     super({
       client,
-      name: 'ping'
+      name: 'test'
     })
   }
   async run(ctx) {
