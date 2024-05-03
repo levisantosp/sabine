@@ -397,6 +397,6 @@ export default class ReadyListener extends Listener {
       await sendVCT24Results()
       await sendVCBResults()
       await sendVCNResults()
-    }, 5000)
+    }, 20000)
   }
 }
