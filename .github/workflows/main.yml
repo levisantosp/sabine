@@ -26,7 +26,7 @@ jobs:
           SSH_USERNAME: ${{ secrets.USERNAME }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ secrets.HOST }}
-          SSH_PORT: ${{ secrets.PORT }}
+          SSH_PORT: 22
       - name: update sabine
         run:
           ssh prod 'cd sabine'
