@@ -12,7 +12,7 @@ export default class HistoryCommand extends Command {
   async run(ctx) {
     let history = ctx.db.user.history.reverse()
     if(!ctx.args[0] || ctx.args[0] == 1) history = history.slice(0, 10)
-    else history = history.slice(ctx.args[0] * 10 - 10, ctx.args[0] * 10)
+    else history = history.slice(ctx.args[0] * 5 - 5, ctx.args[0] * 5)
 
     const embed = new EmbedBuilder()
     .setAuthor(await this.locale('commands.history.embed.author'), ctx.message.author.avatarURL)
@@ -23,7 +23,7 @@ export default class HistoryCommand extends Command {
     }))
     .setFooter(await this.locale('commands.history.embed.footer', { 
       p1: isNaN(ctx.args[0]) ? 1 : ctx.args[0],
-      p2: Math.ceil(ctx.db.user.history.length / 10)
+      p2: Math.ceil(ctx.db.user.history.length / 5)
     }))
 
     for (const guess of history) {
