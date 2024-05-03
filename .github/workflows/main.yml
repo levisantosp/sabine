@@ -19,6 +19,7 @@ jobs:
             HostName $SSH_HOST
             User $SSH_USERNAME
             Port $SSH_PORT
+            Password $SSH_PASSWORD
             IdentityFile ~/.ssh/authorized_keys
             StrictHostKeyChecking no
           END
@@ -27,6 +28,7 @@ jobs:
           SSH_SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ secrets.HOST }}
           SSH_PORT: ${{ secrets.PORT }}
+          SSH_PASSWORD: ${{ secrets.PASSWORD }}
       - name: update sabine
         run:
           ssh prod 'cd sabine'
