@@ -1,12 +1,12 @@
-import { Client } from 'eris'
+import { Client, Collection } from 'eris'
 import { readdirSync } from 'fs'
 import mongoose from 'mongoose'
 
 export default class App extends Client {
   constructor(token, options) {
     super(token, options)
-    this.commands = new Map()
-    this.aliases = new Map()
+    this.commands = new Collection()
+    this.aliases = new Collection()
   }
   async start() {
     await mongoose.connect(process.env.MONGO_URI)

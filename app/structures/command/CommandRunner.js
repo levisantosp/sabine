@@ -22,7 +22,9 @@ export default class CommandRunner {
     let args = messageArray.slice(0)
     let cmd = this.client.commands.get(command.slice(prefix.length)) || this.client.commands.get(this.client.aliases.get(command.slice(prefix.length)))
     if(!cmd) return
-    
+
+    await this.message.channel.sendTyping()
+
     const db = {
       user,
       guild
