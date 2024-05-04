@@ -81,14 +81,14 @@ export default class ReadyListener extends Listener {
               user.guessesRight += 1
               let _guess = user.guesses.find(g => g.match === match.id)
               let index = user.guesses.indexOf(_guess)
-              user.guesses = user.guesses.slice(index, 1)
+              user.guesses.splice(index, 1)
               user.save()
             }
             else {
               user.guessesWrong += 1
               let _guess = user.guesses.find(g => g.match === match.id)
               let index = user.guesses.indexOf(_guess)
-              user.guesses = user.guesses.slice(index, 1)
+              user.guesses.splice(index, 1)
               user.save()
             }
           }
@@ -254,14 +254,14 @@ export default class ReadyListener extends Listener {
             if(guess.score1 === match.teams[0].score && guess.score2 === match.teams[1].score) {
               let _guess = user.guesses.find(g => g.match === match.id)
               let index = user.guesses.indexOf(_guess)
-              user.guesses = user.guesses.slice(index, 1)
+              user.guesses.splice(index, 1)
               user.guessesRight += 1
               user.save()
             }
             else {
               let _guess = user.guesses.find(g => g.match === match.id)
               let index = user.guesses.indexOf(_guess)
-              user.guesses = user.guesses.slice(index, 1)
+              user.guesses.splice(index, 1)
               user.guessesWrong += 1
               user.save()
             }
@@ -376,14 +376,14 @@ export default class ReadyListener extends Listener {
           if(guess.score1 === match.teams[0].score && guess.score2 === match.teams[1].score) {
             let _guess = user.guesses.find(g => g.match === match.id)
             let index = user.guesses.indexOf(_guess)
-            user.guesses = user.guesses.slice(index, 1)
+            user.guesses.splice(index, 1)
             user.guessesRight += 1
             user.save()
           }
           else {
             let _guess = user.guesses.find(g => g.match === match.id)
             let index = user.guesses.indexOf(_guess)
-            user.guesses = user.guesses.slice(index, 1)
+            user.guesses.splice(index, 1)
             user.guessesWrong += 1
             user.save()
           }
