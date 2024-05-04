@@ -6,7 +6,16 @@ export default class GuessesCommand extends Command {
     super({
       client,
       name: 'guesses',
-      aliases: ['historico', 'histórico', 'palpites']
+      aliases: ['historico', 'histórico', 'palpites'],
+      description: 'Shows your guesses',
+      syntax: 'guesses <page>',
+      examples: [
+        'guesses',
+        'guesses 1',
+        'guesses 2',
+        'guesses 3'
+      ],
+      botPermissions: ['embedLinks']
     })
   }
   async run(ctx) {

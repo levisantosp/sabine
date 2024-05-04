@@ -4,7 +4,8 @@ export default class PingCommand extends Command {
   constructor(client) {
     super({
       client,
-      name: 'ping'
+      name: 'ping',
+      description: 'Shows my latency on this shard'
     })
   }
   async run(ctx) {

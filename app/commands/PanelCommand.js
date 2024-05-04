@@ -9,7 +9,15 @@ export default class PanelCommand extends Command {
       client,
       name: 'panel',
       aliases: ['painel', 'config'],
-      permissions: ['manageChannels']
+      description: 'Manage the bot configurations',
+      permissions: ['manageChannels'],
+      botPermissions: ['embedLinks'],
+      syntax: 'panel vct24/vcb/vcn [channel1] [channel2]',
+      examples: [
+        'panel vct24 #matches #results',
+        'panel vcb #matches #results',
+        'panel vcn #matches #results'
+      ]
     })
   }
   async run(ctx) {

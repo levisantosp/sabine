@@ -6,7 +6,16 @@ export default class PlayerCommand extends Command {
     super({
       client,
       name: 'player',
-      aliases: ['jogador', 'p']
+      aliases: ['jogador', 'p'],
+      description: 'Shows a player info',
+      syntax: 'player [player]',
+      examples: [
+        'player less',
+        'player qck',
+        'player tuyz',
+        'player dgzin'
+      ],
+      botPermissions: ['embedLinks']
     })
   }
   async run(ctx) {

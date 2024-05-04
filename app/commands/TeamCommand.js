@@ -6,7 +6,17 @@ export default class TeamCommand extends Command {
     super({
       client,
       name: 'team',
-      aliases: ['equipe', 'time', 't']
+      aliases: ['equipe', 'time', 't'],
+      description: 'Shows a team info',
+      syntax: 'team [team]',
+      examples: [
+        'team loud',
+        'team sentinels',
+        'team nrg esports',
+        'team fnatic',
+        'team natus vincere'
+      ],
+      botPermissions: ['embedLinks']
     })
   }
   async run(ctx) {
