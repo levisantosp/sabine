@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { Guild, User } from '../../database/index.js'
 import Listener from '../structures/client/Listener.js'
 import EmbedBuilder from '../structures/embed/EmbedBuilder.js'
