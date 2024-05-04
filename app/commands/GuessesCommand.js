@@ -1,11 +1,11 @@
 import Command from '../structures/command/Command.js'
 import EmbedBuilder from '../structures/embed/EmbedBuilder.js'
 
-export default class HistoryCommand extends Command {
+export default class GuessesCommand extends Command {
   constructor(client) {
     super({
       client,
-      name: 'history',
+      name: 'guesses',
       aliases: ['historico', 'histórico', 'palpites']
     })
   }
