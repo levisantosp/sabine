@@ -21,7 +21,8 @@ export const commands = {
       field2: 'Palpite: `{score1}-{score2}`\nResultado: `{score3}-{score4}`\n[Página da partida]({link})',
       footer: 'Página {p1}/{p2}',
       desc: 'Palpites certos: `{right}`\nPalpites errados: `{wrong}`\nPalpites totais: `{t}`'
-    }
+    },
+    no_guesses: 'Você não possui palpites.'
   },
   player: {
     insert_player: 'Informe o nome de um jogador.',

@@ -21,7 +21,8 @@ export const commands = {
       field2: 'Guess: `{score1}-{score2}`\nResult: `{score3}-{score4}`\n[Match page]({link})',
       footer: 'Page {p1}/{p2}',
       desc: 'Right guesses: `{right}`\nWrong guesses: `{wrong}`\nTotal guesses: `{t}`'
-    }
+    },
+    no_guesses: 'You do not have guesses.'
   },
   player: {
     insert_player: 'Provide the name of a player.',
