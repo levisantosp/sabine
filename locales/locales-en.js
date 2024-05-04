@@ -58,7 +58,11 @@ export const helper = {
   },
   palpitate_response: 'You guessed {t1} `{s1}-{s2}` {t2}',
   replied: 'You have already guessed this match.',
-  started: 'This match has already started or finished.'
+  started: 'This match has already started or finished.',
+  permissions: {
+    user: 'You\'re weak. You lack the following permissions to use this command: {permissions}',
+    bot: 'I lack the following permissions for this command to work properly: {permissins}'
+  }
 }
 export const permissions = {
   createInstantInvite: "Create Instant Invite",

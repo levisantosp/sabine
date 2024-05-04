@@ -58,7 +58,11 @@ export const helper = {
   },
   palpitate_response: 'Você palpitou {t1} `{s1}-{s2}` {t2}',
   replied: 'Você já palpitou essa partida.',
-  started: 'Esta partida já começou ou terminou.'
+  started: 'Esta partida já começou ou terminou.',
+  permissions: {
+    user: 'Você é fraco. Te faltam as seguintes permissões para usar esse comando: {permissions}',
+    bot: 'Me faltam as seguintes permissões para esse comando funcionar adequadamente: {permissins}'
+  }
 }
 export const permissions = {
   createInstantInvite: "Criar convite instantâneo",
