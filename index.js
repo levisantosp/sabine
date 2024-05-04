@@ -8,5 +8,7 @@ new App(process.env.BOT_TOKEN, {
     roles: false,
     user: true
   },
-  restMode: true
+  restMode: true,
+  defaultImageSize: 2048,
+  defaultImageFormat: 'png'
 }).start()
