@@ -36,6 +36,19 @@ export const commands = {
     embed: {
       desc: 'Jogadores: {p}\nStaff: {s}\nÚltima partida: {lt}\nPróxima partida: {n}'
     }
+  },
+  help: {
+    command_not_found: 'Comando não encontrado.',
+    name: 'Nome',
+    aliases: 'Alternativas',
+    examples: 'Exemplos',
+    syntax: 'Sintaxe',
+    permissions: 'Permissões',
+    footer: '[] = argumento obrigatório | <> = argumento opcional',
+    bot_permissions: 'Minhas permissões',
+    title: 'Meus comandos',
+    description: 'Para mais informações a respeito de determinado comando, use `{arg}`.\nPrecisando de ajuda? Entre no servidor de suporte clicando no botão abaixo!',
+    field: 'Comandos ({q})'
   }
 }
 export const helper = {
@@ -46,4 +59,46 @@ export const helper = {
   palpitate_response: 'Você palpitou {t1} `{s1}-{s2}` {t2}',
   replied: 'Você já palpitou essa partida.',
   started: 'Esta partida já começou ou terminou.'
+}
+export const permissions = {
+  createInstantInvite: "Criar convite instantâneo",
+  kickMembers: "Expulsar membros",
+  banMembers: "Banir membros",
+  administrator: "Administrador",
+  manageChannels: "Gerenciar canais",
+  manageGuild: "Gerenciar servidor",
+  addReactions: "Adicionar reações",
+  sendMessages: "Enviar mensagens",
+  sendTTSMessages: "Enviar Mensagens em Texto-para-voz",
+  manageMessages: "Gerenciar mensagens",
+  embedLinks: "Inserir links",
+  attachFiles: "Anexar arquivos",
+  readMessageHistory: "Ler histórico de mensagens",
+  mentionEveryone: "Mencionar @everyone, @here e todos os cargos",
+  voiceUseVAD: "Usar detecção de voz",
+  changeNickname: "Alterar apelido",
+  manageNicknames: "Gerenciar apelidos",
+  manageRoles: "Gerenciar cargos",
+  manageEmojisAndStickers: "Gerenciar emojis e figurinhas",
+  useExternalEmojis: "Usar emojis externos",
+  viewAuditLog: "Ver registro de auditoria",
+  voicePrioritySpeaker: "Voz prioritária",
+  voiceStream: "Vídeo",
+  viewChannel: "Ver canais",
+  viewGuildInsights: "Ver análises do servidor",
+  voiceConnect: "Conectar",
+  voiceSpeak: "Falar",
+  voiceMuteMembers: "Silenciar membros",
+  voiceRequestToSpeak: "Pedir para falar",
+  voiceDeafenMembers: "Ensurdecer membros",
+  voiceMoveMembers: "Mover membros",
+  manageWebhooks: "Gerenciar webhooks",
+  useApplicationCommands: "Usar comandos de aplicativo",
+  createPrivateThreads: "Criar tópicos privados",
+  createPublicThreads: "Criar tópicos públicos",
+  useExternalStickers: "Usar figurinhas externas",
+  manageThreads: "Gerenciar tópicos",
+  sendMessagesInThreads: "Enviar mensagens em tópicos",
+  startEmbeddedActivities: "Começar atividades",
+  moderateMembers: "Castigar membros"
 }

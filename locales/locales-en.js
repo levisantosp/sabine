@@ -36,6 +36,19 @@ export const commands = {
     embed: {
       desc: 'Players: {p}\nStaff: {s}\nLast match: {lt}\nNext match: {n}'
     }
+  },
+  help: {
+    command_not_found: 'Command not found.',
+    name: 'Name',
+    aliases: 'Aliases',
+    examples: 'Examples',
+    syntax: 'Syntax',
+    permissions: 'Permissions',
+    footer: '[] = required argument | <> = optional argument',
+    bot_permissions: 'My permissions',
+    title: 'My commands',
+    description: 'For more information about a particular command, use `{arg}`.\nNeed help? Log in to the support server by clicking the button below!',
+    field: 'Commands ({q})'
   }
 }
 export const helper = {
@@ -46,4 +59,46 @@ export const helper = {
   palpitate_response: 'You guessed {t1} `{s1}-{s2}` {t2}',
   replied: 'You have already guessed this match.',
   started: 'This match has already started or finished.'
+}
+export const permissions = {
+  createInstantInvite: "Create Instant Invite",
+  kickMembers: "Kick Members",
+  banMembers: "Ban Members",
+  administrator: "Administrator",
+  manageChannels: "Manage Channels",
+  manageGuild: "Manage Guild",
+  addReactions: "Add Reactions",
+  sendMessages: "Send Messages",
+  sendTTSMessages: "Send TTS Messages",
+  manageMessages: "Manage Messages",
+  embedLinks: "Embed Links",
+  attachFiles: "Attach Files",
+  readMessageHistory: "Read Message History",
+  mentionEveryone: "Mention Everyone",
+  voiceUseVAD: "Use VAD",
+  changeNickname: "Change Nickname",
+  manageNicknames: "Manage Nicknames",
+  manageRoles: "Manage Roles",
+  manageEmojisAndStickers: "Manage Emojis And Stickers",
+  useExternalEmojis: "Use External Emojis",
+  viewAuditLog: "View Audit Log",
+  voicePrioritySpeaker: "Priority Speaker",
+  voiceStream: "Stream",
+  viewChannel: "View Channel",
+  viewGuildInsights: "View Guild Insights",
+  voiceConnect: "Connect",
+  voiceSpeak: "Speak",
+  voiceMuteMembers: "Mute Members",
+  voiceRequestToSpeak: "Request to Speak",
+  voiceDeafenMembers: "Deafen Members",
+  voiceMoveMembers: "Move Members",
+  manageWebhooks: "Manage Webhooks",
+  useApplicationCommands: "Use Application Commands",
+  createPrivateThreads: "Create Private Threads",
+  createPublicThreads: "Create Public Threads",
+  useExternalStickers: "Use External Stickers",
+  manageThreads: "Manage Threads",
+  sendMessagesInThreads: "Send Messages In Threads",
+  startEmbeddedActivities: "Start Activities",
+  moderateMembers: "Timeout Members"
 }
