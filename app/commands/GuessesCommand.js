@@ -19,6 +19,7 @@ export default class GuessesCommand extends Command {
     })
   }
   async run(ctx) {
+    if(!ctx.db.user.history[0]) return ctx.reply('commands.history.no_guesses')
     let history = ctx.db.user.history.reverse()
     if(!ctx.args[0] || ctx.args[0] == 1) history = history.slice(0, 5)
     else history = history.slice(ctx.args[0] * 5 - 5, ctx.args[0] * 5)
