@@ -29,4 +29,4 @@ jobs:
           SSH_PORT: 22
       - name: update sabine
         run: |
-          ssh prod 'cd sabine && git pull && npm i && pm2 restart sabine --force'
+          ssh prod 'pm2 stop sabine && cd sabine && git pull && npm i && pm2 start sabine'
