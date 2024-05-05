@@ -17,8 +17,8 @@ export const commands = {
   history: {
     embed: {
       author: 'Your guesses',
-      field: 'Guess: `{score1}-{score2}`\nResult: `pending`\n[Match page]({link})',
-      field2: 'Guess: `{score1}-{score2}`\nResult: `{score3}-{score4}`\n[Match page]({link})',
+      field: 'Guess: `{score1}-{score2}`\nResult: [click here]({link})',
+      field2: 'Guess: `{score1}-{score2}`\nResult: [click here]({link})',
       footer: 'Page {p1}/{p2}',
       desc: 'Right guesses: `{right}`\nWrong guesses: `{wrong}`\nTotal guesses: `{t}`'
     },

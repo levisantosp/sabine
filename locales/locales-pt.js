@@ -17,8 +17,8 @@ export const commands = {
   history: {
     embed: {
       author: 'Seus palpites',
-      field: 'Palpite: `{score1}-{score2}`\nResultado: `pendente`\n[Página da partida]({link})',
-      field2: 'Palpite: `{score1}-{score2}`\nResultado: `{score3}-{score4}`\n[Página da partida]({link})',
+      field: 'Palpite: `{score1}-{score2}`\nResultado: [clique aqui]({link})',
+      field2: 'Palpite: `{score1}-{score2}`\nResultado: [clique aqui]({link})',
       footer: 'Página {p1}/{p2}',
       desc: 'Palpites certos: `{right}`\nPalpites errados: `{wrong}`\nPalpites totais: `{t}`'
     },
