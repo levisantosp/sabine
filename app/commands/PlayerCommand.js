@@ -1,11 +1,9 @@
 import Command from '../structures/command/Command.js'
 import EmbedBuilder from '../structures/embed/EmbedBuilder.js'
-
-//username, equipe, equipes passadas, ultimapartida, nome, timestamp
 const playersCached = {}
-const playersAPICache = (await (await fetch('https://vlr.orlandomm.net/api/v1/players?limit=all', {
+const playersAPICache = await (await fetch('https://vlr.orlandomm.net/api/v1/players?limit=all', {
   method: 'GET'
-})).json())
+})).json()
 const playerAPICache = {}
 
 export default class PlayerCommand extends Command {
