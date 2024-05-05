@@ -21,7 +21,7 @@ export default class GuessesCommand extends Command {
   async run(ctx) {
     if(!ctx.db.user?.history?.length) return ctx.reply('commands.history.no_guesses')
     let history = ctx.db.user.history.reverse()
-    if(!ctx.args[0] || ctx.args[0] == 1) history = history.slice(0, 5)
+    if(!ctx.args[0] || isNaN(ctx.args[0]) || ctx.args[0] == 1) history = history.slice(0, 5)
     else history = history.slice(ctx.args[0] * 5 - 5, ctx.args[0] * 5)
 
     const embed = new EmbedBuilder()
@@ -37,30 +37,12 @@ export default class GuessesCommand extends Command {
     }))
 
     for (const guess of history) {
-      const res = await (await fetch('https://vlr.orlandomm.net/api/v1/results', {
-        method: 'GET'
-      })).json()
-      const res2 = await (await fetch('https://vlr.orlandomm.net/api/v1/matches', {
-        method: 'GET'
-      })).json()
-      let data = res.data.filter(d => d.id == guess.match)[0]
-      if(!data) {
-        data = res2.data.filter(d => d.id == guess.match)[0]
-        embed.addField(`${guess.teams[0].name} x ${guess.teams[1].name}`, await this.locale('commands.history.embed.field', {
-          score1: guess.teams[0].score,
-          score2: guess.teams[1].score,
-          link: `https://www.vlr.gg/${data.id}`
-        }))
-      }
-      else embed.addField(`${guess.teams[0].name} x ${guess.teams[1].name}`, await this.locale('commands.history.embed.field2', {
+      embed.addField(`${guess.teams[0].name} x ${guess.teams[1].name}`, await this.locale('commands.history.embed.field', {
         score1: guess.teams[0].score,
         score2: guess.teams[1].score,
-        score3: data.teams[0].score,
-        score4: data.teams[1].score,
-        link: `https://www.vlr.gg/${data.id}`
+        link: `https://www.vlr.gg/${guess.match}`
       }))
     }
-
     ctx.reply(embed.build())
   }
 }
