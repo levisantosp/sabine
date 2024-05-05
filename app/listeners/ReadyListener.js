@@ -109,7 +109,7 @@ export default class ReadyListener extends Listener {
         }
       })
       for(const guild of guilds) {
-        for(const d of data) {
+        await data.forEach(async d => {
           if(ms(d.in) <= 86400000) {
             const embed = new EmbedBuilder()
             .setTitle(d.tournament)
@@ -138,7 +138,7 @@ export default class ReadyListener extends Listener {
               ]
             })
           }
-        }
+        })
         guild.lastMatchSentTime = new Date().setHours(24, 0, 0, 0)
         guild.save()
       }
@@ -158,7 +158,7 @@ export default class ReadyListener extends Listener {
       })
 
       for(const guild of guilds) {
-        for (const d of data) {
+        await data.forEach(async d => {
           if(ms(d.in) <= 86400000) {
             const embed = new EmbedBuilder()
             .setTitle(d.tournament)
@@ -187,7 +187,7 @@ export default class ReadyListener extends Listener {
               ]
             })
           }
-        }
+        })
         guild.lastVCBMatchSendTime = new Date().setHours(24, 0, 0, 0)
         guild.save()
       }
@@ -217,7 +217,7 @@ export default class ReadyListener extends Listener {
             matches = data
           }
           data.reverse()
-          for(const d of data) {
+          await data.forEach(d => {
             const embed = new EmbedBuilder()
             .setTitle(d.tournament)
             .setDescription(`[Match page](https://vlr.gg/${d.id})`)
@@ -229,7 +229,7 @@ export default class ReadyListener extends Listener {
             let channelId = guild.events.filter(e => e.name = 'Valorant Challengers Brazil')[0]?.channel2
             if(!channelId) return
             this.client.createMessage(channelId, embed.build())
-          }
+          })
           data.reverse()
           guild.lastVCBResultSentId = data[0].id
           guild.save()
@@ -282,7 +282,7 @@ export default class ReadyListener extends Listener {
         }
       })
       for(const guild of guilds) {
-        for (const d of data) {
+        await data.forEach(async d => {
           if(ms(d.in) <= 86400000) {
             const embed = new EmbedBuilder()
             .setTitle(d.tournament)
@@ -313,7 +313,7 @@ export default class ReadyListener extends Listener {
           }
           guild.lastVCNMatchSendTime = new Date().setHours(24, 0, 0, 0)
           guild.save()
-        }
+        })
       }
     }
     const sendVCNResults = async() => {
@@ -341,7 +341,7 @@ export default class ReadyListener extends Listener {
             matches = data
           }
           data.reverse()
-          for(const d of data) {
+          await data.forEach(d => {
             const embed = new EmbedBuilder()
             .setTitle(d.tournament)
             .setDescription(`[Match page](https://vlr.gg/${d.id})`)
@@ -353,7 +353,7 @@ export default class ReadyListener extends Listener {
             let channelId = guild.events.filter(e => e.name = 'Valorant Challengers NA')[0]?.channel2
             if(!channelId) return
             this.client.createMessage(channelId, embed.build())
-          }
+          })
           data.reverse()
           guild.lastVCNResultSentId = data[0].id
         }
