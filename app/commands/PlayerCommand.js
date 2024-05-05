@@ -34,7 +34,7 @@ export default class PlayerCommand extends Command {
 
     const playerAPI = playerAPICache[username]
     if(!playerAPI) return ctx.reply('commands.player.no_player_found')
-    let playerCache = playersCached[playerAPI.user]
+    let playerCache = playersCached[playerAPI.id]
     if(!playerCache) {
       const p = (await (await fetch(`https://vlr.orlandomm.net/api/v1/players/${playerAPI.id}`, {
         method: 'GET'
