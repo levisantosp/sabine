@@ -43,7 +43,9 @@ export default class HelpCommand extends Command {
       }))
       .addField(await this.locale('commands.help.field', {
         q: this.client.commands.size
-      }), this.client.commands.map(cmd => `\`${ctx.db.guild.prefix}${cmd.name}\``).join('\n'))
+      }), this.client.commands.map(cmd => {
+        if (!cmd.onlyDev) return `\`${ctx.db.guild.prefix}${cmd.name}\``
+      }).join('\n'))
 
       const button = new ButtonBuilder()
       .setLabel('Support Server')
