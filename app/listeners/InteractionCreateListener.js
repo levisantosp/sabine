@@ -2,7 +2,6 @@ import { ComponentInteraction } from 'eris'
 import Listener from '../structures/client/Listener.js'
 import { Guild, User } from '../../database/index.js'
 import { get } from '../../locales/index.js'
-import ms from 'enhanced-ms'
 
 export default class InteractionCreateListener extends Listener {
   constructor(client) {
