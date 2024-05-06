@@ -28,7 +28,11 @@ const Guild = new Schema({
     default: 0
   },
   lastVCBResultSentId: String,
-  lastVCNResultSentId: String
+  lastVCNResultSentId: String,
+  tbdMatches: {
+    type: Array,
+    default: []
+  }
 })
 
 export default model('guilds', Guild)
