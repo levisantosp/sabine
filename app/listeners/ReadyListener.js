@@ -77,7 +77,7 @@ export default class ReadyListener extends Listener {
           let guesses = user.guesses
           let guess = guesses.filter(g => g.match === match.id)[0]
           if(guess?.match === match.id) {
-            if(guess.score1 === match.teams[0].score && guess.score2 === match.teams[1].score) {
+            if(guess && guess.score1 === match.teams[0].score && guess.score2 === match.teams[1].score) {
               user.guessesRight += 1
               let _guess = user.guesses.find(g => g.match === match.id)
               let index = user.guesses.indexOf(_guess)
@@ -268,7 +268,7 @@ export default class ReadyListener extends Listener {
           let guesses = user.guesses
           let guess = guesses.filter(g => g.match === match.id)[0]
           if(guess?.match === match.id) {
-            if(guess.score1 === match.teams[0].score && guess.score2 === match.teams[1].score) {
+            if(guess && guess.score1 === match.teams[0].score && guess.score2 === match.teams[1].score) {
               let _guess = user.guesses.find(g => g.match === match.id)
               let index = user.guesses.indexOf(_guess)
               user.guesses.splice(index, 1)
@@ -384,6 +384,7 @@ export default class ReadyListener extends Listener {
           })
           data.reverse()
           guild.lastVCNResultSentId = data[0].id
+          guild.save()
         }
         else {
           guild.lastVCNResultSentId = data[0].id
@@ -395,12 +396,12 @@ export default class ReadyListener extends Listener {
           $exists: true
         }
       })
-      if(matches?.length) return
+      if(!matches?.length) return
       for(const match of matches) {
         for(const user of users) {
           let guesses = user.guesses
           let guess = guesses.filter(g => g.match === match.id)[0]
-          if(guess.score1 === match.teams[0].score && guess.score2 === match.teams[1].score) {
+          if(guess && guess.score1 === match.teams[0].score && guess.score2 === match.teams[1].score) {
             let _guess = user.guesses.find(g => g.match === match.id)
             let index = user.guesses.indexOf(_guess)
             user.guesses.splice(index, 1)
@@ -462,13 +463,13 @@ export default class ReadyListener extends Listener {
       }
     }
     setInterval(async() => {
-      await sendVCT24Matches()
-      await sendVCBMatches()
-      await sendVCNMatches()
-      await sendVCT24Results()
-      await sendVCBResults()
-      await sendVCNResults()
-      await verifyIfMatchAlreadyHasTeams()
-    }, 20000)
+      await sendVCT24Matches().catch(e => new Logger(this.client).error(e))
+      await sendVCBMatches().catch(e => new Logger(this.client).error(e))
+      await sendVCNMatches().catch(e => new Logger(this.client).error(e))
+      await sendVCT24Results().catch(e => new Logger(this.client).error(e))
+      await sendVCBResults().catch(e => new Logger(this.client).error(e))
+      await sendVCNResults().catch(e => new Logger(this.client).error(e))
+      await verifyIfMatchAlreadyHasTeams().catch(e => new Logger(this.client).error(e))
+    }, process.env.INTERVAL ?? 20000)
   }
 }
