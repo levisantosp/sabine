@@ -189,16 +189,19 @@ export default class ReadyListener extends Listener {
               components: [
                 {
                   type: 1,
-                  components: [button]
+                  components: [d.teams[0].name === 'TBD' || d.teams[1].name === 'TBD' ? button.setDisabled() : button]
                 }
               ]
             })
-
+            
             if(d.teams[0].name === 'TBD' || d.teams[1].name === 'TBD') {
-              guild.tbdMatches.push({
+              const g = await Guild.findById(guild.id)
+              g.tbdMatches.push({
                 id: d.id,
-                messageId: msg.id
+                messageId: msg.id,
+                channelId
               })
+              g.save()
             }
           }
         })
@@ -435,7 +438,7 @@ export default class ReadyListener extends Listener {
             .addField(`:flag_${data.teams[0].country}: ${data.teams[0].name}\n:flag_${data.teams[1].country}: ${data.teams[1].name}`, '')
             .setFooter(e.footer.text)
             .setTimestamp(e.timestamp)
-            
+
             msg.edit({
               embed,
               components: [
