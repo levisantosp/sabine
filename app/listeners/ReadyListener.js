@@ -128,7 +128,7 @@ export default class ReadyListener extends Listener {
             if(!channelId) return
             let messages = await this.client.getMessages(channelId, 100)
             await this.client.deleteMessages(channelId, messages.map(m => m.id))
-            this.client.createMessage(channelId, {
+            const msg = await this.client.createMessage(channelId, {
               embed,
               components: [
                 {
@@ -137,6 +137,13 @@ export default class ReadyListener extends Listener {
                 }
               ]
             })
+
+            if(d.teams[0].name === 'TBD' || d.teams[1].name === 'TBD') {
+              guild.tbdMatches.push({
+                id: d.id,
+                messageId: msg.id
+              })
+            }
           }
         })
         guild.lastMatchSentTime = new Date().setHours(24, 0, 0, 0)
@@ -177,7 +184,7 @@ export default class ReadyListener extends Listener {
             if(!channelId) return
             let messages = await this.client.getMessages(channelId, 100)
             await this.client.deleteMessages(channelId, messages.map(m => m.id))
-            this.client.createMessage(channelId, {
+            const msg = await this.client.createMessage(channelId, {
               embed,
               components: [
                 {
@@ -186,6 +193,13 @@ export default class ReadyListener extends Listener {
                 }
               ]
             })
+
+            if(d.teams[0].name === 'TBD' || d.teams[1].name === 'TBD') {
+              guild.tbdMatches.push({
+                id: d.id,
+                messageId: msg.id
+              })
+            }
           }
         })
         guild.lastVCBMatchSendTime = new Date().setHours(24, 0, 0, 0)
@@ -301,19 +315,29 @@ export default class ReadyListener extends Listener {
             if(!channelId) return
             let messages = await this.client.getMessages(channelId, 100)
             await this.client.deleteMessages(channelId, messages.map(m => m.id))
-            this.client.createMessage(channelId, {
+            const msg = await this.client.createMessage(channelId, {
               embed,
               components: [
                 {
                   type: 1,
-                  components: [button]
+                  components: [d.teams[0].name === 'TBD' || d.teams[1].name === 'TBD' ? button.setDisabled() : button]
                 }
               ]
             })
+            
+            if(d.teams[0].name === 'TBD' || d.teams[1].name === 'TBD') {
+              const g = await Guild.findById(guild.id)
+              g.tbdMatches.push({
+                id: d.id,
+                messageId: msg.id,
+                channelId
+              })
+              g.save()
+            }
           }
           guild.lastVCNMatchSendTime = new Date().setHours(24, 0, 0, 0)
-          guild.save()
         })
+        guild.save()
       }
     }
     const sendVCNResults = async() => {
@@ -389,6 +413,47 @@ export default class ReadyListener extends Listener {
         }
       }
     }
+    const verifyIfMatchAlreadyHasTeams = async() => {
+      const res = await (await fetch('https://vlr.orlandomm.net/api/v1/matches', {
+        method: 'GET'
+      })).json()
+      const guilds = await Guild.find({
+        tbdMatches: {
+          $exists: true
+        }
+      })
+      for(const guild of guilds) {
+        for(const match of guild.tbdMatches) {
+          const data = res.data.find(d => d.id === match.id)
+          if(!data.teams[0].name === 'TBD' && !data.teams[1].name === 'TBD') {
+            const msg = await this.client.getMessage(match.channelId, match.messageId)
+            const e = msg.embeds[0]
+            const embed = new EmbedBuilder()
+            .setTitle(e.title)
+            .setDescription(e.description)
+            .setThumbnail(e.thumbnail.url)
+            .addField(`:flag_${data.teams[0].country}: ${data.teams[0].name}\n:flag_${data.teams[1].country}: ${data.teams[1].name}`, '')
+            .setFooter(e.footer.text)
+            .setTimestamp(e.timestamp)
+            
+            msg.edit({
+              embed,
+              components: [
+                {
+                  type: 1,
+                  components: [
+                    new ButtonBuilder()
+                    .setLabel(await get(guild.lang, 'helper.palpitate'))
+                    .setCustomId(`guess-${match.id}`)
+                    .setStyle('green')
+                  ]
+                }
+              ]
+            })
+          }
+        }
+      }
+    }
     setInterval(async() => {
       await sendVCT24Matches()
       await sendVCBMatches()
@@ -396,6 +461,7 @@ export default class ReadyListener extends Listener {
       await sendVCT24Results()
       await sendVCBResults()
       await sendVCNResults()
+      await verifyIfMatchAlreadyHasTeams()
     }, 20000)
   }
 }
