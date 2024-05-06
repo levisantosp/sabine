@@ -14,7 +14,7 @@ export default class ReadyListener extends Listener {
     })
   }
   async on() {
-    Logger.sen(`${this.client.user.username}#${this.client.user.discriminator} online!`)
+    Logger.send(`${this.client.user.username}#${this.client.user.discriminator} online!`)
 
     const sendVCT24Results = async() => {
       const res = await (await fetch('https://vlr.orlandomm.net/api/v1/results', {
