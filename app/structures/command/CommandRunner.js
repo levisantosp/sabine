@@ -1,5 +1,6 @@
 import { Guild, User } from '../../../database/index.js'
 import { get } from '../../../locales/index.js'
+import Logger from '../util/Logger.js'
 import CommandContext from './CommandContext.js'
 
 export default class CommandRunner {
@@ -64,5 +65,11 @@ export default class CommandRunner {
     }
     ctx.args = args
     cmd.run(ctx)
+    .catch(e => {
+      new Logger(this.client).error(e)
+      ctx.reply('helper.error', {
+        e
+      })
+    })
   }
 }

@@ -4,6 +4,7 @@ import EmbedBuilder from '../structures/embed/EmbedBuilder.js'
 import ms from 'enhanced-ms'
 import ButtonBuilder from '../structures/components/ButtonBuilder.js'
 import { get } from '../../locales/index.js'
+import Logger from '../structures/util/Logger.js'
 
 export default class ReadyListener extends Listener {
   constructor(client) {
@@ -13,7 +14,7 @@ export default class ReadyListener extends Listener {
     })
   }
   async on() {
-    console.log('ready')
+    Logger.sen(`${this.client.user.username}#${this.client.user.discriminator} online!`)
 
     const sendVCT24Results = async() => {
       const res = await (await fetch('https://vlr.orlandomm.net/api/v1/results', {

@@ -1,6 +1,7 @@
 import { Client, Collection } from 'eris'
 import { readdirSync } from 'fs'
 import mongoose from 'mongoose'
+import Logger from '../util/Logger.js'
 
 export default class App extends Client {
   constructor(token, options) {
@@ -10,7 +11,7 @@ export default class App extends Client {
   }
   async start() {
     await mongoose.connect(process.env.MONGO_URI)
-    console.log('Database connected')
+    Logger.send('Database connected')
     await this.connect()
 
     let listeners = readdirSync('./app/listeners')
@@ -18,7 +19,7 @@ export default class App extends Client {
       const Listener = await import(`../../listeners/${listen}`)
       const listener = new Listener.default(this)
       
-      this.on(listener.name, (...args) => listener.on(...args))
+      this.on(listener.name, (...args) => listener.on(...args).catch(e => new Logger(this).error(e)))
     })
 
     let commands = readdirSync('./app/commands')
