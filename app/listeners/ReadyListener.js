@@ -454,6 +454,9 @@ export default class ReadyListener extends Listener {
                 }
               ]
             })
+            let index = guild.tbdMatches.findIndex(m => m.id === match.id)
+            guild.tbdMatches.splice(index, 1)
+            guild.save()
           }
         }
       }
