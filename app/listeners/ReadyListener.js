@@ -427,7 +427,7 @@ export default class ReadyListener extends Listener {
       })).json()
       const guilds = await Guild.find({
         tbdMatches: {
-          $exists: true
+          $ne: []
         }
       })
       for(const guild of guilds) {
