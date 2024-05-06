@@ -63,7 +63,8 @@ export const helper = {
   permissions: {
     user: 'Você é fraco. Te faltam as seguintes permissões para usar esse comando: {permissions}',
     bot: 'Me faltam as seguintes permissões para esse comando funcionar adequadamente: {permissins}'
-  }
+  },
+  error: 'Ocorreu um erro inesperado...\n`{e}`'
 }
 export const permissions = {
   createInstantInvite: "Criar convite instantâneo",

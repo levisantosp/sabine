@@ -63,7 +63,8 @@ export const helper = {
   permissions: {
     user: 'You\'re weak. You lack the following permissions to use this command: {permissions}',
     bot: 'I lack the following permissions for this command to work properly: {permissins}'
-  }
+  },
+  error: 'An unexpected error has occurred...\n`{e}`'
 }
 export const permissions = {
   createInstantInvite: "Create Instant Invite",
