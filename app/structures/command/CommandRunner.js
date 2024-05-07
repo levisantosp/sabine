@@ -1,5 +1,6 @@
 import { Guild, User } from '../../../database/index.js'
 import { get } from '../../../locales/index.js'
+import EmbedBuilder from '../embed/EmbedBuilder.js'
 import Logger from '../util/Logger.js'
 import CommandContext from './CommandContext.js'
 
@@ -71,5 +72,27 @@ export default class CommandRunner {
         e
       })
     })
+    .then(async() => {
+      const embed = new EmbedBuilder()
+      .setAuthor(`${ctx.message.author.username}`, ctx.message.author.avatarURL)
+      .setTitle('New command executed')
+      .setDescription(`The command \`${cmd.name}\` has been executed in \`${ctx.guild.name}\``)
+      .addField('Server ID', `\`${ctx.guild.id}\``)
+      .addField('Owner ID', `\`${ctx.guild.ownerID}\``)
+      .addField('Message author', `\`${ctx.message.author.username}\``)
+      .addField('Message content', ctx.message.content)
+      .addField('Message link', ctx.message.jumpLink)
+      .setThumbnail(ctx.guild.iconURL)
+
+      const channel = await this.client.getRESTChannel(process.env.COMMAND_LOG)
+      const webhooks = await channel.getWebhooks()
+      let webhook = webhooks.find(w => w.name === `${this.client.user.username} Logger`)
+      if(!webhook) webhook = await channel.createWebhook({ name: `${this.client.user.username} Logger` })
+      
+      this.client.executeWebhook(webhook.id, webhook.token, {
+        embed,
+        avatarURL: this.client.user.avatarURL
+      })
+    }) 
   }
 }
