@@ -444,7 +444,7 @@ export default class ReadyListener extends Listener {
             .setFooter(e.footer.text)
             .setTimestamp(e.timestamp)
 
-            msg.edit({
+            ch.createMessage({
               embed,
               components: [
                 {
