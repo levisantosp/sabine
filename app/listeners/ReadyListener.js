@@ -434,7 +434,6 @@ export default class ReadyListener extends Listener {
           const data = res.data.find(d => d.id === match.id)
           if(data.teams[0].name !== 'TBD' && data.teams[1].name !== 'TBD') {
             const ch = await this.client.getRESTChannel(match.channelId)
-            const msg = await ch.getMessage('1237119255540138036')
             const e = msg.embeds[0]
             const embed = new EmbedBuilder()
             .setTitle(e.title)
