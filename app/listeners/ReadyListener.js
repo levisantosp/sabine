@@ -1,4 +1,4 @@
-import { Guild, User } from '../../database/index.js'
+import { Client, Guild, User } from '../../database/index.js'
 import Listener from '../structures/client/Listener.js'
 import EmbedBuilder from '../structures/embed/EmbedBuilder.js'
 import ms from 'enhanced-ms'
@@ -16,6 +16,11 @@ export default class ReadyListener extends Listener {
   async on() {
     Logger.send(`${this.client.user.username}#${this.client.user.discriminator} online!`)
 
+    const editClientStatus = async() => {
+      const client = await Client.findById(this.client.user.id)
+      const activity = client.status[Math.floor(Math.random() * client.status.length)]
+      this.client.editStatus('online', activity)
+    }
     const sendVCT24Results = async() => {
       const res = await (await fetch('https://vlr.orlandomm.net/api/v1/results', {
         method: 'GET'
@@ -466,6 +471,7 @@ export default class ReadyListener extends Listener {
         }
       }
     }
+    setInterval(editClientStatus, 20000)
     setInterval(async() => {
       await sendVCT24Matches().catch(e => new Logger(this.client).error(e))
       await sendVCBMatches().catch(e => new Logger(this.client).error(e))
