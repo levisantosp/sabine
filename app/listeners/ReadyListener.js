@@ -134,7 +134,7 @@ export default class ReadyListener extends Listener {
             if(!channelId) return
             let messages = await this.client.getMessages(channelId, 100)
             await this.client.deleteMessages(channelId, messages.map(m => m.id))
-            const msg = await this.client.createMessage(channelId, {
+            if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') this.client.createMessage(channelId, {
               embed,
               components: [
                 {
@@ -143,12 +143,10 @@ export default class ReadyListener extends Listener {
                 }
               ]
             })
-
             if(d.teams[0].name === 'TBD' || d.teams[1].name === 'TBD') {
               const g = await Guild.findById(guild.id)
               g.tbdMatches.push({
                 id: d.id,
-                messageId: msg.id,
                 channelId: channelId
               })
               g.save()
@@ -193,7 +191,7 @@ export default class ReadyListener extends Listener {
             if(!channelId) return
             let messages = await this.client.getMessages(channelId, 100)
             await this.client.deleteMessages(channelId, messages.map(m => m.id))
-            const msg = await this.client.createMessage(channelId, {
+            if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') this.client.createMessage(channelId, {
               embed,
               components: [
                 {
@@ -202,12 +200,10 @@ export default class ReadyListener extends Listener {
                 }
               ]
             })
-            
             if(d.teams[0].name === 'TBD' || d.teams[1].name === 'TBD') {
               const g = await Guild.findById(guild.id)
               g.tbdMatches.push({
                 id: d.id,
-                messageId: msg.id,
                 channelId
               })
               g.save()
@@ -327,7 +323,7 @@ export default class ReadyListener extends Listener {
             if(!channelId) return
             let messages = await this.client.getMessages(channelId, 100)
             await this.client.deleteMessages(channelId, messages.map(m => m.id))
-            const msg = await this.client.createMessage(channelId, {
+            if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') this.client.createMessage(channelId, {
               embed,
               components: [
                 {
@@ -336,12 +332,10 @@ export default class ReadyListener extends Listener {
                 }
               ]
             })
-            
             if(d.teams[0].name === 'TBD' || d.teams[1].name === 'TBD') {
               const g = await Guild.findById(guild.id)
               g.tbdMatches.push({
                 id: d.id,
-                messageId: msg.id,
                 channelId
               })
               g.save()
