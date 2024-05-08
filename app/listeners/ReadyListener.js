@@ -57,7 +57,7 @@ export default class ReadyListener extends Listener {
             .addField(`${d.teams[0].score}\n${d.teams[1].score}`, '', true)
             .setFooter(d.event)
   
-            let channelId = guild.events.filter(e => e.name = 'Valorant Champions Tour 2024')[0]?.channel2
+            let channelId = guild.events.filter(e => e.name === 'Valorant Champions Tour 2024')[0]?.channel2
             if(!channelId) return
             this.client.createMessage(channelId, embed.build())
           })
@@ -130,7 +130,7 @@ export default class ReadyListener extends Listener {
             .setCustomId(`guess-${d.id}`)
             .setStyle('green')
 
-            let channelId = guild.events.filter(e => e.name == 'Valorant Champions Tour 2024')[0]?.channel1
+            let channelId = guild.events.filter(e => e.name === 'Valorant Champions Tour 2024')[0]?.channel1
             if(!channelId) return
             let messages = await this.client.getMessages(channelId, 100)
             await this.client.deleteMessages(channelId, messages.map(m => m.id))
@@ -252,7 +252,7 @@ export default class ReadyListener extends Listener {
             .addField(`${d.teams[0].score}\n${d.teams[1].score}`, '', true)
             .setFooter(d.event)
   
-            let channelId = guild.events.filter(e => e.name = 'Valorant Challengers Brazil')[0]?.channel2
+            let channelId = guild.events.filter(e => e.name === 'Valorant Challengers Brazil')[0]?.channel2
             if(!channelId) return
             this.client.createMessage(channelId, embed.build())
           })
@@ -386,7 +386,7 @@ export default class ReadyListener extends Listener {
             .addField(`${d.teams[0].score}\n${d.teams[1].score}`, '', true)
             .setFooter(d.event)
 
-            let channelId = guild.events.filter(e => e.name = 'Valorant Challengers NA')[0]?.channel2
+            let channelId = guild.events.filter(e => e.name === 'Valorant Challengers NA')[0]?.channel2
             if(!channelId) return
             this.client.createMessage(channelId, embed.build())
           })
