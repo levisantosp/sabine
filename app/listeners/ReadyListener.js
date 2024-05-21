@@ -17,7 +17,7 @@ export default class ReadyListener extends Listener {
     Logger.send(`${this.client.user.username}#${this.client.user.discriminator} online!`)
 
     const editClientStatus = async() => {
-      const client = await Client.findById(this.client.user.id)
+      const client = await Client.findById('1235576817683922954')
       const activity = client.status[Math.floor(Math.random() * client.status.length)]
       this.client.editStatus('online', activity)
     }
@@ -115,6 +115,11 @@ export default class ReadyListener extends Listener {
         }
       })
       for(const guild of guilds) {
+        let channelId = guild.events.filter(e => e.name === 'Valorant Champions Tour 2024')[0]?.channel1
+        if(channelId) continue
+        let messages = await this.client.getMessages(channelId, 100)
+        await this.client.deleteMessages(channelId, messages.map(m => m.id))
+
         for (const d of data) {
           if(ms(d.in) <= 86400000) {
             const embed = new EmbedBuilder()
@@ -130,10 +135,6 @@ export default class ReadyListener extends Listener {
             .setCustomId(`guess-${d.id}`)
             .setStyle('green')
 
-            let channelId = guild.events.filter(e => e.name === 'Valorant Champions Tour 2024')[0]?.channel1
-            if(!channelId) return
-            let messages = await this.client.getMessages(channelId, 100)
-            await this.client.deleteMessages(channelId, messages.map(m => m.id))
             const msg = await this.client.createMessage(channelId, {
               embed,
               components: [
@@ -174,6 +175,11 @@ export default class ReadyListener extends Listener {
       })
 
       for(const guild of guilds) {
+        let channelId = guild.events.filter(e => e.name == 'Valorant Challengers Brazil')[0]?.channel1
+        if(channelId) continue
+        let messages = await this.client.getMessages(channelId, 100)
+        await this.client.deleteMessages(channelId, messages.map(m => m.id))
+
         for(const d of data) {
           if(ms(d.in) <= 86400000) {
             const embed = new EmbedBuilder()
@@ -189,10 +195,6 @@ export default class ReadyListener extends Listener {
             .setCustomId(`guess-${d.id}`)
             .setStyle('green')
 
-            let channelId = guild.events.filter(e => e.name == 'Valorant Challengers Brazil')[0]?.channel1
-            if(!channelId) return
-            let messages = await this.client.getMessages(channelId, 100)
-            await this.client.deleteMessages(channelId, messages.map(m => m.id))
             const msg = await this.client.createMessage(channelId, {
               embed,
               components: [
@@ -308,6 +310,10 @@ export default class ReadyListener extends Listener {
         }
       })
       for(const guild of guilds) {
+        let channelId = guild.events.filter(e => e.name === 'Valorant Challengers NA')[0]?.channel1
+        if(channelId) continue
+        let messages = await this.client.getMessages(channelId, 100)
+        await this.client.deleteMessages(channelId, messages.map(m => m.id))
         for(const d of data) {
           if(ms(d.in) <= 86400000) {
             const embed = new EmbedBuilder()
@@ -323,10 +329,6 @@ export default class ReadyListener extends Listener {
             .setCustomId(`guess-${d.id}`)
             .setStyle('green')
 
-            let channelId = guild.events.filter(e => e.name === 'Valorant Challengers NA')[0]?.channel1
-            if(!channelId) return
-            let messages = await this.client.getMessages(channelId, 100)
-            await this.client.deleteMessages(channelId, messages.map(m => m.id))
             const msg = await this.client.createMessage(channelId, {
               embed,
               components: [
