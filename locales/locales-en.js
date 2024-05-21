@@ -50,6 +50,12 @@ export const commands = {
     title: 'My commands',
     description: 'For more information about a particular command, use `{arg}`.\nNeed help? Log in to the support server by clicking the button below!',
     field: 'Commands ({q})'
+  },
+  leaderboard: {
+    author: 'Page {page}/{pages}',
+    footer: 'Your position: #{pos}',
+    title: 'Users with the most correct guesses',
+    field: 'Total: `{v}`'
   }
 }
 export const helper = {

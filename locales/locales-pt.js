@@ -50,6 +50,12 @@ export const commands = {
     title: 'Meus comandos',
     description: 'Para mais informações a respeito de determinado comando, use `{arg}`.\nPrecisando de ajuda? Entre no servidor de suporte clicando no botão abaixo!',
     field: 'Comandos ({q})'
+  },
+  leaderboard: {
+    author: 'Página {page}/{pages}',
+    footer: 'Sua posição: #{pos}',
+    title: 'Usuários com mais palpites certos',
+    field: 'Totais: `{v}`'
   }
 }
 export const helper = {
