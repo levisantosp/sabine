@@ -29,7 +29,6 @@ export default class CommandRunner {
     )
     if(this.message.author.bot) return
     if(this.message.channel.type !== 0) return
-    if(guild && guild.prefix) prefix = guild.prefix
     if(!this.message.content.toLowerCase().startsWith(prefix)) return
 
     let messageArray = this.message.content.split(' ')
@@ -63,6 +62,15 @@ export default class CommandRunner {
 
     cmd.locale = async(content, args) => {
       return await get(this.locale, content, args)
+    }
+    cmd.getUser = async(user) => {
+      try {
+        if(isNaN(user)) return await this.client.getRESTUser(user.replace(/[<@!>]/g, ''))
+        else return await this.client.getRESTUser(user)
+      }
+      catch(e) {
+        new Logger(this.client).error(e)
+      }
     }
     ctx.args = args
     cmd.run(ctx)

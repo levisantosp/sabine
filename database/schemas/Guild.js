@@ -6,10 +6,6 @@ const Guild = new Schema({
     type: String,
     default: 'en'
   },
-  prefix: {
-    type: String,
-    default: '.'
-  },
   events: {
     type: Array,
     default: []
