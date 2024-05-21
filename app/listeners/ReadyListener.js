@@ -116,7 +116,7 @@ export default class ReadyListener extends Listener {
       })
       for(const guild of guilds) {
         let channelId = guild.events.filter(e => e.name === 'Valorant Champions Tour 2024')[0]?.channel1
-        if(channelId) continue
+        if(!channelId) continue
         let messages = await this.client.getMessages(channelId, 100)
         await this.client.deleteMessages(channelId, messages.map(m => m.id))
 
@@ -176,7 +176,7 @@ export default class ReadyListener extends Listener {
 
       for(const guild of guilds) {
         let channelId = guild.events.filter(e => e.name == 'Valorant Challengers Brazil')[0]?.channel1
-        if(channelId) continue
+        if(!channelId) continue
         let messages = await this.client.getMessages(channelId, 100)
         await this.client.deleteMessages(channelId, messages.map(m => m.id))
 
@@ -311,7 +311,7 @@ export default class ReadyListener extends Listener {
       })
       for(const guild of guilds) {
         let channelId = guild.events.filter(e => e.name === 'Valorant Challengers NA')[0]?.channel1
-        if(channelId) continue
+        if(!channelId) continue
         let messages = await this.client.getMessages(channelId, 100)
         await this.client.deleteMessages(channelId, messages.map(m => m.id))
         for(const d of data) {
