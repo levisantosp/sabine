@@ -27,8 +27,8 @@ export default class HelpCommand extends Command {
       .setFooter(await this.locale('commands.help.footer'))
       .setThumbnail(this.client.user.avatarURL)
 
-      if(cmd.syntax) embed.addField(await this.locale('commands.help.syntax'), `\`${ctx.db.guild.prefix}${cmd.syntax}\``)
-      if(cmd.examples) embed.addField(await this.locale('commands.help.examples'), cmd.examples.map(ex => `\`${ctx.db.guild.prefix}${ex}\``).join('\n'))
+      if(cmd.syntax) embed.addField(await this.locale('commands.help.syntax'), `\`${process.env.PREFIX}${cmd.syntax}\``)
+      if(cmd.examples) embed.addField(await this.locale('commands.help.examples'), cmd.examples.map(ex => `\`${process.env.PREFIX}${ex}\``).join('\n'))
       if(cmd.aliases) embed.addField(await this.locale('commands.help.aliases'), cmd.aliases.map(alias => `\`${alias}\``).join(', '))
       if(cmd.permissions) embed.addField(await this.locale('commands.help.permissions'), cmd.permissions.map(perm => `\`${permissions[perm]}\``).join(', '), true)
       if(cmd.botPermissions) embed.addField(await this.locale('commands.help.bot_permissions'), cmd.botPermissions.map(perm => `\`${permissions[perm]}\``).join(', '), true)
@@ -39,12 +39,12 @@ export default class HelpCommand extends Command {
       .setTitle(await this.locale('commands.help.title'))
       .setThumbnail(this.client.user.avatarURL)
       .setDescription(await this.locale('commands.help.description', {
-        arg: `${ctx.db.guild.prefix}help [command]`
+        arg: `${process.env.PREFIX}help [command]`
       }))
       .addField(await this.locale('commands.help.field', {
         q: this.client.commands.size
       }), this.client.commands.map(cmd => {
-        if (!cmd.onlyDev) return `\`${ctx.db.guild.prefix}${cmd.name}\``
+        if (!cmd.onlyDev) return `\`${process.env.PREFIX}${cmd.name}\``
       }).join('\n'))
 
       const button = new ButtonBuilder()
