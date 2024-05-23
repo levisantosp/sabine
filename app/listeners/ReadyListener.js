@@ -114,11 +114,12 @@ export default class ReadyListener extends Listener {
           $lte: Date.now()
         }
       })
+      if(!guilds.length) return
       for(const guild of guilds) {
         let channelId = guild.events.filter(e => e.name === 'Valorant Champions Tour 2024')[0]?.channel1
         if(!channelId) continue
         let messages = await this.client.getMessages(channelId, 100)
-        await this.client.deleteMessages(channelId, messages.map(m => m.id))
+        await this.client.deleteMessages(channelId, messages.map(m => m.id)).catch(() => {})
 
         for (const d of data) {
           if(ms(d.in) <= 86400000) {
@@ -174,11 +175,12 @@ export default class ReadyListener extends Listener {
         }
       })
 
+      if(!guilds.length) return
       for(const guild of guilds) {
         let channelId = guild.events.filter(e => e.name == 'Valorant Challengers Brazil')[0]?.channel1
         if(!channelId) continue
         let messages = await this.client.getMessages(channelId, 100)
-        await this.client.deleteMessages(channelId, messages.map(m => m.id))
+        await this.client.deleteMessages(channelId, messages.map(m => m.id)).catch(() => {})
 
         for(const d of data) {
           if(ms(d.in) <= 86400000) {
@@ -309,11 +311,12 @@ export default class ReadyListener extends Listener {
           $lte: Date.now()
         }
       })
+      if(!guilds.length) return
       for(const guild of guilds) {
         let channelId = guild.events.filter(e => e.name === 'Valorant Challengers NA')[0]?.channel1
         if(!channelId) continue
         let messages = await this.client.getMessages(channelId, 100)
-        await this.client.deleteMessages(channelId, messages.map(m => m.id))
+        await this.client.deleteMessages(channelId, messages.map(m => m.id)).catch(() => {})
         for(const d of data) {
           if(ms(d.in) <= 86400000) {
             const embed = new EmbedBuilder()
