@@ -118,7 +118,9 @@ export default class ReadyListener extends Listener {
       if(!results.length && Match.VCTMatches.length) return
       
       Match.VCTMatches = []
+      console.log('a')
       for(const guild of guilds) {
+        console.log('b')
         let channelId = guild.events.filter(e => e.name === 'Valorant Champions Tour 2024')[0]?.channel1
         if(!channelId) continue
         let messages = await this.client.getMessages(channelId, 100)
