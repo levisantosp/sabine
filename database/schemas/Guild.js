@@ -9,25 +9,6 @@ const Guild = new Schema({
   events: {
     type: Array,
     default: []
-  },
-  lastMatchSentTime: {
-    type: Number,
-    default: 0
-  },
-  lastResultSentId: String,
-  lastVCBMatchSendTime: {
-    type: Number,
-    default: 0
-  },
-  lastVCNMatchSendTime: {
-    type: Number,
-    default: 0
-  },
-  lastVCBResultSentId: String,
-  lastVCNResultSentId: String,
-  tbdMatches: {
-    type: Array,
-    default: []
   }
 })
 
