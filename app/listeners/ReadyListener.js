@@ -127,6 +127,7 @@ export default class ReadyListener extends Listener {
         await this.client.deleteMessages(channelId, messages.map(m => m.id)).catch(() => {})
 
         for(const d of data) {
+          console.log('c')
           Match.VCTMatches.push(d.id)
 
           const embed = new EmbedBuilder()
