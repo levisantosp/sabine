@@ -52,7 +52,6 @@ export default class ReadyListener extends Listener {
           for(const d of data) {
             const embed = new EmbedBuilder()
             .setTitle(d.tournament)
-            .setDescription(`[Match page](https://vlr.gg/${d.id})`)
             .setThumbnail(d.img)
             .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`, '', true)
             .addField(`${d.teams[0].score}\n${d.teams[1].score}`, '', true)
@@ -60,7 +59,20 @@ export default class ReadyListener extends Listener {
   
             let channelId = guild.events.filter(e => e.name === 'Valorant Champions Tour 2024')[0]?.channel2
             if(!channelId) continue
-            this.client.createMessage(channelId, embed.build())
+            this.client.createMessage(channelId, {
+              embed,
+              components: [
+                {
+                  type: 1,
+                  components: [
+                    new ButtonBuilder()
+                    .setLabel('Match page')
+                    .setStyle('link')
+                    .setURL(`https://vlr.gg/${d.id}`)
+                  ]
+                }
+              ]
+            })
           }
           data.reverse()
         }
@@ -126,23 +138,27 @@ export default class ReadyListener extends Listener {
 
           const embed = new EmbedBuilder()
           .setTitle(d.tournament)
-          .setDescription(`[Match page](https://vlr.gg/${d.id})`)
+          .setDescription(`<t:${((Date.now() + ms(d.in)) / 1000).toFixed(0)}:F> | <t:${((Date.now() + ms(d.in)) / 1000).toFixed(0)}:R>`)
           .setThumbnail(d.img)
           .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`, '', true)
           .setFooter(d.event)
-          .setTimestamp(new Date(Date.now() + ms(d.in)))
 
           const button = new ButtonBuilder()
           .setLabel(await get(guild.lang, 'helper.palpitate'))
           .setCustomId(`guess-${d.id}`)
           .setStyle('green')
 
+          const urlButton = new ButtonBuilder()
+          .setLabel('Match page')
+          .setStyle('link')
+          .setURL(`https://vlr.gg/${d.id}`)
+
           if(d.teams[0].name !== 'TBD' || d.teams[1].name !== 'TBD') this.client.createMessage(channelId, {
             embed,
             components: [
               {
                 type: 1,
-                components: [button]
+                components: [button, urlButton]
               }
             ]
           })
@@ -184,25 +200,34 @@ export default class ReadyListener extends Listener {
 
           const embed = new EmbedBuilder()
           .setTitle(d.tournament)
-          .setDescription(`[Match page](https://vlr.gg/${d.id})`)
+          .setDescription(`<t:${((Date.now() + ms(d.in)) / 1000).toFixed(0)}:F> | <t:${((Date.now() + ms(d.in)) / 1000).toFixed(0)}:R>`)
           .setThumbnail(d.img)
           .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`, '', true)
           .setFooter(d.event)
-          .setTimestamp(new Date(Date.now() + ms(d.in)))
 
           const button = new ButtonBuilder()
           .setLabel(await get(guild.lang, 'helper.palpitate'))
           .setCustomId(`guess-${d.id}`)
           .setStyle('green')
 
+          const urlButton = new ButtonBuilder()
+          .setLabel('Match page')
+          .setStyle('link')
+          .setURL(`https://vlr.gg/${d.id}`)
+
           if(d.teams[0].name !== 'TBD' || d.teams[1].name !== 'TBD') this.client.createMessage(channelId, {
             embed,
             components: [
               {
                 type: 1,
-                components: [button]
+                components: [button, urlButton]
               }
             ]
+          })
+          else Match.tbdMatches.push({
+            id: d.id,
+            channel: channelId,
+            guild: guild.lang
           })
         }
       }
@@ -238,7 +263,6 @@ export default class ReadyListener extends Listener {
           for(const d of data) {
             const embed = new EmbedBuilder()
             .setTitle(d.tournament)
-            .setDescription(`[Match page](https://vlr.gg/${d.id})`)
             .setThumbnail(d.img)
             .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`, '', true)
             .addField(`${d.teams[0].score}\n${d.teams[1].score}`, '', true)
@@ -246,7 +270,20 @@ export default class ReadyListener extends Listener {
   
             let channelId = guild.events.filter(e => e.name === 'Valorant Challengers Brazil')[0]?.channel2
             if(!channelId) continue
-            this.client.createMessage(channelId, embed.build())
+            this.client.createMessage(channelId, {
+              embed,
+              components: [
+                {
+                  type: 1,
+                  components: [
+                    new ButtonBuilder()
+                    .setLabel('Match page')
+                    .setStyle('link')
+                    .setURL(`https://vlr.gg/${d.id}`)
+                  ]
+                }
+              ]
+            })
           }
           data.reverse()
         }
@@ -312,23 +349,27 @@ export default class ReadyListener extends Listener {
 
           const embed = new EmbedBuilder()
           .setTitle(d.tournament)
-          .setDescription(`[Match page](https://vlr.gg/${d.id})`)
+          .setDescription(`<t:${((Date.now() + ms(d.in)) / 1000).toFixed(0)}:F> | <t:${((Date.now() + ms(d.in)) / 1000).toFixed(0)}:R>`)
           .setThumbnail(d.img)
           .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`, '', true)
           .setFooter(d.event)
-          .setTimestamp(new Date(Date.now() + ms(d.in)))
 
           const button = new ButtonBuilder()
           .setLabel(await get(guild.lang, 'helper.palpitate'))
           .setCustomId(`guess-${d.id}`)
           .setStyle('green')
 
+          const urlButton = new ButtonBuilder()
+          .setLabel('Match page')
+          .setStyle('link')
+          .setURL(`https://vlr.gg/${d.id}`)
+
           if(d.teams[0].name !== 'TBD' || d.teams[1].name !== 'TBD') this.client.createMessage(channelId, {
             embed,
             components: [
               {
                 type: 1,
-                components: [button]
+                components: [button, urlButton]
               }
             ]
           })
@@ -371,7 +412,6 @@ export default class ReadyListener extends Listener {
           for(const d of data) {
             const embed = new EmbedBuilder()
             .setTitle(d.tournament)
-            .setDescription(`[Match page](https://vlr.gg/${d.id})`)
             .setThumbnail(d.img)
             .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`, '', true)
             .addField(`${d.teams[0].score}\n${d.teams[1].score}`, '', true)
@@ -379,7 +419,20 @@ export default class ReadyListener extends Listener {
   
             let channelId = guild.events.filter(e => e.name === 'Valorant Challengers NA')[0]?.channel2
             if(!channelId) continue
-            this.client.createMessage(channelId, embed.build())
+            this.client.createMessage(channelId, {
+              embed,
+              components: [
+                {
+                  type: 1,
+                  components: [
+                    new ButtonBuilder()
+                    .setLabel('Match page')
+                    .setStyle('link')
+                    .setURL(`https://vlr.gg/${d.id}`)
+                  ]
+                }
+              ]
+            })
           }
           data.reverse()
         }
@@ -426,12 +479,11 @@ export default class ReadyListener extends Listener {
         if(data.teams[0].name !== 'TBD' && data.teams[1].name !== 'TBD') {
           const channel = await this.client.getRESTChannel(match.channel)
           const embed = new EmbedBuilder()
-          .setTitle(data.tournament)
-          .setDescription(`[Match page](https://vlr.gg/${data.id})`)
-          .setThumbnail(data.img)
-          .addField(`:flag_${data.teams[0].country}: ${data.teams[0].name}\n:flag_${data.teams[1].country}: ${data.teams[1].name}`, '')
-          .setFooter(data.event)
-          .setTimestamp(new Date(Date.now() + ms(data.in)))
+          .setTitle(d.tournament)
+          .setDescription(`<t:${((Date.now() + ms(d.in)) / 1000).toFixed(0)}:F> | <t:${((Date.now() + ms(d.in)) / 1000).toFixed(0)}:R>`)
+          .setThumbnail(d.img)
+          .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`, '', true)
+          .setFooter(d.event)
 
           channel.createMessage({
             embed,
@@ -442,7 +494,11 @@ export default class ReadyListener extends Listener {
                   new ButtonBuilder()
                   .setLabel(await get(match.guild, 'helper.palpitate'))
                   .setCustomId(`guess-${match.id}`)
-                  .setStyle('green')
+                  .setStyle('green'),
+                  new ButtonBuilder()
+                  .setLabel('Match page')
+                  .setStyle('link')
+                  .setURL(`https://vlr.gg/${d.id}`)
                 ]
               }
             ]
