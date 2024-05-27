@@ -115,17 +115,13 @@ export default class ReadyListener extends Listener {
       if(!results.length && Match.VCTMatches.length) return
       
       Match.VCTMatches = []
-      console.log('a')
       for(const guild of guilds) {
-        console.log('b')
         let channelId = guild.events.filter(e => e.name === 'Valorant Champions Tour 2024')[0]?.channel1
-        console.log(channelId)
         if(!channelId) continue
         let messages = await this.client.getMessages(channelId, 100)
         await this.client.deleteMessages(channelId, messages.map(m => m.id)).catch(() => {})
 
         for(const d of data) {
-          console.log('c')
           Match.VCTMatches.push(d.id)
 
           const embed = new EmbedBuilder()
