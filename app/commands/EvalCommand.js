@@ -1,5 +1,6 @@
 import Command from '../structures/command/Command.js'
 import Util from 'util'
+import { Guild, User, Matches, Client } from '../../database/index.js'
 
 export default class EvalCommand extends Command {
   constructor(client) {
