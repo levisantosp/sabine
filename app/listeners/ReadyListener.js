@@ -120,6 +120,7 @@ export default class ReadyListener extends Listener {
         }
       })
       const Match = await Matches.findById('matches')
+      if(Match.verificationTimeVCT > Date.now()) return
       const results = (await (await fetch('https://vlr.orlandomm.net/api/v1/results', {
         method: 'GET'
       })).json()).data.filter(d => d.id === Match.VCTMatches.at(-1))
@@ -134,6 +135,8 @@ export default class ReadyListener extends Listener {
         await this.client.deleteMessages(channelId, messages.map(m => m.id)).catch(() => {})
 
         for(const d of data) {
+          let index = Match.VCTMatches.findIndex(m => m === d.id)
+          if(index > -1) Match.VCTMatches.splice(index, 1)
           Match.VCTMatches.push(d.id)
 
           const embed = new EmbedBuilder()
@@ -169,6 +172,7 @@ export default class ReadyListener extends Listener {
           })
         }
       }
+      Match.verificationTimeVCT = new Date().setHours(24, 0, 0, 0)
       Match.save()
     }
     const sendVCBMatches = async() => {
@@ -182,6 +186,7 @@ export default class ReadyListener extends Listener {
         }
       })
       const Match = await Matches.findById('matches')
+      if(Match.verificationTimeVCB > Date.now()) return
       const results = (await (await fetch('https://vlr.orlandomm.net/api/v1/results', {
         method: 'GET'
       })).json()).data.filter(d => d.id === Match.VCBMatches.at(-1))
@@ -196,6 +201,8 @@ export default class ReadyListener extends Listener {
         await this.client.deleteMessages(channelId, messages.map(m => m.id)).catch(() => {})
 
         for(const d of data) {
+          let index = Match.VCBMatches.findIndex(m => m === d.id)
+          if(index > -1) Match.VCBMatches.splice(index, 1)
           Match.VCBMatches.push(d.id)
 
           const embed = new EmbedBuilder()
@@ -231,6 +238,7 @@ export default class ReadyListener extends Listener {
           })
         }
       }
+      Match.verificationTimeVCB = new Date().setHours(24, 0, 0, 0)
       Match.save()
     }
     const sendVCBResults = async() => {
@@ -331,6 +339,7 @@ export default class ReadyListener extends Listener {
         }
       })
       const Match = await Matches.findById('matches')
+      if(Match.verificationTimeVCN > Date.now()) return
       const results = (await (await fetch('https://vlr.orlandomm.net/api/v1/results', {
         method: 'GET'
       })).json()).data.filter(d => d.id === Match.VCNMatches.at(-1))
@@ -345,6 +354,8 @@ export default class ReadyListener extends Listener {
         await this.client.deleteMessages(channelId, messages.map(m => m.id)).catch(() => {})
 
         for(const d of data) {
+          let index = Match.VCNMatches.findIndex(m => m === d.id)
+          if(index > -1) Match.VCNMatches.splice(index, 1)
           Match.VCNMatches.push(d.id)
 
           const embed = new EmbedBuilder()
@@ -380,6 +391,7 @@ export default class ReadyListener extends Listener {
           })
         }
       }
+      Match.verificationTimeVCN = new Date().setHours(24, 0, 0, 0)
       Match.save()
     }
     const sendVCNResults = async() => {

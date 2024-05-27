@@ -20,7 +20,19 @@ const Matches = new Schema({
   },
   lastVCTResult: String,
   lastVCNResult: String,
-  lastVCBResult: String
+  lastVCBResult: String,
+  verificationTimeVCT: {
+    type: Number,
+    default: 0
+  },
+  verificationTimeVCB: {
+    type: Number,
+    default: 0
+  },
+  verificationTimeVCN: {
+    type: Number,
+    default: 0
+  }
 })
 
 export default model('matches', Matches)
