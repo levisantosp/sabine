@@ -1,4 +1,4 @@
-import { Client, Guild, User } from '../../database/index.js'
+import { Client, Guild, User, Matches } from '../../database/index.js'
 import Listener from '../structures/client/Listener.js'
 import EmbedBuilder from '../structures/embed/EmbedBuilder.js'
 import ms from 'enhanced-ms'
@@ -21,7 +21,7 @@ export default class ReadyListener extends Listener {
       const activity = client.status[Math.floor(Math.random() * client.status.length)]
       this.client.editStatus('online', activity)
     }
-    const sendVCT24Results = async() => {
+    const sendVCTResults = async() => {
       const res = await (await fetch('https://vlr.orlandomm.net/api/v1/results', {
         method: 'GET'
       })).json()
@@ -33,11 +33,12 @@ export default class ReadyListener extends Listener {
           $exists: true
         }
       })
-
+      const Match = await Matches.findById('matches')
       let matches
+
       for(const guild of guilds) {
-        if (guild.lastResultSentId && guild.lastResultSentId !== data[0].id) {
-          let match = data.find(e => e.id == guild.lastResultSentId)
+        if (Match.lastVCTResult && Match.lastVCTResult !== data[0].id) {
+          let match = data.find(e => e.id == Match.lastVCTResult)
           let index = data.indexOf(match)
           if(index > -1) {
             data = data.slice(0, index)
@@ -58,18 +59,14 @@ export default class ReadyListener extends Listener {
             .setFooter(d.event)
   
             let channelId = guild.events.filter(e => e.name === 'Valorant Champions Tour 2024')[0]?.channel2
-            if(!channelId) return
+            if(!channelId) continue
             this.client.createMessage(channelId, embed.build())
           }
           data.reverse()
-          guild.lastResultSentId = data[0].id
-          guild.save()
-        }
-        else {
-          guild.lastResultSentId = data[0].id
-          guild.save()
         }
       }
+      Match.lastVCTResult = data[0].id
+      Match.save()
 
       const users = await User.find({
         guesses: {
@@ -100,12 +97,11 @@ export default class ReadyListener extends Listener {
         }
       }
     }
-    const sendVCT24Matches = async() => {
+    const sendVCTMatches = async() => {
       const res = await (await fetch('https://vlr.orlandomm.net/api/v1/matches', {
         method: 'GET'
       })).json()
       let data = res.data.filter(d => d.tournament.startsWith('Champions Tour 2024'))
-
       const guilds = await Guild.find({
         events: {
           $exists: true
@@ -114,52 +110,53 @@ export default class ReadyListener extends Listener {
           $lte: Date.now()
         }
       })
+      const Match = await Matches.findById('matches')
+      const results = (await (await fetch('https://vlr.orlandomm.net/api/v1/results', {
+        method: 'GET'
+      })).json()).data.filter(d => d.id === Match.VCTMatches.at(-1))
       if(!guilds.length) return
+      if(!results.length && Match.VCTMatches.length) return
+      
+      Match.VCTMatches = []
       for(const guild of guilds) {
         let channelId = guild.events.filter(e => e.name === 'Valorant Champions Tour 2024')[0]?.channel1
         if(!channelId) continue
         let messages = await this.client.getMessages(channelId, 100)
         await this.client.deleteMessages(channelId, messages.map(m => m.id)).catch(() => {})
 
-        for (const d of data) {
-          if(ms(d.in) <= 86400000) {
-            const embed = new EmbedBuilder()
-            .setTitle(d.tournament)
-            .setDescription(`[Match page](https://vlr.gg/${d.id})`)
-            .setThumbnail(d.img)
-            .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`, '', true)
-            .setFooter(d.event)
-            .setTimestamp(new Date(Date.now() + ms(d.in)))
+        for(const d of data) {
+          Match.VCTMatches.push(d.id)
 
-            const button = new ButtonBuilder()
-            .setLabel(await get(guild.lang, 'helper.palpitate'))
-            .setCustomId(`guess-${d.id}`)
-            .setStyle('green')
+          const embed = new EmbedBuilder()
+          .setTitle(d.tournament)
+          .setDescription(`[Match page](https://vlr.gg/${d.id})`)
+          .setThumbnail(d.img)
+          .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`, '', true)
+          .setFooter(d.event)
+          .setTimestamp(new Date(Date.now() + ms(d.in)))
 
-            const msg = await this.client.createMessage(channelId, {
-              embed,
-              components: [
-                {
-                  type: 1,
-                  components: [button]
-                }
-              ]
-            })
+          const button = new ButtonBuilder()
+          .setLabel(await get(guild.lang, 'helper.palpitate'))
+          .setCustomId(`guess-${d.id}`)
+          .setStyle('green')
 
-            if(d.teams[0].name === 'TBD' || d.teams[1].name === 'TBD') {
-              const g = await Guild.findById(guild.id)
-              g.tbdMatches.push({
-                id: d.id,
-                messageId: msg.id,
-                channelId: channelId
-              })
-              g.save()
-            }
-          }
+          if(d.teams[0].name !== 'TBD' || d.teams[1].name !== 'TBD') this.client.createMessage(channelId, {
+            embed,
+            components: [
+              {
+                type: 1,
+                components: [button]
+              }
+            ]
+          })
+          else Match.tbdMatches.push({
+            id: d.id,
+            channel: channelId,
+            guild: guild.lang
+          })
         }
-        guild.lastMatchSentTime = new Date().setHours(24, 0, 0, 0)
-        guild.save()
       }
+      Match.save()
     }
     const sendVCBMatches = async() => {
       const res = await (await fetch('https://vlr.orlandomm.net/api/v1/matches', {
@@ -174,53 +171,49 @@ export default class ReadyListener extends Listener {
           $lte: Date.now()
         }
       })
-
+      const Match = await Matches.findById('matches')
+      const results = (await (await fetch('https://vlr.orlandomm.net/api/v1/results', {
+        method: 'GET'
+      })).json()).data.filter(d => d.id === Match.VCBMatches.at(-1))
       if(!guilds.length) return
+      if(!results.length && Match.VCBMatches.length) return
+      
+      Match.VCBMatches = []
       for(const guild of guilds) {
-        let channelId = guild.events.filter(e => e.name == 'Valorant Challengers Brazil')[0]?.channel1
+        let channelId = guild.events.filter(e => e.name === 'Valorant Challengers Brazil')[0]?.channel1
         if(!channelId) continue
         let messages = await this.client.getMessages(channelId, 100)
         await this.client.deleteMessages(channelId, messages.map(m => m.id)).catch(() => {})
 
         for(const d of data) {
-          if(ms(d.in) <= 86400000) {
-            const embed = new EmbedBuilder()
-            .setTitle(d.tournament)
-            .setDescription(`[Match page](https://vlr.gg/${d.id})`)
-            .setThumbnail(d.img)
-            .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`, '', true)
-            .setFooter(d.event)
-            .setTimestamp(new Date(Date.now() + ms(d.in)))
+          Match.VCBMatches.push(d.id)
 
-            const button = new ButtonBuilder()
-            .setLabel(await get(guild.lang, 'helper.palpitate'))
-            .setCustomId(`guess-${d.id}`)
-            .setStyle('green')
+          const embed = new EmbedBuilder()
+          .setTitle(d.tournament)
+          .setDescription(`[Match page](https://vlr.gg/${d.id})`)
+          .setThumbnail(d.img)
+          .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`, '', true)
+          .setFooter(d.event)
+          .setTimestamp(new Date(Date.now() + ms(d.in)))
 
-            const msg = await this.client.createMessage(channelId, {
-              embed,
-              components: [
-                {
-                  type: 1,
-                  components: [d.teams[0].name === 'TBD' || d.teams[1].name === 'TBD' ? button.setDisabled() : button]
-                }
-              ]
-            })
-            
-            if(d.teams[0].name === 'TBD' || d.teams[1].name === 'TBD') {
-              const g = await Guild.findById(guild.id)
-              g.tbdMatches.push({
-                id: d.id,
-                messageId: msg.id,
-                channelId
-              })
-              g.save()
-            }
-          }
+          const button = new ButtonBuilder()
+          .setLabel(await get(guild.lang, 'helper.palpitate'))
+          .setCustomId(`guess-${d.id}`)
+          .setStyle('green')
+
+          if(d.teams[0].name !== 'TBD' || d.teams[1].name !== 'TBD') this.client.createMessage(channelId, {
+            embed,
+            components: [
+              {
+                type: 1,
+                components: [button]
+              }
+            ]
+          })
         }
-        guild.lastVCBMatchSendTime = new Date().setHours(24, 0, 0, 0)
-        guild.save()
       }
+      console.log(Match.VCBMatches)
+      Match.save()
     }
     const sendVCBResults = async() => {
       const res = await (await fetch('https://vlr.orlandomm.net/api/v1/results', {
@@ -233,10 +226,12 @@ export default class ReadyListener extends Listener {
           $exists: true
         }
       })
+      const Match = await Matches.findById('matches')
       let matches
+
       for(const guild of guilds) {
-        if(guild.lastVCBResultSentId && guild.lastVCBResultSentId !== data[0].id) {
-          let match = data.find(e => e.id == guild.lastVCBResultSentId)
+        if (Match.lastVCBResult && Match.lastVCBResult !== data[0].id) {
+          let match = data.find(e => e.id == Match.lastVCBResult)
           let index = data.indexOf(match)
           if(index > -1) {
             data = data.slice(0, index)
@@ -257,18 +252,15 @@ export default class ReadyListener extends Listener {
             .setFooter(d.event)
   
             let channelId = guild.events.filter(e => e.name === 'Valorant Challengers Brazil')[0]?.channel2
-            if(!channelId) return
+            if(!channelId) continue
             this.client.createMessage(channelId, embed.build())
           }
           data.reverse()
-          guild.lastVCBResultSentId = data[0].id
-          guild.save()
-        }
-        else {
-          guild.lastVCBResultSentId = data[0].id
-          guild.save()
         }
       }
+      Match.lastVCBResult = data[0].id
+      Match.save()
+
       const users = await User.find({
         guesses: {
           $exists: true
@@ -311,51 +303,53 @@ export default class ReadyListener extends Listener {
           $lte: Date.now()
         }
       })
+      const Match = await Matches.findById('matches')
+      const results = (await (await fetch('https://vlr.orlandomm.net/api/v1/results', {
+        method: 'GET'
+      })).json()).data.filter(d => d.id === Match.VCNMatches.at(-1))
       if(!guilds.length) return
+      if(!results.length && Match.VCNMatches.length) return
+      
+      Match.VCNMatches = []
       for(const guild of guilds) {
         let channelId = guild.events.filter(e => e.name === 'Valorant Challengers NA')[0]?.channel1
         if(!channelId) continue
         let messages = await this.client.getMessages(channelId, 100)
         await this.client.deleteMessages(channelId, messages.map(m => m.id)).catch(() => {})
+
         for(const d of data) {
-          if(ms(d.in) <= 86400000) {
-            const embed = new EmbedBuilder()
-            .setTitle(d.tournament)
-            .setDescription(`[Match page](https://vlr.gg/${d.id})`)
-            .setThumbnail(d.img)
-            .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`, '', true)
-            .setFooter(d.event)
-            .setTimestamp(new Date(Date.now() + ms(d.in)))
+          Match.VCNMatches.push(d.id)
 
-            const button = new ButtonBuilder()
-            .setLabel(await get(guild.lang, 'helper.palpitate'))
-            .setCustomId(`guess-${d.id}`)
-            .setStyle('green')
+          const embed = new EmbedBuilder()
+          .setTitle(d.tournament)
+          .setDescription(`[Match page](https://vlr.gg/${d.id})`)
+          .setThumbnail(d.img)
+          .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`, '', true)
+          .setFooter(d.event)
+          .setTimestamp(new Date(Date.now() + ms(d.in)))
 
-            const msg = await this.client.createMessage(channelId, {
-              embed,
-              components: [
-                {
-                  type: 1,
-                  components: [d.teams[0].name === 'TBD' || d.teams[1].name === 'TBD' ? button.setDisabled() : button]
-                }
-              ]
-            })
-            
-            if(d.teams[0].name === 'TBD' || d.teams[1].name === 'TBD') {
-              const g = await Guild.findById(guild.id)
-              g.tbdMatches.push({
-                id: d.id,
-                messageId: msg.id,
-                channelId
-              })
-              g.save()
-            }
-          }
-          guild.lastVCNMatchSendTime = new Date().setHours(24, 0, 0, 0)
+          const button = new ButtonBuilder()
+          .setLabel(await get(guild.lang, 'helper.palpitate'))
+          .setCustomId(`guess-${d.id}`)
+          .setStyle('green')
+
+          if(d.teams[0].name !== 'TBD' || d.teams[1].name !== 'TBD') this.client.createMessage(channelId, {
+            embed,
+            components: [
+              {
+                type: 1,
+                components: [button]
+              }
+            ]
+          })
+          else Match.tbdMatches.push({
+            id: d.id,
+            channel: channelId,
+            guild: guild.lang
+          })
         }
-        guild.save()
       }
+      Match.save()
     }
     const sendVCNResults = async() => {
       const res = await (await fetch('https://vlr.orlandomm.net/api/v1/results', {
@@ -368,17 +362,19 @@ export default class ReadyListener extends Listener {
           $exists: true
         }
       })
+      const Match = await Matches.findById('matches')
       let matches
+
       for(const guild of guilds) {
-        if(guild.lastVCNResultSentId && guild.lastVCNResultSentId !== data[0].id) {
-          let match = data.find(e => e.id === guild.lastVCNResultSentId)
+        if (Match.lastVCNResult && Match.lastVCNResult !== data[0].id) {
+          let match = data.find(e => e.id == Match.lastVCNResult)
           let index = data.indexOf(match)
           if(index > -1) {
             data = data.slice(0, index)
             matches = data
           }
           else {
-            data.slice(0, 1)
+            data = data.slice(0, 1)
             matches = data
           }
           data.reverse()
@@ -390,20 +386,17 @@ export default class ReadyListener extends Listener {
             .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`, '', true)
             .addField(`${d.teams[0].score}\n${d.teams[1].score}`, '', true)
             .setFooter(d.event)
-
+  
             let channelId = guild.events.filter(e => e.name === 'Valorant Challengers NA')[0]?.channel2
-            if(!channelId) return
+            if(!channelId) continue
             this.client.createMessage(channelId, embed.build())
           }
           data.reverse()
-          guild.lastVCNResultSentId = data[0].id
-          guild.save()
-        }
-        else {
-          guild.lastVCNResultSentId = data[0].id
-          guild.save()
         }
       }
+      Match.lastVCNResult = data[0].id
+      Match.save()
+
       const users = await User.find({
         guesses: {
           $exists: true
@@ -435,53 +428,47 @@ export default class ReadyListener extends Listener {
       const res = await (await fetch('https://vlr.orlandomm.net/api/v1/matches', {
         method: 'GET'
       })).json()
-      const guilds = await Guild.find({
-        tbdMatches: {
-          $ne: []
-        }
-      })
-      for(const guild of guilds) {
-        for(const match of guild.tbdMatches) {
-          const data = res.data.find(d => d.id === match.id)
-          if(data.teams[0].name !== 'TBD' && data.teams[1].name !== 'TBD') {
-            const ch = await this.client.getRESTChannel(match.channelId)
-            const msg = await ch.getMessage(match.messageId)
-            const e = msg.embeds[0]
-            const embed = new EmbedBuilder()
-            .setTitle(e.title)
-            .setDescription(e.description)
-            .setThumbnail(e.thumbnail.url)
-            .addField(`:flag_${data.teams[0].country}: ${data.teams[0].name}\n:flag_${data.teams[1].country}: ${data.teams[1].name}`, '')
-            .setFooter(e.footer.text)
-            .setTimestamp(e.timestamp)
+      const Match = await Matches.findById('matches')
+      if(!Match.tbdMatches.length) return
 
-            msg.edit({
-              embed,
-              components: [
-                {
-                  type: 1,
-                  components: [
-                    new ButtonBuilder()
-                    .setLabel(await get(guild.lang, 'helper.palpitate'))
-                    .setCustomId(`guess-${match.id}`)
-                    .setStyle('green')
-                  ]
-                }
-              ]
-            })
-            let index = guild.tbdMatches.findIndex(m => m.id === match.id)
-            guild.tbdMatches.splice(index, 1)
-            guild.save()
-          }
+      for(const match of Match.tbdMatches) {
+        const data = res.data.find(d => d.id === match.id)
+        if(data.teams[0].name !== 'TBD' && data.teams[1].name !== 'TBD') {
+          const channel = await this.client.getRESTChannel(match.channel)
+          const embed = new EmbedBuilder()
+          .setTitle(data.tournament)
+          .setDescription(`[Match page](https://vlr.gg/${data.id})`)
+          .setThumbnail(data.img)
+          .addField(`:flag_${data.teams[0].country}: ${data.teams[0].name}\n:flag_${data.teams[1].country}: ${data.teams[1].name}`, '')
+          .setFooter(data.event)
+          .setTimestamp(new Date(Date.now() + ms(data.in)))
+
+          channel.createMessage({
+            embed,
+            components: [
+              {
+                type: 1,
+                components: [
+                  new ButtonBuilder()
+                  .setLabel(await get(match.guild, 'helper.palpitate'))
+                  .setCustomId(`guess-${match.id}`)
+                  .setStyle('green')
+                ]
+              }
+            ]
+          })
+          let index = Match.tbdMatches.findIndex(m => m.id === match.id)
+          Match.tbdMatches.splice(index, 1)
+          Match.save()
         }
       }
     }
     setInterval(editClientStatus, 20000)
     setInterval(async() => {
-      await sendVCT24Matches().catch(e => new Logger(this.client).error(e))
+      await sendVCTMatches().catch(e => new Logger(this.client).error(e))
       await sendVCBMatches().catch(e => new Logger(this.client).error(e))
       await sendVCNMatches().catch(e => new Logger(this.client).error(e))
-      await sendVCT24Results().catch(e => new Logger(this.client).error(e))
+      await sendVCTResults().catch(e => new Logger(this.client).error(e))
       await sendVCBResults().catch(e => new Logger(this.client).error(e))
       await sendVCNResults().catch(e => new Logger(this.client).error(e))
       await verifyIfMatchAlreadyHasTeams().catch(e => new Logger(this.client).error(e))
