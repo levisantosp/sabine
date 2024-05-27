@@ -105,9 +105,6 @@ export default class ReadyListener extends Listener {
       const guilds = await Guild.find({
         events: {
           $exists: true
-        },
-        lastMatchSentTime: {
-          $lte: Date.now()
         }
       })
       const Match = await Matches.findById('matches')
@@ -170,9 +167,6 @@ export default class ReadyListener extends Listener {
       const guilds = await Guild.find({
         events: {
           $exists: true
-        },
-        lastVCBMatchSendTime: {
-          $lte: Date.now()
         }
       })
       const Match = await Matches.findById('matches')
@@ -301,9 +295,6 @@ export default class ReadyListener extends Listener {
       const guilds = await Guild.find({
         events: {
           $exists: true
-        },
-        lastVCNMatchSendTime: {
-          $lte: Date.now()
         }
       })
       const Match = await Matches.findById('matches')
