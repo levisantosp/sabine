@@ -212,7 +212,6 @@ export default class ReadyListener extends Listener {
           })
         }
       }
-      console.log(Match.VCBMatches)
       Match.save()
     }
     const sendVCBResults = async() => {
