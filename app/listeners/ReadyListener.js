@@ -126,6 +126,7 @@ export default class ReadyListener extends Listener {
         let messages = await this.client.getMessages(channelId, 100)
         await this.client.deleteMessages(channelId, messages.map(m => m.id)).catch(() => {})
 
+        console.log(data)
         for(const d of data) {
           console.log('c')
           Match.VCTMatches.push(d.id)
