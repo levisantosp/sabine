@@ -1,14 +1,14 @@
 {
-  "name": "vladimir",
-  "version": "1.0.0",
-  "description": "",
+  "name": "sabine",
+  "version": "1.0.1",
+  "description": "a valorant champions tour tracker for discord",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "levispires",
   "license": "ISC",
   "dependencies": {
     "@iamtraction/google-translate": "^2.0.1",
