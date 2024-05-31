@@ -491,11 +491,11 @@ export default class ReadyListener extends Listener {
         if(data.teams[0].name !== 'TBD' && data.teams[1].name !== 'TBD') {
           const channel = await this.client.getRESTChannel(match.channel)
           const embed = new EmbedBuilder()
-          .setTitle(d.tournament)
-          .setDescription(`<t:${((Date.now() + ms(d.in)) / 1000).toFixed(0)}:F> | <t:${((Date.now() + ms(d.in)) / 1000).toFixed(0)}:R>`)
-          .setThumbnail(d.img)
-          .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`, '', true)
-          .setFooter(d.event)
+          .setTitle(data.tournament)
+          .setDescription(`<t:${((Date.now() + ms(data.in)) / 1000).toFixed(0)}:F> | <t:${((Date.now() + ms(data.in)) / 1000).toFixed(0)}:R>`)
+          .setThumbnail(data.img)
+          .addField(`:flag_${data.teams[0].country}: ${data.teams[0].name}\n:flag_${data.teams[1].country}: ${data.teams[1].name}`, '', true)
+          .setFooter(data.event)
 
           channel.createMessage({
             embed,
@@ -510,7 +510,7 @@ export default class ReadyListener extends Listener {
                   new ButtonBuilder()
                   .setLabel('Match page')
                   .setStyle('link')
-                  .setURL(`https://vlr.gg/${d.id}`)
+                  .setURL(`https://vlr.gg/${data.id}`)
                 ]
               }
             ]
