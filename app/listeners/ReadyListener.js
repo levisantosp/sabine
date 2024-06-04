@@ -125,7 +125,7 @@ export default class ReadyListener extends Listener {
       if(Match.verificationTimeVCT > Date.now()) return
       const results = (await (await fetch('https://vlr.orlandomm.net/api/v1/results', {
         method: 'GET'
-      })).json()).data.filter(d => d.id === Match.VCTMatches.at(-1)).catch(() => Logger.warn('API is down'))
+      })).json()).data.filter(d => d.id === Match.VCTMatches.at(-1))
       if(!res) return
       if(!guilds.length) return
       if(!results.length && Match.VCTMatches.length) return
@@ -193,7 +193,7 @@ export default class ReadyListener extends Listener {
       if(Match.verificationTimeVCB > Date.now()) return
       const results = (await (await fetch('https://vlr.orlandomm.net/api/v1/results', {
         method: 'GET'
-      })).json()).data.filter(d => d.id === Match.VCBMatches.at(-1)).catch(() => Logger.warn('API is down'))
+      })).json()).data.filter(d => d.id === Match.VCBMatches.at(-1))
       if(!res) return
       if(!guilds.length) return
       if(!results.length && Match.VCBMatches.length) return
@@ -349,7 +349,7 @@ export default class ReadyListener extends Listener {
       if(Match.verificationTimeVCN > Date.now()) return
       const results = (await (await fetch('https://vlr.orlandomm.net/api/v1/results', {
         method: 'GET'
-      })).json()).data.filter(d => d.id === Match.VCNMatches.at(-1)).catch(() => Logger.warn('API is down'))
+      })).json()).data.filter(d => d.id === Match.VCNMatches.at(-1))
       if(!res) return
       if(!guilds.length) return
       if(!results.length && Match.VCNMatches.length) return
