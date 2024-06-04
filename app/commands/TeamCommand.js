@@ -1,9 +1,10 @@
 import Command from '../structures/command/Command.js'
 import EmbedBuilder from '../structures/embed/EmbedBuilder.js'
+import Logger from '../structures/util/Logger.js'
 const teamsCached = {}
 const teamsAPICache = await (await fetch('https://vlr.orlandomm.net/api/v1/teams?limit=all', {
   method: 'GET'
-})).json()
+})).json().catch(() => Logger.warn('API is down'))
 const teamAPICache = {}
 
 export default class TeamCommand extends Command {

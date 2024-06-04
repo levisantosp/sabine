@@ -24,7 +24,7 @@ export default class ReadyListener extends Listener {
     const sendVCTResults = async() => {
       const res = await (await fetch('https://vlr.orlandomm.net/api/v1/results', {
         method: 'GET'
-      })).json()
+      })).json().catch(() => Logger.warn('API is down'))
       let data = res.data.filter(d => d.tournament.startsWith('Champions Tour 2024'))
       if(!data || !data[0]) return
 
@@ -112,7 +112,7 @@ export default class ReadyListener extends Listener {
     const sendVCTMatches = async() => {
       const res = await (await fetch('https://vlr.orlandomm.net/api/v1/matches', {
         method: 'GET'
-      })).json()
+      })).json().catch(() => Logger.warn('API is down'))
       let data = res.data.filter(d => d.tournament.startsWith('Champions Tour 2024'))
       const guilds = await Guild.find({
         events: {
@@ -123,7 +123,7 @@ export default class ReadyListener extends Listener {
       if(Match.verificationTimeVCT > Date.now()) return
       const results = (await (await fetch('https://vlr.orlandomm.net/api/v1/results', {
         method: 'GET'
-      })).json()).data.filter(d => d.id === Match.VCTMatches.at(-1))
+      })).json()).data.filter(d => d.id === Match.VCTMatches.at(-1)).catch(() => Logger.warn('API is down'))
       if(!guilds.length) return
       if(!results.length && Match.VCTMatches.length) return
       
@@ -178,7 +178,7 @@ export default class ReadyListener extends Listener {
     const sendVCBMatches = async() => {
       const res = await (await fetch('https://vlr.orlandomm.net/api/v1/matches', {
         method: 'GET'
-      })).json()
+      })).json().catch(() => Logger.warn('API is down'))
       let data = res.data.filter(d => d.tournament.includes('Challengers League 2024 Brazil'))
       const guilds = await Guild.find({
         events: {
@@ -189,7 +189,7 @@ export default class ReadyListener extends Listener {
       if(Match.verificationTimeVCB > Date.now()) return
       const results = (await (await fetch('https://vlr.orlandomm.net/api/v1/results', {
         method: 'GET'
-      })).json()).data.filter(d => d.id === Match.VCBMatches.at(-1))
+      })).json()).data.filter(d => d.id === Match.VCBMatches.at(-1)).catch(() => Logger.warn('API is down'))
       if(!guilds.length) return
       if(!results.length && Match.VCBMatches.length) return
       
@@ -244,7 +244,7 @@ export default class ReadyListener extends Listener {
     const sendVCBResults = async() => {
       const res = await (await fetch('https://vlr.orlandomm.net/api/v1/results', {
         method: 'GET'
-      })).json()
+      })).json().catch(() => Logger.warn('API is down'))
       let data = res.data.filter(d => d.tournament.includes('Challengers League 2024 Brazil'))
       if(!data || !data[0]) return
       const guilds = await Guild.find({
@@ -331,7 +331,7 @@ export default class ReadyListener extends Listener {
     const sendVCNMatches = async() => {
       const res = await (await fetch('https://vlr.orlandomm.net/api/v1/matches', {
         method: 'GET'
-      })).json()
+      })).json().catch(() => Logger.warn('API is down'))
       let data = res.data.filter(d => d.tournament.includes('Challengers League 2024 North America'))
       const guilds = await Guild.find({
         events: {
@@ -342,7 +342,7 @@ export default class ReadyListener extends Listener {
       if(Match.verificationTimeVCN > Date.now()) return
       const results = (await (await fetch('https://vlr.orlandomm.net/api/v1/results', {
         method: 'GET'
-      })).json()).data.filter(d => d.id === Match.VCNMatches.at(-1))
+      })).json()).data.filter(d => d.id === Match.VCNMatches.at(-1)).catch(() => Logger.warn('API is down'))
       if(!guilds.length) return
       if(!results.length && Match.VCNMatches.length) return
       
@@ -397,7 +397,7 @@ export default class ReadyListener extends Listener {
     const sendVCNResults = async() => {
       const res = await (await fetch('https://vlr.orlandomm.net/api/v1/results', {
         method: 'GET'
-      })).json()
+      })).json().catch(() => Logger.warn('API is down'))
       let data = res.data.filter(d => d.tournament.includes('Challengers League 2024 North America'))
       if(!data || !data[0]) return
       const guilds = await Guild.find({
@@ -482,7 +482,7 @@ export default class ReadyListener extends Listener {
     const verifyIfMatchAlreadyHasTeams = async() => {
       const res = await (await fetch('https://vlr.orlandomm.net/api/v1/matches', {
         method: 'GET'
-      })).json()
+      })).json().catch(() => Logger.warn('API is down'))
       const Match = await Matches.findById('matches')
       if(!Match.tbdMatches.length) return
 

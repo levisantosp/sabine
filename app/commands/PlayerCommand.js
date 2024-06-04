@@ -1,9 +1,10 @@
 import Command from '../structures/command/Command.js'
 import EmbedBuilder from '../structures/embed/EmbedBuilder.js'
+import Logger from '../structures/util/Logger.js'
 const playersCached = {}
 const playersAPICache = await (await fetch('https://vlr.orlandomm.net/api/v1/players?limit=all', {
   method: 'GET'
-})).json()
+})).json().catch(() => Logger.warn('API is down'))
 const playerAPICache = {}
 
 export default class PlayerCommand extends Command {
