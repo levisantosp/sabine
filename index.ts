@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import App from './app/structures/client/App.js'
-new App(process.env.BOT_TOKEN, {
+new App(process.env.BOT_TOKEN!, {
   intents: ['all'],
   allowedMentions: {
     everyone: false,

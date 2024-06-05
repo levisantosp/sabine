@@ -88,18 +88,18 @@ export default class ReadyListener extends Listener {
       for(const match of matches) {
         for(const user of users) {
           let guesses = user.guesses
-          let guess = guesses.filter(g => g.match === match.id)[0]
+          let guess = guesses.filter((g: any) => g.match === match.id)[0]
           if(guess?.match === match.id) {
             if(guess && guess.score1 === match.teams[0].score && guess.score2 === match.teams[1].score) {
               user.guessesRight += 1
-              let _guess = user.guesses.find(g => g.match === match.id)
+              let _guess = user.guesses.find((g: any) => g.match === match.id)
               let index = user.guesses.indexOf(_guess)
               user.guesses.splice(index, 1)
               user.save()
             }
             else {
               user.guessesWrong += 1
-              let _guess = user.guesses.find(g => g.match === match.id)
+              let _guess = user.guesses.find((g: any) => g.match === match.id)
               let index = user.guesses.indexOf(_guess)
               user.guesses.splice(index, 1)
               user.save()
@@ -312,17 +312,17 @@ export default class ReadyListener extends Listener {
       for(const match of matches) {
         for(const user of users) {
           let guesses = user.guesses
-          let guess = guesses.filter(g => g.match === match.id)[0]
+          let guess = guesses.filter((g: any) => g.match === match.id)[0]
           if(guess?.match === match.id) {
             if(guess && guess.score1 === match.teams[0].score && guess.score2 === match.teams[1].score) {
-              let _guess = user.guesses.find(g => g.match === match.id)
+              let _guess = user.guesses.find((g: any) => g.match === match.id)
               let index = user.guesses.indexOf(_guess)
               user.guesses.splice(index, 1)
               user.guessesRight += 1
               user.save()
             }
             else {
-              let _guess = user.guesses.find(g => g.match === match.id)
+              let _guess = user.guesses.find((g: any) => g.match === match.id)
               let index = user.guesses.indexOf(_guess)
               user.guesses.splice(index, 1)
               user.guessesWrong += 1
@@ -468,16 +468,16 @@ export default class ReadyListener extends Listener {
       for(const match of matches) {
         for(const user of users) {
           let guesses = user.guesses
-          let guess = guesses.filter(g => g.match === match.id)[0]
+          let guess = guesses.filter((g: any) => g.match === match.id)[0]
           if(guess && guess.score1 === match.teams[0].score && guess.score2 === match.teams[1].score) {
-            let _guess = user.guesses.find(g => g.match === match.id)
+            let _guess = user.guesses.find((g: any) => g.match === match.id)
             let index = user.guesses.indexOf(_guess)
             user.guesses.splice(index, 1)
             user.guessesRight += 1
             user.save()
           }
           else {
-            let _guess = user.guesses.find(g => g.match === match.id)
+            let _guess = user.guesses.find((g: any) => g.match === match.id)
             let index = user.guesses.indexOf(_guess)
             user.guesses.splice(index, 1)
             user.guessesWrong += 1

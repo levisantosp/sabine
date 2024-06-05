@@ -1,8 +1,7 @@
-import { Client, ClientOptions, Collection } from 'eris'
+import { Client, ClientOptions } from 'eris'
 import { readdirSync } from 'fs'
 import mongoose from 'mongoose'
-import { Logger } from '..'
-import Command from '../command/Command.js'
+import { Logger, Command } from '..'
 
 export default class App extends Client {
   commands: Map<string, Command>
@@ -15,7 +14,7 @@ export default class App extends Client {
     this.aliases = new Map()
   }
   async start() {
-    await mongoose.connect(process.env.MONGO_URI)
+    await mongoose.connect(process.env.MONGO_URI!)
     Logger.send('Database online')
     await this.connect()
 

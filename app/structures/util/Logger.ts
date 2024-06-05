@@ -21,7 +21,7 @@ export default class Logger {
     .setTitle('An error has occurred')
     .setDescription(`\`\`\`js\n${error.stack}\`\`\``)
 
-    const channel = await this.client.getRESTChannel(process.env.ERROR_LOG) as TextChannel
+    const channel = await this.client.getRESTChannel(process.env.ERROR_LOG!) as TextChannel
     const webhooks = await channel.getWebhooks()
     let webhook = webhooks.find(w => w.name === `${this.client.user.username} Logger`)
     if(!webhook) webhook = await channel.createWebhook({ name: `${this.client.user.username} Logger` })

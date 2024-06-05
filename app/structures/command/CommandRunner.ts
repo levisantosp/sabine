@@ -29,7 +29,7 @@ export default class CommandRunner {
       user,
       guild
     }
-    const ctx = new CommandContext(
+    const ctx: CommandContext = new CommandContext(
       {
         client: this.client,
         db,
@@ -40,14 +40,14 @@ export default class CommandRunner {
     )
     if(this.message.author.bot) return
     if(this.message.channel.type !== 0) return
-    if(!this.message.content.toLowerCase().startsWith(prefix)) return
+    if(!this.message.content.toLowerCase().startsWith(prefix!)) return
 
     let messageArray = this.message.content.split(' ')
     let command = messageArray.shift()!.toLowerCase()
     let args = messageArray.slice(0)
-    let cmd = this.client.vanilla.get(command.slice(prefix.length)) || this.client.vanilla.get(this.client.aliases.get(command.slice(prefix.length))!)
+    let cmd = this.client.vanilla.get(command.slice(prefix!.length)) || this.client.vanilla.get(this.client.aliases.get(command.slice(prefix!.length))!)
     if(!cmd) return
-    if(cmd.onlyDev && !process.env.DEVS.includes(ctx.message.author.id)) return
+    if(cmd.onlyDev && !process.env.DEVS!.includes(ctx.message.author.id)) return
     const { permissions } = await import(`../../../locales/locales-${guild?.lang}.js`)
     if(cmd.permissions) {
       let perms: string[] = []
@@ -103,7 +103,7 @@ export default class CommandRunner {
       .addField('Message link', ctx.message.jumpLink)
       .setThumbnail(ctx.guild.iconURL!)
 
-      const channel = await this.client.getRESTChannel(process.env.COMMAND_LOG) as TextChannel
+      const channel = await this.client.getRESTChannel(process.env.COMMAND_LOG!) as TextChannel
       const webhooks = await channel.getWebhooks()
       let webhook = webhooks.find(w => w.name === `${this.client.user.username} Logger`)
       if(!webhook) webhook = await channel.createWebhook({ name: `${this.client.user.username} Logger` })

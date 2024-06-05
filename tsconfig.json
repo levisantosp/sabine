@@ -108,5 +108,11 @@
     "outDir": "./dist",
     "resolveJsonModule": true,
     "rootDir": "."
-  }
+  },
+  "include": [
+    "./index.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

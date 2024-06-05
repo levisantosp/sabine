@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "tsx test",
-    "start": "rm -rf dist && tsc .",
+    "start": "rm -rf dist && tsc && node .",
     "dev": "tsx index.ts"
   },
   "keywords": [],
