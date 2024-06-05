@@ -35,7 +35,7 @@ export default class HelpCommand extends Command {
     }
     else {
       return console.log(this.client.commands.entries())
-      const embed = new EmbedBuilder()
+      /*const embed = new EmbedBuilder()
       .setTitle(this.locale('commands.help.title'))
       .setThumbnail(this.client?.user.avatarURL!)
       .setDescription(this.locale('commands.help.description', {
@@ -43,7 +43,7 @@ export default class HelpCommand extends Command {
       }))
       .addField(this.locale('commands.help.field', {
         q: this.client?.commands.size
-      }), this.client?.commands.entries((cmd: Command) => {
+      }), this.client?.commands.map((cmd: Command) => {
         if (!cmd.onlyDev) return `\`${process.env.PREFIX}${cmd.name}\``
       }).join('\n'))
 
@@ -59,7 +59,7 @@ export default class HelpCommand extends Command {
             components: [button]
           }
         ]
-      })
+      })*/
     }
   }
 }

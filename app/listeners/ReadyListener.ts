@@ -68,7 +68,7 @@ export default class ReadyListener extends Listener {
                     .setLabel('Match page')
                     .setStyle('link')
                     .setURL(`https://vlr.gg/${d.id}`)
-                  ]
+                  ] as any
                 }
               ]
             })
@@ -162,7 +162,7 @@ export default class ReadyListener extends Listener {
             components: [
               {
                 type: 1,
-                components: [button, urlButton]
+                components: [button, urlButton] as any
               }
             ]
           })
@@ -204,7 +204,7 @@ export default class ReadyListener extends Listener {
         await this.client.deleteMessages(channelId, messages.map(m => m.id)).catch(() => {})
 
         for(const d of data) {
-          let index = Match!.VCBMatches.findIndex(m => m === d.id)
+          let index = Match!.VCBMatches.findIndex((m: any) => m === d.id)
           if(index > -1) Match!.VCBMatches.splice(index, 1)
           Match!.VCBMatches.push(d.id)
 
@@ -230,7 +230,7 @@ export default class ReadyListener extends Listener {
             components: [
               {
                 type: 1,
-                components: [button, urlButton]
+                components: [button, urlButton] as any
               }
             ]
           })
@@ -292,7 +292,7 @@ export default class ReadyListener extends Listener {
                     .setLabel('Match page')
                     .setStyle('link')
                     .setURL(`https://vlr.gg/${d.id}`)
-                  ]
+                  ] as any
                 }
               ]
             })
@@ -386,7 +386,7 @@ export default class ReadyListener extends Listener {
             components: [
               {
                 type: 1,
-                components: [button, urlButton]
+                components: [button, urlButton] as any
               }
             ]
           })
@@ -448,7 +448,7 @@ export default class ReadyListener extends Listener {
                     .setLabel('Match page')
                     .setStyle('link')
                     .setURL(`https://vlr.gg/${d.id}`)
-                  ]
+                  ] as any
                 }
               ]
             })
@@ -519,7 +519,7 @@ export default class ReadyListener extends Listener {
                   .setLabel('Match page')
                   .setStyle('link')
                   .setURL(`https://vlr.gg/${data.id}`)
-                ]
+                ] as any
               }
             ]
           })

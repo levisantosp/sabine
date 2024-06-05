@@ -15,7 +15,6 @@ export default class App extends Client {
     this.aliases = new Map()
   }
   async start() {
-    new Collection()
     await mongoose.connect(process.env.MONGO_URI)
     Logger.send('Database online')
     await this.connect()

@@ -1,6 +1,6 @@
 import { App, Command, CommandContext, EmbedBuilder, Logger } from '../../structures'
 const teamsCached: any = {}
-const teamsAPICache = fetch('https://vlr.orlandomm.net/api/v1/teams?limit=all', {
+const teamsAPICache: any = fetch('https://vlr.orlandomm.net/api/v1/teams?limit=all', {
   method: 'GET'
 })
 .then(res => res.json().then(json => json))

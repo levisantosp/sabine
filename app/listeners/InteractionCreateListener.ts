@@ -1,7 +1,8 @@
-import { CommandInteraction, ComponentInteraction } from 'eris'
+import { CommandInteraction } from 'eris'
 import { App, Listener } from '../structures'
 import { Guild, User } from '../../database'
 import locales from '../../locales'
+import { ButtonInteraction } from '../../types'
 
 export default class InteractionCreateListener extends Listener {
   constructor(client: App) {
@@ -10,12 +11,12 @@ export default class InteractionCreateListener extends Listener {
       name: 'interactionCreate'
     })
   }
-  async on(interaction: ComponentInteraction | CommandInteraction) {
-    if(interaction instanceof ComponentInteraction) {
+  async on(interaction: ButtonInteraction | CommandInteraction) {
+    if(interaction instanceof ButtonInteraction) {
       if(!interaction.data.custom_id.startsWith('guess-')) return
       const guild = await Guild.findById(interaction.guildID)
       const user = await User.findById(interaction.member!.id) || new User({ _id: interaction.member!.id })
-      if(user.guesses.filter(g => g.match === interaction.data.custom_id.slice(6))[0]?.match === interaction.data.custom_id.slice(6)) {
+      if(user.guesses.filter((g: any) => g.match === interaction.data.custom_id.slice(6))[0]?.match === interaction.data.custom_id.slice(6)) {
         await interaction.defer(64)
         return interaction.createMessage(locales(guild?.lang!, 'helper.replied'))
       }
@@ -72,14 +73,14 @@ export default class InteractionCreateListener extends Listener {
         })
       })
     }
-    if(interaction instanceof ComponentInteraction && interaction.data.custom_id.startsWith('modal-')) {
+    if(interaction instanceof ButtonInteraction && interaction.data.custom_id.startsWith('modal-')) {
       const user = await User.findById(interaction.member!.id) || new User({ _id: interaction.member!.id })
       const guild = await Guild.findById(interaction.guildID)
       await interaction.defer(64)
       const res = await (await fetch('https://vlr.orlandomm.net/api/v1/matches', {
         method: 'GET'
       })).json()
-      const data = res.data.filter(d => d.id == interaction.data.custom_id.slice(6))[0]
+      const data = res.data.filter((d: any) => d.id == interaction.data.custom_id.slice(6))[0]
       interaction.createMessage(locales(guild?.lang!, 'helper.palpitate_response', {
         t1: data.teams[0].name,
         t2: data.teams[1].name,
