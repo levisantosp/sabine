@@ -1,26 +1,27 @@
-import { Constants } from 'eris'
+import { Constants, SelectMenuOptions } from 'eris'
 
 export default class SelectMenuBuilder {
+  type: 3
+  custom_id!: string
+  placeholder?: string
+  options!: SelectMenuOptions[]
+  min_values?: number
+  max_values?: number
+  disabled?: boolean
   constructor() {
     this.type = Constants.ComponentTypes.SELECT_MENU
-    this.custom_id = null
-    this.placeholder = null
-    this.options = []
-    this.min_values = null
-    this.max_values = null
-    this.disabled = null
   }
-  setPlaceholder(text) {
+  setPlaceholder(text: string) {
     this.placeholder = text
     return this
   }
-  setCustomId(id) {
+  setCustomId(id: string) {
     this.custom_id = id
     return this
   }
-  addOption(label, description, value, emoji) {
+  addOption(label: string, description: string, value: string, emoji: string) {
     if(emoji) {
-      if(isNaN(emoji)) this.options.push(
+      if(isNaN(Number(emoji))) this.options?.push(
         {
           label,
           description,
@@ -30,7 +31,7 @@ export default class SelectMenuBuilder {
           }
         }
       )
-      else this.options.push(
+      else this.options?.push(
         {
           label,
           description,
@@ -42,7 +43,7 @@ export default class SelectMenuBuilder {
       )
     }
     else {
-      this.options.push(
+      this.options?.push(
         {
           label,
           description,
@@ -52,16 +53,16 @@ export default class SelectMenuBuilder {
     }
     return this
   }
-  setMinValues(number) {
+  setMinValues(number: number) {
     this.min_values = number
     return this
   }
-  setMaxValues(number) {
+  setMaxValues(number: number) {
     this.max_values = number
     return this
   }
-  setDisabled(disabled = true) {
-    this.disabled = disabled
+  setDisabled() {
+    this.disabled = true
     return this
   }
   build(content = '') {

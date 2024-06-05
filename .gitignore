@@ -1,4 +1,5 @@
 .env
 node_modules
 test.js
+test.ts
 package-lock.json

@@ -2,10 +2,11 @@
   "name": "sabine",
   "version": "1.0.1",
   "description": "a valorant champions tour tracker for discord",
-  "main": "index.js",
-  "type": "module",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tsx test",
+    "start": "rm -rf dist && tsc",
+    "dev": "tsx index.ts"
   },
   "keywords": [],
   "author": "levispires",
@@ -20,6 +21,9 @@
     "mongoose": "^8.3.2"
   },
   "devDependencies": {
-    "dotenv": "^16.4.5"
+    "@types/node": "^20.14.1",
+    "dotenv": "^16.4.5",
+    "tsx": "^4.11.2",
+    "typescript": "^5.4.5"
   }
 }

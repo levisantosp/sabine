@@ -1,31 +1,31 @@
-import { ComponentInteraction } from 'eris'
-import Listener from '../structures/client/Listener.js'
-import { Guild, User } from '../../database/index.js'
-import { get } from '../../locales/index.js'
+import { CommandInteraction, ComponentInteraction } from 'eris'
+import { App, Listener } from '../structures'
+import { Guild, User } from '../../database'
+import locales from '../../locales'
 
 export default class InteractionCreateListener extends Listener {
-  constructor(client) {
+  constructor(client: App) {
     super({
       client,
       name: 'interactionCreate'
     })
   }
-  async on(interaction) {
+  async on(interaction: ComponentInteraction | CommandInteraction) {
     if(interaction instanceof ComponentInteraction) {
       if(!interaction.data.custom_id.startsWith('guess-')) return
       const guild = await Guild.findById(interaction.guildID)
-      const user = await User.findById(interaction.member.id) || new User({ _id: interaction.member.id })
+      const user = await User.findById(interaction.member!.id) || new User({ _id: interaction.member!.id })
       if(user.guesses.filter(g => g.match === interaction.data.custom_id.slice(6))[0]?.match === interaction.data.custom_id.slice(6)) {
         await interaction.defer(64)
-        return interaction.createMessage(await get(guild.lang, 'helper.replied'))
+        return interaction.createMessage(locales(guild?.lang!, 'helper.replied'))
       }
       const res = await (await fetch('https://vlr.orlandomm.net/api/v1/matches', {
         method: 'GET'
       })).json()
-      const data = res.data.filter(d => d.id == interaction.data.custom_id.slice(6))[0]
+      const data = res.data.filter((d: any) => d.id == interaction.data.custom_id.slice(6))[0]
       if(!data?.in) {
         await interaction.defer(64)
-        interaction.createMessage(await get(guild.lang, 'helper.started'))
+        interaction.createMessage(locales(guild?.lang!, 'helper.started'))
         return
       }
       fetch(`https://discord.com/api/v10/interactions/${interaction.id}/${interaction.token}/callback`, {
@@ -37,7 +37,7 @@ export default class InteractionCreateListener extends Listener {
           type: 9,
           data: {
             custom_id: `modal-${interaction.data.custom_id.slice(6)}`,
-            title: await get(guild.lang, 'helper.palpitate_modal.title'),
+            title: locales(guild?.lang!, 'helper.palpitate_modal.title'),
             components: [
               {
                 type: 1,
@@ -72,15 +72,15 @@ export default class InteractionCreateListener extends Listener {
         })
       })
     }
-    if(interaction.data.custom_id.startsWith('modal-')) {
-      const user = await User.findById(interaction.member.id) || new User({ _id: interaction.member.id })
+    if(interaction instanceof ComponentInteraction && interaction.data.custom_id.startsWith('modal-')) {
+      const user = await User.findById(interaction.member!.id) || new User({ _id: interaction.member!.id })
       const guild = await Guild.findById(interaction.guildID)
       await interaction.defer(64)
       const res = await (await fetch('https://vlr.orlandomm.net/api/v1/matches', {
         method: 'GET'
       })).json()
       const data = res.data.filter(d => d.id == interaction.data.custom_id.slice(6))[0]
-      interaction.createMessage(await get(guild.lang, 'helper.palpitate_response', {
+      interaction.createMessage(locales(guild?.lang!, 'helper.palpitate_response', {
         t1: data.teams[0].name,
         t2: data.teams[1].name,
         s1: interaction.data.components[0].components[0].value,

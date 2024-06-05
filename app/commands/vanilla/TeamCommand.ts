@@ -1,14 +1,14 @@
-import Command from '../structures/command/Command.js'
-import EmbedBuilder from '../structures/embed/EmbedBuilder.js'
-import Logger from '../structures/util/Logger.js'
-const teamsCached = {}
-const teamsAPICache = await (await fetch('https://vlr.orlandomm.net/api/v1/teams?limit=all', {
+import { App, Command, CommandContext, EmbedBuilder, Logger } from '../../structures'
+const teamsCached: any = {}
+const teamsAPICache = fetch('https://vlr.orlandomm.net/api/v1/teams?limit=all', {
   method: 'GET'
-})).json().catch(() => Logger.warn('API is down'))
-const teamAPICache = {}
+})
+.then(res => res.json().then(json => json))
+.catch(() => Logger.warn('API is down'))
+const teamAPICache: any = {}
 
 export default class TeamCommand extends Command {
-  constructor(client) {
+  constructor(client: App) {
     super({
       client,
       name: 'team',
@@ -25,11 +25,11 @@ export default class TeamCommand extends Command {
       botPermissions: ['embedLinks']
     })
   }
-  async run(ctx) {
+  async run(ctx: CommandContext) {
     let team = ctx.args.slice(0).join(' ')
     if (!team) return ctx.reply('commands.team.insert_team')
     if(!teamAPICache[team]) {
-      teamAPICache[team] = teamsAPICache.data.find(t => t.name.toLowerCase() === team.toLowerCase())
+      teamAPICache[team] = teamsAPICache.data.find((t: any) => t.name.toLowerCase() === team.toLowerCase())
     }
 
     const teamAPI = teamAPICache[team]
@@ -40,8 +40,8 @@ export default class TeamCommand extends Command {
         method: 'GET'
       })).json()).data
       teamCache = teamsCached[t.id] = {
-        players: t.players.map(p => `[${p.user}](${p.url})`).join(', '),
-        staff: t.staff.map(s => `[${s.user}](${s.url})`).join(', '),
+        players: t.players.map((p: any) => `[${p.user}](${p.url})`).join(', '),
+        staff: t.staff.map((s:any) => `[${s.user}](${s.url})`).join(', '),
         lastMatch: `[${t.results[0].teams[0].name} ${t.results[0].teams[0].points}-${t.results[0].teams[1].points} ${t.results[0].teams[1].name}](${t.results[0].match.url})`,
         nextMatch: `[${t.upcoming[0]?.teams[0].name} x ${t.upcoming[0]?.teams[1].name}](${t.upcoming[0]?.match.url})`,
         title: `${t.info.name} (${t.info.tag})`,
@@ -51,7 +51,7 @@ export default class TeamCommand extends Command {
     const embed = new EmbedBuilder()
     .setTitle(teamCache.title)
     .setThumbnail(teamCache.logo)
-    .setDescription(await this.locale('commands.team.embed.desc', {
+    .setDescription(this.locale('commands.team.embed.desc', {
       p: teamCache.players,
       s: teamCache.staff,
       lt: teamCache.lastMatch,

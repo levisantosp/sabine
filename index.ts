@@ -6,7 +6,7 @@ new App(process.env.BOT_TOKEN, {
     everyone: false,
     repliedUser: true,
     roles: false,
-    user: true
+    users: true
   },
   restMode: true,
   defaultImageSize: 2048,

@@ -1,15 +1,16 @@
-import { Guild } from '../../database/index.js'
-import Listener from '../structures/client/Listener.js'
-import CommandRunner from '../structures/command/CommandRunner.js'
+import { Message } from 'eris'
+import { App, CommandRunner, Listener } from '../structures'
+import { Guild } from '../../database'
+
 
 export default class MessageCreateListener extends Listener {
-  constructor(client) {
+  constructor(client: App) {
     super({
       client,
       name: 'messageCreate'
     })
   }
-  async on(message) {
+  async on(message: Message) {
     const guild = await Guild.findById(message.guildID) || new Guild(
       {
         _id: message.guildID

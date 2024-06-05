@@ -1,14 +1,14 @@
-import Command from '../structures/command/Command.js'
-import EmbedBuilder from '../structures/embed/EmbedBuilder.js'
-import Logger from '../structures/util/Logger.js'
-const playersCached = {}
-const playersAPICache = await (await fetch('https://vlr.orlandomm.net/api/v1/players?limit=all', {
+import { App, Command, CommandContext, EmbedBuilder, Logger } from '../../structures'
+const playersCached: any = {}
+const playersAPICache: any = fetch('https://vlr.orlandomm.net/api/v1/players?limit=all', {
   method: 'GET'
-})).json().catch(() => Logger.warn('API is down'))
-const playerAPICache = {}
+})
+.then(res => res.json().then(json => json))
+.catch(() => Logger.warn('API is down'))
+const playerAPICache: any = {}
 
 export default class PlayerCommand extends Command {
-  constructor(client) {
+  constructor(client: App) {
     super({
       client,
       name: 'player',
@@ -17,18 +17,20 @@ export default class PlayerCommand extends Command {
       syntax: 'player [player]',
       examples: [
         'player less',
-        'player qck',
+        'player quick',
         'player tuyz',
-        'player dgzin'
+        'player dgzin',
+        'player pancada',
+        'player aspas'
       ],
       botPermissions: ['embedLinks']
     })
   }
-  async run(ctx) {
+  async run(ctx: CommandContext) {
     if(!ctx.args.slice(0).join(' ')) return ctx.reply('commands.player.insert_player')
     const username = ctx.args.slice(0).join(' ').toLowerCase()
     if(!playerAPICache[username]) {
-      playerAPICache[username] = playersAPICache.data.find(p => p.name.toLowerCase() === ctx.args.slice(0).join(' ').toLowerCase())
+      playerAPICache[username] = playersAPICache.data.find((p: any) => p.name.toLowerCase() === ctx.args.slice(0).join(' ').toLowerCase())
     }
 
     const playerAPI = playerAPICache[username]
@@ -40,7 +42,7 @@ export default class PlayerCommand extends Command {
       })).json()).data
       playerCache = playersCached[p.id] = {
         team: `[${p.team.name}](${p.team.url})`,
-        pt: p.pastTeams.map(t => `[${t.name}](${t.url})`).join(', '),
+        pt: p.pastTeams.map((t: any) => `[${t.name}](${t.url})`).join(', '),
         thumbnail: p.info.img,
         user: p.info.user,
         lt: `[${p.results[0].teams[0].name} ${p.results[0].teams[0].points}-${p.results[0].teams[1].points} ${p.results[0].teams[1].name}](${p.results[0].match.url})`,
@@ -52,7 +54,7 @@ export default class PlayerCommand extends Command {
     const embed = new EmbedBuilder()
     .setTitle(`:flag_${playerCache.flag}: ${playerCache.user}`)
     .setThumbnail(playerCache.thumbnail)
-    .setDescription(await this.locale('commands.player.embed.desc', {
+    .setDescription(this.locale('commands.player.embed.desc', {
       name: playerCache.name,
       team: playerCache.team,
       pt: playerCache.pt,

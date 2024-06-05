@@ -1,16 +1,20 @@
 import { Constants } from 'eris'
 
 export default class ButtonBuilder {
-  constructor() {
-    this.type = Constants.ComponentTypes.BUTTON
-    this.style = null
-    this.label = null
-    this.custom_id = null
-    this.emoji = null
-    this.url = null
-    this.disabled = null    
+  type: number
+  style?: number
+  label?: string
+  custom_id?: string
+  emoji?: {
+    name?: string
+    id?: string
   }
-  setStyle(style) {
+  url?: string
+  disabled?: boolean
+  constructor() {
+    this.type = Constants.ComponentTypes.BUTTON 
+  }
+  setStyle(style: 'blue' | 'gray' | 'green' | 'red' | 'link') {
     switch(style.toLowerCase()) {
       case 'blue': this.style = Constants.ButtonStyles.PRIMARY
       break
@@ -26,16 +30,16 @@ export default class ButtonBuilder {
     }
     return this
   }
-  setLabel(label) {
+  setLabel(label: string) {
     this.label = label
     return this
   }
-  setCustomId(id) {
+  setCustomId(id: string) {
     this.custom_id = id
     return this
   }
-  setEmoji(emoji) {
-    if(isNaN(emoji)) this.emoji = {
+  setEmoji(emoji: string) {
+    if(isNaN(Number(emoji))) this.emoji = {
       name: emoji
     }
     else this.emoji = {
@@ -43,7 +47,7 @@ export default class ButtonBuilder {
     }
     return this
   }
-  setURL(url) {
+  setURL(url: string) {
     this.url = url
     return this
   }

@@ -1,20 +1,35 @@
-import { get } from '../../../locales/index.js'
+import { AdvancedMessageContent, Guild, Message } from 'eris'
+import locale from '../../../locales'
+import App from '../client/App'
 
+interface CommandContextOptions {
+  client: App
+  db: any
+  guild: Guild
+  message: Message
+  locale: string
+}
 export default class CommandContext {
-  constructor(options) {
+  client: App
+  db: any
+  guild: Guild
+  message: Message
+  locale: string
+  args!: string[]
+  constructor(options: CommandContextOptions) {
     this.client = options.client
     this.db = options.db
     this.guild = options.guild
     this.message = options.message
     this.locale = options.locale
   }
-  async reply(content, options) {
-    switch (typeof content) {
+  async reply(content: string | AdvancedMessageContent, options?: any) {
+    switch(typeof content) {
       case 'string': {
         if(options?.name && options?.file) {
           return this.message.channel.createMessage(
             {
-              content: await get(this.locale, content ?? content, options),
+              content: locale(this.locale, content ?? content, options),
               messageReference: {
                 messageID: this.message.id
               }
@@ -27,7 +42,7 @@ export default class CommandContext {
         }
         else return this.message.channel.createMessage(
           {
-            content: await get(this.locale, content, options),
+            content: locale(this.locale, content, options),
             messageReference: {
               messageID: this.message.id
             }
