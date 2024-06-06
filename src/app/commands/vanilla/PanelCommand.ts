@@ -1,4 +1,4 @@
-import { SelectMenuInteraction } from '../../../types'
+import { SelectMenuInteraction } from '../../../../types/index.d.js'
 import { App, Command, CommandContext, EmbedBuilder, SelectMenuBuilder } from '../../structures'
 
 export default class PanelCommand extends Command {

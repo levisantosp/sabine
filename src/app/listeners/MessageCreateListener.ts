@@ -2,7 +2,6 @@ import { Message } from 'eris'
 import { App, CommandRunner, Listener } from '../structures'
 import { Guild } from '../../database'
 
-
 export default class MessageCreateListener extends Listener {
   constructor(client: App) {
     super({

@@ -538,6 +538,6 @@ export default class ReadyListener extends Listener {
       await sendVCBResults().catch(e => new Logger(this.client).error(e))
       await sendVCNResults().catch(e => new Logger(this.client).error(e))
       await verifyIfMatchAlreadyHasTeams().catch(e => new Logger(this.client).error(e))
-    }, process.env.INTERVAL ?? 20000)
+    }, Number(process.env.INTERVAL) || 20000)
   }
 }

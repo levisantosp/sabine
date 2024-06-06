@@ -2,7 +2,7 @@ import { CommandInteraction } from 'eris'
 import { App, Listener } from '../structures'
 import { Guild, User } from '../../database'
 import locales from '../../locales'
-import { ButtonInteraction } from '../../types/index.d.js'
+import { ButtonInteraction } from '../../../types/index.d.js'
 
 export default class InteractionCreateListener extends Listener {
   constructor(client: App) {
