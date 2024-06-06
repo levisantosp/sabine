@@ -1,4 +1,4 @@
-import { SelectMenuInteraction } from '../../../../types/index.d.js'
+import { ComponentInteraction } from 'eris'
 import { App, Command, CommandContext, EmbedBuilder, SelectMenuBuilder } from '../../structures'
 
 export default class PanelCommand extends Command {
@@ -46,7 +46,8 @@ export default class PanelCommand extends Command {
         ]
       })
   
-      const collector = async(i: SelectMenuInteraction) => {
+      const collector = async(i: ComponentInteraction) => {
+        if(i.data.component_type !== 3) return
         if(i.data.custom_id !== 'control-panel') return
         if(i.message.id !== msg.id) return
         if(i.member?.id !== ctx.message.author.id) return

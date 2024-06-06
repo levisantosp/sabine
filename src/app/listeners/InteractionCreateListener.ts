@@ -1,9 +1,17 @@
-import { CommandInteraction } from 'eris'
+import { CommandInteraction, ComponentInteraction, Constants } from 'eris'
 import { App, Listener } from '../structures'
 import { Guild, User } from '../../database'
 import locales from '../../locales'
-import { ButtonInteraction } from '../../../types/index.d.js'
 
+interface ComponentInteractionButtonData {
+  data: Constants['ComponentTypes']['BUTTON']
+  custom_id: string
+  components: Array<{
+    components: Array<{
+      value: string
+    }>
+  }>
+}
 export default class InteractionCreateListener extends Listener {
   constructor(client: App) {
     super({
@@ -11,19 +19,19 @@ export default class InteractionCreateListener extends Listener {
       name: 'interactionCreate'
     })
   }
-  async on(interaction: ButtonInteraction | CommandInteraction) {
-    if(interaction instanceof ButtonInteraction) {
-      if(!interaction.data.custom_id.startsWith('guess-')) return
+  async on(interaction: ComponentInteraction | CommandInteraction) {
+    if(interaction instanceof ComponentInteraction) {
+      if(!(interaction.data as unknown as ComponentInteractionButtonData).custom_id.startsWith('guess-')) return
       const guild = await Guild.findById(interaction.guildID)
       const user = await User.findById(interaction.member!.id) || new User({ _id: interaction.member!.id })
-      if(user.guesses.filter((g: any) => g.match === interaction.data.custom_id.slice(6))[0]?.match === interaction.data.custom_id.slice(6)) {
+      if(user.guesses.filter((g: any) => g.match === (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6))[0]?.match === (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6)) {
         await interaction.defer(64)
         return interaction.createMessage(locales(guild?.lang!, 'helper.replied'))
       }
       const res = await (await fetch('https://vlr.orlandomm.net/api/v1/matches', {
         method: 'GET'
       })).json()
-      const data = res.data.filter((d: any) => d.id == interaction.data.custom_id.slice(6))[0]
+      const data = res.data.filter((d: any) => d.id == (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6))[0]
       if(!data?.in) {
         await interaction.defer(64)
         interaction.createMessage(locales(guild?.lang!, 'helper.started'))
@@ -37,7 +45,7 @@ export default class InteractionCreateListener extends Listener {
         body: JSON.stringify({
           type: 9,
           data: {
-            custom_id: `modal-${interaction.data.custom_id.slice(6)}`,
+            custom_id: `modal-${(interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6)}`,
             title: locales(guild?.lang!, 'helper.palpitate_modal.title'),
             components: [
               {
@@ -73,19 +81,19 @@ export default class InteractionCreateListener extends Listener {
         })
       })
     }
-    if(interaction instanceof ButtonInteraction && interaction.data.custom_id.startsWith('modal-')) {
+    if(interaction instanceof ComponentInteraction && (interaction.data as unknown as ComponentInteractionButtonData).custom_id.startsWith('modal-')) {
       const user = await User.findById(interaction.member!.id) || new User({ _id: interaction.member!.id })
       const guild = await Guild.findById(interaction.guildID)
       await interaction.defer(64)
       const res = await (await fetch('https://vlr.orlandomm.net/api/v1/matches', {
         method: 'GET'
       })).json()
-      const data = res.data.filter((d: any) => d.id == interaction.data.custom_id.slice(6))[0]
+      const data = res.data.filter((d: any) => d.id == (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6))[0]
       interaction.createMessage(locales(guild?.lang!, 'helper.palpitate_response', {
         t1: data.teams[0].name,
         t2: data.teams[1].name,
-        s1: interaction.data.components[0].components[0].value,
-        s2: interaction.data.components[1].components[0].value
+        s1: (interaction.data as unknown as ComponentInteractionButtonData).components[0].components[0].value,
+        s2: (interaction.data as unknown as ComponentInteractionButtonData).components[1].components[0].value
       }))
 
       user.history.push({
@@ -93,18 +101,18 @@ export default class InteractionCreateListener extends Listener {
         teams: [
           {
             name: data.teams[0].name,
-            score: interaction.data.components[0].components[0].value
+            score: (interaction.data as unknown as ComponentInteractionButtonData).components[0].components[0].value
           },
           {
             name: data.teams[1].name,
-            score: interaction.data.components[1].components[0].value
+            score: (interaction.data as unknown as ComponentInteractionButtonData).components[1].components[0].value
           }
         ]
       })
       user.guesses.push({
         match: data.id,
-        score1: interaction.data.components[0].components[0].value,
-        score2: interaction.data.components[1].components[0].value
+        score1: (interaction.data as unknown as ComponentInteractionButtonData).components[0].components[0].value,
+        score2: (interaction.data as unknown as ComponentInteractionButtonData).components[1].components[0].value
       })
       user.save()
     }
