@@ -136,14 +136,17 @@ export default class LeaderboardCommand extends Command {
     .setEmoji('▶')
     .setStyle('gray')
     if(args[3] === 'previous') {
-      previous.setCustomId(`${args[0]};${args[1]};${page - 1 < 1 ? 1 : page - 1};previous`)
-      next.setCustomId(`${args[0]};${args[1]};${page};next`)
+      page =- 1
+      if(page > Math.ceil(array.length / 10)) page = Math.ceil(array.length / 10)
+      if(page < 1) page = 1
+      previous.setCustomId(`${args[0]};${args[1]};${page};previous`)
+      next.setCustomId(`${args[0]};${args[1]};${page + 1};next`)
     }
     else {
-      next.setCustomId(`${args[0]};${args[1]};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next`)
       page += 1
-      if(page === Math.ceil(array.length / 10)) page = Math.ceil(array.length / 10) - 1
-      if(page > Math.ceil(array.length / 10)) page = Math.ceil(array.length / 10)
+      if(page === Math.ceil(array.length / 10) || page > Math.ceil(array.length / 10)) page = Math.ceil(array.length / 10) - 1
+      if(page < 1) page = 1
+      next.setCustomId(`${args[0]};${args[1]};${page + 1};next`)
       previous.setCustomId(`${args[0]};${args[1]};${page};previous`)
     }
     i.editParent({
