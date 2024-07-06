@@ -1,16 +1,16 @@
-import { User } from 'eris'
+import { AutocompleteInteraction, ComponentInteraction, User } from 'eris'
 import App from '../client/App'
 import CommandContext from './CommandContext'
 
-interface ChoiceOptions {
+type ChoiceOptions = {
   name: string
   name_localizations?: {
     'pt-BR': string
   }
   value: string
 }
-interface SubCommandGroupOptions {
-  type: number
+type SubCommandGroupOptions = {
+  type: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11
   name: string
   name_localizations?: {
     'pt-BR': string
@@ -21,9 +21,10 @@ interface SubCommandGroupOptions {
   },
   choices?: ChoiceOptions[]
   required?: boolean
+  autocomplete?: boolean
 }
-interface SubCommandOptions {
-  type: number
+type SubCommandOptions = {
+  type: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11
   name: string
   name_localizations?: {
     'pt-BR': string
@@ -35,9 +36,10 @@ interface SubCommandOptions {
   choices?: ChoiceOptions[]
   required?: boolean
   options?: SubCommandGroupOptions[]
+  autocomplete?: boolean
 }
-interface SlashOptions {
-  type: 1
+type SlashOptions = {
+  type: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11
   name: string
   name_localizations?: {
     'pt-BR': string
@@ -49,14 +51,15 @@ interface SlashOptions {
   choices?: ChoiceOptions[]
   required?: boolean
   options?: SubCommandOptions[]
+  autocomplete?: boolean
 }
-interface CommandOptions {
+type CommandOptions = {
   name: string
   name_localizations?: {
     'pt-BR': string
   }
   aliases?: string[]
-  description?: string
+  description: string
   description_localizations?: {
     'pt-BR': string
   }
@@ -68,6 +71,15 @@ interface CommandOptions {
   botPermissions?: Array<'createInstantInvite' | 'kickMembers' | 'banMembers' | 'administrator' | 'manageChannels' | 'manageGuild' | 'addReactions' | 'sendMessages' | 'sendTTSMessages' | 'manageMessages' | 'embedLinks' | 'attachFiles' | 'readMessageHistory' | 'mentionEveryone' | 'voiceUseVAD' | 'changeNickname' | 'manageNicknames' | 'manageRoles' | 'manageEmojisAndStickers' | 'useExternalEmojis' | 'viewAuditLog' | 'voicePrioritySpeaker' | 'voiceStream' | 'viewChannel' | 'viewGuildInsights' | 'voiceConnect' | 'voiceSpeak' | 'voiceMuteMembers' | 'voiceRequestToSpeak' | 'voiceDeafenMembers' | 'voiceMoveMembers' | 'manageWebhooks' | 'useApplicationCommands' | 'createPrivateThreads' | 'createPublicThreads' | 'useExternalStickers' | 'manageThreads' | 'sendMessagesInThreads' | 'useEmbeddedActivities' | 'moderateMembers' | 'manageEvents'>
   onlyDev?: boolean
   ephemeral?: boolean
+  autocomplete?: boolean
+}
+export type AutocompleteCommandOptions = {
+  guild?: {
+    events: string[]
+  }
+  events?: string[]
+  players?: string[]
+  teams?: string[]
 }
 export default class Command {
   name: string
@@ -75,7 +87,7 @@ export default class Command {
     'pt-BR': string
   }
   aliases?: string[]
-  description?: string
+  description: string
   description_localizations?: {
     'pt-BR': string
   }
@@ -87,7 +99,8 @@ export default class Command {
   botPermissions?: Array<'createInstantInvite' | 'kickMembers' | 'banMembers' | 'administrator' | 'manageChannels' | 'manageGuild' | 'addReactions' | 'sendMessages' | 'sendTTSMessages' | 'manageMessages' | 'embedLinks' | 'attachFiles' | 'readMessageHistory' | 'mentionEveryone' | 'voiceUseVAD' | 'changeNickname' | 'manageNicknames' | 'manageRoles' | 'manageEmojisAndStickers' | 'useExternalEmojis' | 'viewAuditLog' | 'voicePrioritySpeaker' | 'voiceStream' | 'viewChannel' | 'viewGuildInsights' | 'voiceConnect' | 'voiceSpeak' | 'voiceMuteMembers' | 'voiceRequestToSpeak' | 'voiceDeafenMembers' | 'voiceMoveMembers' | 'manageWebhooks' | 'useApplicationCommands' | 'createPrivateThreads' | 'createPublicThreads' | 'useExternalStickers' | 'manageThreads' | 'sendMessagesInThreads' | 'useEmbeddedActivities' | 'moderateMembers' | 'manageEvents'>
   onlyDev?: boolean
   ephemeral?: boolean
-  locale!: (content: string, args?: object) => string
+  autocomplete?: boolean
+  locale!: (content: string, args?: any) => string
   getUser!: (user: string) => Promise<User | undefined>
   constructor(options: CommandOptions) {
     this.name = options.name
@@ -101,6 +114,9 @@ export default class Command {
     this.permissions = options.permissions
     this.botPermissions = options.botPermissions
     this.onlyDev = options.onlyDev
+    this.autocomplete = options.autocomplete
   }
-  async run(ctx: CommandContext): Promise<any> {}
+  async run(ctx: CommandContext) {}
+  async execAutocomplete(i: AutocompleteInteraction, options: AutocompleteCommandOptions) {}
+  async execInteraction(i: ComponentInteraction, args: string[]) {}
 }

@@ -1,5 +1,5 @@
 export default function(lang: string, content: string, args?: any): string {
-  let locale = require(`./locales-${lang}.js`)
+  let locale = require(`./${lang}.js`)
 
   for(const file of content.split('.')) {
     locale = locale[file]

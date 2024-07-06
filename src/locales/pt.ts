@@ -55,7 +55,14 @@ export const commands = {
     author: 'Página {page}/{pages}',
     footer: 'Sua posição: #{pos}',
     title: 'Usuários com mais palpites certos',
-    field: 'Totais: `{v}`'
+    field: 'Totais: `{v}`',
+    no_users: 'Sem usuários para mostrar nesta página.'
+  },
+  admin: {
+    tournament_has_been_added: 'Este campeonato já foi adicionado.',
+    tournament_added: 'O campeonato **{t}** foi adicionado com sucesso!',
+    channels_must_be_different: 'Os canais de resultados e partidas NÃO PODEM ser iguais. É recomendável que o canal de partidas seja um canal separado onde não haverá interação de membros.',
+    tournament_removed: 'O campeonato **{t}** foi removido com sucesso!'
   }
 }
 export const helper = {

@@ -3,6 +3,7 @@ import { App, ButtonBuilder, EmbedBuilder, Listener, Logger } from '../structure
 import { Client, Guild, Matches, User } from '../../database'
 import locales from '../../locales'
 import { TextChannel } from 'eris'
+import { CommandStructure } from '../../../types'
 
 export default class ReadyListener extends Listener {
   constructor(client: App) {
@@ -14,6 +15,23 @@ export default class ReadyListener extends Listener {
   async on() {
     Logger.send(`${this.client.user.username}#${this.client.user.discriminator} online!`)
 
+    const commands: CommandStructure[] = []
+    this.client.commands.forEach(command => {
+      commands.push({
+        name: command.name,
+        name_localizations: command.name_localizations,
+        description: command.description,
+        description_localizations: command.description_localizations,
+        options: command.options,
+        type: 1
+      })
+    })
+    this.client.bulkEditCommands(commands)
+    if(!(await Matches.findById('matches'))) {
+      await new Matches({
+        _id: 'matches'
+      }).save()
+    }
     const editClientStatus = async() => {
       const client = await Client.findById('1235576817683922954')
       const activity = client?.status[Math.floor(Math.random() * client?.status.length)]
