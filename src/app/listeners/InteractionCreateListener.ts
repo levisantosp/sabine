@@ -37,7 +37,7 @@ export default class InteractionCreateListener extends Listener {
         if(!(interaction.data as unknown as ComponentInteractionButtonData).custom_id.startsWith('guess-')) return
         const guild = await Guild.findById(interaction.guildID)
         const user = await User.findById(interaction.member!.id) || new User({ _id: interaction.member!.id })
-        if(user.guesses.filter((g: any) => g.match === (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6))[0]?.match === (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6)) {
+        if(user.history.filter((g: any) => g.match === (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6))[0]?.match === (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6)) {
           await interaction.defer(64)
           return interaction.createMessage(locales(guild?.lang!, 'helper.replied'))
         }
@@ -103,12 +103,6 @@ export default class InteractionCreateListener extends Listener {
         method: 'GET'
       })).json()
       const data = res.data.filter((d: any) => d.id == (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6))[0]
-      interaction.createMessage(locales(guild?.lang!, 'helper.palpitate_response', {
-        t1: data.teams[0].name,
-        t2: data.teams[1].name,
-        s1: (interaction.data as unknown as ComponentInteractionButtonData).components[0].components[0].value,
-        s2: (interaction.data as unknown as ComponentInteractionButtonData).components[1].components[0].value
-      }))
       user.history.push({
         match: data.id,
         teams: [
@@ -122,12 +116,13 @@ export default class InteractionCreateListener extends Listener {
           }
         ]
       })
-      user.guesses.push({
-        match: data.id,
-        score1: (interaction.data as unknown as ComponentInteractionButtonData).components[0].components[0].value,
-        score2: (interaction.data as unknown as ComponentInteractionButtonData).components[1].components[0].value
-      })
-      user.save()
+      await user.save()
+      interaction.createMessage(locales(guild?.lang!, 'helper.palpitate_response', {
+        t1: data.teams[0].name,
+        t2: data.teams[1].name,
+        s1: (interaction.data as unknown as ComponentInteractionButtonData).components[0].components[0].value,
+        s2: (interaction.data as unknown as ComponentInteractionButtonData).components[1].components[0].value
+      }))
     }
     if(interaction instanceof CommandInteraction) {
       if(!interaction.member) return
