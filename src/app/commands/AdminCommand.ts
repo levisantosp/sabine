@@ -258,7 +258,7 @@ export default class AdminCommand extends Command {
         i.result(events!.map(e => ({ name: e, value: e })))
       },
       remove: async() => {
-        i.result(guild!.events.map(e => ({ name: e.name, value: e.name })))
+        i.result(guild!.events.map((e: any) => ({ name: e.name, value: e.name })))
       }
     }
     args[(i.data.options as AutocompleteInteractionDataOptions[])[0].options[0].name]()
