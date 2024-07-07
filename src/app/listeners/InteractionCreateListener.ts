@@ -149,26 +149,8 @@ export default class InteractionCreateListener extends Listener {
     if(interaction instanceof AutocompleteInteraction) {
       const command = this.client.commands.get(interaction.data.name)
       if(!command) return
-      if(!cache.has('events')) {
-        const res: Tournament = await (await fetch('https://vlr.orlandomm.net/api/v1/events', {
-          method: 'GET'
-        })).json().catch(() => console.log('API is down'))
-        cache.set('events', res)
-      }
-      const res: Tournament = cache.get('events')
-      const events = res.data.filter(e => e.status !== 'completed')
-      .map(e => e.name)
-      .filter(e => {
-        if(e.toLowerCase().includes((interaction.data.options as AutocompleteInteractionDataOptions[])[0].options[0].options[0].value.toLowerCase())) return e
-      })
-      .slice(0, 25)
       const guild = (await Guild.findById(interaction.guildID!))!
-      command.execAutocomplete(interaction, {
-        events,
-        guild: {
-          events: guild.events.length === 0 ? ['Empty'] : guild.events.map((e: any) => e.name)
-        }
-      })
+      command.execAutocomplete(interaction)
       .catch((e: Error) => new Logger(this.client).error(e))
     }
   }

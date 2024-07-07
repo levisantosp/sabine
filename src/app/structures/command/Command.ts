@@ -58,7 +58,6 @@ type CommandOptions = {
   name_localizations?: {
     'pt-BR': string
   }
-  aliases?: string[]
   description: string
   description_localizations?: {
     'pt-BR': string
@@ -72,21 +71,12 @@ type CommandOptions = {
   onlyDev?: boolean
   ephemeral?: boolean
   autocomplete?: boolean
-}
-export type AutocompleteCommandOptions = {
-  guild?: {
-    events: string[]
-  }
-  events?: string[]
-  players?: string[]
-  teams?: string[]
 }
 export default class Command {
   name: string
   name_localizations?: {
     'pt-BR': string
   }
-  aliases?: string[]
   description: string
   description_localizations?: {
     'pt-BR': string
@@ -100,11 +90,12 @@ export default class Command {
   onlyDev?: boolean
   ephemeral?: boolean
   autocomplete?: boolean
+  id!: string
   locale!: (content: string, args?: any) => string
   getUser!: (user: string) => Promise<User | undefined>
   constructor(options: CommandOptions) {
     this.name = options.name
-    this.aliases = options.aliases
+    this.name_localizations = options.name_localizations
     this.description = options.description
     this.description_localizations = options.description_localizations
     this.options = options.options
@@ -117,6 +108,6 @@ export default class Command {
     this.autocomplete = options.autocomplete
   }
   async run(ctx: CommandContext) {}
-  async execAutocomplete(i: AutocompleteInteraction, options: AutocompleteCommandOptions) {}
+  async execAutocomplete(i: AutocompleteInteraction) {}
   async execInteraction(i: ComponentInteraction, args: string[]) {}
 }

@@ -86,6 +86,7 @@ export default class CommandRunner {
       else {
         ctx.args = (this.callback.data as CommandInteractionDataOptions).options?.map(o => o.value?.toString()) ?? []
       }
+      cmd.id = ctx.callback.data.id
       cmd.run(ctx)
       .catch((e: Error) => {
         new Logger(this.client).error(e)

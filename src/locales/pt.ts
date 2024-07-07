@@ -1,19 +1,4 @@
 export const commands = {
-  panel: {
-    embed_title: 'Painel de Controle',
-    embed_desc: 'Nenhum canal foi configurado',
-    embed_field: 'Será anunciado em {ch}',
-    embed_desc2: 'Nenhum canal foi configurado.\nUse `{p}painel {arg} [channel1] [channel2]` para configurar\n\n`[channel1]` - canal que as partidas serão enviadas\n`[channel2]` - canal que os resultados serão enviados',
-    embed_desc3: 'Canais que as partidas do Valorant Champions Tour serão anunciadas: {ch}\nPara mudar os canais, use `{p}painel {arg} [channel1] [channel2]` para configurar\n\n`[channel1]` - canal que as partidas serão enviadas\n`[channel2]` - canal que os resultados serão enviados',
-    embed_desc4: 'Canais que as partidas do Valorant Challengers Brazil serão anunciadas: {ch}\nPara mudar os canais, use `{p}painel {arg} [channel1] [channel2]` para configurar\n\n`[channel1]` - canal que as partidas serão enviadas\n`[channel2]` - canal que os resultados serão enviados',
-    embed_desc5: 'Canais que as partidas do Valorant Challengers NA serão anunciadas: {ch}\nPara mudar os canais, use `{p}painel {arg} [channel1] [channel2]` para configurar\n\n`[channel1]` - canal que as partidas serão enviadas\n`[channel2]` - canal que os resultados serão enviados',
-    menu: {
-      option: 'Use {p}painel {arg} para configurar o canal'
-    },
-    'non-existent_channel': 'Canal inexistente ou não é um canal de texto.',
-    success: 'Canal setado com sucesso.',
-    enter_second_channel: 'Insira um segundo canal, onde os resultados serão enviados.'
-  },
   history: {
     embed: {
       author: 'Seus palpites',
@@ -62,11 +47,17 @@ export const commands = {
     tournament_has_been_added: 'Este campeonato já foi adicionado.',
     tournament_added: 'O campeonato **{t}** foi adicionado com sucesso!',
     channels_must_be_different: 'Os canais de resultados e partidas NÃO PODEM ser iguais. É recomendável que o canal de partidas seja um canal separado onde não haverá interação de membros.',
-    tournament_removed: 'O campeonato **{t}** foi removido com sucesso!'
+    tournament_removed: 'O campeonato **{t}** foi removido com sucesso!',
+    panel: 'Painel de Controle',
+    event_channels: 'Partidas serão anunciadas em {ch1}\nResultados serão anunciados em {ch2}',
+    desc: 'Idioma: `{lang}` (altere usando: </admin language:{id}>)\nLimite de campeonatos: `{limit}`',
+    invalid_channel: 'Tipo de canal inválido. Considere selecionar um canal de TEXTO.',
+    limit_reached: 'Este servidor atingiu o limite máximo de campeonatos que podem ser adicionados. Se quiser adicionar este campeonato, considere remover um usando {cmd}'
   }
 }
 export const helper = {
   palpitate: 'Palpitar',
+  stats: 'Estatísticas',
   palpitate_modal: {
     title: 'Seu palpite para a partida'
   },

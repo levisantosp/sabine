@@ -1,19 +1,4 @@
 export const commands = {
-  panel: {
-    embed_title: 'Control Panel',
-    embed_desc: 'No channels have been configured',
-    embed_field: 'Will be announced on {ch}',
-    embed_desc2: 'No channels have been configured.\nUse `{p}panel {arg} [channel1] [channel2]` to configure\n\n`[channel1]` - will be the channel where the matches will be sent\n`[channel2]` - will be the channel where the results will be sent',
-    embed_desc3: 'Channels that will be announced Valorant Champions Tour 2024 matches: {ch}\nTo change the channels, use `{p}panel {arg} [channel1] [channel2]` to configure\n\n`[channel1]` - will be the channel where the matches will be sent\n`[channel2]` - will be the channel where the results will be sent',
-    embed_desc4: 'Channels that will be announced Valorant Challengers Brazil matches: {ch}\nTo change the channels, use `{p}panel {arg} [channel1] [channel2]` to configure\n\n`[channel1]` - will be the channel where the matches will be sent\n`[channel2]` - will be the channel where the results will be sent',
-    embed_desc5: 'Channels that will be announced Valorant Challengers NA matches: {ch}\nTo change the channels, use `{p}panel {arg} [channel1] [channel2]` to configure\n\n`[channel1]` - will be the channel where the matches will be sent\n`[channel2]` - will be the channel where the results will be sent',
-    menu: {
-      option: 'Use {p}panel {arg} to configure the channel'
-    },
-    'non-existent_channel': 'Non-existent channel or is not a text channel.',
-    success: 'Channel set successfully.',
-    enter_second_channel: 'Enter the second channel, where the results will be sent.'
-  },
   history: {
     embed: {
       author: 'Your guesses',
@@ -55,11 +40,24 @@ export const commands = {
     author: 'Page {page}/{pages}',
     footer: 'Your position: #{pos}',
     title: 'Users with the most correct guesses',
-    field: 'Total: `{v}`'
+    field: 'Total: `{v}`',
+    no_users: 'No users to show in this page.'
+  },
+  admin: {
+    tournament_has_been_added: 'This tournament already has been added.',
+    tournament_added: 'The tournament **{t}** has been added successfuly!',
+    channels_must_be_different: 'The matches channel and results channel cannot be the same. It is recommended that the matches channel be a separate channel where there will be no member interaction.',
+    tournament_removed: 'The tournament **{t}** has been removed successfuly!',
+    panel: 'Control Panel',
+    event_channels: 'Matches will be announced in {ch1}\nResults will be announced in {ch2}',
+    desc: 'Language: `{lang}` (change by using: </admin language:{id}>)\nLimit of tournaments: `{limit}`',
+    invalid_channel: 'Invalid channel type. Consider select a TEXT channel.',
+    limit_reached: 'This server has reached the maximum limit of tournaments that can be added. If you want to add this tournaments, consider removing one using {cmd}'
   }
 }
 export const helper = {
   palpitate: 'Palpitate',
+  stats: 'Stats',
   palpitate_modal: {
     title: 'Your guess for the match'
   },

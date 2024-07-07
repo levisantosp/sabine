@@ -1,8 +1,10 @@
 import { AutocompleteInteraction } from 'eris'
-import { App, Command, CommandContext } from '../structures'
-import { AutocompleteCommandOptions } from '../structures/command/Command'
+import { App, Command, CommandContext, EmbedBuilder } from '../structures'
+import { Tournament } from '../../../types'
+import { Guild } from '../../database'
+const cache = new Map()
 
-type AutocompleteOptions = {
+export type AutocompleteOptions = {
   type: number
   name: 'add' | 'remove'
   options: Array<{
@@ -25,7 +27,9 @@ export type AutocompleteInteractionDataOptions = {
 type Options = {
   options: Array<{
     name: 'add' | 'remove'
+    value: 'pt' | 'en'
   }>
+  name: string
 }
 export default class AdminCommand extends Command {
   constructor(client: App) {
@@ -74,9 +78,9 @@ export default class AdminCommand extends Command {
                 },
                 {
                   type: 7,
-                  name: 'results_channel',
+                  name: 'matches_channel',
                   name_localizations: {
-                    'pt-BR': 'canal_de_resultados'
+                    'pt-BR': 'canal_de_partidas'
                   },
                   description: 'Enter a channel',
                   description_localizations: {
@@ -86,9 +90,9 @@ export default class AdminCommand extends Command {
                 },
                 {
                   type: 7,
-                  name: 'matches_channel',
+                  name: 'results_channel',
                   name_localizations: {
-                    'pt-BR': 'canal_de_partidas'
+                    'pt-BR': 'canal_de_resultados'
                   },
                   description: 'Enter a channel',
                   description_localizations: {
@@ -125,42 +129,136 @@ export default class AdminCommand extends Command {
               ]
             }
           ]
+        },
+        {
+          type: 1,
+          name: 'panel',
+          name_localizations: {
+            'pt-BR': 'painel'
+          },
+          description: 'Shows the control panel',
+          description_localizations: {
+            'pt-BR': 'Mostra o painel de controle'
+          }
+        },
+        {
+          type: 1,
+          name: 'language',
+          name_localizations: {
+            'pt-BR': 'idioma'
+          },
+          description: 'Change the languague that I interact on this server',
+          description_localizations: {
+            'pt-BR': 'Altera o idioma que eu interajo neste servidor'
+          },
+          options: [
+            {
+              type: 3,
+              name: 'lang',
+              description: 'Choose the language',
+              description_localizations: {
+                'pt-BR': 'Escolha o idioma'
+              },
+              choices: [
+                {
+                  name: 'Português Brasileiro',
+                  value: 'pt'
+                },
+                {
+                  name: 'American English',
+                  value: 'en'
+                }
+              ],
+              required: true
+            }
+          ]
         }
-      ]
+      ],
+      permissions: ['administrator'],
+      botPermissions: ['manageMessages', 'embedLinks', 'sendMessages']
     })
   }
   async run(ctx: CommandContext) {
-    const options = {
-      add: async() => {
-        if(ctx.db.guild.events.filter((e: any) => e.name === ctx.args[0]).length) return ctx.reply('commands.admin.tournament_has_been_added')
-        if(ctx.args[1] === ctx.args[2]) return ctx.reply('commands.admin.channels_must_be_different')
-        ctx.db.guild.events.push({
-          name: ctx.args[0],
-          channel1: ctx.args[2],
-          channel2: ctx.args[1]
-        })
-        await ctx.db.guild.save()
-        ctx.reply('commands.admin.tournament_added', {
-          t: ctx.args[0]
-        })
-      },
-      remove: async() => {
-        ctx.db.guild.events.splice(ctx.db.guild.events.findIndex((e: any) => e.name === ctx.args[0]), 1)
-        await ctx.db.guild.save()
-        ctx.reply('commands.admin.tournament_removed', {
-          t: ctx.args[0]
-        })
+    if(ctx.callback.data.options![0].name === 'panel') {
+      const embed = new EmbedBuilder()
+      .setTitle(this.locale('commands.admin.panel'))
+      .setDescription(this.locale('commands.admin.desc', {
+        lang: ctx.db.guild.lang.replace('en', 'English').replace('pt', 'Português'),
+        limit: ctx.db.guild.tournamentsLength === Infinity ? Infinity : `${ctx.db.guild.events.length}/${ctx.db.guild.tournamentsLength}`,
+        id: this.id
+      }))
+      for(const event of ctx.db.guild.events) {
+        embed.addField(event.name, this.locale('commands.admin.event_channels', {
+          ch1: `<#${event.channel1}>`,
+          ch2: `<#${event.channel2}>`
+        }), true)
       }
+      ctx.reply(embed.build())
     }
-    options[(ctx.callback.data.options![0] as Options).options[0].name]()
+    if(ctx.callback.data.options![0].name === 'language') {
+      const options = {
+        en: async() => {
+          ctx.db.guild.lang = 'en'
+          await ctx.db.guild.save()
+          ctx.reply('Now I will interact in English on this server!')
+        },
+        pt: async() => {
+          ctx.db.guild.lang = 'pt'
+          await ctx.db.guild.save()
+          ctx.reply('Agora eu irei interagir em português neste servidor!')
+        }
+      }
+      options[(ctx.callback.data.options![0] as Options).options[0].value]()
+    }
+    if(ctx.callback.data.options![0].name === 'tournament') {
+      const options = {
+        add: async() => {
+          if(ctx.db.guild.events.length >= ctx.db.guild.tournamentsLength) return ctx.reply('commands.admin.limit_reached', { cmd: `</admin tournament remove:${this.id}>` })
+          if(ctx.db.guild.events.filter((e: any) => e.name === ctx.args[0]).length) return ctx.reply('commands.admin.tournament_has_been_added')
+          if(ctx.args[1] === ctx.args[2]) return ctx.reply('commands.admin.channels_must_be_different')
+          if(ctx.guild.channels.get(ctx.args[1])?.type !== 0 || ctx.guild.channels.get(ctx.args[2])?.type !== 0) return ctx.reply('commands.admin.invalid_channel')
+          ctx.db.guild.events.push({
+            name: ctx.args[0],
+            channel1: ctx.args[1],
+            channel2: ctx.args[2]
+          })
+          await ctx.db.guild.save()
+          ctx.reply('commands.admin.tournament_added', {
+            t: ctx.args[0]
+          })
+        },
+        remove: async() => {
+          ctx.db.guild.events.splice(ctx.db.guild.events.findIndex((e: any) => e.name === ctx.args[0]), 1)
+          await ctx.db.guild.save()
+          ctx.reply('commands.admin.tournament_removed', {
+            t: ctx.args[0]
+          })
+        }
+      }
+      options[(ctx.callback.data.options![0] as Options).options[0].name]()
+    }
   }
-  async execAutocomplete(i: AutocompleteInteraction, options: AutocompleteCommandOptions) {
+  async execAutocomplete(i: AutocompleteInteraction) {
+    if(!cache.has('events')) {
+      const res: Tournament = await (await fetch('https://vlr.orlandomm.net/api/v1/events', {
+        method: 'GET'
+      })).json().catch(() => console.log('API is down'))
+      cache.set('events', res)
+    }
+    const res: Tournament = cache.get('events')
+    const events = res.data.filter(e => e.status !== 'completed')
+    .map(e => e.name)
+    .filter(e => {
+      if(e.toLowerCase().includes((i.data.options as AutocompleteInteractionDataOptions[])[0].options[0].options[0].value.toLowerCase())) return e
+    })
+    .slice(0, 25)
+    const guild = await Guild.findById(i.guildID)
     const args = {
       add: async() => {
-        i.result(options.events!.map(e => ({ name: e, value: e })))
+        i.result(events!.map(e => ({ name: e, value: e })))
       },
       remove: async() => {
-        i.result(options.guild!.events.map(e => ({ name: e, value: e })))
+        i.result(guild!.events.map(e => ({ name: e.name, value: e.name })))
       }
     }
     args[(i.data.options as AutocompleteInteractionDataOptions[])[0].options[0].name]()

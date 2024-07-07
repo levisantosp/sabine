@@ -9,6 +9,10 @@ const Guild = new Schema({
   events: {
     type: Array,
     default: []
+  },
+  tournamentsLength: {
+    type: Number,
+    default: 5
   }
 })
 

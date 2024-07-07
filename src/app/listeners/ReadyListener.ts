@@ -154,7 +154,7 @@ export default class ReadyListener extends Listener {
         await this.client.deleteMessages(channelId, messages.map(m => m.id)).catch(() => {})
 
         for(const d of data) {
-          let index = Match!.VCTMatches.findIndex(m => m === d.id)
+          let index = Match!.VCTMatches.findIndex((m: string) => m === d.id)
           if(index > -1) Match!.VCTMatches.splice(index, 1)
           Match!.VCTMatches.push(d.id)
 
@@ -378,7 +378,7 @@ export default class ReadyListener extends Listener {
         await this.client.deleteMessages(channelId, messages.map(m => m.id)).catch(() => {})
 
         for(const d of data) {
-          let index = Match!.VCNMatches.findIndex(m => m === d.id)
+          let index = Match!.VCNMatches.findIndex((m: string) => m === d.id)
           if(index > -1) Match!.VCNMatches.splice(index, 1)
           Match!.VCNMatches.push(d.id)
 
@@ -541,7 +541,7 @@ export default class ReadyListener extends Listener {
               }
             ]
           })
-          let index = Match!.tbdMatches.findIndex(m => m.id === match.id)
+          let index = Match!.tbdMatches.findIndex((m: any) => m.id === match.id)
           Match!.tbdMatches.splice(index, 1)
           Match!.save()
         }
