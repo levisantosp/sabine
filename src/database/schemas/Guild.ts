@@ -13,6 +13,19 @@ const Guild = new Schema({
   tournamentsLength: {
     type: Number,
     default: 5
+  },
+  verificationTime: {
+    type: Number,
+    default: 0
+  },
+  lastResult: String,
+  matches: {
+    type: Array,
+    default: []
+  },
+  tbdMatches: {
+    type: Array,
+    default: []
   }
 })
 

@@ -6,10 +6,6 @@ const User = new Schema({
     type: Array,
     default: []
   },
-  guesses: {
-    type: Array,
-    default: []
-  },
   guessesWrong: {
     type: Number,
     default: 0
