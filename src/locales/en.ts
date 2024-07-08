@@ -52,7 +52,8 @@ export const commands = {
     event_channels: 'Matches will be announced in {ch1}\nResults will be announced in {ch2}',
     desc: 'Language: `{lang}` (change by using: </admin language:{id}>)\nLimit of tournaments: `{limit}`',
     invalid_channel: 'Invalid channel type. Consider select a TEXT channel.',
-    limit_reached: 'This server has reached the maximum limit of tournaments that can be added. If you want to add this tournaments, consider removing one using {cmd}'
+    limit_reached: 'This server has reached the maximum limit of tournaments that can be added. If you want to add this tournaments, consider removing one using {cmd}',
+    channel_being_used: 'The channel {ch} is already being used to announce the matches of another tournament. Consider using another channel for this.\nCheck the channels that are already in use by using {cmd}'
   }
 }
 export const helper = {

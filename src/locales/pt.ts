@@ -52,7 +52,8 @@ export const commands = {
     event_channels: 'Partidas serão anunciadas em {ch1}\nResultados serão anunciados em {ch2}',
     desc: 'Idioma: `{lang}` (altere usando: </admin language:{id}>)\nLimite de campeonatos: `{limit}`',
     invalid_channel: 'Tipo de canal inválido. Considere selecionar um canal de TEXTO.',
-    limit_reached: 'Este servidor atingiu o limite máximo de campeonatos que podem ser adicionados. Se quiser adicionar este campeonato, considere remover um usando {cmd}'
+    limit_reached: 'Este servidor atingiu o limite máximo de campeonatos que podem ser adicionados. Se quiser adicionar este campeonato, considere remover um usando {cmd}',
+    channel_being_used: 'O canal {ch} já está sendo usado para anunciar as partidas de outro campeonato. Considere usar outro canal para isso.\nVerifique os canais que já estão em uso usando {cmd}'
   }
 }
 export const helper = {
