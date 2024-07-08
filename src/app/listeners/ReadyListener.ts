@@ -58,29 +58,31 @@ export default class ReadyListener extends Listener {
             matches = data
           }
           data.reverse()
-          let channelId = guild.events.find((e: any) => data.some((d: any) => d.tournament === e.name))?.channel2
-          if(!channelId) continue
-          for(const d of data) {
-            const embed = new EmbedBuilder()
-            .setTitle(d.tournament)
-            .setThumbnail(d.img)
-            .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`, '', true)
-            .addField(`${d.teams[0].score}\n${d.teams[1].score}`, '', true)
-            .setFooter(d.event)
-            this.client.createMessage(channelId, {
-              embed,
-              components: [
-                {
-                  type: 1,
+          for(const e of guild.events) {
+            for(const d of data) {
+              if(e.name === d.tournament) {
+                const embed = new EmbedBuilder()
+                .setTitle(d.tournament)
+                .setThumbnail(d.img)
+                .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`, '', true)
+                .addField(`${d.teams[0].score}\n${d.teams[1].score}`, '', true)
+                .setFooter(d.event)
+                this.client.createMessage(e.channel2, {
+                  embed,
                   components: [
-                    new ButtonBuilder()
-                    .setLabel(locales(guild.lang, 'helper.stats'))
-                    .setStyle('link')
-                    .setURL(`https://vlr.gg/${d.id}`)
-                  ] as ActionRowComponents[]
-                }
-              ]
-            })
+                    {
+                      type: 1,
+                      components: [
+                        new ButtonBuilder()
+                        .setLabel(locales(guild.lang, 'helper.stats'))
+                        .setStyle('link')
+                        .setURL(`https://vlr.gg/${d.id}`)
+                      ] as ActionRowComponents[]
+                    }
+                  ]
+                })
+              }
+            }
           }
           data.reverse()
         }
@@ -93,19 +95,18 @@ export default class ReadyListener extends Listener {
         }
       })
       if(!matches.length) return
-      for(const match of matches) {
-        for(const user of users) {
+      for(const user of users) {
+        for(const match of matches) {
           let guess = user.history.find((h: any) => h.match === match.id)
           if(!guess) continue
           if(guess.score1 === match.teams[0].score && guess.score2 === match.teams[1].score) {
             user.guessesRight += 1
-            user.save()
           }
           else {
             user.guessesWrong += 1
-            user.save()
           }
         }
+        user.save()
       }
     }
     const sendMatches = async() => {
@@ -133,47 +134,47 @@ export default class ReadyListener extends Listener {
         }
         guild.matches = []
         let data = res.data.filter((d: any) => guild.events.some((e: any) => e.name === d.tournament))
-        let channelId = guild.events.find((e: any) => data.some((d: any) => d.tournament === e.name))?.channel1
-        if(!channelId) continue
-        let messages = await this.client.getMessages(channelId, 100)
-        await this.client.deleteMessages(channelId, messages.map(m => m.id)).catch(() => {})
-
-        for(const d of data) {
-          if(Number(ms(d.in)) > 86400000) continue
-          let index = guild.matches.findIndex((m: string) => m === d.id)
-          if(index > -1) guild.matches.splice(index, 1)
-          guild.matches.push(d.id)
-
-          const embed = new EmbedBuilder()
-          .setTitle(d.tournament)
-          .setDescription(`<t:${((Date.now() + Number(Number(ms(d.in)))) / 1000).toFixed(0)}:F> | <t:${((Date.now() + Number(Number(ms(d.in)))) / 1000).toFixed(0)}:R>`)
-          .setThumbnail(d.img)
-          .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`, '', true)
-          .setFooter(d.event)
-
-          const button = new ButtonBuilder()
-          .setLabel(locales(guild.lang, 'helper.palpitate'))
-          .setCustomId(`guess-${d.id}`)
-          .setStyle('green')
-
-          const urlButton = new ButtonBuilder()
-          .setLabel(locales(guild.lang, 'helper.stats'))
-          .setStyle('link')
-          .setURL(`https://vlr.gg/${d.id}`)
-
-          if(d.teams[0].name !== 'TBD' || d.teams[1].name !== 'TBD') this.client.createMessage(channelId, {
-            embed,
-            components: [
-              {
-                type: 1,
-                components: [button, urlButton] as ActionRowComponents[]
-              }
-            ]
-          })
-          else guild.tbdMatches.push({
-            id: d.id,
-            channel: channelId
-          })
+        for(const e of guild.events) {
+          let messages = await this.client.getMessages(e.channel1)
+          await this.client.deleteMessages(e.channel1, messages.map(m => m.id))
+          for(const d of data) {
+            if(e.name === d.tournament) {
+              let index = guild.matches.findIndex((m: string) => m === d.id)
+              if(index > -1) guild.matches.splice(index, 1)
+              guild.matches.push(d.id)
+    
+              const embed = new EmbedBuilder()
+              .setTitle(d.tournament)
+              .setDescription(`<t:${((Date.now() + Number(Number(ms(d.in)))) / 1000).toFixed(0)}:F> | <t:${((Date.now() + Number(Number(ms(d.in)))) / 1000).toFixed(0)}:R>`)
+              .setThumbnail(d.img)
+              .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`, '', true)
+              .setFooter(d.event)
+    
+              const button = new ButtonBuilder()
+              .setLabel(locales(guild.lang, 'helper.palpitate'))
+              .setCustomId(`guess-${d.id}`)
+              .setStyle('green')
+    
+              const urlButton = new ButtonBuilder()
+              .setLabel(locales(guild.lang, 'helper.stats'))
+              .setStyle('link')
+              .setURL(`https://vlr.gg/${d.id}`)
+    
+              if(d.teams[0].name !== 'TBD' || d.teams[1].name !== 'TBD') this.client.createMessage(e.channel1, {
+                embed,
+                components: [
+                  {
+                    type: 1,
+                    components: [button, urlButton] as ActionRowComponents[]
+                  }
+                ]
+              })
+              else guild.tbdMatches.push({
+                id: d.id,
+                channel: e.channel1
+              })     
+            }
+          }
         }
         guild.verificationTime = new Date().setHours(24, 0, 0, 0)
         guild.save()
