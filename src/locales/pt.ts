@@ -34,7 +34,8 @@ export const commands = {
     bot_permissions: 'Minhas permissões',
     title: 'Meus comandos',
     description: 'Para mais informações a respeito de determinado comando, use `{arg}`.\nPrecisando de ajuda? Entre no servidor de suporte clicando no botão abaixo!',
-    field: 'Comandos ({q})'
+    field: 'Comandos ({q})',
+    community: 'Comunidade e Suporte'
   },
   leaderboard: {
     author: 'Página {page}/{pages}',

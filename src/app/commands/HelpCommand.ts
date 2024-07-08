@@ -70,7 +70,7 @@ export default class HelpCommand extends Command {
       }).join('\n'))
 
       const button = new ButtonBuilder()
-      .setLabel('Support Server')
+      .setLabel(this.locale('commands.help.community'))
       .setStyle('link')
       .setURL('https://discord.gg/g5nmc376yh')
       ctx.reply({
