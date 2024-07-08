@@ -27,11 +27,6 @@ export default class ReadyListener extends Listener {
       })
     })
     this.client.bulkEditCommands(commands)
-    const editClientStatus = async() => {
-      const client = await Client.findById('1235576817683922954')
-      const activity = client?.status[Math.floor(Math.random() * client?.status.length)]
-      this.client.editStatus('online', activity)
-    }
     const sendResults = async() => {
       const res = await (await fetch('https://vlr.orlandomm.net/api/v1/results', {
         method: 'GET'
@@ -223,7 +218,6 @@ export default class ReadyListener extends Listener {
         }
       }
     }
-    setInterval(editClientStatus, 20000)
     setInterval(async() => {
       await sendMatches().catch(e => new Logger(this.client).error(e))
       await sendResults().catch(e => new Logger(this.client).error(e))
