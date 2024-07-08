@@ -40,7 +40,7 @@ export default class CommandRunner {
       )
       let cmd = this.client.commands.get(this.callback.data.name)
       if(!cmd) return
-      const { permissions } = await import(`../../../locales/${this.locale}`)
+      const { permissions } = await import(`../../../locales/${this.locale}.js`)
       if(cmd.permissions) {
         let perms: string[] = []
         for(let perm of cmd.permissions) {
