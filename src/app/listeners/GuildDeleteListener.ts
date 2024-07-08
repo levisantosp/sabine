@@ -1,7 +1,6 @@
 import { Guild, TextChannel } from 'eris'
 import { App, EmbedBuilder, Listener } from '../structures'
 
-
 export default class GuildDeleteListener extends Listener {
   constructor(client: App) {
     super({
