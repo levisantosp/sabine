@@ -498,10 +498,11 @@ export default class ReadyListener extends Listener {
 
       for(const match of Match.tbdMatches) {
         const data = res.data.find(d => d.id === match.id)
-        if(data?.teams[0].name !== 'TBD' && data?.teams[1].name !== 'TBD') {
+        if(!data) continue
+        if(data.teams[0].name !== 'TBD' && data.teams[1].name !== 'TBD') {
           const channel = await this.client.getRESTChannel(match.channel)
           const embed = new EmbedBuilder()
-          .setTitle(data.tournament)
+          .setTitle(data?.tournament)
           .setDescription(`<t:${((Date.now() + ms(data.in)) / 1000).toFixed(0)}:F> | <t:${((Date.now() + ms(data.in)) / 1000).toFixed(0)}:R>`)
           .setThumbnail(data.img)
           .addField(`:flag_${data.teams[0].country}: ${data.teams[0].name}\n:flag_${data.teams[1].country}: ${data.teams[1].name}`, '', true)
