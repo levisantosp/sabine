@@ -498,7 +498,7 @@ export default class ReadyListener extends Listener {
 
       for(const match of Match.tbdMatches) {
         const data = res.data.find(d => d.id === match.id)
-        if(data.teams[0].name !== 'TBD' && data.teams[1].name !== 'TBD') {
+        if(data?.teams[0].name !== 'TBD' && data?.teams[1].name !== 'TBD') {
           const channel = await this.client.getRESTChannel(match.channel)
           const embed = new EmbedBuilder()
           .setTitle(data.tournament)
