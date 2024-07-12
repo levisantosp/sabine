@@ -154,8 +154,8 @@ export default class ReadyListener extends Listener {
               .setLabel(locales(guild.lang, 'helper.stats'))
               .setStyle('link')
               .setURL(`https://vlr.gg/${d.id}`)
-    
-              if(d.teams[0].name !== 'TBD' || d.teams[1].name !== 'TBD') this.client.createMessage(e.channel1, {
+              
+              if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') this.client.createMessage(e.channel1, {
                 embed,
                 components: [
                   {
@@ -164,10 +164,12 @@ export default class ReadyListener extends Listener {
                   }
                 ]
               })
-              else guild.tbdMatches.push({
-                id: d.id,
-                channel: e.channel1
-              })     
+              else {
+                guild.tbdMatches.push({
+                  id: d.id,
+                  channel: e.channel1
+                }) 
+              }    
             }
           }
         }
