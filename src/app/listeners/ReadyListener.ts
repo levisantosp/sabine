@@ -187,6 +187,7 @@ export default class ReadyListener extends Listener {
         if(!guild.tbdMatches.length) continue
         for(const match of guild.tbdMatches) {
           const data = res.data.find((d: any) => d.id === match.id)
+          if(!data) continue
           if(data.teams[0].name !== 'TBD' && data.teams[1].name !== 'TBD') {
             const channel = await this.client.getRESTChannel(match.channel) as TextChannel
             const embed = new EmbedBuilder()
