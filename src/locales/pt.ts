@@ -41,7 +41,7 @@ export const commands = {
     author: 'Página {page}/{pages}',
     footer: 'Sua posição: #{pos}',
     title: 'Usuários com mais palpites certos',
-    field: 'Totais: `{v}`',
+    field: '`{t}` palpites certos',
     no_users: 'Sem usuários para mostrar nesta página.'
   },
   admin: {
