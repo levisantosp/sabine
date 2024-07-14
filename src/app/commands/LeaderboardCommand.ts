@@ -56,12 +56,17 @@ export default class LeaderboardCommand extends Command {
     .setTitle(this.locale('commands.leaderboard.title'))
     .setThumbnail((await this.getUser(array[0].id))?.avatarURL!)
 
-    let pos = 1
-    if(!isNaN(page) && page > 1) pos = page * 10
+    let pos = 0
+    if(!isNaN(page) && page > 1) pos = page * 10 - 10
     for(const user of users) {
+      pos++
       const u = await this.getUser(user.id)
-      if(u) embed.addField(`${pos++} - ${u.username} (${user.guessesRight})`, this.locale('commands.leaderboard.field', {
-        v: user.history.length
+      let field = `${pos} - ${u?.username}`
+      if(pos === 1) field = `🥇 - ${u?.username}`
+      if(pos === 2) field = `🥈 - ${u?.username}`
+      if(pos === 3) field = `🥉 - ${u?.username}`
+      if(u) embed.addField(field, this.locale('commands.leaderboard.field', {
+        t: user.guessesRight
       }))
     }
     embed.setFooter(this.locale('commands.leaderboard.footer', {
@@ -75,6 +80,8 @@ export default class LeaderboardCommand extends Command {
     .setEmoji('▶')
     .setCustomId(`leaderboard;${ctx.callback.member?.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next`)
     .setStyle('gray')
+    if(page <= 1) previous.setDisabled()
+    if(page >= Math.ceil(array.length / 10)) next.setDisabled()
     ctx.reply({
       embed,
       components: [
@@ -119,12 +126,17 @@ export default class LeaderboardCommand extends Command {
     .setTitle(this.locale('commands.leaderboard.title'))
     .setThumbnail((await this.getUser(array[0].id))?.avatarURL!)
 
-    let pos = 1
-    if(Number(args[2]) > 1) pos = Number(args[2]) * 10
+    let pos = 0
+    if(Number(args[2]) > 1) pos = 1 * Number(args[2]) * 10 - 10
     for(const user of users) {
+      pos++
       const u = await this.getUser(user.id)
-      if(u) embed.addField(`${pos++} - ${u.username} (${user.guessesRight})`, this.locale('commands.leaderboard.field', {
-        v: user.history.length
+      let field = `${pos} - ${u?.username}`
+      if(pos === 1) field = `🥇 - ${u?.username}`
+      if(pos === 2) field = `🥈 - ${u?.username}`
+      if(pos === 3) field = `🥉 - ${u?.username}`
+      if(u) embed.addField(field, this.locale('commands.leaderboard.field', {
+        t: user.guessesRight
       }))
     }
     embed.setFooter(i.message.embeds[0].footer!.text)
@@ -137,15 +149,27 @@ export default class LeaderboardCommand extends Command {
     .setStyle('gray')
     if(args[3] === 'previous') {
       page =- 1
-      if(page > Math.ceil(array.length / 10)) page = Math.ceil(array.length / 10)
-      if(page < 1) page = 1
+      if(page > Math.ceil(array.length / 10)) {
+        page = Math.ceil(array.length / 10)
+        next.setDisabled()
+      }
+      if(page < 1) {
+        page = 1
+        previous.setDisabled()
+      }
       previous.setCustomId(`${args[0]};${args[1]};${page};previous`)
       next.setCustomId(`${args[0]};${args[1]};${page + 1};next`)
     }
     else {
       page += 1
-      if(page === Math.ceil(array.length / 10) || page > Math.ceil(array.length / 10)) page = Math.ceil(array.length / 10) - 1
-      if(page < 1) page = 1
+      if(page === Math.ceil(array.length / 10) || page > Math.ceil(array.length / 10)) {
+        page = Math.ceil(array.length / 10) - 1
+        next.setDisabled()
+      }
+      if(page < 1) {
+        page = 1
+        previous.setDisabled()
+      }
       next.setCustomId(`${args[0]};${args[1]};${page + 1};next`)
       previous.setCustomId(`${args[0]};${args[1]};${page};previous`)
     }
