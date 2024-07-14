@@ -45,8 +45,8 @@ export default class PlayerCommand extends Command {
     .setDescription(this.locale('commands.team.embed.desc', {
       p: team.data.players.map(p => `[${p.user}](${p.url})`).join(', '),
       s: team.data.staff.map(s => `[${s.user}](${s.url})`).join(', '),
-      lt: `[${team.data.results[0].teams[0].name} ${team.data.results[0].teams[0].points}-${team.data.results[0].teams[1].points} ${team.data.results[0].teams[1].name}](${team.data.results[0].match.url})`,
-      n: `[${team.data.upcoming[0]?.teams[0].name} x ${team.data.upcoming[0]?.teams[1].name}](${team.data.upcoming[0]?.match.url})`
+      lt: `[${team.data.results[0].teams[0].points}-${team.data.results[0].teams[1].points} vs ${team.data.results[0].teams[1].name}](${team.data.results[0].match.url})`,
+      n: team.data.upcoming.length ? `[${team.data.upcoming[0]?.teams[0].name} vs ${team.data.upcoming[0]?.teams[1].name}](${team.data.upcoming[0]?.match.url})` : ''
     }))
     ctx.reply(embed.build())
   }

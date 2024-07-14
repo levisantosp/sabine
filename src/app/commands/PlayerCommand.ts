@@ -46,7 +46,7 @@ export default class PlayerCommand extends Command {
       name: player.data.info.name,
       team: `[${player.data.team.name}](${player.data.team.url})`,
       pt: player.data.pastTeams.map(t => `[${t.name}](${t.url})`).join(', '),
-      lt: `[${player.data.results[0].teams[0].name} ${player.data.results[0].teams[0].points}-${player.data.results[0].teams[1].points} ${player.data.results[0].teams[1].name}](${player.data.results[0].match.url})`
+      lt: `[${player.data.results[0].teams[0].points}-${player.data.results[0].teams[1].points} vs ${player.data.results[0].teams[1].name}](${player.data.results[0].match.url})`
     }))
     ctx.reply(embed.build())
   }
