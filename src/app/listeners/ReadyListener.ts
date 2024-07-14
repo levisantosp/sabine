@@ -1,6 +1,6 @@
 import ms from 'enhanced-ms'
 import { App, ButtonBuilder, EmbedBuilder, Listener, Logger } from '../structures'
-import { Client, Guild, User } from '../../database'
+import { Guild, User } from '../../database'
 import locales from '../../locales'
 import { ActionRowComponents, TextChannel } from 'eris'
 import { CommandStructure } from '../../../types'
@@ -133,6 +133,7 @@ export default class ReadyListener extends Listener {
           let messages = await this.client.getMessages(e.channel1)
           await this.client.deleteMessages(e.channel1, messages.map(m => m.id))
           for(const d of data) {
+            if(Number(ms(d.in)) > 86400000) continue
             if(e.name === d.tournament) {
               let index = guild.matches.findIndex((m: string) => m === d.id)
               if(index > -1) guild.matches.splice(index, 1)
