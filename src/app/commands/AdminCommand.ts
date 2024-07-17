@@ -175,7 +175,20 @@ export default class AdminCommand extends Command {
         }
       ],
       permissions: ['administrator'],
-      botPermissions: ['manageMessages', 'embedLinks', 'sendMessages']
+      botPermissions: ['manageMessages', 'embedLinks', 'sendMessages'],
+      examples: [
+        'admin panel',
+        'admin tournament add VCT Americas',
+        'admin tournament remove VCT Americas',
+        'admin language Português Brasileiro',
+        'admin language American English'
+      ],
+      syntaxes: [
+        'admin panel',
+        'admin tournament add [tournament]',
+        'admin tournament remove [tournament]',
+        'admin language [lang]'
+      ]
     })
   }
   async run(ctx: CommandContext) {

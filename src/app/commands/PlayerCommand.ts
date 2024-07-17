@@ -28,7 +28,14 @@ export default class PlayerCommand extends Command {
           autocomplete: true,
           required: true
         }
-      ]
+      ],
+      syntax: 'player [player]',
+      examples: [
+        'player aspas',
+        'player benjyfishy',
+        'player Less'
+      ],
+      botPermissions: ['embedLinks']
     })
   }
   async run(ctx: CommandContext) {

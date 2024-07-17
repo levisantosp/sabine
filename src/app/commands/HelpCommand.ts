@@ -33,7 +33,14 @@ export default class HelpCommand extends Command {
           autocomplete: true
         }
       ],
-      botPermissions: ['embedLinks']
+      botPermissions: ['embedLinks'],
+      syntax: 'help <command>',
+      examples: [
+        'help',
+        'help ping',
+        'help team',
+        'help player'
+      ]
     })
   }
   async run(ctx: CommandContext) {
@@ -51,6 +58,7 @@ export default class HelpCommand extends Command {
       .setThumbnail(this.client.user.avatarURL!)
 
       if(cmd.syntax) embed.addField(this.locale('commands.help.syntax'), `\`/${cmd.syntax}\``)
+      if(cmd.syntaxes) embed.addField(this.locale('commands.help.syntax'), cmd.syntaxes.map(syntax => `\`/${syntax}\``).join('\n'))
       if(cmd.examples) embed.addField(this.locale('commands.help.examples'), cmd.examples.map(ex => `\`/${ex}\``).join('\n'))
       if(cmd.permissions) embed.addField(this.locale('commands.help.permissions'), cmd.permissions.map(perm => `\`${permissions[perm]}\``).join(', '), true)
       if(cmd.botPermissions) embed.addField(this.locale('commands.help.bot_permissions'), cmd.botPermissions.map(perm => `\`${permissions[perm]}\``).join(', '), true)
@@ -61,7 +69,7 @@ export default class HelpCommand extends Command {
       .setTitle(this.locale('commands.help.title'))
       .setThumbnail(this.client.user.avatarURL!)
       .setDescription(this.locale('commands.help.description', {
-        arg: `${process.env.PREFIX}help [command]`
+        arg: `/help [command]`
       }))
       .addField(this.locale('commands.help.field', {
         q: this.client.commands.size
@@ -78,7 +86,13 @@ export default class HelpCommand extends Command {
         components: [
           {
             type: 1,
-            components: [button] as ActionRowComponents[]
+            components: [
+              button,
+              new ButtonBuilder()
+              .setLabel(this.locale('commands.help.privacy'))
+              .setStyle('link')
+              .setURL('https://levispires.github.io/sabine-terms/')
+            ] as ActionRowComponents[]
           }
         ]
       })

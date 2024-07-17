@@ -25,7 +25,14 @@ export default class GuessesCommand extends Command {
           }
         }
       ],
-      botPermissions: ['embedLinks']
+      botPermissions: ['embedLinks'],
+      syntax: 'guesses <page>',
+      examples: [
+        'guesses',
+        'guesses 1',
+        'guesses 2',
+        'guesses 5'
+      ]
     })
   }
   async run(ctx: CommandContext) {

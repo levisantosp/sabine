@@ -28,7 +28,16 @@ export default class PlayerCommand extends Command {
           autocomplete: true,
           required: true
         }
-      ]
+      ],
+      syntax: 'team [team]',
+      examples: [
+        'team LOUD',
+        'team FURIA',
+        'team Hero Base',
+        'team G2',
+        'team Team Heretics'
+      ],
+      botPermissions: ['embedLinks']
     })
   }
   async run(ctx: CommandContext) {
