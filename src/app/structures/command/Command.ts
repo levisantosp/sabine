@@ -112,5 +112,5 @@ export default class Command {
   }
   async run(ctx: CommandContext) {}
   async execAutocomplete(i: AutocompleteInteraction) {}
-  async execInteraction(i: ComponentInteraction, args: string[]) {}
+  async execInteraction(i: ComponentInteraction, args: string[]): Promise<any> {}
 }

@@ -55,7 +55,12 @@ export const commands = {
     desc: 'Language: `{lang}` (change by using: </admin language:{id}>)\nLimit of tournaments: `{limit}`',
     invalid_channel: 'Invalid channel type. Consider select a TEXT channel.',
     limit_reached: 'This server has reached the maximum limit of tournaments that can be added. If you want to add this tournaments, consider removing one using {cmd}',
-    channel_being_used: 'The channel {ch} is already being used to announce the matches of another tournament. Consider using another channel for this.\nCheck the channels that are already in use by using {cmd}'
+    channel_being_used: 'The channel {ch} is already being used to announce the matches of another tournament. Consider using another channel for this.\nCheck the channels that are already in use by using {cmd}',
+    resend_time: 'This feature has already been used today on this server. Try again tomorrow.',
+    resending: 'Resending matches. It may take a few minutes for matches to be resent, just wait.',
+    resend: 'Resend matches',
+    confirm: 'You are about to FORCE the submission of matches on this server!\nIt is worth remembering that this action is **IRREVERSIBLE** and can only be done **ONCE a day**! If you still want to add more tournaments, add them before using this feature.\nDo you want to continue?',
+    continue: 'Continue'
   }
 }
 export const helper = {
@@ -72,7 +77,6 @@ export const helper = {
     bot: 'I lack the following permissions for this command to work properly: {permissins}'
   },
   error: 'An unexpected error has occurred...\n`{e}`',
-  
   privacy: 'Before you start to use the bot, you must accept the [Terms of Service and Privacy](https://levispires.github.io/sabine-terms/)'
 }
 export const permissions = {

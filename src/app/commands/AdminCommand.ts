@@ -1,5 +1,5 @@
-import { AutocompleteInteraction } from 'eris'
-import { App, Command, CommandContext, EmbedBuilder } from '../structures'
+import { ActionRowComponents, AutocompleteInteraction, ComponentInteraction, InteractionContent, InteractionContentEdit } from 'eris'
+import { App, ButtonBuilder, Command, CommandContext, EmbedBuilder } from '../structures'
 import { Tournament } from '../../../types'
 import { Guild } from '../../database'
 const cache = new Map()
@@ -206,7 +206,19 @@ export default class AdminCommand extends Command {
           ch2: `<#${event.channel2}>`
         }), true)
       }
-      ctx.reply(embed.build())
+      const button = new ButtonBuilder()
+      .setLabel(this.locale('commands.admin.resend'))
+      .setStyle('red')
+      .setCustomId(`admin;resend;${ctx.callback.member?.id}`)
+      ctx.reply({
+        embed,
+        components: [
+          {
+            type: 1,
+            components: [button] as ActionRowComponents[]
+          }
+        ]
+      })
     }
     if(ctx.callback.data.options![0].name === 'language') {
       const options = {
@@ -279,5 +291,34 @@ export default class AdminCommand extends Command {
       }
     }
     args[(i.data.options as AutocompleteInteractionDataOptions[])[0].options[0].name]()
+  }
+  async execInteraction(i: ComponentInteraction, args: string[]) {
+    if(i.member?.id !== args[2]) return
+    if(args[1] === 'resend') {
+      await i.defer(64)
+      const guild = (await Guild.findById(i.guildID!))!
+      if(guild.resendTime > Date.now()) return i.createMessage(this.locale('commands.admin.resend_time') as InteractionContentEdit)
+      const button = new ButtonBuilder()
+      .setLabel(this.locale('commands.admin.continue'))
+      .setStyle('red')
+      .setCustomId(`admin;continue;${i.member.id}`)
+      i.createMessage(button.build(this.locale('commands.admin.confirm')) as InteractionContent)
+    }
+    if(args[1] === 'continue') {
+      const guild = (await Guild.findById(i.guildID!))!
+      if(guild.resendTime > Date.now()) return i.editParent({
+        content: this.locale('commands.admin.resend_time'),
+        components: []
+      })
+      guild.matches = []
+      guild.verificationTime = 0
+      guild.tbdMatches = []
+      guild.resendTime = new Date().setHours(24, 0, 0, 0)
+      await guild.save()
+      i.editParent({
+        content: this.locale('commands.admin.resending'),
+        components: []
+      })
+    }
   }
 }

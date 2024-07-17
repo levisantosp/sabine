@@ -26,6 +26,10 @@ const Guild = new Schema({
   tbdMatches: {
     type: Array,
     default: []
+  },
+  resendTime: {
+    type: Number,
+    default: 0
   }
 })
 

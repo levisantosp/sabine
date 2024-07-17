@@ -55,7 +55,12 @@ export const commands = {
     desc: 'Idioma: `{lang}` (altere usando: </admin language:{id}>)\nLimite de campeonatos: `{limit}`',
     invalid_channel: 'Tipo de canal inválido. Considere selecionar um canal de TEXTO.',
     limit_reached: 'Este servidor atingiu o limite máximo de campeonatos que podem ser adicionados. Se quiser adicionar este campeonato, considere remover um usando {cmd}',
-    channel_being_used: 'O canal {ch} já está sendo usado para anunciar as partidas de outro campeonato. Considere usar outro canal para isso.\nVerifique os canais que já estão em uso usando {cmd}'
+    channel_being_used: 'O canal {ch} já está sendo usado para anunciar as partidas de outro campeonato. Considere usar outro canal para isso.\nVerifique os canais que já estão em uso usando {cmd}',
+    resend_time: 'Este recurso já foi usado hoje neste servidor. Tente novamente amanhã.',
+    resending: 'Reenviando partidas. Pode demorar alguns minutos para as partidas serem reenviadas, apenas aguarde.',
+    resend: 'Reenviar partidas',
+    confirm: 'Você está prestes a FORÇAR o envio das partidas neste servidor!\nVale lembrar que esta ação é **IRREVERSÍVEL** e só pode ser feita **UMA VEZ por dia**! Se você ainda quer adicionar mais campeonatos, adicione antes de usar este recurso.\nDeseja continuar?',
+    continue: 'Continuar'
   }
 }
 export const helper = {
