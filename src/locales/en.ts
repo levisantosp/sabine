@@ -35,7 +35,8 @@ export const commands = {
     title: 'My commands',
     description: 'For more information about a particular command, use `{arg}`.\nNeed help? Log in to the support server by clicking the button below!',
     field: 'Commands ({q})',
-    community: 'Community and Support'
+    community: 'Community and Support',
+    privacy: 'Terms of Service and Privacy'
   },
   leaderboard: {
     author: 'Page {page}/{pages}',
@@ -70,7 +71,9 @@ export const helper = {
     user: 'You\'re weak. You lack the following permissions to use this command: {permissions}',
     bot: 'I lack the following permissions for this command to work properly: {permissins}'
   },
-  error: 'An unexpected error has occurred...\n`{e}`'
+  error: 'An unexpected error has occurred...\n`{e}`',
+  
+  privacy: 'Before you start to use the bot, you must accept the [Terms of Service and Privacy](https://levispires.github.io/sabine-terms/)'
 }
 export const permissions = {
   createInstantInvite: "Create Instant Invite",
