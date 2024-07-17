@@ -42,7 +42,7 @@ export const commands = {
     author: 'Page {page}/{pages}',
     footer: 'Your position: #{pos}',
     title: 'Users with the most correct guesses',
-    field: '`{v}` correct guesses',
+    field: '`{t}` correct guesses',
     no_users: 'No users to show in this page.'
   },
   admin: {
