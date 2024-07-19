@@ -32,6 +32,7 @@ export default class InteractionCreateListener extends Listener {
           }
         }
         command.execInteraction(interaction, args)
+        .catch((e: Error) => new Logger(this.client).error(e))
       }
       else {
         if(!(interaction.data as unknown as ComponentInteractionButtonData).custom_id.startsWith('guess-')) return
@@ -144,7 +145,6 @@ export default class InteractionCreateListener extends Listener {
     if(interaction instanceof AutocompleteInteraction) {
       const command = this.client.commands.get(interaction.data.name)
       if(!command) return
-      const guild = (await Guild.findById(interaction.guildID!))!
       command.execAutocomplete(interaction)
       .catch((e: Error) => new Logger(this.client).error(e))
     }
