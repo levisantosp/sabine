@@ -27,6 +27,14 @@ export default class ReadyListener extends Listener {
       })
     })
     this.client.bulkEditCommands(commands)
+    const deleteGuild = async() => {
+      const guilds = await Guild.find()
+      for(const guild of guilds) {
+        if(!this.client.guilds.get(guild.id)) {
+          await guild.deleteOne()
+        }
+      }
+    }
     const sendResults = async() => {
       const res = await (await fetch('https://vlr.orlandomm.net/api/v1/results', {
         method: 'GET'
@@ -224,6 +232,7 @@ export default class ReadyListener extends Listener {
       }
     }
     setInterval(async() => {
+      await deleteGuild().catch(e => new Logger(this.client).error(e))
       await sendMatches().catch(e => new Logger(this.client).error(e))
       await sendResults().catch(e => new Logger(this.client).error(e))
       await verifyIfMatchAlreadyHasTeams().catch(e => new Logger(this.client).error(e))
