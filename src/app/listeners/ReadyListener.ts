@@ -4,6 +4,7 @@ import { Guild, User } from '../../database'
 import locales from '../../locales'
 import { ActionRowComponents, TextChannel } from 'eris'
 import { CommandStructure } from '../../../types'
+import { events } from 'vlresports-scraper'
 
 export default class ReadyListener extends Listener {
   constructor(client: App) {
@@ -102,7 +103,7 @@ export default class ReadyListener extends Listener {
         for(const match of matches) {
           let guess = user.history.find((h: any) => h.match === match.id)
           if(!guess) continue
-          if(guess.score1 === match.teams[0].score && guess.score2 === match.teams[1].score) {
+          if(guess.teams[0].score === match.teams[0].score && guess.teams[1].score === match.teams[1].score) {
             user.guessesRight += 1
           }
           else {

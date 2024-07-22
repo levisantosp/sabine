@@ -17,7 +17,8 @@
     "enhanced-ms": "^3.0.0",
     "eris": "^0.17.2",
     "moment": "^2.30.1",
-    "mongoose": "^8.3.2"
+    "mongoose": "^8.3.2",
+    "vlresports-scraper": "github:levispires/valorant-esports-scraper"
   },
   "devDependencies": {
     "@types/node": "^20.14.1",
