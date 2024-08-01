@@ -1,5 +1,5 @@
 import { AdvancedMessageContent, CommandInteraction, Guild, Message } from 'eris'
-import locale from '../../../locales'
+import locale from '../../locales'
 import App from '../client/App'
 
 interface CommandContextOptions {

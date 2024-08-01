@@ -1,11 +1,11 @@
 import { CommandInteraction, Message, TextChannel } from 'eris'
-import { Guild, User } from '../../../database'
-import locale from '../../../locales'
+import { Guild, User } from '../../database'
+import locale from '../../locales'
 import EmbedBuilder from '../builders/EmbedBuilder.js'
 import App from '../client/App'
 import Logger from '../util/Logger.js'
 import CommandContext from './CommandContext.js'
-import { CommandInteractionDataOptions } from '../../../../types'
+import { CommandInteractionDataOptions } from '../../../types'
 
 interface CommandRunnerOptions {
   client: App

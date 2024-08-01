@@ -1,8 +1,8 @@
 import { AutocompleteInteraction, CommandInteraction, ComponentInteraction, UnknownInteraction } from 'eris'
 import { App, CommandRunner, Listener, Logger } from '../structures'
-import { Guild, User } from '../../database'
-import locales from '../../locales'
-import { ComponentInteractionButtonData, Tournament } from '../../../types'
+import { Guild, User } from '../database'
+import locales from '../locales'
+import { ComponentInteractionButtonData, Tournament } from '../../types'
 import { AutocompleteInteractionDataOptions } from '../commands/AdminCommand'
 const cache = new Map()
 

@@ -1,5 +1,5 @@
 import { ActionRowComponents, ComponentInteraction } from 'eris'
-import { User } from '../../database'
+import { User } from '../database'
 import { App, ButtonBuilder, Command, CommandContext, EmbedBuilder } from '../structures'
 
 

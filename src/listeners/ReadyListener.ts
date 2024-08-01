@@ -1,10 +1,9 @@
 import ms from 'enhanced-ms'
 import { App, ButtonBuilder, EmbedBuilder, Listener, Logger } from '../structures'
-import { Guild, User } from '../../database'
-import locales from '../../locales'
+import { Guild, User } from '../database'
+import locales from '../locales'
 import { ActionRowComponents, TextChannel } from 'eris'
-import { CommandStructure } from '../../../types'
-import { events } from 'vlresports-scraper'
+import { CommandStructure } from '../../types'
 
 export default class ReadyListener extends Listener {
   constructor(client: App) {

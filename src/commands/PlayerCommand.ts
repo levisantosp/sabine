@@ -1,6 +1,6 @@
 import { AutocompleteInteraction } from 'eris'
 import { App, Command, CommandContext, EmbedBuilder, Logger } from '../structures'
-import { Player, PlayerRes } from '../../../types'
+import { Player, PlayerRes } from '../../types'
 const cache = new Map()
 
 type AutocompleteOptions = {

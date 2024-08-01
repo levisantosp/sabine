@@ -1,7 +1,7 @@
 import { Client, ClientOptions } from 'eris'
 import { readdirSync } from 'fs'
 import mongoose from 'mongoose'
-import { Logger, Command, Listener } from '..'
+import { Logger, Command } from '..'
 import path from 'path'
 
 export default class App extends Client {

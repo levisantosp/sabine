@@ -1,7 +1,7 @@
 import { ActionRowComponents, AutocompleteInteraction, ComponentInteraction, InteractionContent, InteractionContentEdit } from 'eris'
 import { App, ButtonBuilder, Command, CommandContext, EmbedBuilder } from '../structures'
-import { Tournament } from '../../../types'
-import { Guild } from '../../database'
+import { Tournament } from '../../types'
+import { Guild } from '../database'
 const cache = new Map()
 
 export type AutocompleteOptions = {
