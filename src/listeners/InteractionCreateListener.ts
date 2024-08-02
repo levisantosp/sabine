@@ -3,6 +3,7 @@ import { App, CommandRunner, Listener, Logger } from '../structures'
 import { Guild, User } from '../database'
 import locales from '../locales'
 import { ComponentInteractionButtonData } from '../../types'
+import MainController from '../scraper'
 
 export default class InteractionCreateListener extends Listener {
   constructor(client: App) {
@@ -40,11 +41,9 @@ export default class InteractionCreateListener extends Listener {
           await interaction.defer(64)
           return interaction.createMessage(locales(guild?.lang!, 'helper.replied'))
         }
-        const res = await (await fetch('https://vlr.orlandomm.net/api/v1/matches', {
-          method: 'GET'
-        })).json()
-        const data = res.data.filter((d: any) => d.id == (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6))[0]
-        if(!data?.in) {
+        const res = await MainController.getMatches()
+        const data = res.find(d => d.id == (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6))!
+        if(data.when / 1000 > (Date.now())) {
           await interaction.defer(64)
           interaction.createMessage(locales(guild?.lang!, 'helper.started'))
           return
@@ -98,10 +97,8 @@ export default class InteractionCreateListener extends Listener {
       const user = await User.findById(interaction.member!.id) || new User({ _id: interaction.member!.id })
       const guild = await Guild.findById(interaction.guildID)
       await interaction.defer(64)
-      const res = await (await fetch('https://vlr.orlandomm.net/api/v1/matches', {
-        method: 'GET'
-      })).json()
-      const data = res.data.filter((d: any) => d.id == (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6))[0]
+      const res = await MainController.getMatches()
+      const data = res.find(d => d.id == (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6))!
       user.history.push({
         match: data.id,
         teams: [

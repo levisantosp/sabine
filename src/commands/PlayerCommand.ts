@@ -1,6 +1,7 @@
 import { AutocompleteInteraction } from 'eris'
 import { App, Command, CommandContext, EmbedBuilder, Logger } from '../structures'
-import { Player, PlayerRes } from '../../types'
+import MainController from '../scraper'
+import { PlayerData, PlayersData } from '../../types'
 const cache = new Map()
 
 type AutocompleteOptions = {
@@ -40,32 +41,28 @@ export default class PlayerCommand extends Command {
   }
   async run(ctx: CommandContext) {
     if(!cache.has(ctx.args[0])) {
-      const res: PlayerRes = await (await fetch(`https://vlr.orlandomm.net/api/v1/players/${ctx.args[0]}`, {
-        method: 'GET'
-      })).json().catch(() => Logger.warn('API is down'))
+      const res = await MainController.getPlayerById(ctx.args[0])
       cache.set(ctx.args[0], res)
     }
-    const player: PlayerRes = cache.get(ctx.args[0])
+    const player: PlayerData = cache.get(ctx.args[0])
     const embed = new EmbedBuilder()
-    .setTitle(`:flag_${player.data.info.flag}: ${player.data.info.user}`)
-    .setThumbnail(player.data.info.img)
+    .setTitle(`:flag_${player.country.flag}: ${player.user}`)
+    .setThumbnail(player.avatar)
     .setDescription(this.locale('commands.player.embed.desc', {
-      name: player.data.info.name,
-      team: `[${player.data.team.name}](${player.data.team.url})`,
-      pt: player.data.pastTeams.map(t => `[${t.name}](${t.url})`).join(', '),
-      lt: `[${player.data.results[0].teams[0].points}-${player.data.results[0].teams[1].points} vs ${player.data.results[0].teams[1].name}](${player.data.results[0].match.url})`
+      name: player.realName,
+      team: `[${player.team.name}](${player.team.url})`,
+      pt: player.pastTeams.map(t => `[${t.name}](${t.url})`).join(', '),
+      lt: `[${player.lastResults[0].teams[0].score}-${player.lastResults[0].teams[1].score} vs ${player.lastResults[0].teams[1].name}](${player.lastResults[0].url})`
     }))
     ctx.reply(embed.build())
   }
   async execAutocomplete(i: AutocompleteInteraction) {
     if(!cache.has('players')) {
-      const res: Player = await (await fetch('https://vlr.orlandomm.net/api/v1/players?limit=all', {
-        method: 'GET'
-      })).json().catch(() => Logger.warn('API is down'))
+      const res = await MainController.getAllPlayers()
       cache.set('players', res)
     }
-    const res: Player = cache.get('players')
-    const players = res.data.sort((a, b) => a.name.localeCompare(b.name))
+    const res: PlayersData[] = cache.get('players')
+    const players = res.sort((a, b) => a.name.localeCompare(b.name))
     .filter(e => {
       if(e.name.toLowerCase().includes((i.data.options[0] as AutocompleteOptions).value.toLowerCase())) return e
     })

@@ -28,10 +28,6 @@ type CommandStructure = {
   }
   options?: SlashOptions[]
 }
-type TeamResponse = {
-  status: string
-  data: TeamData
-}
 type EventsData = {
   id?: string
   name: string
@@ -63,7 +59,7 @@ type PlayersData = {
 }
 type PlayerCountry = {
   name: string
-  flag: string
+  flag?: string
 }
 type PlayerPastTeam = {
   id: string
@@ -79,12 +75,16 @@ type PlayerLastResult = {
   teams: PlayerLastResultTeam[]
   url: string
 }
+type PlayerCurrentTeam = {
+  name: string
+  url: string
+}
 type PlayerData = {
   avatar: string
   user: string
   realName: string
   country: PlayerCountry
-  currentTeam: string
+  team: PlayerCurrentTeam
   pastTeams: PlayerPastTeam[]
   lastResults: PlayerLastResult[]
 }
@@ -115,13 +115,22 @@ type Roster = {
   url: string
 }
 type TeamRoster = {
-  players: Roster
-  staffs: Roster
+  players: Roster[]
+  staffs: Roster[]
+}
+type UpcomingMatchTeam = {
+  name: string
+}
+type UpcomingMatch = {
+  teams: UpcomingMatchTeam[]
+  url: string
 }
 type TeamData = {
   id: string
   name: string
   tag: string
+  logo: string
   roster: TeamRoster
   lastResults: PlayerLastResult[]
+  upcomingMatches: UpcomingMatch[]
 }

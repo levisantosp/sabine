@@ -1,7 +1,8 @@
 import { ActionRowComponents, AutocompleteInteraction, ComponentInteraction, InteractionContent, InteractionContentEdit } from 'eris'
 import { App, ButtonBuilder, Command, CommandContext, EmbedBuilder } from '../structures'
-import { Tournament } from '../../types'
 import { Guild } from '../database'
+import MainController from '../scraper'
+import { EventsData } from '../../types'
 const cache = new Map()
 
 export type AutocompleteOptions = {
@@ -269,13 +270,11 @@ export default class AdminCommand extends Command {
   }
   async execAutocomplete(i: AutocompleteInteraction) {
     if(!cache.has('events')) {
-      const res: Tournament = await (await fetch('https://vlr.orlandomm.net/api/v1/events', {
-        method: 'GET'
-      })).json().catch(() => console.log('API is down'))
+      const res = await MainController.getEvents()
       cache.set('events', res)
     }
-    const res: Tournament = cache.get('events')
-    const events = res.data.filter(e => e.status !== 'completed')
+    const res: EventsData[] = cache.get('events')
+    const events = res.filter(e => e.status !== 'completed')
     .map(e => e.name)
     .filter(e => {
       if(e.toLowerCase().includes((i.data.options as AutocompleteInteractionDataOptions[])[0].options[0].options[0].value.toLowerCase())) return e

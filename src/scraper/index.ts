@@ -23,7 +23,7 @@ export default class MainController {
   static async getAllTeams() {
     return await TeamsController.get()
   }
-  static async getTeam(id: string | number) {
+  static async getTeamById(id: string | number) {
     return await TeamsController.getById(id)
   }
 }

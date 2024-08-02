@@ -3,7 +3,7 @@ import { App, ButtonBuilder, EmbedBuilder, Listener, Logger } from '../structure
 import { Guild, User } from '../database'
 import locales from '../locales'
 import { ActionRowComponents, TextChannel } from 'eris'
-import { CommandStructure } from '../../types'
+import { CommandStructure, ResultsData } from '../../types'
 import MainController from '../scraper'
 
 export default class ReadyListener extends Listener {
@@ -38,14 +38,13 @@ export default class ReadyListener extends Listener {
     }
     const sendResults = async() => {
       const res = await MainController.getResults()
-      console.log(res)
-      if(!res) return
+      if(!res || !res.length) return
       const guilds = await Guild.find({
         events: {
           $exists: true
         }
       })
-      let matches: any[] = []
+      let matches: ResultsData[] = []
       for(const guild of guilds) {
         let data = res.filter(d => guild.events.some((e: any) => e.name === d.tournament.name))
         if(!data || !data[0]) return
@@ -63,7 +62,7 @@ export default class ReadyListener extends Listener {
           data.reverse()
           for(const e of guild.events) {
             for(const d of data) {
-              if(e.name === d.tournament) {
+              if(e.name === d.tournament.name) {
                 const embed = new EmbedBuilder()
                 .setTitle(d.tournament.name)
                 .setThumbnail(d.tournament.image)
@@ -114,7 +113,7 @@ export default class ReadyListener extends Listener {
     }
     const sendMatches = async() => {
       const res = await MainController.getMatches()
-      if(!res) return
+      if(!res || !res.length) return
       const guilds = await Guild.find({
         events: {
           $exists: true
@@ -131,21 +130,21 @@ export default class ReadyListener extends Listener {
           continue
         }
         guild.matches = []
-        let data = res.filter(d => guild.events.some((e: any) => e.name === d.tournament))
+        let data = res.filter(d => guild.events.some((e: any) => e.name === d.tournament.name))
         for(const e of guild.events) {
           if(!this.client.getChannel(e.channel1)) continue
           let messages = await this.client.getMessages(e.channel1)
           await this.client.deleteMessages(e.channel1, messages.map(m => m.id))
           for(const d of data) {
-            if(Number(ms(d.when)) > 86400000) continue
-            if(e.name === d.tournament) {
+            if(d.when > (86400000 + Date.now())) continue
+            if(e.name === d.tournament.name) {
               let index = guild.matches.findIndex((m: string) => m === d.id)
               if(index > -1) guild.matches.splice(index, 1)
               guild.matches.push(d.id)
     
               const embed = new EmbedBuilder()
               .setTitle(d.tournament.name)
-              .setDescription(`<t:${((Date.now() + Number(Number(ms(d.when)))) / 1000).toFixed(0)}:F> | <t:${((Date.now() + Number(Number(ms(d.when)))) / 1000).toFixed(0)}:R>`)
+              .setDescription(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
               .setThumbnail(d.tournament.image)
               .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`, '', true)
               .setFooter(d.stage)
@@ -184,7 +183,7 @@ export default class ReadyListener extends Listener {
     }
     const verifyIfMatchAlreadyHasTeams = async() => {
       const res = await MainController.getMatches()
-      if(!res) return
+      if(!res || !res.length) return
       const guilds = await Guild.find()
       for(const guild of guilds) {
         if(!guild.tbdMatches.length) continue
@@ -195,7 +194,7 @@ export default class ReadyListener extends Listener {
             const channel = await this.client.getRESTChannel(match.channel) as TextChannel
             const embed = new EmbedBuilder()
             .setTitle(data.tournament.name)
-            .setDescription(`<t:${((Date.now() + Number(ms(data.when))) / 1000).toFixed(0)}:F> | <t:${((Date.now() + Number(ms(data.when))) / 1000).toFixed(0)}:R>`)
+            .setDescription(`<t:${data.when / 1000}:F> | <t:${data.when / 1000}:R>`)
             .setThumbnail(data.tournament.image)
             .addField(`:flag_${data.teams[0].country}: ${data.teams[0].name}\n:flag_${data.teams[1].country}: ${data.teams[1].name}`, '', true)
             .setFooter(data.stage)

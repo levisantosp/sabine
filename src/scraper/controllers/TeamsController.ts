@@ -1,5 +1,5 @@
 import { load } from 'cheerio'
-import { PlayerLastResult, TeamsData } from '../../../types'
+import { PlayerLastResult, TeamsData, UpcomingMatch } from '../../../types'
 
 export default class TeamsController {
   static async get() {
@@ -28,6 +28,7 @@ export default class TeamsController {
     const teamArray = $('.team-header-name').text().replace(/\t/g, '').trim().replace('\n', '').split('\n')
     const name = teamArray[0]
     const tag = teamArray[1]
+    const logo = 'https:' + $('.wf-avatar img').attr('src')
     const players = []
     const staffs = []
     const rosterElements: any[] = []
@@ -52,7 +53,7 @@ export default class TeamsController {
     }
     const roster = { players, staffs }
     const lastResults: PlayerLastResult[] = []
-    $('.wf-card.fc-flex.m-item').each((index, element) => {
+    $('.wf-card.fc-flex.m-item').eq(1).each((index, element) => {
       lastResults.push({
         id: $(element).attr('href')?.split('/')[1]!,
         teams: [
@@ -68,6 +69,20 @@ export default class TeamsController {
         url: 'https://vlr.gg' + $(element).attr('href')
       })
     })
-    return { id, name, tag, roster, lastResults }
+    const upcomingMatches: UpcomingMatch[] = []
+    $('.wf-card.fc-flex.m-item').eq(0).each((index, element) => {
+      upcomingMatches.push({
+        teams: [
+          {
+            name: $(element).find('.m-item-team-name').eq(0).text().trim()
+          },
+          {
+            name: $(element).find('.m-item-team-name').eq(1).text().trim()
+          }
+        ],
+        url: 'https://vlr.gg' + $(element).attr('href')!
+      })
+    })
+    return { id, name, tag, logo, roster, lastResults, upcomingMatches }
   }
 }
