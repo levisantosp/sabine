@@ -38,6 +38,7 @@ export default class ReadyListener extends Listener {
     }
     const sendResults = async() => {
       const res = await MainController.getResults()
+      console.log(res)
       if(!res) return
       const guilds = await Guild.find({
         events: {
