@@ -4,6 +4,7 @@ import { Guild, User } from '../database'
 import locales from '../locales'
 import { ActionRowComponents, TextChannel } from 'eris'
 import { CommandStructure } from '../../types'
+import MainController from '../scraper'
 
 export default class ReadyListener extends Listener {
   constructor(client: App) {
@@ -36,9 +37,7 @@ export default class ReadyListener extends Listener {
       }
     }
     const sendResults = async() => {
-      const res = await (await fetch('https://vlr.orlandomm.net/api/v1/results', {
-        method: 'GET'
-      })).json().catch(() => Logger.warn('API is down'))
+      const res = await MainController.getResults()
       if(!res) return
       const guilds = await Guild.find({
         events: {
@@ -47,11 +46,11 @@ export default class ReadyListener extends Listener {
       })
       let matches: any[] = []
       for(const guild of guilds) {
-        let data = res.data.filter((d: any) => guild.events.some((e: any) => e.name === d.tournament))
+        let data = res.filter(d => guild.events.some((e: any) => e.name === d.tournament.name))
         if(!data || !data[0]) return
         if(guild.lastResult && guild.lastResult !== data[0].id) {
-          let match = data.find((e: any) => e.id == guild.lastResult)
-          let index = data.indexOf(match)
+          let match = data.find(e => e.id == guild.lastResult)
+          let index = data.indexOf(match!)
           if(index > -1) {
             data = data.slice(0, index)
             matches = data
@@ -65,11 +64,11 @@ export default class ReadyListener extends Listener {
             for(const d of data) {
               if(e.name === d.tournament) {
                 const embed = new EmbedBuilder()
-                .setTitle(d.tournament)
-                .setThumbnail(d.img)
+                .setTitle(d.tournament.name)
+                .setThumbnail(d.tournament.image)
                 .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`, '', true)
                 .addField(`${d.teams[0].score}\n${d.teams[1].score}`, '', true)
-                .setFooter(d.event)
+                .setFooter(d.stage)
                 this.client.createMessage(e.channel2, {
                   embed,
                   components: [
@@ -113,47 +112,42 @@ export default class ReadyListener extends Listener {
       }
     }
     const sendMatches = async() => {
-      const res = await (await fetch('https://vlr.orlandomm.net/api/v1/matches', {
-        method: 'GET'
-      })).json().catch(() => Logger.warn('API is down'))
+      const res = await MainController.getMatches()
       if(!res) return
       const guilds = await Guild.find({
         events: {
           $exists: true
         }
       })
-      const res2 = (await (await fetch('https://vlr.orlandomm.net/api/v1/results', {
-        method: 'GET'
-      })).json())
-      if(!res) return
+      const res2 = await MainController.getResults()
       if(!guilds.length) return
       for(const guild of guilds) {
         if(guild.verificationTime > Date.now()) continue
-        const results = res2.data.filter((d: any) => d.id === guild.matches.at(-1))
+        const results = res2.filter(d => d.id === guild.matches.at(-1))
         if(!results.length && guild.matches.length) {
           guild.verificationTime = new Date().setHours(24, 0, 0, 0)
           await guild.save()
           continue
         }
         guild.matches = []
-        let data = res.data.filter((d: any) => guild.events.some((e: any) => e.name === d.tournament))
+        let data = res.filter(d => guild.events.some((e: any) => e.name === d.tournament))
         for(const e of guild.events) {
           if(!this.client.getChannel(e.channel1)) continue
           let messages = await this.client.getMessages(e.channel1)
           await this.client.deleteMessages(e.channel1, messages.map(m => m.id))
           for(const d of data) {
-            if(Number(ms(d.in)) > 86400000) continue
+            if(Number(ms(d.when)) > 86400000) continue
             if(e.name === d.tournament) {
               let index = guild.matches.findIndex((m: string) => m === d.id)
               if(index > -1) guild.matches.splice(index, 1)
               guild.matches.push(d.id)
     
               const embed = new EmbedBuilder()
-              .setTitle(d.tournament)
-              .setDescription(`<t:${((Date.now() + Number(Number(ms(d.in)))) / 1000).toFixed(0)}:F> | <t:${((Date.now() + Number(Number(ms(d.in)))) / 1000).toFixed(0)}:R>`)
-              .setThumbnail(d.img)
+              .setTitle(d.tournament.name)
+              .setDescription(`<t:${((Date.now() + Number(Number(ms(d.when)))) / 1000).toFixed(0)}:F> | <t:${((Date.now() + Number(Number(ms(d.when)))) / 1000).toFixed(0)}:R>`)
+              .setThumbnail(d.tournament.image)
               .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`, '', true)
-              .setFooter(d.event)
+              .setFooter(d.stage)
     
               const button = new ButtonBuilder()
               .setLabel(locales(guild.lang, 'helper.palpitate'))
@@ -188,24 +182,22 @@ export default class ReadyListener extends Listener {
       }
     }
     const verifyIfMatchAlreadyHasTeams = async() => {
-      const res = await (await fetch('https://vlr.orlandomm.net/api/v1/matches', {
-        method: 'GET'
-      })).json().catch(() => Logger.warn('API is down'))
+      const res = await MainController.getMatches()
       if(!res) return
       const guilds = await Guild.find()
       for(const guild of guilds) {
         if(!guild.tbdMatches.length) continue
         for(const match of guild.tbdMatches) {
-          const data = res.data.find((d: any) => d.id === match.id)
+          const data = res.find(d => d.id === match.id)
           if(!data) continue
           if(data.teams[0].name !== 'TBD' && data.teams[1].name !== 'TBD') {
             const channel = await this.client.getRESTChannel(match.channel) as TextChannel
             const embed = new EmbedBuilder()
-            .setTitle(data.tournament)
-            .setDescription(`<t:${((Date.now() + Number(ms(data.in))) / 1000).toFixed(0)}:F> | <t:${((Date.now() + Number(ms(data.in))) / 1000).toFixed(0)}:R>`)
-            .setThumbnail(data.img)
+            .setTitle(data.tournament.name)
+            .setDescription(`<t:${((Date.now() + Number(ms(data.when))) / 1000).toFixed(0)}:F> | <t:${((Date.now() + Number(ms(data.when))) / 1000).toFixed(0)}:R>`)
+            .setThumbnail(data.tournament.image)
             .addField(`:flag_${data.teams[0].country}: ${data.teams[0].name}\n:flag_${data.teams[1].country}: ${data.teams[1].name}`, '', true)
-            .setFooter(data.event)
+            .setFooter(data.stage)
             channel.createMessage({
               embed,
               components: [
