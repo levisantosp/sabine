@@ -15,7 +15,6 @@ export default class PlayersController {
       const country = $(element).find('td').find('.flag').attr('class')?.split(' ')[1].replace('mod-', '')!
       players.push({ id, name, teamTag, country })
     })
-    console.log(players[0])
     return players
   }
   static async getById(id: string | number) {
@@ -26,7 +25,6 @@ export default class PlayersController {
     const avatar = 'https:' + $('.player-header').find('.wf-avatar').find('img').attr('src')
     const user = $('.player-header').find('.wf-title').text().trim()
     const realName = $('.player-header').find('.player-real-name').text()
-    const currentTeam = $('.wf-module-item').find('div').find('div').first().text().trim()
     const pastTeams: PlayerPastTeam[] = []
     $('.wf-module-item').eq(1).parent().find('a').map((index, element) => {
       pastTeams.push({
@@ -60,7 +58,10 @@ export default class PlayersController {
         name: $('.player-header').find('div').last().text().trim(),
         flag: $('.player-header').find('.flag').attr('class')?.split(' ')[1].replace('mod-', '')
       },
-      currentTeam,
+      team: {
+        name: $('.wf-module-item').find('div').find('div').first().text().trim(),
+        url: 'https://vlr.gg' + $('.wf-module-item.mod-first').attr('href')
+      },
       pastTeams,
       lastResults
     }
