@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "@iamtraction/google-translate": "^2.0.1",
+    "cheerio": "^1.0.0-rc.12",
     "colors": "^1.4.0",
     "enhanced-ms": "^3.0.0",
     "eris": "^0.17.2",
