@@ -2,9 +2,7 @@ import { AutocompleteInteraction, CommandInteraction, ComponentInteraction, Unkn
 import { App, CommandRunner, Listener, Logger } from '../structures'
 import { Guild, User } from '../database'
 import locales from '../locales'
-import { ComponentInteractionButtonData, Tournament } from '../../types'
-import { AutocompleteInteractionDataOptions } from '../commands/AdminCommand'
-const cache = new Map()
+import { ComponentInteractionButtonData } from '../../types'
 
 export default class InteractionCreateListener extends Listener {
   constructor(client: App) {
