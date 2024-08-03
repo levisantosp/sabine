@@ -15,7 +15,9 @@ export default class ReadyListener extends Listener {
   }
   async on() {
     Logger.send(`${this.client.user.username}#${this.client.user.discriminator} online!`)
-
+    if(this.client.user.id === '934070086766051379') {
+      this.client.editStatus('dnd')
+    }
     const commands: CommandStructure[] = []
     this.client.commands.forEach(command => {
       commands.push({
