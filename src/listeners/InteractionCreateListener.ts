@@ -1,5 +1,5 @@
-import { AutocompleteInteraction, CommandInteraction, ComponentInteraction, UnknownInteraction } from 'eris'
-import { App, CommandRunner, Listener, Logger } from '../structures'
+import { ActionRowComponents, AutocompleteInteraction, CommandInteraction, ComponentInteraction, UnknownInteraction } from 'eris'
+import { App, ButtonBuilder, CommandRunner, Listener, Logger } from '../structures'
 import { Guild, User } from '../database'
 import locales from '../locales'
 import { ComponentInteractionButtonData } from '../../types'
@@ -34,69 +34,104 @@ export default class InteractionCreateListener extends Listener {
         .catch((e: Error) => new Logger(this.client).error(e))
       }
       else {
-        if(!(interaction.data as unknown as ComponentInteractionButtonData).custom_id.startsWith('guess-')) return
-        const guild = await Guild.findById(interaction.guildID)
-        const user = await User.findById(interaction.member!.id) || new User({ _id: interaction.member!.id })
-        if(user.history.filter((g: any) => g.match === (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6))[0]?.match === (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6)) {
+        if((interaction.data as unknown as ComponentInteractionButtonData).custom_id.startsWith('guess-')) {
           await interaction.defer(64)
-          return interaction.createMessage(locales(guild?.lang!, 'helper.replied'))
-        }
-        const res = await MainController.getMatches()
-        const data = res.find(d => d.id == (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6))!
-        if(data.when / 1000 > (Date.now())) {
-          await interaction.defer(64)
-          interaction.createMessage(locales(guild?.lang!, 'helper.started'))
-          return
-        }
-        fetch(`https://discord.com/api/v10/interactions/${interaction.id}/${interaction.token}/callback`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            type: 9,
-            data: {
-              custom_id: `modal-${(interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6)}`,
-              title: locales(guild?.lang!, 'helper.palpitate_modal.title'),
-              components: [
-                {
-                  type: 1,
-                  components: [
-                    {
-                      type: 4,
-                      custom_id: 'response-modal-1',
-                      label: data.teams[0].name,
-                      style: 1,
-                      min_length: 1,
-                      max_length: 1,
-                      required: true
-                    },
-                  ]
-                },
-                {
-                  type: 1,
-                  components: [
-                    {
-                      type: 4,
-                      custom_id: 'response-modal-2',
-                      label: data.teams[1].name,
-                      style: 1,
-                      min_length: 1,
-                      max_length: 1,
-                      required: true
-                    }
-                  ]
-                }
-              ]
-            }
+          const guild = await Guild.findById(interaction.guildID)
+          const user = await User.findById(interaction.member!.id) || new User({ _id: interaction.member!.id })
+          await interaction.createMessage(locales(guild?.lang!, 'helper.verifying'))
+          if(user.history.filter((g: any) => g.match === (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6))[0]?.match === (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6)) {
+            return interaction.editParent({
+              content: locales(guild?.lang!, 'helper.replied')
+            })
+          }
+          const res = await MainController.getMatches()
+          const data = res.find(d => d.id == (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6))
+          if((data?.when as number) / 1000 > (Date.now()) || !data) {
+            return interaction.editParent({
+              content: locales(guild?.lang!, 'helper.started')
+            })
+          }
+          interaction.editParent({
+            content: locales(guild?.lang!, 'helper.verified'),
+            components: [
+              {
+                type: 1,
+                components: [
+                  new ButtonBuilder()
+                  .setStyle('green')
+                  .setLabel(locales(guild?.lang!, 'helper.palpitate'))
+                  .setCustomId(`predict-${(interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6)}`)
+                ] as ActionRowComponents[]
+              }
+            ]
           })
-        }) 
+        }
+        if((interaction.data as unknown as ComponentInteractionButtonData).custom_id.startsWith('predict-')) {
+          const guild = await Guild.findById(interaction.guildID)
+          const user = await User.findById(interaction.member!.id) || new User({ _id: interaction.member!.id })
+          if(user.history.filter((g: any) => g.match === (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(8))[0]?.match === (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(8)) {
+            return interaction.editParent({
+              content: locales(guild?.lang!, 'helper.replied'),
+              components: []
+            })
+          }
+          const res = await MainController.getMatches()
+          const data = res.find(d => d.id == (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(8))
+          if((data?.when as number) / 1000 > (Date.now()) || !data) {
+            return interaction.editParent({
+              content: locales(guild?.lang!, 'helper.started'),
+              components: []
+            })
+          }
+          fetch(`https://discord.com/api/v10/interactions/${interaction.id}/${interaction.token}/callback`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              type: 9,
+              data: {
+                custom_id: `modal-${(interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(8)}`,
+                title: locales(guild?.lang!, 'helper.palpitate_modal.title'),
+                components: [
+                  {
+                    type: 1,
+                    components: [
+                      {
+                        type: 4,
+                        custom_id: 'response-modal-1',
+                        label: data?.teams[0].name,
+                        style: 1,
+                        min_length: 1,
+                        max_length: 1,
+                        required: true
+                      },
+                    ]
+                  },
+                  {
+                    type: 1,
+                    components: [
+                      {
+                        type: 4,
+                        custom_id: 'response-modal-2',
+                        label: data?.teams[1].name,
+                        style: 1,
+                        min_length: 1,
+                        max_length: 1,
+                        required: true
+                      }
+                    ]
+                  }
+                ]
+              }
+            })
+          }) 
+        }
       }
     }
     if(interaction instanceof UnknownInteraction && (interaction.data as unknown as ComponentInteractionButtonData).custom_id.startsWith('modal-')) {
       const user = await User.findById(interaction.member!.id) || new User({ _id: interaction.member!.id })
       const guild = await Guild.findById(interaction.guildID)
-      await interaction.defer(64)
       const res = await MainController.getMatches()
       const data = res.find(d => d.id == (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6))!
       user.history.push({
@@ -113,12 +148,15 @@ export default class InteractionCreateListener extends Listener {
         ]
       })
       await user.save()
-      interaction.createMessage(locales(guild?.lang!, 'helper.palpitate_response', {
-        t1: data.teams[0].name,
-        t2: data.teams[1].name,
-        s1: (interaction.data as unknown as ComponentInteractionButtonData).components[0].components[0].value,
-        s2: (interaction.data as unknown as ComponentInteractionButtonData).components[1].components[0].value
-      }))
+      interaction.editParent({
+        content: locales(guild?.lang!, 'helper.palpitate_response', {
+          t1: data.teams[0].name,
+          t2: data.teams[1].name,
+          s1: (interaction.data as unknown as ComponentInteractionButtonData).components[0].components[0].value,
+          s2: (interaction.data as unknown as ComponentInteractionButtonData).components[1].components[0].value
+        }),
+        components: []
+      })
     }
     if(interaction instanceof CommandInteraction) {
       if(!interaction.member) return
