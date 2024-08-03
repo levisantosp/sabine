@@ -77,7 +77,9 @@ export const helper = {
     bot: 'Me faltam as seguintes permissões para esse comando funcionar adequadamente: {permissins}'
   },
   error: 'Ocorreu um erro inesperado...\n`{e}`',
-  privacy: 'Antes de começar a usar o bot, você deve aceitar os [Termos de Serviço e Privacidade](https://levispires.github.io/sabine-terms/)'
+  privacy: 'Antes de começar a usar o bot, você deve aceitar os [Termos de Serviço e Privacidade](https://levispires.github.io/sabine-terms/)',
+  verifying: '<a:carregando:809221866434199634> Processando requisição... aguarde.',
+  verified: '<:sucess:869391072323846184> Requisição processada. Você já pode fazer um palpite.'
 }
 export const permissions = {
   createInstantInvite: "Criar convite instantâneo",
