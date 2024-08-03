@@ -24,7 +24,9 @@ export default class TeamsController {
     const html = await (await fetch(`https://www.vlr.gg/team/${id}`, {
       method: 'get'
     })).text()
+    const resultsHtml = await (await fetch(`https://www.vlr.gg/team/matches/${id}/?group=completed`)).text()
     const $ = load(html)
+    const $results = load(resultsHtml)
     const teamArray = $('.team-header-name').text().replace(/\t/g, '').trim().replace('\n', '').split('\n')
     const name = teamArray[0]
     const tag = teamArray[1]
@@ -53,7 +55,7 @@ export default class TeamsController {
     }
     const roster = { players, staffs }
     const lastResults: PlayerLastResult[] = []
-    $('.wf-card.fc-flex.m-item').eq(1).each((index, element) => {
+    $results('.wf-card.fc-flex.m-item').each((index, element) => {
       lastResults.push({
         id: $(element).attr('href')?.split('/')[1]!,
         teams: [
@@ -70,7 +72,7 @@ export default class TeamsController {
       })
     })
     const upcomingMatches: UpcomingMatch[] = []
-    $('.wf-card.fc-flex.m-item').eq(0).each((index, element) => {
+    $('.mod-tbd').parent().each((index, element) => {
       upcomingMatches.push({
         teams: [
           {
@@ -80,7 +82,7 @@ export default class TeamsController {
             name: $(element).find('.m-item-team-name').eq(1).text().trim()
           }
         ],
-        url: 'https://vlr.gg' + $(element).attr('href')!
+        url: 'https://vlr.gg' + $(element).attr('href')
       })
     })
     return { id, name, tag, logo, roster, lastResults, upcomingMatches }
