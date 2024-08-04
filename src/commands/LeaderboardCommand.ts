@@ -2,7 +2,6 @@ import { ComponentInteraction } from 'oceanic.js'
 import { User } from '../database'
 import { App, ButtonBuilder, Command, CommandContext, EmbedBuilder } from '../structures'
 
-
 export default class LeaderboardCommand extends Command {
   constructor(client: App) {    
     super({

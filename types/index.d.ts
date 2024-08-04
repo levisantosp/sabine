@@ -1,33 +1,5 @@
 import { AutocompleteInteraction, Constants, InteractionDataOptions } from 'oceanic.js'
 
-type ComponentInteractionButtonData = {
-  data: Constants['ComponentTypes']['BUTTON']
-  custom_id: string
-  components: Array<{
-    components: Array<{
-      value: string
-    }>
-  }>
-}
-type CommandInteractionDataOptions = {
-  options?: Array<{
-    name: string
-    type: number
-    value: string | number
-  }>
-}
-type CommandStructure = {
-  type: 1 | 2 | 3
-  name: string
-  nameLocalizations?: {
-    'pt-BR': string
-  }
-  description: string
-  descriptionLocalizations?: {
-    'pt-BR': string
-  }
-  options?: SlashOptions[]
-}
 type EventsData = {
   id?: string
   name: string

@@ -5,28 +5,6 @@ import MainController from '../scraper'
 import { EventsData } from '../../types'
 const cache = new Map()
 
-export type AutocompleteOptions = {
-  type: number
-  name: 'add' | 'remove'
-  options: Array<{
-    value: string
-    type: number
-    name: string
-    focused?: boolean
-  }>
-}
-export type AutocompleteInteractionDataOptions = {
-  type: number
-  options: AutocompleteOptions[]
-  name: string
-}
-type Options = {
-  options: Array<{
-    name: 'add' | 'remove'
-    value: 'pt' | 'en'
-  }>
-  name: string
-}
 export default class AdminCommand extends Command {
   constructor(client: App) {
     super({

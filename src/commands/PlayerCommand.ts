@@ -4,11 +4,6 @@ import MainController from '../scraper'
 import { PlayerData, PlayersData } from '../../types'
 const cache = new Map()
 
-type AutocompleteOptions = {
-  value: string
-  type: number
-  name: string
-}
 export default class PlayerCommand extends Command {
   constructor(client: App) {
     super({

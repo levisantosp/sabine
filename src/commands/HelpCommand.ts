@@ -2,11 +2,6 @@ import translate from '@iamtraction/google-translate'
 import { App, ButtonBuilder, Command, CommandContext, EmbedBuilder, Logger } from '../structures'
 import { AutocompleteInteraction } from 'oceanic.js'
 
-type AutocompleteOptions = {
-  value: string
-  type: number
-  name: string
-}
 export default class HelpCommand extends Command {
   constructor(client: App) {
     super({

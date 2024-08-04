@@ -76,15 +76,6 @@ export default class CommandRunner {
           new Logger(this.client).error(e as Error)
         }
       }
-      // if(this.callback.data.options?.length && this.callback.data.options[0].type === 2) {
-      //   ctx.args = (this.callback.data.options![0].options as CommandInteractionDataOptions[])[0].options?.map(o => o.value.toString()) ?? []
-      // }
-      // else if(this.callback.data.options?.length && this.callback.data.options[0].type === 1) {
-      //   ctx.args = (this.callback.data as CommandInteractionDataOptions).options?.map(o => o.value?.toString()) ?? []
-      // }
-      // else {
-      //   ctx.args = (this.callback.data as CommandInteractionDataOptions).options?.map(o => o.value?.toString()) ?? []
-      // }
       ctx.args = ctx.callback.data.options.getSubCommand() ?? []
       if(ctx.args.length > 0) {
         for(const option of ctx.callback.data.options.getOptions()) {
