@@ -1,6 +1,6 @@
 import translate from '@iamtraction/google-translate'
 import { App, ButtonBuilder, Command, CommandContext, EmbedBuilder, Logger } from '../structures'
-import { ActionRowComponents, AutocompleteInteraction } from 'eris'
+import { AutocompleteInteraction } from 'oceanic.js'
 
 type AutocompleteOptions = {
   value: string
@@ -12,28 +12,28 @@ export default class HelpCommand extends Command {
     super({
       client,
       name: 'help',
-      name_localizations: {
+      nameLocalizations: {
         'pt-BR': 'ajuda'
       },
       description: 'List of commands',
-      description_localizations: {
+      descriptionLocalizations: {
         'pt-BR': 'Lista de comandos'
       },
       options: [
         {
           type: 3,
           name: 'command',
-          name_localizations: {
+          nameLocalizations: {
             'pt-BR': 'comando'
           },
           description: 'Insert the name of a command',
-          description_localizations: {
+          descriptionLocalizations: {
             'pt-BR': 'Insira o nome de um comando'
           },
           autocomplete: true
         }
       ],
-      botPermissions: ['embedLinks'],
+      botPermissions: ['EMBED_LINKS'],
       syntax: 'help <command>',
       examples: [
         'help',
@@ -47,7 +47,7 @@ export default class HelpCommand extends Command {
     if(ctx.args[0]) {
       const cmd = this.client.commands.get(ctx.args[0])
       if (!cmd || cmd.onlyDev) return ctx.reply('commands.help.command_not_found')
-      const { permissions } = await import(`../../locales/${ctx.db.guild.lang}.js`)
+      const { permissions } = await import(`../locales/${ctx.db.guild.lang}.js`)
       const embed = new EmbedBuilder()
       .setTitle(ctx.args[0])
       .setDescription((await translate(cmd.description!, {
@@ -55,7 +55,7 @@ export default class HelpCommand extends Command {
       })).text)
       .addField(this.locale('commands.help.name'), `\`${cmd.name}\``)
       .setFooter(this.locale('commands.help.footer'))
-      .setThumbnail(this.client.user.avatarURL!)
+      .setThumbnail(this.client.user.avatarURL())
 
       if(cmd.syntax) embed.addField(this.locale('commands.help.syntax'), `\`/${cmd.syntax}\``)
       if(cmd.syntaxes) embed.addField(this.locale('commands.help.syntax'), cmd.syntaxes.map(syntax => `\`/${syntax}\``).join('\n'))
@@ -67,7 +67,7 @@ export default class HelpCommand extends Command {
     else {
       const embed = new EmbedBuilder()
       .setTitle(this.locale('commands.help.title'))
-      .setThumbnail(this.client.user.avatarURL!)
+      .setThumbnail(this.client.user.avatarURL())
       .setDescription(this.locale('commands.help.description', {
         arg: `/help [command]`
       }))
@@ -82,7 +82,7 @@ export default class HelpCommand extends Command {
       .setStyle('link')
       .setURL('https://discord.gg/g5nmc376yh')
       ctx.reply({
-        embed,
+        embeds: [embed],
         components: [
           {
             type: 1,
@@ -92,7 +92,7 @@ export default class HelpCommand extends Command {
               .setLabel(this.locale('commands.help.privacy'))
               .setStyle('link')
               .setURL('https://levispires.github.io/sabine-terms/')
-            ] as ActionRowComponents[]
+            ]
           }
         ]
       })
@@ -100,7 +100,7 @@ export default class HelpCommand extends Command {
   }
   async execAutocomplete(i: AutocompleteInteraction) {
     const commands = Array.from(this.client.commands).filter(c => {
-      if(c[0].includes((i.data.options[0] as AutocompleteOptions).value.toLowerCase())) return c
+      if(c[0].includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return c
     })
     .slice(0, 25)
     i.result(commands.map(cmd => ({ name: cmd[0], value: cmd[0] })))

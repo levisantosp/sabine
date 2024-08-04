@@ -5,27 +5,27 @@ export default class GuessesCommand extends Command {
     super({
       client,
       name: 'guesses',
-      name_localizations: {
+      nameLocalizations: {
         'pt-BR': 'palpites'
       },
       description: 'Shows your guesses',
-      description_localizations: {
+      descriptionLocalizations: {
         'pt-BR': 'Mostra seus palpites'
       },
       options: [
         {
           type: 4,
           name: 'page',
-          name_localizations: {
+          nameLocalizations: {
             'pt-BR': 'página'
           },
           description: 'Insert the page',
-          description_localizations: {
+          descriptionLocalizations: {
             'pt-BR': 'Insira a página'
           }
         }
       ],
-      botPermissions: ['embedLinks'],
+      botPermissions: ['EMBED_LINKS'],
       syntax: 'guesses <page>',
       examples: [
         'guesses',
@@ -42,7 +42,7 @@ export default class GuessesCommand extends Command {
       else history = history.slice(Number(ctx.args[0]) * 5 - 5, Number(ctx.args[0]) * 5)
   
       const embed = new EmbedBuilder()
-      .setAuthor(this.locale('commands.history.embed.author'), ctx.callback.member?.avatarURL)
+      .setAuthor(this.locale('commands.history.embed.author'), ctx.callback.member?.avatarURL())
       .setDescription(this.locale('commands.history.embed.desc', {
         right: ctx.db.user.guessesRight,
         wrong: ctx.db.user.guessesWrong,
@@ -52,8 +52,7 @@ export default class GuessesCommand extends Command {
         p1: isNaN(Number(ctx.args[0])) ? 1 : Number(ctx.args[0]),
         p2: Math.ceil(ctx.db.user.history.length / 5)
       }))
-  
-      for (const guess of history) {
+      for(const guess of history) {
         embed.addField(`${guess.teams[0].name} x ${guess.teams[1].name}`, this.locale('commands.history.embed.field', {
           score1: guess.teams[0].score,
           score2: guess.teams[1].score,

@@ -1,14 +1,18 @@
 import 'dotenv/config'
 import App from './structures/client/App'
-new App(process.env.BOT_TOKEN!, {
-  intents: ['all'],
+new App({
+  auth: 'Bot ' + process.env.BOT_TOKEN,
+  gateway: {
+    intents: ['ALL'],
+    autoReconnect: true,
+  },
   allowedMentions: {
     everyone: false,
+    users: true,
     repliedUser: true,
-    roles: false,
-    users: true
+    roles: false
   },
-  restMode: true,
-  defaultImageSize: 2048,
-  defaultImageFormat: 'png'
-}).start()
+  defaultImageFormat: 'png',
+  defaultImageSize: 2048
+})
+.start()

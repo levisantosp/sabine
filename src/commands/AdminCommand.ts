@@ -1,4 +1,4 @@
-import { ActionRowComponents, AutocompleteInteraction, ComponentInteraction, InteractionContent, InteractionContentEdit } from 'eris'
+import { AutocompleteInteraction, ComponentInteraction, InteractionContent } from 'oceanic.js'
 import { App, ButtonBuilder, Command, CommandContext, EmbedBuilder } from '../structures'
 import { Guild } from '../database'
 import MainController from '../scraper'
@@ -15,11 +15,6 @@ export type AutocompleteOptions = {
     focused?: boolean
   }>
 }
-// type AutocompleteInteractionOptions = {
-//   type: number
-//   name: string
-//   options: AutocompleteOptions[]
-// }
 export type AutocompleteInteractionDataOptions = {
   type: number
   options: AutocompleteOptions[]
@@ -38,40 +33,40 @@ export default class AdminCommand extends Command {
       client,
       name: 'admin',
       description: 'Manage the bot configs',
-      description_localizations: {
+      descriptionLocalizations: {
         'pt-BR': 'Gerencie as configurações do bot'
       },
       options: [
         {
           type: 2,
           name: 'tournament',
-          name_localizations: {
+          nameLocalizations: {
             'pt-BR': 'campeonato'
           },
           description: 'Add a tournament to announce',
-          description_localizations: {
+          descriptionLocalizations: {
             'pt-BR': 'Adicione um torneio para anunciar'
           },
           options: [
             {
               type: 1,
               name: 'add',
-              name_localizations: {
+              nameLocalizations: {
                 'pt-BR': 'adicionar'
               },
               description: 'Add a tournament to announce',
-              description_localizations: {
+              descriptionLocalizations: {
                 'pt-BR': 'Adicione um camepenato para anunciar'
               },
               options: [
                 {
                   type: 3,
                   name: 'tournament',
-                  name_localizations: {
+                  nameLocalizations: {
                     'pt-BR': 'campeonato'
                   },
                   description: 'Enter a tournament',
-                  description_localizations: {
+                  descriptionLocalizations: {
                     'pt-BR': 'Informe o campeonato'
                   },
                   autocomplete: true,
@@ -80,11 +75,11 @@ export default class AdminCommand extends Command {
                 {
                   type: 7,
                   name: 'matches_channel',
-                  name_localizations: {
+                  nameLocalizations: {
                     'pt-BR': 'canal_de_partidas'
                   },
                   description: 'Enter a channel',
-                  description_localizations: {
+                  descriptionLocalizations: {
                     'pt-BR': 'Informe o canal'
                   },
                   required: true
@@ -92,11 +87,11 @@ export default class AdminCommand extends Command {
                 {
                   type: 7,
                   name: 'results_channel',
-                  name_localizations: {
+                  nameLocalizations: {
                     'pt-BR': 'canal_de_resultados'
                   },
                   description: 'Enter a channel',
-                  description_localizations: {
+                  descriptionLocalizations: {
                     'pt-BR': 'Informe o canal'
                   },
                   required: true
@@ -106,22 +101,22 @@ export default class AdminCommand extends Command {
             {
               type: 1,
               name: 'remove',
-              name_localizations: {
+              nameLocalizations: {
                 'pt-BR': 'remover'
               },
               description: 'Remove a tournament',
-              description_localizations: {
+              descriptionLocalizations: {
                 'pt-BR': 'Remove um torneio'
               },
               options: [
                 {
                   type: 3,
                   name: 'tournament',
-                  name_localizations: {
+                  nameLocalizations: {
                     'pt-BR': 'campeonato'
                   },
                   description: 'Enter a tournament',
-                  description_localizations: {
+                  descriptionLocalizations: {
                     'pt-BR': 'Informe um torneio'
                   },
                   autocomplete: true,
@@ -134,22 +129,22 @@ export default class AdminCommand extends Command {
         {
           type: 1,
           name: 'panel',
-          name_localizations: {
+          nameLocalizations: {
             'pt-BR': 'painel'
           },
           description: 'Shows the control panel',
-          description_localizations: {
+          descriptionLocalizations: {
             'pt-BR': 'Mostra o painel de controle'
           }
         },
         {
           type: 1,
           name: 'language',
-          name_localizations: {
+          nameLocalizations: {
             'pt-BR': 'idioma'
           },
           description: 'Change the languague that I interact on this server',
-          description_localizations: {
+          descriptionLocalizations: {
             'pt-BR': 'Altera o idioma que eu interajo neste servidor'
           },
           options: [
@@ -157,7 +152,7 @@ export default class AdminCommand extends Command {
               type: 3,
               name: 'lang',
               description: 'Choose the language',
-              description_localizations: {
+              descriptionLocalizations: {
                 'pt-BR': 'Escolha o idioma'
               },
               choices: [
@@ -175,8 +170,8 @@ export default class AdminCommand extends Command {
           ]
         }
       ],
-      permissions: ['administrator'],
-      botPermissions: ['manageMessages', 'embedLinks', 'sendMessages'],
+      permissions: ['ADMINISTRATOR'],
+      botPermissions: ['MANAGE_MESSAGES', 'EMBED_LINKS', 'SEND_MESSAGES'],
       examples: [
         'admin panel',
         'admin tournament add VCT Americas',
@@ -193,7 +188,7 @@ export default class AdminCommand extends Command {
     })
   }
   async run(ctx: CommandContext) {
-    if(ctx.callback.data.options![0].name === 'panel') {
+    if(ctx.args[0] === 'panel') {
       const embed = new EmbedBuilder()
       .setTitle(this.locale('commands.admin.panel'))
       .setDescription(this.locale('commands.admin.desc', {
@@ -212,16 +207,16 @@ export default class AdminCommand extends Command {
       .setStyle('red')
       .setCustomId(`admin;resend;${ctx.callback.member?.id}`)
       ctx.reply({
-        embed,
+        embeds: [embed],
         components: [
           {
             type: 1,
-            components: [button] as ActionRowComponents[]
+            components: [button]
           }
         ]
       })
     }
-    if(ctx.callback.data.options![0].name === 'language') {
+    if(ctx.args[0] === 'language') {
       const options = {
         en: async() => {
           ctx.db.guild.lang = 'en'
@@ -234,9 +229,9 @@ export default class AdminCommand extends Command {
           ctx.reply('Agora eu irei interagir em português neste servidor!')
         }
       }
-      options[(ctx.callback.data.options![0] as Options).options[0].value]()
+      options[ctx.callback.data.options.getStringOption('lang')?.name as 'pt' | 'en']()
     }
-    if(ctx.callback.data.options![0].name === 'tournament') {
+    if(ctx.args[0] === 'tournament') {
       const options = {
         add: async() => {
           if(ctx.db.guild.events.length >= ctx.db.guild.tournamentsLength) return ctx.reply('commands.admin.limit_reached', { cmd: `</admin tournament remove:${this.id}>` })
@@ -246,26 +241,26 @@ export default class AdminCommand extends Command {
           })
           if(ctx.db.guild.events.filter((e: any) => e.name === ctx.args[0]).length) return ctx.reply('commands.admin.tournament_has_been_added')
           if(ctx.args[1] === ctx.args[2]) return ctx.reply('commands.admin.channels_must_be_different')
-          if(ctx.guild.channels.get(ctx.args[1])?.type !== 0 || ctx.guild.channels.get(ctx.args[2])?.type !== 0) return ctx.reply('commands.admin.invalid_channel')
+          if(ctx.guild.channels.get(ctx.args[3])?.type !== 0 || ctx.guild.channels.get(ctx.args[4])?.type !== 0) return ctx.reply('commands.admin.invalid_channel')
           ctx.db.guild.events.push({
-            name: ctx.args[0],
-            channel1: ctx.args[1],
-            channel2: ctx.args[2]
+            name: ctx.args[2],
+            channel1: ctx.args[3],
+            channel2: ctx.args[4]
           })
           await ctx.db.guild.save()
           ctx.reply('commands.admin.tournament_added', {
-            t: ctx.args[0]
+            t: ctx.args[2]
           })
         },
         remove: async() => {
-          ctx.db.guild.events.splice(ctx.db.guild.events.findIndex((e: any) => e.name === ctx.args[0]), 1)
+          ctx.db.guild.events.splice(ctx.db.guild.events.findIndex((e: any) => e.name === ctx.args[2]), 1)
           await ctx.db.guild.save()
           ctx.reply('commands.admin.tournament_removed', {
-            t: ctx.args[0]
+            t: ctx.args[2]
           })
         }
       }
-      options[(ctx.callback.data.options![0] as Options).options[0].name]()
+      options[ctx.args[1] as 'remove' | 'add']()
     }
   }
   async execAutocomplete(i: AutocompleteInteraction) {
@@ -277,7 +272,7 @@ export default class AdminCommand extends Command {
     const events = res.filter(e => e.status !== 'completed')
     .map(e => e.name)
     .filter(e => {
-      if(e.toLowerCase().includes((i.data.options as AutocompleteInteractionDataOptions[])[0].options[0].options[0].value.toLowerCase())) return e
+      if(e.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e
     })
     .slice(0, 25)
     const guild = await Guild.findById(i.guildID)
@@ -289,14 +284,14 @@ export default class AdminCommand extends Command {
         i.result(guild!.events.map((e: any) => ({ name: e.name, value: e.name })))
       }
     }
-    args[(i.data.options as AutocompleteInteractionDataOptions[])[0].options[0].name]()
+    args[i.data.options.getSubCommand()![1] as 'add' | 'remove']()
   }
   async execInteraction(i: ComponentInteraction, args: string[]) {
     if(i.member?.id !== args[2]) return
     if(args[1] === 'resend') {
       await i.defer(64)
       const guild = (await Guild.findById(i.guildID!))!
-      if(guild.resendTime > Date.now()) return i.createMessage(this.locale('commands.admin.resend_time') as InteractionContentEdit)
+      if(guild.resendTime > Date.now()) return i.createMessage({ content: this.locale('commands.admin.resend_time') })
       const button = new ButtonBuilder()
       .setLabel(this.locale('commands.admin.continue'))
       .setStyle('red')

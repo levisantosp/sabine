@@ -1,20 +1,14 @@
-import { Constants } from 'eris'
+import { Constants, NullablePartialEmoji, URLButton } from 'oceanic.js'
 
 export default class ButtonBuilder {
-  type: 2
-  style!: 1 | 2 | 3 | 4 | 5
-  label?: string
-  custom_id?: string
-  emoji?: {
-    name?: string
-    id?: string
-  }
-  url!: string
-  disabled?: boolean
-  constructor() {
-    this.type = Constants.ComponentTypes.BUTTON 
-  }
-  setStyle(style: 'blue' | 'gray' | 'green' | 'red' | 'link') {
+  public type: number = 2
+  public style!: 1 | 2 | 3 | 4 | 5
+  public label?: string
+  public customID!: string
+  public emoji?: NullablePartialEmoji
+  public url!: string
+  public disabled?: boolean
+  public setStyle(style: 'blue' | 'gray' | 'green' | 'red' | 'link') {
     switch(style.toLowerCase()) {
       case 'blue': this.style = Constants.ButtonStyles.PRIMARY
       break
@@ -30,15 +24,15 @@ export default class ButtonBuilder {
     }
     return this
   }
-  setLabel(label: string) {
+  public setLabel(label: string) {
     this.label = label
     return this
   }
-  setCustomId(id: string) {
-    this.custom_id = id
+  public setCustomId(id: string) {
+    this.customID = id
     return this
   }
-  setEmoji(emoji: string) {
+  public setEmoji(emoji: string) {
     if(isNaN(Number(emoji))) this.emoji = {
       name: emoji
     }
@@ -47,15 +41,19 @@ export default class ButtonBuilder {
     }
     return this
   }
-  setURL(url: string) {
+  public setURL(url: string) {
     this.url = url
-    return this
+    return this as unknown as URLButton
   }
-  setDisabled() {
+  public setDisabled() {
     this.disabled = true
     return this
   }
-  build(content = '') {
+  public setEnabled() {
+    this.disabled = false
+    return this
+  }
+  public build(content = '') {
     return {
       content,
       components: [

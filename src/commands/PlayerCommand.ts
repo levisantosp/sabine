@@ -1,4 +1,4 @@
-import { AutocompleteInteraction } from 'eris'
+import { AutocompleteInteraction } from 'oceanic.js'
 import { App, Command, CommandContext, EmbedBuilder, Logger } from '../structures'
 import MainController from '../scraper'
 import { PlayerData, PlayersData } from '../../types'
@@ -15,7 +15,7 @@ export default class PlayerCommand extends Command {
       client,
       name: 'player',
       description: 'Shows a player info',
-      description_localizations: {
+      descriptionLocalizations: {
         'pt-BR': 'Mostra as informações de determinado jogador'
       },
       options: [
@@ -23,7 +23,7 @@ export default class PlayerCommand extends Command {
           type: 3,
           name: 'player',
           description: 'Select a player',
-          description_localizations: {
+          descriptionLocalizations: {
             'pt-BR': 'Selecione um jogador'
           },
           autocomplete: true,
@@ -36,7 +36,7 @@ export default class PlayerCommand extends Command {
         'player benjyfishy',
         'player Less'
       ],
-      botPermissions: ['embedLinks']
+      botPermissions: ['EMBED_LINKS']
     })
   }
   async run(ctx: CommandContext) {
@@ -64,7 +64,7 @@ export default class PlayerCommand extends Command {
     const res: PlayersData[] = cache.get('players')
     const players = res.sort((a, b) => a.name.localeCompare(b.name))
     .filter(e => {
-      if(e.name.toLowerCase().includes((i.data.options[0] as AutocompleteOptions).value.toLowerCase())) return e
+      if(e.name.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e
     })
     .slice(0, 25)
     i.result(players.map(p => ({ name: `${p.name} (${p.teamTag})`, value: p.id })))

@@ -1,4 +1,4 @@
-import { AdvancedMessageContent, CommandInteraction, Guild, Message } from 'eris'
+import { CommandInteraction, CreateMessageOptions, Guild, InitialInteractionContent } from 'oceanic.js'
 import locale from '../../locales'
 import App from '../client/App'
 
@@ -23,37 +23,45 @@ export default class CommandContext {
     this.callback = options.callback
     this.locale = options.locale
   }
-  async reply(content: string | AdvancedMessageContent, options?: any) {
+  async reply(content: string | InitialInteractionContent, options?: any) {
     if(this.callback instanceof CommandInteraction) {
       switch(typeof content) {
         case 'string': {
-          if(options?.name && options?.file) {
-            return this.callback.createMessage(
+          if(options?.name && options?.files) {
+            await this.callback.defer()
+            if(this.callback.acknowledged) return this.callback.createFollowup(
               {
-                content: locale(this.locale, content ?? content, options)
-              },
+                content: locale(this.locale, content, options)
+              }
+            )
+            else return this.callback.createMessage(
               {
-                file: options?.file,
-                name: options?.name
+                content: locale(this.locale, content, options)
               }
             )
           }
-          else return this.callback.createMessage(
-            {
-              content: locale(this.locale, content, options)
-            }
-          )
+          else {
+            if(this.callback.acknowledged) return this.callback.createFollowup(
+              {
+                content: locale(this.locale, content, options)
+              }
+            )
+            else return this.callback.createMessage(
+              {
+                content: locale(this.locale, content, options)
+              }
+            )
+          }
         }
         case 'object': {
           if(options?.options && options?.name) {
-            return this.callback.createMessage(Object.assign(content),
-              {
-                file: options?.file,
-                name: options?.name
-              }
-            )
+            if(this.callback.acknowledged) return this.callback.createFollowup(Object.assign(content))
+            else return this.callback.createMessage(Object.assign(content))
           }
-          else return this.callback.createMessage(Object.assign(content))
+          else {
+            if(this.callback.acknowledged) return this.callback.createFollowup(Object.assign(content))
+            else return this.callback.createMessage(Object.assign(content))
+          }
         }
       }
     }

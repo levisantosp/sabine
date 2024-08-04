@@ -1,36 +1,32 @@
-import { EmbedAuthorOptions, EmbedField, EmbedFooterOptions, EmbedImageOptions } from 'eris'
+import { EmbedAuthorOptions, EmbedField, EmbedFooterOptions, EmbedImageOptions } from 'oceanic.js'
 
 export default class EmbedBuilder {
-  author?: EmbedAuthorOptions
-  title?: string
-  description?: string
-  fields?: EmbedField[]
-  image?: EmbedImageOptions
-  thumbnail?: EmbedImageOptions
-  timestamp?: Date
-  footer?: EmbedFooterOptions
-  color?: number
-  constructor() {
-    this.color = 0x7289DA
-    this.fields = []
-  }
-  setAuthor(name: string, icon_url?: string, url?: string) {
+  public author?: EmbedAuthorOptions
+  public title?: string
+  public description?: string
+  public fields?: EmbedField[] = []
+  public image?: EmbedImageOptions
+  public thumbnail?: EmbedImageOptions
+  public timestamp?: string
+  public footer?: EmbedFooterOptions
+  public color?: number = 0x7289DA
+  public setAuthor(name: string, iconURL?: string, url?: string) {
     this.author = {
       name,
-      icon_url,
+      iconURL,
       url
     }
     return this
   }
-  setTitle(title: string) {
+  public setTitle(title: string) {
     this.title = title
     return this
   }
-  setDescription(desc: string) {
+  public setDescription(desc: string) {
     this.description = desc
     return this
   }
-  addField(name: string, value: string, inline?: boolean) {
+  public addField(name: string, value: string, inline?: boolean) {
     this.fields?.push(
       {
         name,
@@ -40,33 +36,33 @@ export default class EmbedBuilder {
     )
     return this
   }
-  setImage(url: string) {
+  public setImage(url: string) {
     this.image = {
       url
     }
     return this
   }
-  setThumbnail(url: string) {
+  public setThumbnail(url: string) {
     this.thumbnail = {
       url
     }
     return this
   }
-  setFooter(text: string, icon_url?: string) {
+  public setFooter(text: string, iconURL?: string) {
     this.footer = {
       text,
-      icon_url
+      iconURL
     }
     return this
   }
-  setTimestamp(timestamp?: Date) {
-    this.timestamp = timestamp ?? new Date()
+  public setTimestamp(timestamp?: number) {
+    this.timestamp = timestamp?.toString() ?? Date.now().toString()
     return this
   }
-  build(content = '') {
+  public build(content = '') {
     return {
       content,
-      embed: this
+      embeds: [this]
     }
   }
 }

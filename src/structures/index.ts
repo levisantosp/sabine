@@ -4,7 +4,7 @@ import Command from './command/Command'
 import CommandContext from './command/CommandContext'
 import CommandRunner from './command/CommandRunner'
 import ButtonBuilder from './builders/ButtonBuilder'
-import SelectMenuBuilder from './builders/SelectMenuBuilder'
+// import SelectMenuBuilder from './builders/SelectMenuBuilder'
 import Logger from './util/Logger'
 import EmbedBuilder from './builders/EmbedBuilder'
 
@@ -15,7 +15,7 @@ export {
   CommandContext,
   CommandRunner,
   ButtonBuilder,
-  SelectMenuBuilder,
+  // SelectMenuBuilder,
   Logger,
   EmbedBuilder
 }

@@ -2,8 +2,8 @@ import ms from 'enhanced-ms'
 import { App, ButtonBuilder, EmbedBuilder, Listener, Logger } from '../structures'
 import { Guild, User } from '../database'
 import locales from '../locales'
-import { ActionRowComponents, TextChannel } from 'eris'
-import { CommandStructure, ResultsData } from '../../types'
+import { CreateApplicationCommandOptions, TextChannel } from 'oceanic.js'
+import { ResultsData } from '../../types'
 import MainController from '../scraper'
 
 export default class ReadyListener extends Listener {
@@ -18,18 +18,18 @@ export default class ReadyListener extends Listener {
     if(this.client.user.id === '934070086766051379') {
       this.client.editStatus('dnd')
     }
-    const commands: CommandStructure[] = []
+    const commands: CreateApplicationCommandOptions[] = []
     this.client.commands.forEach(command => {
       commands.push({
         name: command.name,
-        name_localizations: command.name_localizations,
+        nameLocalizations: command.nameLocalizations,
         description: command.description,
-        description_localizations: command.description_localizations,
+        descriptionLocalizations: command.descriptionLocalizations,
         options: command.options,
         type: 1
       })
     })
-    this.client.bulkEditCommands(commands)
+    this.client.application.bulkEditGlobalCommands(commands)
     const deleteGuild = async() => {
       const guilds = await Guild.find()
       for(const guild of guilds) {
@@ -71,8 +71,8 @@ export default class ReadyListener extends Listener {
                 .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`, '', true)
                 .addField(`${d.teams[0].score}\n${d.teams[1].score}`, '', true)
                 .setFooter(d.stage)
-                this.client.createMessage(e.channel2, {
-                  embed,
+                this.client.rest.channels.createMessage(e.channel2, {
+                  embeds: [embed],
                   components: [
                     {
                       type: 1,
@@ -81,7 +81,7 @@ export default class ReadyListener extends Listener {
                         .setLabel(locales(guild.lang, 'helper.stats'))
                         .setStyle('link')
                         .setURL(`https://vlr.gg/${d.id}`)
-                      ] as ActionRowComponents[]
+                      ]
                     }
                   ]
                 })
@@ -135,8 +135,8 @@ export default class ReadyListener extends Listener {
         let data = res.filter(d => guild.events.some((e: any) => e.name === d.tournament.name))
         for(const e of guild.events) {
           if(!this.client.getChannel(e.channel1)) continue
-          let messages = await this.client.getMessages(e.channel1)
-          await this.client.deleteMessages(e.channel1, messages.map(m => m.id))
+          let messages = await this.client.rest.channels.getMessages(e.channel1)
+          await this.client.rest.channels.deleteMessages(e.channel1, messages.map(m => m.id), 'Removing completed matches.')
           for(const d of data) {
             if(d.when > (86400000 + Date.now())) continue
             if(e.name === d.tournament.name) {
@@ -161,12 +161,12 @@ export default class ReadyListener extends Listener {
               .setStyle('link')
               .setURL(`https://vlr.gg/${d.id}`)
               
-              if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') this.client.createMessage(e.channel1, {
-                embed,
+              if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') this.client.rest.channels.createMessage(e.channel1, {
+                embeds: [embed],
                 components: [
                   {
                     type: 1,
-                    components: [button, urlButton] as ActionRowComponents[]
+                    components: [button, urlButton]
                   }
                 ]
               })
@@ -174,7 +174,7 @@ export default class ReadyListener extends Listener {
                 guild.tbdMatches.push({
                   id: d.id,
                   channel: e.channel1
-                }) 
+                })
               }    
             }
           }
@@ -193,7 +193,7 @@ export default class ReadyListener extends Listener {
           const data = res.find(d => d.id === match.id)
           if(!data) continue
           if(data.teams[0].name !== 'TBD' && data.teams[1].name !== 'TBD') {
-            const channel = await this.client.getRESTChannel(match.channel) as TextChannel
+            const channel = await this.client.rest.channels.get(match.channel) as TextChannel
             const embed = new EmbedBuilder()
             .setTitle(data.tournament.name)
             .setDescription(`<t:${data.when / 1000}:F> | <t:${data.when / 1000}:R>`)
@@ -201,7 +201,7 @@ export default class ReadyListener extends Listener {
             .addField(`:flag_${data.teams[0].country}: ${data.teams[0].name}\n:flag_${data.teams[1].country}: ${data.teams[1].name}`, '', true)
             .setFooter(data.stage)
             channel.createMessage({
-              embed,
+              embeds: [embed],
               components: [
                 {
                   type: 1,
@@ -214,7 +214,7 @@ export default class ReadyListener extends Listener {
                     .setLabel(locales(guild.lang, 'helper.stats'))
                     .setStyle('link')
                     .setURL(`https://vlr.gg/${data.id}`)
-                  ] as ActionRowComponents[]
+                  ]
                 }
               ]
             })

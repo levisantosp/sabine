@@ -1,16 +1,16 @@
-import { Client, ClientOptions } from 'eris'
+import { Client, ClientOptions } from 'oceanic.js'
 import { readdirSync } from 'fs'
 import mongoose from 'mongoose'
 import { Logger, Command } from '..'
 import path from 'path'
 
 export default class App extends Client {
-  commands: Map<string, Command>
-  constructor(token: string, options?: ClientOptions) {
-    super(token, options)
+  public commands: Map<string, Command>
+  public constructor(options?: ClientOptions) {
+    super(options)
     this.commands = new Map()
   }
-  async start() {
+  public async start() {
     await mongoose.connect(process.env.MONGO_URI!)
     Logger.send('Database online')
     await this.connect()

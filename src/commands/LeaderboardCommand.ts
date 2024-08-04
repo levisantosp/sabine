@@ -1,4 +1,4 @@
-import { ActionRowComponents, ComponentInteraction } from 'eris'
+import { ComponentInteraction } from 'oceanic.js'
 import { User } from '../database'
 import { App, ButtonBuilder, Command, CommandContext, EmbedBuilder } from '../structures'
 
@@ -9,7 +9,7 @@ export default class LeaderboardCommand extends Command {
       client,
       name: 'leaderboard',
       description: 'Ranking of guesses',
-      description_localizations: {
+      descriptionLocalizations: {
         'pt-BR': 'Ranking de palpites'
       },
       syntax: 'leaderboard <page>',
@@ -23,11 +23,11 @@ export default class LeaderboardCommand extends Command {
         {
           type: 4,
           name: 'page',
-          name_localizations: {
+          nameLocalizations: {
             'pt-BR': 'pagina'
           },
           description: 'Insert the page',
-          description_localizations: {
+          descriptionLocalizations: {
             'pt-BR': 'Insira a página'
           }
         }
@@ -54,7 +54,7 @@ export default class LeaderboardCommand extends Command {
       pages: Math.ceil(array.length / 10)
     }))
     .setTitle(this.locale('commands.leaderboard.title'))
-    .setThumbnail((await this.getUser(array[0].id))?.avatarURL!)
+    .setThumbnail((await this.getUser(array[0].id))?.avatarURL()!)
 
     let pos = 0
     if(!isNaN(page) && page > 1) pos = page * 10 - 10
@@ -83,11 +83,11 @@ export default class LeaderboardCommand extends Command {
     if(page <= 1) previous.setDisabled()
     if(page >= Math.ceil(array.length / 10)) next.setDisabled()
     ctx.reply({
-      embed,
+      embeds: [embed],
       components: [
         {
           type: 1,
-          components: [previous, next] as ActionRowComponents[]
+          components: [previous, next]
         }
       ]
     })
@@ -95,7 +95,7 @@ export default class LeaderboardCommand extends Command {
   async execInteraction(i: ComponentInteraction, args: string[]) {
     if(i.member?.id !== args[1]) return await i.deferUpdate()
     await i.deferUpdate()
-    await i.editParent(
+    await i.editOriginal(
       {
         components: [
           {
@@ -106,7 +106,7 @@ export default class LeaderboardCommand extends Command {
               .setCustomId('blablabla')
               .setStyle('gray')
               .setDisabled()
-            ] as ActionRowComponents[]
+            ]
           }
         ]
       }
@@ -124,7 +124,7 @@ export default class LeaderboardCommand extends Command {
       pages: Math.ceil(array.length / 10)
     }))
     .setTitle(this.locale('commands.leaderboard.title'))
-    .setThumbnail((await this.getUser(array[0].id))?.avatarURL!)
+    .setThumbnail((await this.getUser(array[0].id))?.avatarURL()!)
 
     let pos = 0
     if(Number(args[2]) > 1) pos = 1 * Number(args[2]) * 10 - 10
@@ -173,12 +173,12 @@ export default class LeaderboardCommand extends Command {
       next.setCustomId(`${args[0]};${args[1]};${page + 1};next`)
       previous.setCustomId(`${args[0]};${args[1]};${page};previous`)
     }
-    i.editParent({
+    i.editOriginal({
       embeds: [embed],
       components: [
         {
           type: 1,
-          components: [previous, next] as ActionRowComponents[]
+          components: [previous, next]
         }
       ]
     })

@@ -1,4 +1,4 @@
-import { AutocompleteInteraction, Constants, InteractionDataOptions } from 'eris'
+import { AutocompleteInteraction, Constants, InteractionDataOptions } from 'oceanic.js'
 
 type ComponentInteractionButtonData = {
   data: Constants['ComponentTypes']['BUTTON']
@@ -19,11 +19,11 @@ type CommandInteractionDataOptions = {
 type CommandStructure = {
   type: 1 | 2 | 3
   name: string
-  name_localizations?: {
+  nameLocalizations?: {
     'pt-BR': string
   }
   description: string
-  description_localizations?: {
+  descriptionLocalizations?: {
     'pt-BR': string
   }
   options?: SlashOptions[]

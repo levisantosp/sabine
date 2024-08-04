@@ -1,8 +1,7 @@
-import { ActionRowComponents, AutocompleteInteraction, CommandInteraction, ComponentInteraction, UnknownInteraction } from 'eris'
+import { AutocompleteInteraction, CommandInteraction, ComponentInteraction, Interaction, ModalSubmitInteraction, ModalSubmitInteractionComponentsWrapper } from 'oceanic.js'
 import { App, ButtonBuilder, CommandRunner, Listener, Logger } from '../structures'
 import { Guild, User } from '../database'
 import locales from '../locales'
-import { ComponentInteractionButtonData } from '../../types'
 import MainController from '../scraper'
 
 export default class InteractionCreateListener extends Listener {
@@ -12,9 +11,9 @@ export default class InteractionCreateListener extends Listener {
       name: 'interactionCreate'
     })
   }
-  async on(interaction: ComponentInteraction | CommandInteraction | UnknownInteraction | AutocompleteInteraction) {
+  async on(interaction: ComponentInteraction | CommandInteraction | AutocompleteInteraction | ModalSubmitInteraction | ModalSubmitInteractionComponentsWrapper) {
     if(interaction instanceof ComponentInteraction) {
-      const args = interaction.data.custom_id.split(';')
+      const args = interaction.data.customID.split(';')
       const command = this.client.commands.get(args[0])
       const guild = await Guild.findById(interaction.guildID!)
       if(command) {
@@ -23,8 +22,8 @@ export default class InteractionCreateListener extends Listener {
         }
         command.getUser = async(user: string) => {
           try {
-            if(isNaN(Number(user))) return await this.client.getRESTUser(user.replace(/[<@!>]/g, ''))
-            else return await this.client.getRESTUser(user as string)
+            if(isNaN(Number(user))) return await this.client.rest.users.get(user.replace(/[<@!>]/g, ''))
+            else return await this.client.rest.users.get(user as string)
           }
           catch(e) {
             new Logger(this.client).error(e as Error)
@@ -34,24 +33,26 @@ export default class InteractionCreateListener extends Listener {
         .catch((e: Error) => new Logger(this.client).error(e))
       }
       else {
-        if((interaction.data as unknown as ComponentInteractionButtonData).custom_id.startsWith('guess-')) {
+        if(interaction.data.customID.startsWith('guess-')) {
           await interaction.defer(64)
           const guild = await Guild.findById(interaction.guildID)
           const user = await User.findById(interaction.member!.id) || new User({ _id: interaction.member!.id })
-          await interaction.createMessage(locales(guild?.lang!, 'helper.verifying'))
-          if(user.history.filter((g: any) => g.match === (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6))[0]?.match === (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6)) {
-            return interaction.editParent({
+          await interaction.createFollowup({
+            content: locales(guild?.lang!, 'helper.verifying')
+          })
+          if(user.history.filter((g: any) => g.match === interaction.data.customID.slice(6))[0]?.match === interaction.data.customID.slice(6)) {
+            return interaction.editOriginal({
               content: locales(guild?.lang!, 'helper.replied')
             })
           }
           const res = await MainController.getMatches()
-          const data = res.find(d => d.id == (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6))
+          const data = res.find(d => d.id == interaction.data.customID.slice(6))
           if((data?.when as number) / 1000 > (Date.now()) || !data) {
-            return interaction.editParent({
+            return interaction.editOriginal({
               content: locales(guild?.lang!, 'helper.started')
             })
           }
-          interaction.editParent({
+          interaction.editOriginal({
             content: locales(guild?.lang!, 'helper.verified'),
             components: [
               {
@@ -60,90 +61,81 @@ export default class InteractionCreateListener extends Listener {
                   new ButtonBuilder()
                   .setStyle('green')
                   .setLabel(locales(guild?.lang!, 'helper.palpitate'))
-                  .setCustomId(`predict-${(interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6)}`)
-                ] as ActionRowComponents[]
+                  .setCustomId(`predict-${interaction.data.customID.slice(6)}`)
+                ]
               }
             ]
           })
         }
-        if((interaction.data as unknown as ComponentInteractionButtonData).custom_id.startsWith('predict-')) {
+        if(interaction.data.customID.startsWith('predict-')) {
           const guild = await Guild.findById(interaction.guildID)
           const user = await User.findById(interaction.member!.id) || new User({ _id: interaction.member!.id })
-          if(user.history.filter((g: any) => g.match === (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(8))[0]?.match === (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(8)) {
+          if(user.history.filter((g: any) => g.match === interaction.data.customID.slice(8))[0]?.match === interaction.data.customID.slice(8)) {
             return interaction.editParent({
               content: locales(guild?.lang!, 'helper.replied'),
               components: []
             })
           }
           const res = await MainController.getMatches()
-          const data = res.find(d => d.id == (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(8))
+          const data = res.find(d => d.id == interaction.data.customID.slice(8))
           if((data?.when as number) / 1000 > (Date.now()) || !data) {
-            return interaction.editParent({
+            return interaction.editOriginal({
               content: locales(guild?.lang!, 'helper.started'),
               components: []
             })
           }
-          fetch(`https://discord.com/api/v10/interactions/${interaction.id}/${interaction.token}/callback`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              type: 9,
-              data: {
-                custom_id: `modal-${(interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(8)}`,
-                title: locales(guild?.lang!, 'helper.palpitate_modal.title'),
+          interaction.createModal({
+            customID: `modal-${interaction.data.customID.slice(8)}`,
+            title: locales(guild?.lang!, 'helper.palpitate_modal.title'),
+            components: [
+              {
+                type: 1,
                 components: [
                   {
-                    type: 1,
-                    components: [
-                      {
-                        type: 4,
-                        custom_id: 'response-modal-1',
-                        label: data?.teams[0].name,
-                        style: 1,
-                        min_length: 1,
-                        max_length: 1,
-                        required: true
-                      },
-                    ]
+                    type: 4,
+                    customID: 'response-modal-1',
+                    label: data?.teams[0].name,
+                    style: 1,
+                    minLength: 1,
+                    maxLength: 1,
+                    required: true
                   },
+                ]
+              },
+              {
+                type: 1,
+                components: [
                   {
-                    type: 1,
-                    components: [
-                      {
-                        type: 4,
-                        custom_id: 'response-modal-2',
-                        label: data?.teams[1].name,
-                        style: 1,
-                        min_length: 1,
-                        max_length: 1,
-                        required: true
-                      }
-                    ]
+                    type: 4,
+                    customID: 'response-modal-2',
+                    label: data?.teams[1].name,
+                    style: 1,
+                    minLength: 1,
+                    maxLength: 1,
+                    required: true
                   }
                 ]
               }
-            })
-          }) 
+            ]
+          })
         }
       }
     }
-    if(interaction instanceof UnknownInteraction && (interaction.data as unknown as ComponentInteractionButtonData).custom_id.startsWith('modal-')) {
+    if(interaction instanceof ModalSubmitInteraction && interaction.data.customID.startsWith('modal-')) {
       const user = await User.findById(interaction.member!.id) || new User({ _id: interaction.member!.id })
       const guild = await Guild.findById(interaction.guildID)
       const res = await MainController.getMatches()
-      const data = res.find(d => d.id == (interaction.data as unknown as ComponentInteractionButtonData).custom_id.slice(6))!
+      const data = res.find(d => d.id == interaction.data.customID.slice(6))!
       user.history.push({
         match: data.id,
         teams: [
           {
             name: data.teams[0].name,
-            score: (interaction.data as unknown as ComponentInteractionButtonData).components[0].components[0].value
+            score: interaction.data.components.getComponents()[0].value
           },
           {
             name: data.teams[1].name,
-            score: (interaction.data as unknown as ComponentInteractionButtonData).components[1].components[0].value
+            score: interaction.data.components.getComponents()[1].value
           }
         ]
       })
@@ -152,8 +144,8 @@ export default class InteractionCreateListener extends Listener {
         content: locales(guild?.lang!, 'helper.palpitate_response', {
           t1: data.teams[0].name,
           t2: data.teams[1].name,
-          s1: (interaction.data as unknown as ComponentInteractionButtonData).components[0].components[0].value,
-          s2: (interaction.data as unknown as ComponentInteractionButtonData).components[1].components[0].value
+          s1: interaction.data.components.getComponents()[0].value,
+          s2: interaction.data.components.getComponents()[1].value
         }),
         components: []
       })

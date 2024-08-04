@@ -1,11 +1,10 @@
-import { CommandInteraction, Message, TextChannel } from 'eris'
+import { CommandInteraction, TextChannel } from 'oceanic.js'
 import { Guild, User } from '../../database'
 import locale from '../../locales'
 import EmbedBuilder from '../builders/EmbedBuilder.js'
 import App from '../client/App'
 import Logger from '../util/Logger.js'
 import CommandContext from './CommandContext.js'
-import { CommandInteractionDataOptions } from '../../../types'
 
 interface CommandRunnerOptions {
   client: App
@@ -29,7 +28,7 @@ export default class CommandRunner {
         user,
         guild
       }
-      const ctx: CommandContext = new CommandContext(
+      const ctx = new CommandContext(
         {
           client: this.client,
           db,
@@ -70,21 +69,30 @@ export default class CommandRunner {
       }
       cmd.getUser = async(user: string) => {
         try {
-          if(isNaN(Number(user))) return await this.client.getRESTUser(user.replace(/[<@!>]/g, ''))
-          else return await this.client.getRESTUser(user as string)
+          if(isNaN(Number(user))) return await this.client.rest.users.get(user.replace(/[<@!>]/g, ''))
+          else return await this.client.rest.users.get(user as string)
         }
         catch(e) {
           new Logger(this.client).error(e as Error)
         }
       }
-      if(this.callback.data.options?.length && this.callback.data.options[0].type === 2) {
-        ctx.args = (this.callback.data.options![0].options as CommandInteractionDataOptions[])[0].options?.map(o => o.value.toString()) ?? []
+      // if(this.callback.data.options?.length && this.callback.data.options[0].type === 2) {
+      //   ctx.args = (this.callback.data.options![0].options as CommandInteractionDataOptions[])[0].options?.map(o => o.value.toString()) ?? []
+      // }
+      // else if(this.callback.data.options?.length && this.callback.data.options[0].type === 1) {
+      //   ctx.args = (this.callback.data as CommandInteractionDataOptions).options?.map(o => o.value?.toString()) ?? []
+      // }
+      // else {
+      //   ctx.args = (this.callback.data as CommandInteractionDataOptions).options?.map(o => o.value?.toString()) ?? []
+      // }
+      ctx.args = ctx.callback.data.options.getSubCommand() ?? []
+      if(ctx.args.length > 0) {
+        for(const option of ctx.callback.data.options.getOptions()) {
+          ctx.args.push(option.value.toString())
+        }
       }
-      else if(this.callback.data.options?.length && this.callback.data.options[0].type === 1) {
-        ctx.args = (this.callback.data as CommandInteractionDataOptions).options?.map(o => o.value?.toString()) ?? []
-      }
-      else {
-        ctx.args = (this.callback.data as CommandInteractionDataOptions).options?.map(o => o.value?.toString()) ?? []
+      else for(const option of ctx.callback.data.options.getOptions()) {
+        ctx.args.push(option.value.toString())
       }
       cmd.id = ctx.callback.data.id
       cmd.run(ctx)
@@ -96,23 +104,22 @@ export default class CommandRunner {
       })
       .then(async() => {
         const embed = new EmbedBuilder()
-        .setAuthor(`${(ctx.callback as CommandInteraction).member?.username}`, (ctx.callback as CommandInteraction).member?.avatarURL)
+        .setAuthor(`${(ctx.callback as CommandInteraction).member?.username}`, ctx.callback.member?.avatarURL())
         .setTitle('New slash command executed')
         .setDescription(`The command \`${cmd.name}\` has been executed in \`${ctx.guild.name}\``)
         .addField('Server ID', `\`${ctx.guild.id}\``)
-        .addField('Owner ID', `\`${ctx.guild.ownerID}\``)
+        .addField('Owner', `\`${ctx.guild.owner?.username}\` (\`${ctx.guild.ownerID}\`)`)
         .addField('Command author', `\`${(ctx.callback as CommandInteraction).member?.username}\``)
-        .setThumbnail(ctx.guild.iconURL!)
+        .setThumbnail(ctx.guild.iconURL()!)
   
-        const channel = await this.client.getRESTChannel(process.env.COMMAND_LOG!) as TextChannel
+        const channel = await this.client.rest.channels.get(process.env.COMMAND_LOG!) as TextChannel
         const webhooks = await channel.getWebhooks()
         let webhook = webhooks.find(w => w.name === `${this.client.user.username} Logger`)
         if(!webhook) webhook = await channel.createWebhook({ name: `${this.client.user.username} Logger` })
-        
-        this.client.executeWebhook(webhook.id, webhook.token!, {
-          embed,
-          avatarURL: this.client.user.avatarURL
-        })
+        webhook.execute({
+          embeds: [embed],
+          avatarURL: this.client.user.avatarURL()
+        }, webhook.token!)
       })
     }
   }
