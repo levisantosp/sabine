@@ -14,7 +14,7 @@ export default class GuildDeleteListener extends Listener {
     .setDescription(`Now I'm on ${this.client.guilds.size} guilds`)
     .addField('Owner', `\`${guild.owner?.username} (${guild.ownerID})`, true)
     .addField('Member count', guild.memberCount.toString(), true)
-    .setThumbnail(guild.icon!)
+    .setThumbnail(guild.iconURL()!)
 
     const channel = await this.client.rest.channels.get(process.env.GUILDS_LOG!) as TextChannel
     const webhooks = await channel.getWebhooks()
