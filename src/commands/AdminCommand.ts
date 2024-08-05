@@ -269,12 +269,12 @@ export default class AdminCommand extends Command {
     if(args[1] === 'resend') {
       await i.defer(64)
       const guild = (await Guild.findById(i.guildID!))!
-      if(guild.resendTime > Date.now()) return i.createMessage({ content: this.locale('commands.admin.resend_time') })
+      if(guild.resendTime > Date.now()) return i.createFollowup({ content: this.locale('commands.admin.resend_time') })
       const button = new ButtonBuilder()
       .setLabel(this.locale('commands.admin.continue'))
       .setStyle('red')
       .setCustomId(`admin;continue;${i.member.id}`)
-      i.createMessage(button.build(this.locale('commands.admin.confirm')) as InteractionContent)
+      i.createFollowup(button.build(this.locale('commands.admin.confirm')) as InteractionContent)
     }
     if(args[1] === 'continue') {
       const guild = (await Guild.findById(i.guildID!))!
