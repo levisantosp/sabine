@@ -47,7 +47,7 @@ export default class InteractionCreateListener extends Listener {
           }
           const res = await MainController.getMatches()
           const data = res.find(d => d.id == interaction.data.customID.slice(6))
-          if((data?.when as number) / 1000 > (Date.now()) || !data) {
+          if(data?.status === 'LIVE' || !data) {
             return interaction.editOriginal({
               content: locales(guild?.lang!, 'helper.started')
             })
@@ -78,7 +78,7 @@ export default class InteractionCreateListener extends Listener {
           }
           const res = await MainController.getMatches()
           const data = res.find(d => d.id == interaction.data.customID.slice(8))
-          if((data?.when as number) / 1000 > (Date.now()) || !data) {
+          if(data?.status === 'LIVE' || !data) {
             return interaction.editOriginal({
               content: locales(guild?.lang!, 'helper.started'),
               components: []
