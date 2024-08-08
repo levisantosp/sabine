@@ -7,6 +7,7 @@ declare global {
       ERROR_LOG: string
       COMMAND_LOG: string
       GUILDS_LOG: string
+      SHARD_LOG: string
       INTERVAL: number
     }
   }
