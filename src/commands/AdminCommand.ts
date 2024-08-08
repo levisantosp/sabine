@@ -253,13 +253,17 @@ export default class AdminCommand extends Command {
       if(e.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e
     })
     .slice(0, 25)
-    const guild = await Guild.findById(i.guildID)
+    const guild = (await Guild.findById(i.guildID))!
     const args = {
       add: async() => {
-        i.result(events!.map(e => ({ name: e, value: e })))
+        i.result(events.map(e => ({ name: e, value: e })))
       },
       remove: async() => {
-        i.result(guild!.events.map(e => ({ name: e.name, value: e.name })))
+        const events = guild!.events.map(e => e.name)
+        .filter(e => {
+          if(e.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e
+        })
+        i.result(guild.events.map(e => ({ name: e.name, value: e.name })))
       }
     }
     args[i.data.options.getSubCommand()![1] as 'add' | 'remove']()
