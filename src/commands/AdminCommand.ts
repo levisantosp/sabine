@@ -207,7 +207,7 @@ export default class AdminCommand extends Command {
           ctx.reply('Agora eu irei interagir em português neste servidor!')
         }
       }
-      options[ctx.callback.data.options.getStringOption('lang')?.name as 'pt' | 'en']()
+      options[ctx.callback.data.options.getStringOption('lang')?.value as 'pt' | 'en']()
     }
     if(ctx.args[0] === 'tournament') {
       const options = {
@@ -274,7 +274,7 @@ export default class AdminCommand extends Command {
       .setLabel(this.locale('commands.admin.continue'))
       .setStyle('red')
       .setCustomId(`admin;continue;${i.member.id}`)
-      i.createFollowup(button.build(this.locale('commands.admin.confirm')) as InteractionContent)
+      i.createFollowup(button.build(this.locale('commands.admin.confirm')))
     }
     if(args[1] === 'continue') {
       const guild = (await Guild.findById(i.guildID!))!
