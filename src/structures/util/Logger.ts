@@ -17,6 +17,10 @@ export default class Logger {
     return console.log(colors.yellow(`[${moment(Date.now()).format('hh:mm')}] ${message}`))
   }
   async error(error: string | Error, shardId?: number) {
+    const errors = [
+      'Missing Permissions'
+    ]
+    if(errors.some(e => error.toString().includes(e))) return
     switch(typeof error) {
       case 'string': {
         const embed = new EmbedBuilder()
