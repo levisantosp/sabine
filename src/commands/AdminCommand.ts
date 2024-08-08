@@ -263,7 +263,7 @@ export default class AdminCommand extends Command {
         .filter(e => {
           if(e.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e
         })
-        i.result(guild.events.map(e => ({ name: e.name, value: e.name })))
+        i.result(events.map(e => ({ name: e, value: e })))
       }
     }
     args[i.data.options.getSubCommand()![1] as 'add' | 'remove']()
