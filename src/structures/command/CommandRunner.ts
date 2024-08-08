@@ -5,6 +5,8 @@ import EmbedBuilder from '../builders/EmbedBuilder.js'
 import App from '../client/App'
 import Logger from '../util/Logger.js'
 import CommandContext from './CommandContext.js'
+import { UserSchemaInterface } from '../../database/schemas/User'
+import { GuildSchemaInterface } from '../../database/schemas/Guild'
 
 interface CommandRunnerOptions {
   client: App
@@ -25,8 +27,8 @@ export default class CommandRunner {
       const guild = await Guild.findById(this.callback.guildID)
       const user = await User.findById(this.callback.member?.id)
       const db = {
-        user,
-        guild
+        user: user as UserSchemaInterface,
+        guild: guild as GuildSchemaInterface
       }
       const ctx = new CommandContext(
         {

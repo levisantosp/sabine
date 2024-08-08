@@ -213,11 +213,11 @@ export default class AdminCommand extends Command {
       const options = {
         add: async() => {
           if(ctx.db.guild.events.length >= ctx.db.guild.tournamentsLength) return ctx.reply('commands.admin.limit_reached', { cmd: `</admin tournament remove:${this.id}>` })
-          if(ctx.db.guild.events.some((e: any) => e.channel1 === ctx.args[1])) return ctx.reply('commands.admin.channel_being_used', {
+          if(ctx.db.guild.events.some(e => e.channel1 === ctx.args[1])) return ctx.reply('commands.admin.channel_being_used', {
             ch: `<#${ctx.args[1]}>`,
             cmd: `</admin panel:${this.id}>`
           })
-          if(ctx.db.guild.events.filter((e: any) => e.name === ctx.args[0]).length) return ctx.reply('commands.admin.tournament_has_been_added')
+          if(ctx.db.guild.events.filter(e => e.name === ctx.args[0]).length) return ctx.reply('commands.admin.tournament_has_been_added')
           if(ctx.args[1] === ctx.args[2]) return ctx.reply('commands.admin.channels_must_be_different')
           if(ctx.guild.channels.get(ctx.args[3])?.type !== 0 || ctx.guild.channels.get(ctx.args[4])?.type !== 0) return ctx.reply('commands.admin.invalid_channel')
           ctx.db.guild.events.push({
@@ -231,7 +231,7 @@ export default class AdminCommand extends Command {
           })
         },
         remove: async() => {
-          ctx.db.guild.events.splice(ctx.db.guild.events.findIndex((e: any) => e.name === ctx.args[2]), 1)
+          ctx.db.guild.events.splice(ctx.db.guild.events.findIndex(e => e.name === ctx.args[2]), 1)
           await ctx.db.guild.save()
           ctx.reply('commands.admin.tournament_removed', {
             t: ctx.args[2]
@@ -259,7 +259,7 @@ export default class AdminCommand extends Command {
         i.result(events!.map(e => ({ name: e, value: e })))
       },
       remove: async() => {
-        i.result(guild!.events.map((e: any) => ({ name: e.name, value: e.name })))
+        i.result(guild!.events.map(e => ({ name: e.name, value: e.name })))
       }
     }
     args[i.data.options.getSubCommand()![1] as 'add' | 'remove']()

@@ -1,17 +1,23 @@
 import { CommandInteraction, CreateMessageOptions, Guild, InitialInteractionContent } from 'oceanic.js'
 import locale from '../../locales'
 import App from '../client/App'
+import { GuildSchemaInterface } from '../../database/schemas/Guild'
+import { UserSchemaInterface } from '../../database/schemas/User'
 
+type Database = {
+  guild: GuildSchemaInterface
+  user: UserSchemaInterface
+}
 interface CommandContextOptions {
   client: App
-  db: any
+  db: Database
   guild: Guild
   callback: CommandInteraction
   locale: string
 }
 export default class CommandContext {
   client: App
-  db: any
+  db: Database
   guild: Guild
   callback: CommandInteraction
   locale: string

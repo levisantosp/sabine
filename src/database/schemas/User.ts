@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose'
+import { Document, Schema, model } from 'mongoose'
 
 const User = new Schema({
   _id: String,
@@ -15,5 +15,18 @@ const User = new Schema({
     default: 0
   }
 })
-
+type UserSchemaHistoryTeam = {
+  name: string
+  score: string
+}
+type UserSchemaHistory = {
+  match: string
+  teams: UserSchemaHistoryTeam[]
+}
+export interface UserSchemaInterface extends Document {
+  _id: string
+  history: UserSchemaHistory[]
+  guessesRight: number
+  guessesWrong: number
+}
 export default model('users', User)

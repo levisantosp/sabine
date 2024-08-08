@@ -6,7 +6,8 @@
   "scripts": {
     "test": "tsx test",
     "start": "rm -rf dist && tsc && node dist/index.js",
-    "dev": "tsx ."
+    "dev": "tsx .",
+    "build": "rm -rf dist && tsc"
   },
   "keywords": [],
   "author": "levispires",

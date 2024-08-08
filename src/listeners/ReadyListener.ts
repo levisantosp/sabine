@@ -48,7 +48,7 @@ export default class ReadyListener extends Listener {
       })
       let matches: ResultsData[] = []
       for(const guild of guilds) {
-        let data = res.filter(d => guild.events.some((e: any) => e.name === d.tournament.name))
+        let data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
         if(!data || !data[0]) return
         if(guild.lastResult && guild.lastResult !== data[0].id) {
           let match = data.find(e => e.id == guild.lastResult)
@@ -132,7 +132,7 @@ export default class ReadyListener extends Listener {
           continue
         }
         guild.matches = []
-        let data = res.filter(d => guild.events.some((e: any) => e.name === d.tournament.name))
+        let data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
         for(const e of guild.events) {
           if(!this.client.getChannel(e.channel1)) continue
           let messages = await this.client.rest.channels.getMessages(e.channel1)
