@@ -1,14 +1,14 @@
 import { App, Command, CommandContext, EmbedBuilder } from '../structures'
 
-export default class GuessesCommand extends Command {
+export default class PredictionsCommand extends Command {
   constructor(client: App) {
     super({
       client,
-      name: 'guesses',
+      name: 'predictions',
       nameLocalizations: {
         'pt-BR': 'palpites'
       },
-      description: 'Shows your guesses',
+      description: 'Shows your predictions',
       descriptionLocalizations: {
         'pt-BR': 'Mostra seus palpites'
       },
@@ -26,17 +26,17 @@ export default class GuessesCommand extends Command {
         }
       ],
       botPermissions: ['EMBED_LINKS'],
-      syntax: 'guesses <page>',
+      syntax: 'predictions <page>',
       examples: [
-        'guesses',
-        'guesses 1',
-        'guesses 2',
-        'guesses 5'
+        'predictions',
+        'predictions 1',
+        'predictions 2',
+        'predictions 5'
       ]
     })
   }
   async run(ctx: CommandContext) {
-    if(!ctx.db.user?.history?.length) return ctx.reply('commands.history.no_guesses')
+    if(!ctx.db.user?.history?.length) return ctx.reply('commands.history.no_predictions')
       let history = ctx.db.user.history.reverse()
       if(!Number(ctx.args[0]) || isNaN(Number(ctx.args[0])) || Number(ctx.args[0]) == 1) history = history.slice(0, 5)
       else history = history.slice(Number(ctx.args[0]) * 5 - 5, Number(ctx.args[0]) * 5)
