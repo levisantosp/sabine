@@ -7,7 +7,7 @@ export default class LeaderboardCommand extends Command {
     super({
       client,
       name: 'leaderboard',
-      description: 'Ranking of guesses',
+      description: 'Ranking of predictions',
       descriptionLocalizations: {
         'pt-BR': 'Ranking de palpites'
       },
