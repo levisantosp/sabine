@@ -7,7 +7,7 @@ export const commands = {
       footer: 'Página {p1}/{p2}',
       desc: 'Palpites certos: `{right}`\nPalpites errados: `{wrong}`\nPalpites totais: `{t}`'
     },
-    no_guesses: 'Você não possui palpites.'
+    no_predictions: 'Você não possui palpites.'
   },
   player: {
     insert_player: 'Informe o nome de um jogador.',

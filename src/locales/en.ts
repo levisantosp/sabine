@@ -1,13 +1,12 @@
 export const commands = {
   history: {
     embed: {
-      author: 'Your guesses',
-      field: 'Guess: `{score1}-{score2}`\nResult: [click here]({link})',
-      field2: 'Guess: `{score1}-{score2}`\nResult: [click here]({link})',
+      author: 'Your predictions',
+      field: 'Prediction: `{score1}-{score2}`\nResult: [click here]({link})',
       footer: 'Page {p1}/{p2}',
-      desc: 'Right guesses: `{right}`\nWrong guesses: `{wrong}`\nTotal guesses: `{t}`'
+      desc: 'Right predictions: `{right}`\nWrong predictions: `{wrong}`\nTotal predictions: `{t}`'
     },
-    no_guesses: 'You do not have guesses.'
+    no_predictions: 'You do not have predictions.'
   },
   player: {
     insert_player: 'Provide the name of a player.',
@@ -41,8 +40,8 @@ export const commands = {
   leaderboard: {
     author: 'Page {page}/{pages}',
     footer: 'Your position: #{pos}',
-    title: 'Users with the most correct guesses',
-    field: '`{t}` correct guesses',
+    title: 'Users with the most correct predictions',
+    field: '`{t}` correct predictions',
     no_users: 'No users to show in this page.'
   },
   admin: {
@@ -64,13 +63,13 @@ export const commands = {
   }
 }
 export const helper = {
-  palpitate: 'Make a guess',
+  palpitate: 'Make a prediction',
   stats: 'Stats',
   palpitate_modal: {
-    title: 'Your guess for the match'
+    title: 'Your prediction for the match'
   },
-  palpitate_response: 'You guessed {t1} `{s1}-{s2}` {t2}',
-  replied: 'You have already guessed this match.',
+  palpitate_response: 'You predicted {t1} `{s1}-{s2}` {t2}',
+  replied: 'You have already predicted this match.',
   started: 'This match has already started or finished.',
   permissions: {
     user: 'You\'re weak. You lack the following permissions to use this command: {permissions}',
@@ -79,7 +78,7 @@ export const helper = {
   error: 'An unexpected error has occurred...\n`{e}`',
   privacy: 'Before you start to use the bot, you must accept the [Terms of Service and Privacy](https://levispires.github.io/sabine-terms/)',
   verifying: '<a:carregando:809221866434199634> Processing request... just wait.',
-  verified: '<:sucess:869391072323846184> Request processed. You can already make a guess.'
+  verified: '<:sucess:869391072323846184> Request processed. You can already make a prediction.'
 }
 export const permissions = {
   CREATE_INSTANT_INVITE: 'Create Instant Invite',
