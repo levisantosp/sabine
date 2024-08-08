@@ -2,57 +2,6 @@ import { ApplicationCommandOptions, ApplicationCommandOptionsChoice, Autocomplet
 import App from '../client/App'
 import CommandContext from './CommandContext'
 
-type ChoiceOptions = {
-  name: string
-  nameLocalizations?: {
-    'pt-BR': string
-  }
-  value: string
-}
-type SubCommandGroupOptions = {
-  type: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11
-  name: string
-  nameLocalizations?: {
-    'pt-BR': string
-  }
-  description: string,
-  descriptionLocalizations: {
-    'pt-BR': string
-  },
-  choices?: ApplicationCommandOptionsChoice[]
-  required?: boolean
-  autocomplete?: boolean
-}
-type SubCommandOptions = {
-  type: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11
-  name: string
-  nameLocalizations?: {
-    'pt-BR': string
-  }
-  description: string,
-  descriptionLocalizations: {
-    'pt-BR': string
-  },
-  choices?: ChoiceOptions[]
-  required?: boolean
-  options?: SubCommandGroupOptions[]
-  autocomplete?: boolean
-}
-type SlashOptions = {
-  type: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11
-  name: string
-  nameLocalizations?: {
-    'pt-BR': string
-  }
-  description: string
-  descriptionLocalizations: {
-    'pt-BR': string
-  }
-  choices?: ChoiceOptions[]
-  required?: boolean
-  options?: SubCommandOptions[]
-  autocomplete?: boolean
-}
 type CommandOptions = {
   name: string
   nameLocalizations?: {
