@@ -55,8 +55,8 @@ export default class EmbedBuilder {
     }
     return this
   }
-  public setTimestamp(timestamp?: number) {
-    this.timestamp = timestamp?.toString() ?? Date.now().toString()
+  public setTimestamp(timestamp = new Date()) {
+    this.timestamp = timestamp.toISOString()
     return this
   }
   public build(content = '') {
