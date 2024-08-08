@@ -1,6 +1,6 @@
 import { CommandInteraction, TextChannel } from 'oceanic.js'
 import { Guild, User } from '../../database'
-import locale from '../../locales'
+import locale, { Args } from '../../locales'
 import EmbedBuilder from '../builders/EmbedBuilder.js'
 import App from '../client/App'
 import Logger from '../util/Logger.js'
@@ -66,7 +66,7 @@ export default class CommandRunner {
       }
       else await this.callback.defer()
 
-      cmd.locale = (content: string, args: any) => {
+      cmd.locale = (content: string, args: Args) => {
         return locale(this.locale, content, args)
       }
       cmd.getUser = async(user: string) => {

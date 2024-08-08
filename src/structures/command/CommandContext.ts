@@ -1,5 +1,5 @@
 import { CommandInteraction, CreateMessageOptions, Guild, InitialInteractionContent } from 'oceanic.js'
-import locale from '../../locales'
+import locale, { Args } from '../../locales'
 import App from '../client/App'
 import { GuildSchemaInterface } from '../../database/schemas/Guild'
 import { UserSchemaInterface } from '../../database/schemas/User'
@@ -29,7 +29,7 @@ export default class CommandContext {
     this.callback = options.callback
     this.locale = options.locale
   }
-  async reply(content: string | InitialInteractionContent, options?: any) {
+  async reply(content: string | InitialInteractionContent, options?: Args) {
     if(this.callback instanceof CommandInteraction) {
       switch(typeof content) {
         case 'string': {

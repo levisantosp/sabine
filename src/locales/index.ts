@@ -1,6 +1,8 @@
-export default function(lang: string, content: string, args?: any): string {
+export type Args = {
+  [key: string]: string | number | Error
+}
+export default function(lang: string, content: string, args?: Args): string {
   let locale = require(`./${lang}.js`)
-
   for(const file of content.split('.')) {
     locale = locale[file]
     if(!locale) return content
