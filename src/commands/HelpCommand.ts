@@ -75,7 +75,6 @@ export default class HelpCommand extends Command {
           else return `\`/${cmd[0]}\``
         }
       })
-      console.log(commands)
       const embed = new EmbedBuilder()
       .setTitle(this.locale('commands.help.title'))
       .setThumbnail(this.client.user.avatarURL())
