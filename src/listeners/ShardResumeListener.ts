@@ -11,7 +11,7 @@ export default class ShardDisconnectListener extends Listener {
   public async on(id: number) {
     const embed = new EmbedBuilder()
     .setTitle('Shard Resumed')
-    .setDescription(`Shard ID: \`${id}\` => \`Resume\``)
+    .setDescription(`Shard ID: \`${id}\` => \`Resumed\``)
     .setFooter(`Instance: ${this.client.user.tag}`, this.client.user.avatarURL())
     .setTimestamp()
     const channel = await this.client.rest.channels.get(process.env.SHARD_LOG!) as TextChannel

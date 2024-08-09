@@ -96,10 +96,11 @@ export default class CommandRunner {
         })
       })
       .then(async() => {
+        const command = ctx.callback.data.options.getSubCommand() ? `${cmd.name} ${ctx.callback.data.options.getSubCommand()?.join(' ')}` : cmd.name
         const embed = new EmbedBuilder()
-        .setAuthor(`${(ctx.callback as CommandInteraction).member?.username}`, ctx.callback.member?.avatarURL())
+        .setAuthor(`${ctx.callback.member?.username}`, ctx.callback.member?.avatarURL())
         .setTitle('New slash command executed')
-        .setDescription(`The command \`${cmd.name}\` has been executed in \`${ctx.guild.name}\``)
+        .setDescription(`The command \`${command}\` has been executed in \`${ctx.guild.name}\``)
         .addField('Server ID', `\`${ctx.guild.id}\``)
         .addField('Owner', `\`${ctx.guild.owner?.username}\` (\`${ctx.guild.ownerID}\`)`)
         .addField('Command author', `\`${(ctx.callback as CommandInteraction).member?.username}\``)

@@ -184,6 +184,7 @@ export default class AdminCommand extends Command {
       .setLabel(this.locale('commands.admin.resend'))
       .setStyle('red')
       .setCustomId(`admin;resend;${ctx.callback.member?.id}`)
+      if(!ctx.db.guild.events.length) button.setDisabled()
       ctx.reply({
         embeds: [embed],
         components: [
