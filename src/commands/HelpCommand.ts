@@ -60,6 +60,22 @@ export default class HelpCommand extends Command {
       ctx.reply(embed.build())
     }
     else {
+      const commands = Array.from(this.client.commands).map((cmd) => {
+        if(!cmd[1].onlyDev) {
+          if(cmd[1].options) {
+            let options = cmd[1].options.map(op => {
+              if(op.type === 1) return `\`/${cmd[0]} ${op.name}\``
+              else if(op.type === 2) {
+                return op.options?.map(op2 => `\`/${cmd[0]} ${op.name} ${op2.name}\``).join('\n')
+              }
+              else return `\`/${cmd[0]}\``
+            })
+            return options.join('\n')
+          }
+          else return `\`/${cmd[0]}\``
+        }
+      })
+      console.log(commands)
       const embed = new EmbedBuilder()
       .setTitle(this.locale('commands.help.title'))
       .setThumbnail(this.client.user.avatarURL())
@@ -67,10 +83,8 @@ export default class HelpCommand extends Command {
         arg: `/help [command]`
       }))
       .addField(this.locale('commands.help.field', {
-        q: this.client.commands.size
-      }), Array.from(this.client.commands).map((cmd: any) => {
-        if(!cmd.onlyDev) return `\`/${cmd[0]}\``
-      }).join('\n'))
+        q: commands.length
+      }), commands.join('\n'))
 
       const button = new ButtonBuilder()
       .setLabel(this.locale('commands.help.community'))
