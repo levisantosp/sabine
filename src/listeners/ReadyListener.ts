@@ -129,12 +129,12 @@ export default class ReadyListener extends Listener {
         if(!results.length && guild.matches.length) {
           guild.verificationTime = new Date().setHours(24, 0, 0, 0)
           await guild.save()
-          console.log('test')
           continue
         }
         guild.matches = []
         let data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
         for(const e of guild.events) {
+          console.log('aqui')
           if(!this.client.getChannel(e.channel1)) continue
           let messages = await this.client.rest.channels.getMessages(e.channel1)
           await this.client.rest.channels.deleteMessages(e.channel1, messages.map(m => m.id), 'Removing completed matches.')
