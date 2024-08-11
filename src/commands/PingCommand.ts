@@ -9,6 +9,6 @@ export default class PingCommand extends Command {
     })
   }
   async run(ctx: CommandContext) {
-    ctx.reply(`Pong! \`${ctx.guild.shard.latency}ms\``)
+    ctx.reply(`Pong! \`${ctx.guild.shard.latency}ms\`\nWorking on docker`)
   }
 }
