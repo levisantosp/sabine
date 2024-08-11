@@ -66,7 +66,7 @@ export default class CommandRunner {
       }
       else await this.callback.defer()
 
-      cmd.locale = (content: string, args: Args) => {
+      cmd.locale = (content: string, args?: Args) => {
         return locale(this.locale, content, args)
       }
       cmd.getUser = async(user: string) => {

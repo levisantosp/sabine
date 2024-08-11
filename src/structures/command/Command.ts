@@ -1,6 +1,7 @@
 import { ApplicationCommandOptions, ApplicationCommandOptionsChoice, AutocompleteInteraction, ComponentInteraction, Constants, User } from 'oceanic.js'
 import App from '../client/App'
 import CommandContext from './CommandContext'
+import { Args } from '../../locales'
 
 type CommandOptions = {
   name: string
@@ -41,7 +42,7 @@ export default class Command {
   onlyDev?: boolean
   ephemeral?: boolean
   id!: string
-  locale!: (content: string, args?: any) => string
+  locale!: (content: string, args?: Args) => string
   getUser!: (user: string) => Promise<User | undefined>
   constructor(options: CommandOptions) {
     this.name = options.name
