@@ -129,6 +129,7 @@ export default class ReadyListener extends Listener {
         if(!results.length && guild.matches.length) {
           guild.verificationTime = new Date().setHours(24, 0, 0, 0)
           await guild.save()
+          console.log('test')
           continue
         }
         guild.matches = []
