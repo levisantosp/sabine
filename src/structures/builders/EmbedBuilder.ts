@@ -9,7 +9,7 @@ export default class EmbedBuilder {
   public thumbnail?: EmbedImageOptions
   public timestamp?: string
   public footer?: EmbedFooterOptions
-  public color?: number = 0x7289DA
+  public color?: number = 1769216
   public setAuthor(name: string, iconURL?: string, url?: string) {
     this.author = {
       name,
