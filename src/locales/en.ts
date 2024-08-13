@@ -60,6 +60,16 @@ export const commands = {
     resend: 'Resend matches',
     confirm: 'You are about to FORCE the submission of matches on this server!\nIt is worth remembering that this action is **IRREVERSIBLE** and can only be done **ONCE a day**! If you still want to add more tournaments, add them before using this feature.\nDo you want to continue?',
     continue: 'Continue'
+  },
+  info: {
+    embed: {
+      title: 'Bot information'
+    },
+    lib: 'Library',
+    creator: 'Creator',
+    guilds: 'Servers',
+    users: 'Users',
+    invite: 'Invite me!'
   }
 }
 export const helper = {
@@ -78,7 +88,11 @@ export const helper = {
   error: 'An unexpected error has occurred...\n`{e}`',
   privacy: 'Before you start to use the bot, you must accept the [Terms of Service and Privacy](https://levispires.github.io/sabine-terms/)',
   verifying: '<a:carregando:809221866434199634> Processing request... just wait.',
-  verified: '<:sucess:869391072323846184> Request processed. You can already make a prediction.'
+  verified: '<:sucess:869391072323846184> Request processed. You can already make a prediction.',
+  pickem: {
+    label: 'Pick\'em',
+    res: 'Join the PICK\'EM for a change to win a <:booster:1272968894239215636> **Discord Nitro** or a <:nitro:1272968817496297542> **Discord Nitro Basic** by joining our official server!\nhttps://discord.gg/g5nmc376yh'
+  }
 }
 export const permissions = {
   CREATE_INSTANT_INVITE: 'Create Instant Invite',

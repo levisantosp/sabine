@@ -61,6 +61,16 @@ export const commands = {
     resend: 'Reenviar partidas',
     confirm: 'Você está prestes a FORÇAR o envio das partidas neste servidor!\nVale lembrar que esta ação é **IRREVERSÍVEL** e só pode ser feita **UMA VEZ por dia**! Se você ainda quer adicionar mais campeonatos, adicione antes de usar este recurso.\nDeseja continuar?',
     continue: 'Continuar'
+  },
+  info: {
+    embed: {
+      title: 'Informações do Bot'
+    },
+    lib: 'Biblioteca',
+    creator: 'Criador',
+    guilds: 'Servidores',
+    users: 'Usuários',
+    invite: 'Me adicione!'
   }
 }
 export const helper = {
@@ -79,7 +89,11 @@ export const helper = {
   error: 'Ocorreu um erro inesperado...\n`{e}`',
   privacy: 'Antes de começar a usar o bot, você deve aceitar os [Termos de Serviço e Privacidade](https://levispires.github.io/sabine-terms/)',
   verifying: '<a:carregando:809221866434199634> Processando requisição... aguarde.',
-  verified: '<:sucess:869391072323846184> Requisição processada. Você já pode fazer um palpite.'
+  verified: '<:sucess:869391072323846184> Requisição processada. Você já pode fazer um palpite.',
+  pickem: {
+    label: 'Bolão',
+    res: 'Participe do BOLÃO valendo um <:booster:1272968894239215636> **Discord Nitro** e um <:nitro:1272968817496297542> **Discord Nitro Basic** entrando no nosso servidor oficial!\nhttps://discord.gg/g5nmc376yh'
+  }
 }
 export const permissions = {
   CREATE_INSTANT_INVITE: 'Criar convite instantâneo',
