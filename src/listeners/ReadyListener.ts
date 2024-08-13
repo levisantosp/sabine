@@ -80,7 +80,11 @@ export default class ReadyListener extends Listener {
                         new ButtonBuilder()
                         .setLabel(locales(guild.lang, 'helper.stats'))
                         .setStyle('link')
-                        .setURL(`https://vlr.gg/${d.id}`)
+                        .setURL(`https://vlr.gg/${d.id}`),
+                        new ButtonBuilder()
+                        .setLabel(locales(guild.lang, 'helper.pickem.label'))
+                        .setStyle('blue')
+                        .setCustomId('pickem')
                       ]
                     }
                   ]
@@ -167,6 +171,15 @@ export default class ReadyListener extends Listener {
                   {
                     type: 1,
                     components: [button, urlButton]
+                  },
+                  {
+                    type: 1,
+                    components: [
+                      new ButtonBuilder()
+                      .setLabel(locales(guild.lang, 'helper.pickem.label'))
+                      .setStyle('blue')
+                      .setCustomId('pickem')
+                    ]
                   }
                 ]
               })
