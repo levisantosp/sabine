@@ -89,6 +89,7 @@ export default class ReadyListener extends Listener {
                     }
                   ]
                 })
+                .catch(() => {})
               }
             }
           }
