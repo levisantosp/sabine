@@ -19,5 +19,5 @@ jobs:
           port: 22
           script: |
             cd sabine/sabine
-            git pull
+            git pull origin main
             docker compose up -d --build
