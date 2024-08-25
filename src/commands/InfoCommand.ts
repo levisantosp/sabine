@@ -22,7 +22,7 @@ export default class InfoCommand extends Command {
     .addField(this.locale('commands.info.creator'), `@${this.client.users.get('441932495693414410')?.tag}`, true)
     .addField(this.locale('commands.info.guilds'), this.client.guilds.size.toString(), true)
     .addField(this.locale('commands.info.users'), this.client.users.filter(user => !user.bot).length.toString(), true)
-    .setFooter(`Shard ID: ${ctx.guild.shard.id} | Shard Uptime: ${ms(this.client.uptime, { shortFormat: true })} | Client Uptime: ${ms(Date.now() - this.client.startTime, { shortFormat: true })}`)
+    .setFooter(`Shard ID: ${ctx.guild.shard.id} | Shard Uptime: ${ms(this.client.uptime, { shortFormat: true })} | Client Uptime: ${ms(Date.now() - this.uptime, { shortFormat: true })}`)
     ctx.reply({
       embeds: [embed],
       components: [
