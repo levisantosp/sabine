@@ -1,4 +1,4 @@
-import { ApplicationCommandOptions, ApplicationCommandOptionsChoice, AutocompleteInteraction, ComponentInteraction, Constants, User } from 'oceanic.js'
+import { ApplicationCommandOptions, AutocompleteInteraction, ComponentInteraction, Constants, User } from 'oceanic.js'
 import App from '../client/App'
 import CommandContext from './CommandContext'
 import { Args } from '../../locales'
@@ -24,27 +24,28 @@ type CommandOptions = {
   autocomplete?: boolean
 }
 export default class Command {
-  name: string
-  nameLocalizations?: {
+  public name: string
+  public nameLocalizations?: {
     'pt-BR': string
   }
-  description: string
-  descriptionLocalizations?: {
+  public description: string
+  public descriptionLocalizations?: {
     'pt-BR': string
   }
-  options?: ApplicationCommandOptions[]
-  syntax?: string
-  syntaxes?: string[]
-  examples?: string[]
-  client: App
-  permissions?: Constants.PermissionName[]
-  botPermissions?: Constants.PermissionName[]
-  onlyDev?: boolean
-  ephemeral?: boolean
-  id!: string
-  locale!: (content: string, args?: Args) => string
-  getUser!: (user: string) => Promise<User | undefined>
-  constructor(options: CommandOptions) {
+  public options?: ApplicationCommandOptions[]
+  public syntax?: string
+  public syntaxes?: string[]
+  public examples?: string[]
+  public client: App
+  public permissions?: Constants.PermissionName[]
+  public botPermissions?: Constants.PermissionName[]
+  public onlyDev?: boolean
+  public ephemeral?: boolean
+  public id!: string
+  public locale!: (content: string, args?: Args) => string
+  public getUser!: (user: string) => Promise<User | undefined>
+  public uptime: number = Date.now()
+  public constructor(options: CommandOptions) {
     this.name = options.name
     this.nameLocalizations = options.nameLocalizations
     this.description = options.description
