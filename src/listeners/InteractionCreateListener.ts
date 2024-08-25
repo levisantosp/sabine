@@ -107,7 +107,8 @@ export default class InteractionCreateListener extends Listener {
                     style: 1,
                     minLength: 1,
                     maxLength: 1,
-                    required: true
+                    required: true,
+                    placeholder: '0'
                   },
                 ]
               },
@@ -121,7 +122,8 @@ export default class InteractionCreateListener extends Listener {
                     style: 1,
                     minLength: 1,
                     maxLength: 1,
-                    required: true
+                    required: true,
+                    placeholder: '0'
                   }
                 ]
               }
