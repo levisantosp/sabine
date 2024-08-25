@@ -92,7 +92,8 @@ export const helper = {
   pickem: {
     label: 'Pick\'em',
     res: 'Join the PICK\'EM for a chance to win a <:booster:1272968894239215636> **Discord Nitro** or a <:nitro:1272968817496297542> **Discord Nitro Basic** by joining our official server!\nhttps://discord.gg/g5nmc376yh'
-  }
+  },
+  banned: '**You are banned and can not use the bot.\nIf you think this is a mistake, contact us in our Discord server!**\n**When:** {when}\n**Ends at:** {ends}\n**Reason:** `{reason}`'
 }
 export const permissions = {
   CREATE_INSTANT_INVITE: 'Create Instant Invite',

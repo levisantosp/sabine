@@ -1,8 +1,7 @@
 import { CommandInteraction, CreateMessageOptions, Guild, InitialInteractionContent } from 'oceanic.js'
 import locale, { Args } from '../../locales'
 import App from '../client/App'
-import { GuildSchemaInterface } from '../../database/schemas/Guild'
-import { UserSchemaInterface } from '../../database/schemas/User'
+import { GuildSchemaInterface, UserSchemaInterface } from '../../database'
 
 type Database = {
   guild: GuildSchemaInterface

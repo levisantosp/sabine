@@ -1,4 +1,4 @@
-import { AutocompleteInteraction, ComponentInteraction, InteractionContent } from 'oceanic.js'
+import { AutocompleteInteraction, ComponentInteraction } from 'oceanic.js'
 import { App, ButtonBuilder, Command, CommandContext, EmbedBuilder } from '../structures'
 import { Guild } from '../database'
 import MainController from '../scraper'

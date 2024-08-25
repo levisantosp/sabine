@@ -1,6 +1,6 @@
-import { AutocompleteInteraction, CommandInteraction, ComponentInteraction, Interaction, ModalSubmitInteraction, ModalSubmitInteractionComponentsWrapper } from 'oceanic.js'
+import { AutocompleteInteraction, CommandInteraction, ComponentInteraction, ModalSubmitInteraction, ModalSubmitInteractionComponentsWrapper } from 'oceanic.js'
 import { App, ButtonBuilder, CommandRunner, Listener, Logger } from '../structures'
-import { Guild, User } from '../database'
+import { Blacklist, BlacklistSchemaInterface, Guild, User } from '../database'
 import locales from '../locales'
 import MainController from '../scraper'
 
@@ -13,6 +13,9 @@ export default class InteractionCreateListener extends Listener {
   }
   async on(interaction: ComponentInteraction | CommandInteraction | AutocompleteInteraction | ModalSubmitInteraction | ModalSubmitInteractionComponentsWrapper) {
     if(interaction instanceof ComponentInteraction) {
+      const blacklist = await Blacklist.findById('blacklist') as BlacklistSchemaInterface
+      const ban = blacklist.users.find(user => user.id === interaction.user.id)
+      if(ban) return
       const args = interaction.data.customID.split(';')
       const command = this.client.commands.get(args[0])
       const guild = await Guild.findById(interaction.guildID!)

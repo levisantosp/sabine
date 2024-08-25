@@ -93,7 +93,8 @@ export const helper = {
   pickem: {
     label: 'Bolão',
     res: 'Participe do BOLÃO valendo um <:booster:1272968894239215636> **Discord Nitro** e um <:nitro:1272968817496297542> **Discord Nitro Basic** entrando no nosso servidor oficial!\nhttps://discord.gg/g5nmc376yh'
-  }
+  },
+  banned: '**Você está banido e não pode mais usar o bot.\nSe você acha que isso é um engano, entre em contato conosco no nosso servidor no Discord!**\n**Quando:** {when}\n**Termina em:** {ends}\n**Motivo:** `{reason}`'
 }
 export const permissions = {
   CREATE_INSTANT_INVITE: 'Criar convite instantâneo',

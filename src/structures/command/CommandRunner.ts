@@ -1,12 +1,11 @@
 import { CommandInteraction, TextChannel } from 'oceanic.js'
-import { Guild, User } from '../../database'
+import { Blacklist, BlacklistSchemaInterface, Guild, GuildSchemaInterface, User, UserSchemaInterface } from '../../database'
 import locale, { Args } from '../../locales'
 import EmbedBuilder from '../builders/EmbedBuilder.js'
 import App from '../client/App'
 import Logger from '../util/Logger.js'
 import CommandContext from './CommandContext.js'
-import { UserSchemaInterface } from '../../database/schemas/User'
-import { GuildSchemaInterface } from '../../database/schemas/Guild'
+import ButtonBuilder from '../builders/ButtonBuilder'
 
 interface CommandRunnerOptions {
   client: App
@@ -24,11 +23,32 @@ export default class CommandRunner {
   }
   async run() {
     if(this.callback instanceof CommandInteraction) {
-      const guild = await Guild.findById(this.callback.guildID)
-      const user = await User.findById(this.callback.member?.id)
+      const guild = await Guild.findById(this.callback.guildID) as GuildSchemaInterface
+      const user = await User.findById(this.callback.member?.id) as UserSchemaInterface
+      const blacklist = await Blacklist.findById('blacklist') as BlacklistSchemaInterface
+      const ban = blacklist.users.find(user => user.id === this.callback.user.id)
+      if(ban) return this.callback.createMessage({
+        content: locale(guild.lang, 'helper.banned', {
+          reason: ban.reason,
+          ends: ban.endsAt === Infinity ? Infinity : `<t:${ban.endsAt}:F> | <t:${ban.endsAt}:R>`,
+          when: `<t:${ban.when}:F> | <t:${ban.when}:R>`
+        }),
+        flags: 64,
+        components: [
+          {
+            type: 1,
+            components: [
+              new ButtonBuilder()
+              .setStyle('link')
+              .setLabel(locale(guild.lang, 'commands.help.community'))
+              .setURL('https://discord.gg/g5nmc376yh')
+            ]
+          }
+        ]
+      })
       const db = {
-        user: user as UserSchemaInterface,
-        guild: guild as GuildSchemaInterface
+        user: user,
+        guild: guild
       }
       const ctx = new CommandContext(
         {
