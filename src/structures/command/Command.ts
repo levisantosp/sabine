@@ -16,7 +16,7 @@ type CommandOptions = {
   syntax?: string
   syntaxes?: string[]
   examples?: string[]
-  client: App
+  client?: App
   permissions?: Constants.PermissionName[]
   botPermissions?: Constants.PermissionName[]
   onlyDev?: boolean
@@ -36,7 +36,7 @@ export default class Command {
   public syntax?: string
   public syntaxes?: string[]
   public examples?: string[]
-  public client: App
+  public client?: App
   public permissions?: Constants.PermissionName[]
   public botPermissions?: Constants.PermissionName[]
   public onlyDev?: boolean

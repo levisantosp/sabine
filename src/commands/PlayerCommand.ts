@@ -5,7 +5,7 @@ import { PlayerData, PlayersData } from '../../types'
 const cache = new Map()
 
 export default class PlayerCommand extends Command {
-  constructor(client: App) {
+  public constructor(client: App) {
     super({
       client,
       name: 'player',
@@ -34,7 +34,7 @@ export default class PlayerCommand extends Command {
       botPermissions: ['EMBED_LINKS']
     })
   }
-  async run(ctx: CommandContext) {
+  public async run(ctx: CommandContext) {
     if(!cache.has(ctx.args[0])) {
       const res = await MainController.getPlayerById(ctx.args[0])
       cache.set(ctx.args[0], res)
@@ -63,6 +63,6 @@ export default class PlayerCommand extends Command {
     })
     .slice(0, 25)
     i.result(players.map(p => ({ name: `${p.name} (${p.teamTag})`, value: p.id })))
-    .catch((e) => new Logger(this.client).error(e))
+    .catch((e) => new Logger(this.client!).error(e))
   }
 }
