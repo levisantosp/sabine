@@ -137,6 +137,7 @@ export default class ReadyListener extends Listener {
         }
         guild.matches = []
         let data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
+        console.log(data)
         for(const e of guild.events) {
           if(!this.client.getChannel(e.channel1)) continue
           let messages = await this.client.rest.channels.getMessages(e.channel1)
