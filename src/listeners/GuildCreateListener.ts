@@ -1,5 +1,6 @@
 import { Guild, TextChannel } from 'oceanic.js'
 import { App, EmbedBuilder, Listener } from '../structures'
+import { Blacklist, BlacklistSchemaInterface } from '../database'
 
 export default class GuildCreateListener extends Listener {
   public constructor(client: App) {
@@ -9,6 +10,9 @@ export default class GuildCreateListener extends Listener {
     })
   }
   public async on(guild: Guild) {
+    const blacklist = await Blacklist.findById('blacklist') as BlacklistSchemaInterface
+    const ban = blacklist.guilds.find(g => g.id === guild.id)
+    if(ban) return await guild.leave()
     const embed = new EmbedBuilder()
     .setTitle(`I've been added to \`${guild.name} (${guild.id})\``)
     .setDescription(`Now I'm on ${this.client.guilds.size} guilds`)

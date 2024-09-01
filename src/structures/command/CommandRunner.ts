@@ -27,6 +27,9 @@ export default class CommandRunner {
       const user = await User.findById(this.callback.member?.id) as UserSchemaInterface
       const blacklist = await Blacklist.findById('blacklist') as BlacklistSchemaInterface
       const ban = blacklist.users.find(user => user.id === this.callback.user.id)
+      if(blacklist.guilds.find(g => g.id === this.callback.guildID)) {
+        return await this.callback.guild?.leave()
+      }
       if(ban) return this.callback.createMessage({
         content: locale(guild.lang, 'helper.banned', {
           reason: ban.reason,
