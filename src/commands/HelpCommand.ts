@@ -3,7 +3,7 @@ import { App, ButtonBuilder, Command, CommandContext, EmbedBuilder, Logger } fro
 import { AutocompleteInteraction } from 'oceanic.js'
 
 export default class HelpCommand extends Command {
-  constructor(client: App) {
+  public constructor(client: App) {
     super({
       client,
       name: 'help',
@@ -38,9 +38,9 @@ export default class HelpCommand extends Command {
       ]
     })
   }
-  async run(ctx: CommandContext) {
+  public async run(ctx: CommandContext) {
     if(ctx.args[0]) {
-      const cmd = this.client.commands.get(ctx.args[0])
+      const cmd = this.client!.commands.get(ctx.args[0])
       if (!cmd || cmd.onlyDev) return ctx.reply('commands.help.command_not_found')
       const { permissions } = await import(`../locales/${ctx.db.guild.lang}.js`)
       const embed = new EmbedBuilder()
@@ -50,7 +50,7 @@ export default class HelpCommand extends Command {
       })).text)
       .addField(this.locale('commands.help.name'), `\`${cmd.name}\``)
       .setFooter(this.locale('commands.help.footer'))
-      .setThumbnail(this.client.user.avatarURL())
+      .setThumbnail(this.client!.user.avatarURL())
 
       if(cmd.syntax) embed.addField(this.locale('commands.help.syntax'), `\`/${cmd.syntax}\``)
       if(cmd.syntaxes) embed.addField(this.locale('commands.help.syntax'), cmd.syntaxes.map(syntax => `\`/${syntax}\``).join('\n'))
@@ -60,7 +60,7 @@ export default class HelpCommand extends Command {
       ctx.reply(embed.build())
     }
     else {
-      const commands = Array.from(this.client.commands).map((cmd) => {
+      const commands = Array.from(this.client!.commands).map((cmd) => {
         if(!cmd[1].onlyDev) {
           if(cmd[1].options) {
             let options = cmd[1].options.map(op => {
@@ -75,14 +75,17 @@ export default class HelpCommand extends Command {
           else return `\`/${cmd[0]}\``
         }
       })
+      
       const embed = new EmbedBuilder()
       .setTitle(this.locale('commands.help.title'))
-      .setThumbnail(this.client.user.avatarURL())
+      .setThumbnail(this.client!.user.avatarURL())
       .setDescription(this.locale('commands.help.description', {
         arg: `/help [command]`
       }))
       .addField(this.locale('commands.help.field', {
-        q: commands.length
+        q: commands.length + commands.reduce((count, str) => {
+          return count! + (str?.match(/\n/g) ?? []).length
+        }, 0)
       }), commands.join('\n'))
 
       const button = new ButtonBuilder()
@@ -106,12 +109,12 @@ export default class HelpCommand extends Command {
       })
     }
   }
-  async execAutocomplete(i: AutocompleteInteraction) {
-    const commands = Array.from(this.client.commands).filter(c => {
+  public async execAutocomplete(i: AutocompleteInteraction) {
+    const commands = Array.from(this.client!.commands).filter(c => {
       if(c[0].includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return c
     })
     .slice(0, 25)
     i.result(commands.map(cmd => ({ name: cmd[0], value: cmd[0] })))
-    .catch((e) => new Logger(this.client).error(e))
+    .catch((e) => new Logger(this.client!).error(e))
   }
 }
