@@ -6,7 +6,7 @@ import { EventsData } from '../../types'
 const cache = new Map()
 
 export default class AdminCommand extends Command {
-  constructor(client: App) {
+  public constructor(client: App) {
     super({
       client,
       name: 'admin',
@@ -165,7 +165,7 @@ export default class AdminCommand extends Command {
       ]
     })
   }
-  async run(ctx: CommandContext) {
+  public async run(ctx: CommandContext) {
     if(ctx.args[0] === 'panel') {
       const embed = new EmbedBuilder()
       .setTitle(this.locale('commands.admin.panel'))
@@ -232,6 +232,11 @@ export default class AdminCommand extends Command {
           })
         },
         remove: async() => {
+          if(ctx.args[2] == this.locale('commands.admin.remove_all')) {
+            ctx.db.guild.events = []
+            await ctx.db.guild.save()
+            return ctx.reply('commands.admin.removed_all_tournaments')
+          }
           ctx.db.guild.events.splice(ctx.db.guild.events.findIndex(e => e.name === ctx.args[2]), 1)
           await ctx.db.guild.save()
           ctx.reply('commands.admin.tournament_removed', {
@@ -242,7 +247,7 @@ export default class AdminCommand extends Command {
       options[ctx.args[1] as 'remove' | 'add']()
     }
   }
-  async execAutocomplete(i: AutocompleteInteraction) {
+  public async execAutocomplete(i: AutocompleteInteraction) {
     if(!cache.has('events')) {
       const res = await MainController.getEvents()
       cache.set('events', res)
@@ -264,12 +269,13 @@ export default class AdminCommand extends Command {
         .filter(e => {
           if(e.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e
         })
+        events.unshift(this.locale('commands.admin.remove_all'))
         i.result(events.map(e => ({ name: e, value: e })))
       }
     }
     args[i.data.options.getSubCommand()![1] as 'add' | 'remove']()
   }
-  async execInteraction(i: ComponentInteraction, args: string[]) {
+  public async execInteraction(i: ComponentInteraction, args: string[]) {
     if(i.member?.id !== args[2]) return
     if(args[1] === 'resend') {
       await i.defer(64)
@@ -288,7 +294,6 @@ export default class AdminCommand extends Command {
         components: []
       })
       guild.matches = []
-      guild.verificationTime = 0
       guild.tbdMatches = []
       guild.resendTime = new Date().setHours(24, 0, 0, 0)
       await guild.save()
