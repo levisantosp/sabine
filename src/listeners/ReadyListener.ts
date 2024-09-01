@@ -1,4 +1,3 @@
-import ms from 'enhanced-ms'
 import { App, ButtonBuilder, EmbedBuilder, Listener, Logger } from '../structures'
 import { Guild, User } from '../database'
 import locales from '../locales'
@@ -67,8 +66,9 @@ export default class ReadyListener extends Listener {
               if(e.name === d.tournament.name) {
                 const embed = new EmbedBuilder()
                 .setTitle(d.tournament.name)
+                .setDescription(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
                 .setThumbnail(d.tournament.image)
-                .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`, '', true)
+                .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`.replaceAll(':flag_un:', ':united_nations:'), '', true)
                 .addField(`${d.teams[0].score}\n${d.teams[1].score}`, '', true)
                 .setFooter(d.stage)
                 this.client.rest.channels.createMessage(e.channel2, {
@@ -129,7 +129,6 @@ export default class ReadyListener extends Listener {
       const res2 = await MainController.getResults()
       if(!guilds.length) return
       for(const guild of guilds) {
-        if(guild.verificationTime > Date.now()) continue
         const results = res2.filter(d => d.id === guild.matches.at(-1))
         if(!results.length && guild.matches.length) {
           guild.verificationTime = new Date().setHours(24, 0, 0, 0)
@@ -143,7 +142,7 @@ export default class ReadyListener extends Listener {
           let messages = await this.client.rest.channels.getMessages(e.channel1)
           await this.client.rest.channels.deleteMessages(e.channel1, messages.map(m => m.id), 'Removing completed matches.')
           for(const d of data) {
-            if(d.when > (86400000 + Date.now())) continue
+            if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
             if(e.name === d.tournament.name) {
               let index = guild.matches.findIndex((m: string) => m === d.id)
               if(index > -1) guild.matches.splice(index, 1)
@@ -153,7 +152,7 @@ export default class ReadyListener extends Listener {
               .setTitle(d.tournament.name)
               .setDescription(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
               .setThumbnail(d.tournament.image)
-              .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`, '', true)
+              .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`.replaceAll(':flag_un:', ':united_nations:'), '', true)
               .setFooter(d.stage)
     
               const button = new ButtonBuilder()
