@@ -37,7 +37,7 @@ export const commands = {
     community: 'Community and Support',
     privacy: 'Terms of Service and Privacy'
   },
-  leaderboard: {
+  ranking: {
     author: 'Page {page}/{pages}',
     footer: 'Your position: #{pos}',
     title: 'Users with the most correct predictions',
@@ -46,9 +46,9 @@ export const commands = {
   },
   admin: {
     tournament_has_been_added: 'This tournament already has been added.',
-    tournament_added: 'The tournament **{t}** has been added successfuly!',
+    tournament_added: 'The tournament **{t}** has been added successfully!',
     channels_must_be_different: 'The matches channel and results channel cannot be the same. It is recommended that the matches channel be a separate channel where there will be no member interaction.',
-    tournament_removed: 'The tournament **{t}** has been removed successfuly!',
+    tournament_removed: 'The tournament **{t}** has been removed successfully!',
     panel: 'Control Panel',
     event_channels: 'Matches will be announced in {ch1}\nResults will be announced in {ch2}',
     desc: 'Language: `{lang}` (change by using: </admin language:{id}>)\nLimit of tournaments: `{limit}`',
@@ -59,7 +59,9 @@ export const commands = {
     resending: 'Resending matches. It may take a few minutes for matches to be resent, just wait.',
     resend: 'Resend matches',
     confirm: 'You are about to FORCE the submission of matches on this server!\nIt is worth remembering that this action is **IRREVERSIBLE** and can only be done **ONCE a day**! If you still want to add more tournaments, add them before using this feature.\nDo you want to continue?',
-    continue: 'Continue'
+    continue: 'Continue',
+    remove_all: 'Remove all',
+    removed_all_tournaments: 'All tournaments have been removed successfully!'
   },
   info: {
     embed: {

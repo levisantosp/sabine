@@ -38,7 +38,7 @@ export const commands = {
     community: 'Comunidade e Suporte',
     privacy: 'Termos de Serviço e Privacidade'
   },
-  leaderboard: {
+  ranking: {
     author: 'Página {page}/{pages}',
     footer: 'Sua posição: #{pos}',
     title: 'Usuários com mais palpites certos',
@@ -60,7 +60,9 @@ export const commands = {
     resending: 'Reenviando partidas. Pode demorar alguns minutos para as partidas serem reenviadas, apenas aguarde.',
     resend: 'Reenviar partidas',
     confirm: 'Você está prestes a FORÇAR o envio das partidas neste servidor!\nVale lembrar que esta ação é **IRREVERSÍVEL** e só pode ser feita **UMA VEZ por dia**! Se você ainda quer adicionar mais campeonatos, adicione antes de usar este recurso.\nDeseja continuar?',
-    continue: 'Continuar'
+    continue: 'Continuar',
+    remove_all: 'Remover todos',
+    removed_all_tournaments: 'Todos os torneios foram removidos com sucesso!'
   },
   info: {
     embed: {
