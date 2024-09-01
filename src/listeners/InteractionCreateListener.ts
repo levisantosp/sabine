@@ -1,7 +1,7 @@
 import { AutocompleteInteraction, CommandInteraction, ComponentInteraction, ModalSubmitInteraction, ModalSubmitInteractionComponentsWrapper } from 'oceanic.js'
 import { App, ButtonBuilder, CommandRunner, Listener, Logger } from '../structures'
 import { Blacklist, BlacklistSchemaInterface, Guild, User } from '../database'
-import locales from '../locales'
+import locales, { Args } from '../locales'
 import MainController from '../scraper'
 
 export default class InteractionCreateListener extends Listener {
@@ -19,9 +19,10 @@ export default class InteractionCreateListener extends Listener {
       const args = interaction.data.customID.split(';')
       const command = this.client.commands.get(args[0])
       const guild = await Guild.findById(interaction.guildID!)
+      const user = await User.findById(interaction.user.id)
       if(command) {
-        command.locale = (content: string, args: any) => {
-          return locales(guild?.lang ?? 'en', content, args)
+        command.locale = (content: string, args?: Args) => {
+          return locales(user?.lang ?? guild?.lang ?? 'en', content, args)
         }
         command.getUser = async(user: string) => {
           try {
@@ -38,7 +39,7 @@ export default class InteractionCreateListener extends Listener {
       else {
         if(interaction.data.customID === 'pickem') {
           return interaction.createMessage({
-            content: locales(guild?.lang!, 'helper.pickem.res'),
+            content: locales(user?.lang ?? guild?.lang!, 'helper.pickem.res'),
             flags: 64
           })
         }
@@ -47,29 +48,29 @@ export default class InteractionCreateListener extends Listener {
           const guild = await Guild.findById(interaction.guildID)
           const user = await User.findById(interaction.member!.id) || new User({ _id: interaction.member!.id })
           await interaction.createFollowup({
-            content: locales(guild?.lang!, 'helper.verifying')
+            content: locales(user.lang ?? guild?.lang!, 'helper.verifying')
           })
           if(user.history.filter((g: any) => g.match === interaction.data.customID.slice(6))[0]?.match === interaction.data.customID.slice(6)) {
             return interaction.editOriginal({
-              content: locales(guild?.lang!, 'helper.replied')
+              content: locales(user.lang ?? guild?.lang!, 'helper.replied')
             })
           }
           const res = await MainController.getMatches()
           const data = res.find(d => d.id == interaction.data.customID.slice(6))
           if(data?.status === 'LIVE' || !data) {
             return interaction.editOriginal({
-              content: locales(guild?.lang!, 'helper.started')
+              content: locales(user.lang ?? guild?.lang!, 'helper.started')
             })
           }
           interaction.editOriginal({
-            content: locales(guild?.lang!, 'helper.verified'),
+            content: locales(user.lang ?? guild?.lang!, 'helper.verified'),
             components: [
               {
                 type: 1,
                 components: [
                   new ButtonBuilder()
                   .setStyle('green')
-                  .setLabel(locales(guild?.lang!, 'helper.palpitate'))
+                  .setLabel(locales(user.lang ?? guild?.lang!, 'helper.palpitate'))
                   .setCustomId(`predict-${interaction.data.customID.slice(6)}`)
                 ]
               }
@@ -81,7 +82,7 @@ export default class InteractionCreateListener extends Listener {
           const user = await User.findById(interaction.member!.id) || new User({ _id: interaction.member!.id })
           if(user.history.filter((g: any) => g.match === interaction.data.customID.slice(8))[0]?.match === interaction.data.customID.slice(8)) {
             return interaction.editParent({
-              content: locales(guild?.lang!, 'helper.replied'),
+              content: locales(user.lang ?? guild?.lang!, 'helper.replied'),
               components: []
             })
           }
@@ -89,13 +90,13 @@ export default class InteractionCreateListener extends Listener {
           const data = res.find(d => d.id == interaction.data.customID.slice(8))
           if(data?.status === 'LIVE' || !data) {
             return interaction.editOriginal({
-              content: locales(guild?.lang!, 'helper.started'),
+              content: locales(user.lang ?? guild?.lang!, 'helper.started'),
               components: []
             })
           }
           interaction.createModal({
             customID: `modal-${interaction.data.customID.slice(8)}`,
-            title: locales(guild?.lang!, 'helper.palpitate_modal.title'),
+            title: locales(user.lang ?? guild?.lang!, 'helper.palpitate_modal.title'),
             components: [
               {
                 type: 1,
@@ -152,7 +153,7 @@ export default class InteractionCreateListener extends Listener {
       })
       await user.save()
       interaction.editParent({
-        content: locales(guild?.lang!, 'helper.palpitate_response', {
+        content: locales(user.lang ?? guild?.lang!, 'helper.palpitate_response', {
           t1: data.teams[0].name,
           t2: data.teams[1].name,
           s1: interaction.data.components.getComponents()[0].value,
@@ -168,12 +169,13 @@ export default class InteractionCreateListener extends Listener {
           _id: interaction.guildID
         }
       )
+      const user = await User.findById(interaction.user.id)
       await guild.save()
       new CommandRunner(
         {
           client: this.client,
           callback: interaction,
-          locale: guild.lang
+          locale: user && user.lang ? user.lang : guild.lang
         }
       )
       .run()
@@ -181,6 +183,11 @@ export default class InteractionCreateListener extends Listener {
     if(interaction instanceof AutocompleteInteraction) {
       const command = this.client.commands.get(interaction.data.name)
       if(!command) return
+      const guild = await Guild.findById(interaction.guildID) || new Guild({ _id: interaction.guildID })
+      const user = await User.findById(interaction.user.id)
+      command.locale = (content: string, args?: Args) => {
+        return locales(user?.lang ?? guild.lang, content, args)
+      }
       command.execAutocomplete(interaction)
       .catch((e: Error) => new Logger(this.client).error(e))
     }
