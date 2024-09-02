@@ -17,7 +17,7 @@ export default class ReadyListener extends Listener {
     if(this.client.user.id === '934070086766051379') {
       this.client.editStatus('dnd')
     }
-    const g = await Guild.findById('786013941364424704')
+    const g = await Guild.find({})
     console.log(g)
     const commands: CreateApplicationCommandOptions[] = []
     this.client.commands.forEach(command => {
