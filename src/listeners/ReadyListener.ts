@@ -121,7 +121,7 @@ export default class ReadyListener extends Listener {
     const sendMatches = async() => {
       const res = await MainController.getMatches()
       if(!res || !res.length) return
-      const guilds = await Guild.find({})
+      const guilds = await Guild.find()
       const res2 = await MainController.getResults()
       if(!guilds.length) return
       for(const guild of guilds) {
