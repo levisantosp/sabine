@@ -99,7 +99,7 @@ export default class ReadyListener extends Listener {
         guild.save()
       }
       const users = await User.find({
-        guesses: {
+        history: {
           $exists: true
         }
       })

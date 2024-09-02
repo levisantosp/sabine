@@ -19,7 +19,7 @@
     "enhanced-ms": "^3.0.0",
     "moment": "^2.30.1",
     "moment-timezone": "^0.5.45",
-    "mongoose": "^8.3.2",
+    "mongoose": "^8.6.0",
     "oceanic.js": "^1.11.1"
   },
   "devDependencies": {
