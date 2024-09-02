@@ -120,14 +120,14 @@ export default class ReadyListener extends Listener {
     }
     const sendMatches = async() => {
       const guilds = await Guild.find()
-      return console.log(guilds)
       const res = await MainController.getMatches()
       if(!res || !res.length) return
       const res2 = await MainController.getResults()
       if(!guilds.length) return
       for(const guild of guilds) {
+        console.log(guild.id)
         const results = res2.filter(d => d.id === guild.matches.at(-1))
-        console.log(guild.id, results.length, guild.matches.length)
+        // console.log(guild.id, results.length, guild.matches.length)
         if(!results.length && guild.matches.length) continue
         guild.matches = []
         let data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
