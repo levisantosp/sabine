@@ -229,6 +229,7 @@ export default class ReadyListener extends Listener {
                 }
               ]
             })
+            .catch(() => {})
             let index = guild.tbdMatches.findIndex((m: any) => m.id === match.id)
             guild.tbdMatches.splice(index, 1)
             guild.save()
