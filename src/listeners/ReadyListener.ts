@@ -28,7 +28,16 @@ export default class ReadyListener extends Listener {
         type: 1
       })
     })
+    const guilds = await Guild.find({
+      events: {
+        $ne: []
+      }
+    })
+    for(const guild of guilds) {
+      console.log(guild.id)
+    }
     this.client.application.bulkEditGlobalCommands(commands)
+    return 
     const deleteGuild = async() => {
       const guilds = await Guild.find()
       for(const guild of guilds) {
