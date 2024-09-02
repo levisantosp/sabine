@@ -123,7 +123,7 @@ export default class ReadyListener extends Listener {
       if(!res || !res.length) return
       const guilds = await Guild.find({
         events: {
-          $exists: true
+          $ne: []
         }
       })
       const res2 = await MainController.getResults()
