@@ -133,17 +133,17 @@ export default class ReadyListener extends Listener {
         const results = res2.filter(d => d.id === guild.matches.at(-1))
         // console.log(guild.id, results.length, guild.matches.length)
         if(!results.length && guild.matches.length) {
-          console.log('skipping this guild', guild.id)
+          // console.log('skipping this guild', guild.id)
           // continue
         }
         guild.matches = []
         let data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
         for(const e of guild.events) {
-          if(!this.client.getChannel(e.channel1)) continue
+          // if(!this.client.getChannel(e.channel1)) continue
           let messages = await this.client.rest.channels.getMessages(e.channel1)
           await this.client.rest.channels.deleteMessages(e.channel1, messages.map(m => m.id), 'Removing completed matches.')
           for(const d of data) {
-            if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
+            // if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
             if(e.name === d.tournament.name) {
               let index = guild.matches.findIndex((m: string) => m === d.id)
               if(index > -1) guild.matches.splice(index, 1)
