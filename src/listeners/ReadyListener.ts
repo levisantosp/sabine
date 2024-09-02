@@ -136,6 +136,8 @@ export default class ReadyListener extends Listener {
         let data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
         for(const e of guild.events) {
           if(!this.client.getChannel(e.channel1)) continue
+          let messages = await this.client.rest.channels.getMessages(e.channel1, { limit: 100 })
+          await this.client.rest.channels.deleteMessages(e.channel1, messages.filter(m => m.author.id === this.client.user.id).map(m => m.id))
         }
         // for(const e of guild.events) {
         //   if(!this.client.getChannel(e.channel1)) continue
