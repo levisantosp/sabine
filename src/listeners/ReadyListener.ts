@@ -162,36 +162,36 @@ export default class ReadyListener extends Listener {
                   .setStyle('link')
                   .setURL(`https://vlr.gg/${d.id}`)
                   
-                  if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') this.client.rest.channels.createMessage(e.channel1, {
-                    embeds: [embed],
-                    components: [
-                      {
-                        type: 1,
-                        components: [button, urlButton]
-                      },
-                      {
-                        type: 1,
-                        components: [
-                          new ButtonBuilder()
-                          .setLabel(locales(guild.lang, 'helper.pickem.label'))
-                          .setStyle('blue')
-                          .setCustomId('pickem')
-                        ]
-                      }
-                    ]
-                  })
-                  else {
-                    guild.tbdMatches.push({
-                      id: d.id,
-                      channel: e.channel1
-                    })
-                  }    
+                  // if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') this.client.rest.channels.createMessage(e.channel1, {
+                  //   embeds: [embed],
+                  //   components: [
+                  //     {
+                  //       type: 1,
+                  //       components: [button, urlButton]
+                  //     },
+                  //     {
+                  //       type: 1,
+                  //       components: [
+                  //         new ButtonBuilder()
+                  //         .setLabel(locales(guild.lang, 'helper.pickem.label'))
+                  //         .setStyle('blue')
+                  //         .setCustomId('pickem')
+                  //       ]
+                  //     }
+                  //   ]
+                  // })
+                  // else {
+                  //   guild.tbdMatches.push({
+                  //     id: d.id,
+                  //     channel: e.channel1
+                  //   })
+                  // }    
                 }
               }
             }
           }
         }
-        guild.save()
+        // guild.save()
       }
     }
     const verifyIfMatchAlreadyHasTeams = async() => {
