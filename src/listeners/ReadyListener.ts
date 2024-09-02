@@ -28,84 +28,7 @@ export default class ReadyListener extends Listener {
         type: 1
       })
     })
-    const guilds = await Guild.find({
-      events: {
-        $ne: []
-      }
-    })
-    const res = await MainController.getMatches()
-    if(!res || !res.length) return
-    const res2 = await MainController.getResults()
-    if(!guilds.length) return
-    for(const guild of guilds) {
-      console.log(guild.id)
-      const results = res2.filter(d => d.id === guild.matches.at(-1))
-      // console.log(guild.id, results.length, guild.matches.length)
-      if(!results.length && guild.matches.length) {
-        // console.log('skipping this guild', guild.id)
-        // continue
-      }
-      guild.matches = []
-      let data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
-      for(const e of guild.events) {
-        // if(!this.client.getChannel(e.channel1)) continue
-        let messages = await this.client.rest.channels.getMessages(e.channel1)
-        await this.client.rest.channels.deleteMessages(e.channel1, messages.map(m => m.id), 'Removing completed matches.')
-        for(const d of data) {
-          // if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
-          if(e.name === d.tournament.name) {
-            let index = guild.matches.findIndex((m: string) => m === d.id)
-            if(index > -1) guild.matches.splice(index, 1)
-            guild.matches.push(d.id)
-  
-            const embed = new EmbedBuilder()
-            .setTitle(d.tournament.name)
-            .setDescription(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
-            .setThumbnail(d.tournament.image)
-            .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`.replaceAll(':flag_un:', ':united_nations:'), '', true)
-            .setFooter(d.stage)
-  
-            const button = new ButtonBuilder()
-            .setLabel(locales(guild.lang, 'helper.palpitate'))
-            .setCustomId(`guess-${d.id}`)
-            .setStyle('green')
-  
-            const urlButton = new ButtonBuilder()
-            .setLabel(locales(guild.lang, 'helper.stats'))
-            .setStyle('link')
-            .setURL(`https://vlr.gg/${d.id}`)
-            
-            // if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') this.client.rest.channels.createMessage(e.channel1, {
-            //   embeds: [embed],
-            //   components: [
-            //     {
-            //       type: 1,
-            //       components: [button, urlButton]
-            //     },
-            //     {
-            //       type: 1,
-            //       components: [
-            //         new ButtonBuilder()
-            //         .setLabel(locales(guild.lang, 'helper.pickem.label'))
-            //         .setStyle('blue')
-            //         .setCustomId('pickem')
-            //       ]
-            //     }
-            //   ]
-            // })
-            // else {
-            //   guild.tbdMatches.push({
-            //     id: d.id,
-            //     channel: e.channel1
-            //   })
-            // }    
-          }
-        }
-      }
-      // guild.save()
-    }
     this.client.application.bulkEditGlobalCommands(commands)
-    return 
     const deleteGuild = async() => {
       const guilds = await Guild.find()
       for(const guild of guilds) {
@@ -215,61 +138,61 @@ export default class ReadyListener extends Listener {
         }
         guild.matches = []
         let data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
-        for(const e of guild.events) {
-          // if(!this.client.getChannel(e.channel1)) continue
-          let messages = await this.client.rest.channels.getMessages(e.channel1)
-          await this.client.rest.channels.deleteMessages(e.channel1, messages.map(m => m.id), 'Removing completed matches.')
-          for(const d of data) {
-            // if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
-            if(e.name === d.tournament.name) {
-              let index = guild.matches.findIndex((m: string) => m === d.id)
-              if(index > -1) guild.matches.splice(index, 1)
-              guild.matches.push(d.id)
+        // for(const e of guild.events) {
+        //   if(!this.client.getChannel(e.channel1)) continue
+        //   let messages = await this.client.rest.channels.getMessages(e.channel1)
+        //   await this.client.rest.channels.deleteMessages(e.channel1, messages.map(m => m.id), 'Removing completed matches.')
+        //   for(const d of data) {
+        //     if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
+        //     if(e.name === d.tournament.name) {
+        //       let index = guild.matches.findIndex((m: string) => m === d.id)
+        //       if(index > -1) guild.matches.splice(index, 1)
+        //       guild.matches.push(d.id)
     
-              const embed = new EmbedBuilder()
-              .setTitle(d.tournament.name)
-              .setDescription(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
-              .setThumbnail(d.tournament.image)
-              .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`.replaceAll(':flag_un:', ':united_nations:'), '', true)
-              .setFooter(d.stage)
+        //       const embed = new EmbedBuilder()
+        //       .setTitle(d.tournament.name)
+        //       .setDescription(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
+        //       .setThumbnail(d.tournament.image)
+        //       .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`.replaceAll(':flag_un:', ':united_nations:'), '', true)
+        //       .setFooter(d.stage)
     
-              const button = new ButtonBuilder()
-              .setLabel(locales(guild.lang, 'helper.palpitate'))
-              .setCustomId(`guess-${d.id}`)
-              .setStyle('green')
+        //       const button = new ButtonBuilder()
+        //       .setLabel(locales(guild.lang, 'helper.palpitate'))
+        //       .setCustomId(`guess-${d.id}`)
+        //       .setStyle('green')
     
-              const urlButton = new ButtonBuilder()
-              .setLabel(locales(guild.lang, 'helper.stats'))
-              .setStyle('link')
-              .setURL(`https://vlr.gg/${d.id}`)
+        //       const urlButton = new ButtonBuilder()
+        //       .setLabel(locales(guild.lang, 'helper.stats'))
+        //       .setStyle('link')
+        //       .setURL(`https://vlr.gg/${d.id}`)
               
-              // if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') this.client.rest.channels.createMessage(e.channel1, {
-              //   embeds: [embed],
-              //   components: [
-              //     {
-              //       type: 1,
-              //       components: [button, urlButton]
-              //     },
-              //     {
-              //       type: 1,
-              //       components: [
-              //         new ButtonBuilder()
-              //         .setLabel(locales(guild.lang, 'helper.pickem.label'))
-              //         .setStyle('blue')
-              //         .setCustomId('pickem')
-              //       ]
-              //     }
-              //   ]
-              // })
-              // else {
-              //   guild.tbdMatches.push({
-              //     id: d.id,
-              //     channel: e.channel1
-              //   })
-              // }    
-            }
-          }
-        }
+        //       if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') this.client.rest.channels.createMessage(e.channel1, {
+        //         embeds: [embed],
+        //         components: [
+        //           {
+        //             type: 1,
+        //             components: [button, urlButton]
+        //           },
+        //           {
+        //             type: 1,
+        //             components: [
+        //               new ButtonBuilder()
+        //               .setLabel(locales(guild.lang, 'helper.pickem.label'))
+        //               .setStyle('blue')
+        //               .setCustomId('pickem')
+        //             ]
+        //           }
+        //         ]
+        //       })
+        //       else {
+        //         guild.tbdMatches.push({
+        //           id: d.id,
+        //           channel: e.channel1
+        //         })
+        //       }    
+        //     }
+        //   }
+        // }
         // guild.save()
       }
     }
