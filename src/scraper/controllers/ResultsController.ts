@@ -20,7 +20,7 @@ export default class ResultsController {
       const winnerScore = Math.max(...[Number(score1), Number(score2)])
       const status = $(element).find('.ml-status').text()
       const date = `${$(element.parent!).prev().text().replace('Today', '').replace('Yesterday', '').trim()} ${$(element).find('.match-item-time').text().trim()}`
-      const timestamp = new Date(new Date(date).toLocaleString('en-US', { timeZone: process.env.TZ })).getTime()
+      const timestamp = new Date(new Date(date).toLocaleString('en-US', { timeZone: process.env.TZ })).getTime() + 7200000
       const stage = $(element).find('.match-item-event-series').text().trim()
       results.push({
         id,
