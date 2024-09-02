@@ -119,7 +119,11 @@ export default class ReadyListener extends Listener {
       }
     }
     const sendMatches = async() => {
-      const guilds = await Guild.find()
+      const guilds = await Guild.find({
+        events: {
+          $ne: []
+        }
+      })
       const res = await MainController.getMatches()
       if(!res || !res.length) return
       const res2 = await MainController.getResults()
@@ -130,7 +134,7 @@ export default class ReadyListener extends Listener {
         // console.log(guild.id, results.length, guild.matches.length)
         if(!results.length && guild.matches.length) {
           console.log('skipping this guild', guild.id)
-          continue
+          // continue
         }
         guild.matches = []
         let data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
@@ -162,35 +166,34 @@ export default class ReadyListener extends Listener {
               .setStyle('link')
               .setURL(`https://vlr.gg/${d.id}`)
               
-              if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') this.client.rest.channels.createMessage(e.channel1, {
-                embeds: [embed],
-                components: [
-                  {
-                    type: 1,
-                    components: [button, urlButton]
-                  },
-                  {
-                    type: 1,
-                    components: [
-                      new ButtonBuilder()
-                      .setLabel(locales(guild.lang, 'helper.pickem.label'))
-                      .setStyle('blue')
-                      .setCustomId('pickem')
-                    ]
-                  }
-                ]
-              })
-              else {
-                guild.tbdMatches.push({
-                  id: d.id,
-                  channel: e.channel1
-                })
-              }    
+              // if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') this.client.rest.channels.createMessage(e.channel1, {
+              //   embeds: [embed],
+              //   components: [
+              //     {
+              //       type: 1,
+              //       components: [button, urlButton]
+              //     },
+              //     {
+              //       type: 1,
+              //       components: [
+              //         new ButtonBuilder()
+              //         .setLabel(locales(guild.lang, 'helper.pickem.label'))
+              //         .setStyle('blue')
+              //         .setCustomId('pickem')
+              //       ]
+              //     }
+              //   ]
+              // })
+              // else {
+              //   guild.tbdMatches.push({
+              //     id: d.id,
+              //     channel: e.channel1
+              //   })
+              // }    
             }
           }
         }
-        guild.verificationTime = new Date().setHours(24, 0, 0, 0)
-        guild.save()
+        // guild.save()
       }
     }
     const verifyIfMatchAlreadyHasTeams = async() => {
