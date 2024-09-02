@@ -17,8 +17,6 @@ export default class ReadyListener extends Listener {
     if(this.client.user.id === '934070086766051379') {
       this.client.editStatus('dnd')
     }
-    const g = await Guild.find({})
-    console.log(g)
     const commands: CreateApplicationCommandOptions[] = []
     this.client.commands.forEach(command => {
       commands.push({
@@ -122,6 +120,7 @@ export default class ReadyListener extends Listener {
     }
     const sendMatches = async() => {
       const guilds = await Guild.find()
+      return console.log(guilds)
       const res = await MainController.getMatches()
       if(!res || !res.length) return
       const res2 = await MainController.getResults()
