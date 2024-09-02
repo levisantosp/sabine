@@ -130,7 +130,7 @@ export default class ReadyListener extends Listener {
       if(!guilds.length) return
       for(const guild of guilds) {
         const results = res2.filter(d => d.id === guild.matches.at(-1))
-        console.log(guild, results[0])
+        console.log(guild, results.length, guild.matches.length)
         if(!results.length && guild.matches.length) continue
         guild.matches = []
         let data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
