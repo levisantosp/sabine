@@ -123,12 +123,13 @@ export default class ReadyListener extends Listener {
       if(!res || !res.length) return
       const guilds = await Guild.find({
         events: {
-          $exists: true
+          $ne: []
         }
       })
       const res2 = await MainController.getResults()
       if(!guilds.length) return
       for(const guild of guilds) {
+        console.log(guild.id)
         const results = res2.filter(d => d.id === guild.matches.at(-1))
         if(!results.length && guild.matches.length) continue
         guild.matches = []
