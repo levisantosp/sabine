@@ -179,7 +179,7 @@ export default class ReadyListener extends Listener {
                       ]
                     }
                   ]
-                })
+                }).catch(() => {})
                 else {
                   guild.tbdMatches.push({
                     id: d.id,
