@@ -25,7 +25,20 @@ export default class rankingCommand extends Command {
           description: 'Shows the predictions ranking of this server',
           descriptionLocalizations: {
             'pt-BR': 'Mostra o ranking de palpites deste servidor'
-          }
+          },
+          options: [
+            {
+              type: 4,
+              name: 'page',
+              nameLocalizations: {
+                'pt-BR': 'página'
+              },
+              description: 'Enter a page',
+              descriptionLocalizations: {
+                'pt-BR': 'Informe uma página'
+              }
+            }
+          ]
         },
         {
           type: 1,
@@ -33,7 +46,20 @@ export default class rankingCommand extends Command {
           description: 'Shows the global predictions ranking',
           descriptionLocalizations: {
             'pt-BR': 'Mostra o ranking global de palpites'
-          }
+          },
+          options: [
+            {
+              type: 4,
+              name: 'page',
+              nameLocalizations: {
+                'pt-BR': 'página'
+              },
+              description: 'Enter a page',
+              descriptionLocalizations: {
+                'pt-BR': 'Informe uma página'
+              }
+            }
+          ]
         }
       ]
     })
@@ -46,7 +72,7 @@ export default class rankingCommand extends Command {
         }
       })).filter(user => ctx.guild.members.get(user.id)).sort((a: any, b: any) => b.guessesRight - a.guessesRight)
       let array = users
-      let page = Number(ctx.args[0])
+      let page = Number(ctx.args[1])
       if(!page || page === 1 || isNaN(page)) {
         users = users.slice(0, 10)
         page = 1
@@ -104,7 +130,7 @@ export default class rankingCommand extends Command {
         }
       })).sort((a: any, b: any) => b.guessesRight - a.guessesRight)
       let array = users
-      let page = Number(ctx.args[0])
+      let page = Number(ctx.args[1])
       if(!page || page === 1 || isNaN(page)) {
         users = users.slice(0, 10)
         page = 1
