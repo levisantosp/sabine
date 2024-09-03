@@ -33,10 +33,6 @@ export const Guild = mongoose.model('guilds', new mongoose.Schema(
       type: Number,
       default: 5
     },
-    verificationTime: {
-      type: Number,
-      default: 0
-    },
     lastResult: String,
     matches: {
       type: Array,
@@ -83,7 +79,6 @@ export interface GuildSchemaInterface extends mongoose.Document {
   lang: 'pt' | 'en'
   events: GuildSchemaEvent[]
   tournamentsLength: number
-  verificationTime: number
   lastResult: string
   matches: string[]
   tbdMatches: string[]
