@@ -48,7 +48,7 @@ export default class ReadyListener extends Listener {
       let matches: ResultsData[] = []
       for(const guild of guilds) {
         let data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
-        if(!data || !data[0]) return
+        if(!data || !data[0]) continue
         if(guild.lastResult && guild.lastResult !== data[0].id) {
           let match = data.find(e => e.id == guild.lastResult)
           let index = data.indexOf(match!)
