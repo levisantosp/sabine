@@ -22,10 +22,13 @@ export default class PlayersController {
       method: 'get'
     })).text()
     const $ = load(html)
-    const avatar = 'https:' + $('.player-header').find('.wf-avatar').find('img').attr('src')
+    let avatar = 'https:' + $('.player-header').find('.wf-avatar').find('img').attr('src')
     const user = $('.player-header').find('.wf-title').text().trim()
     const realName = $('.player-header').find('.player-real-name').text()
     const pastTeams: PlayerPastTeam[] = []
+    if(!avatar.startsWith('https://owcdn.net')) {
+      avatar = 'https://www.vlr.gg/img/base/ph/sil.png'
+    }
     $('.wf-module-item').eq(1).parent().find('a').map((index, element) => {
       pastTeams.push({
         id: $(element).attr('href')?.split('/')[2]!,
