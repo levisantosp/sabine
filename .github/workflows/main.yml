@@ -1,23 +1,32 @@
-name: Deployment
+name: deploy
 on:
   push:
     branches:
       - 'main'
-
 jobs:
   deploy:
-    name: "Deploy to production"
+    name: "deploy to production"
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-      - name: Execute script SSH
-        uses: appleboy/ssh-action@v1.0.1
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: 22
-          script: |
-            cd sabine/sabine
-            git pull origin main
-            docker compose up -d --build
+      - name: Setup ssh
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/authorized_keys
+          chmod 600 ~/.ssh/authorized_keys
+          cat >>~/.ssh/config << END
+          Host prod
+            HostName $SSH_HOST
+            User $SSH_USERNAME
+            Port $SSH_PORT
+            IdentityFile ~/.ssh/id_rsa
+            StrictHostKeyChecking no
+          END
+        env:
+          SSH_USERNAME: ${{ secrets.USERNAME }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.HOST }}
+          SSH_PORT: 22
+      - name: update sabine
+        run: |
+          ssh prod 'cd sabine/sabine && git pull && docker compose up -d --build'
