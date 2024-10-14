@@ -162,6 +162,7 @@ export default class ReadyListener extends Listener {
                 .setStyle('link')
                 .setURL(`https://vlr.gg/${d.id}`)
                 
+                if(d.stage.toLowerCase().includes('showmatch')) continue
                 if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') this.client.rest.channels.createMessage(e.channel1, {
                   embeds: [embed],
                   components: [
