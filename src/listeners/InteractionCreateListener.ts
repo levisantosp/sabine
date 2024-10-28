@@ -37,12 +37,12 @@ export default class InteractionCreateListener extends Listener {
         .catch((e: Error) => new Logger(this.client).error(e))
       }
       else {
-        if(interaction.data.customID === 'pickem') {
-          return interaction.createMessage({
-            content: locales(user?.lang ?? guild?.lang!, 'helper.pickem.res'),
-            flags: 64
-          })
-        }
+        // if(interaction.data.customID === 'pickem') {
+        //   return interaction.createMessage({
+        //     content: locales(user?.lang ?? guild?.lang!, 'helper.pickem.res'),
+        //     flags: 64
+        //   })
+        // }
         if(interaction.data.customID.startsWith('guess-')) {
           await interaction.defer(64)
           const guild = await Guild.findById(interaction.guildID)
