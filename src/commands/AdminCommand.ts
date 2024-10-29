@@ -1,5 +1,5 @@
 import { AutocompleteInteraction, ComponentInteraction } from 'oceanic.js'
-import { App, ButtonBuilder, Command, CommandContext, EmbedBuilder } from '../structures'
+import { App, ButtonBuilder, Command, CommandContext, EmbedBuilder, Logger } from '../structures'
 import { Guild } from '../database'
 import MainController from '../scraper'
 import { EventsData } from '../../types'
@@ -214,12 +214,12 @@ export default class AdminCommand extends Command {
       const options = {
         add: async() => {
           if(ctx.db.guild.events.length >= ctx.db.guild.tournamentsLength) return ctx.reply('commands.admin.limit_reached', { cmd: `</admin tournament remove:${this.id}>` })
-          if(ctx.db.guild.events.some(e => e.channel1 === ctx.args[1])) return ctx.reply('commands.admin.channel_being_used', {
-            ch: `<#${ctx.args[1]}>`,
+          if(ctx.db.guild.events.some(e => e.channel2 === ctx.args[3])) return ctx.reply('commands.admin.channel_being_used', {
+            ch: `<#${ctx.args[3]}>`,
             cmd: `</admin panel:${this.id}>`
           })
           if(ctx.db.guild.events.filter(e => e.name === ctx.args[0]).length) return ctx.reply('commands.admin.tournament_has_been_added')
-          if(ctx.args[1] === ctx.args[2]) return ctx.reply('commands.admin.channels_must_be_different')
+          if(ctx.args[3] === ctx.args[4]) return ctx.reply('commands.admin.channels_must_be_different')
           if(ctx.guild.channels.get(ctx.args[3])?.type !== 0 || ctx.guild.channels.get(ctx.args[4])?.type !== 0) return ctx.reply('commands.admin.invalid_channel')
           ctx.db.guild.events.push({
             name: ctx.args[2],
@@ -274,6 +274,7 @@ export default class AdminCommand extends Command {
       }
     }
     args[i.data.options.getSubCommand()![1] as 'add' | 'remove']()
+    .catch((e: Error) => new Logger(this.client!).error(e))
   }
   public async execInteraction(i: ComponentInteraction, args: string[]) {
     if(i.member?.id !== args[2]) return
