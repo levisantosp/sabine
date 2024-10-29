@@ -74,6 +74,10 @@ type UserSchemaHistory = {
   match: string
   teams: UserSchemaHistoryTeam[]
 }
+type TBDMatches = {
+  id: string
+  channel: string
+}
 export interface GuildSchemaInterface extends mongoose.Document {
   _id: string
   lang: 'pt' | 'en'
@@ -81,7 +85,7 @@ export interface GuildSchemaInterface extends mongoose.Document {
   tournamentsLength: number
   lastResult: string
   matches: string[]
-  tbdMatches: string[]
+  tbdMatches: TBDMatches[]
   resendTime: number
 }
 export interface UserSchemaInterface extends mongoose.Document {
