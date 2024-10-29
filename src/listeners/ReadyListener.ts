@@ -1,5 +1,5 @@
 import { App, ButtonBuilder, EmbedBuilder, Listener, Logger } from '../structures'
-import { Guild, User } from '../database'
+import { Guild, GuildSchemaInterface, User, UserSchemaInterface } from '../database'
 import locales from '../locales'
 import { CreateApplicationCommandOptions, TextChannel } from 'oceanic.js'
 import { ResultsData } from '../../types'
@@ -61,16 +61,20 @@ export default class ReadyListener extends Listener {
             matches = data
           }
           data.reverse()
-          for(const e of guild.events) {
-            for(const d of data) {
-              if(e.name === d.tournament.name) {
+          for (const d of data) {
+            for (const e of guild.events) {
+              if (e.name === d.tournament.name) {
                 const embed = new EmbedBuilder()
-                .setTitle(d.tournament.name)
-                .setDescription(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
-                .setThumbnail(d.tournament.image)
-                .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`.replaceAll(':flag_un:', ':united_nations:'), '', true)
-                .addField(`${d.teams[0].score}\n${d.teams[1].score}`, '', true)
-                .setFooter(d.stage)
+                  .setTitle(d.tournament.name)
+                  .setDescription(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
+                  .setThumbnail(d.tournament.image)
+                  .addField(
+                    `:flag_${d.teams[0].country}: ${d.teams[0].name} ${d.teams[0].score}-${d.teams[1].score} ${d.teams[1].name} :flag_${d.teams[1].country}:`.replaceAll(':flag_un:', ':united_nations:'),
+                    '',
+                    true
+                  )
+                  .setFooter(d.stage)
+                
                 this.client.rest.channels.createMessage(e.channel2, {
                   embeds: [embed],
                   components: [
@@ -78,9 +82,9 @@ export default class ReadyListener extends Listener {
                       type: 1,
                       components: [
                         new ButtonBuilder()
-                        .setLabel(locales(guild.lang, 'helper.stats'))
-                        .setStyle('link')
-                        .setURL(`https://vlr.gg/${d.id}`),
+                          .setLabel(locales(guild.lang, 'helper.stats'))
+                          .setStyle('link')
+                          .setURL(`https://vlr.gg/${d.id}`)
                         // new ButtonBuilder()
                         // .setLabel(locales(guild.lang, 'helper.pickem.label'))
                         // .setStyle('blue')
@@ -88,11 +92,11 @@ export default class ReadyListener extends Listener {
                       ]
                     }
                   ]
-                })
-                .catch(() => {})
+                }).catch(() => {})
               }
             }
           }
+          
           data.reverse()
         }
         guild.lastResult = data[0].id
@@ -102,11 +106,11 @@ export default class ReadyListener extends Listener {
         history: {
           $exists: true
         }
-      })
+      }) as UserSchemaInterface[]
       if(!matches.length) return
       for(const user of users) {
         for(const match of matches) {
-          let guess = user.history.find((h: any) => h.match === match.id)
+          let guess = user.history.find((h) => h.match === match.id)
           if(!guess) continue
           if(guess.teams[0].score === match.teams[0].score && guess.teams[1].score === match.teams[1].score) {
             user.guessesRight += 1
@@ -125,7 +129,7 @@ export default class ReadyListener extends Listener {
         events: {
           $ne: []
         }
-      })
+      }) as GuildSchemaInterface[]
       const res2 = await MainController.getResults()
       if(!guilds.length) return
       for(const guild of guilds) {
@@ -138,18 +142,23 @@ export default class ReadyListener extends Listener {
           try {
             let messages = await this.client.rest.channels.getMessages(e.channel1, { limit: 100 })
             await this.client.rest.channels.deleteMessages(e.channel1, messages.filter(m => m.author.id === this.client.user.id).map(m => m.id))
-            for(const d of data) {
-              if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
+          }
+          catch {}
+        }
+        try {
+          for(const d of data) {
+            if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
+            for(const e of guild.events) {
               if(e.name === d.tournament.name) {
-                let index = guild.matches.findIndex((m: string) => m === d.id)
+                let index = guild.matches.findIndex((m) => m === d.id)
                 if(index > -1) guild.matches.splice(index, 1)
-                guild.matches.push(d.id)
+                guild.matches.push(d.id!)
       
                 const embed = new EmbedBuilder()
                 .setTitle(d.tournament.name)
                 .setDescription(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
                 .setThumbnail(d.tournament.image)
-                .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name}\n:flag_${d.teams[1].country}: ${d.teams[1].name}`.replaceAll(':flag_un:', ':united_nations:'), '', true)
+                .addField(`:flag_${d.teams[0].country}: ${d.teams[0].name} \`vs\` ${d.teams[1].name} :flag_${d.teams[1].country}:`.replaceAll(':flag_un:', ':united_nations:'), '', true)
                 .setFooter(d.stage)
       
                 const button = new ButtonBuilder()
@@ -183,22 +192,22 @@ export default class ReadyListener extends Listener {
                 }).catch(() => {})
                 else {
                   guild.tbdMatches.push({
-                    id: d.id,
+                    id: d.id!,
                     channel: e.channel1
                   })
                 }    
               }
             }
           }
-          catch {}
         }
+        catch {}
         guild.save()
       }
     }
     const verifyIfMatchAlreadyHasTeams = async() => {
       const res = await MainController.getMatches()
       if(!res || !res.length) return
-      const guilds = await Guild.find()
+      const guilds = await Guild.find() as GuildSchemaInterface[]
       for(const guild of guilds) {
         if(!guild.tbdMatches.length) continue
         for(const match of guild.tbdMatches) {
@@ -231,7 +240,7 @@ export default class ReadyListener extends Listener {
               ]
             })
             .catch(() => {})
-            let index = guild.tbdMatches.findIndex((m: any) => m.id === match.id)
+            let index = guild.tbdMatches.findIndex((m) => m.id === match.id)
             guild.tbdMatches.splice(index, 1)
             guild.save()
           }
