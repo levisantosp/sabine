@@ -69,7 +69,7 @@ export default class ReadyListener extends Listener {
                   .setDescription(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
                   .setThumbnail(d.tournament.image)
                   .addField(
-                    `:flag_${d.teams[0].country}: ${d.teams[0].name} ${d.teams[0].score}-${d.teams[1].score} ${d.teams[1].name} :flag_${d.teams[1].country}:`.replaceAll(':flag_un:', ':united_nations:'),
+                    `:flag_${d.teams[0].country}: ${d.teams[0].name} \`${d.teams[0].score}-${d.teams[1].score}\` ${d.teams[1].name} :flag_${d.teams[1].country}:`.replaceAll(':flag_un:', ':united_nations:'),
                     '',
                     true
                   )

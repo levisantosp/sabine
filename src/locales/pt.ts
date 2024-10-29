@@ -57,7 +57,7 @@ export const commands = {
     limit_reached: '<:error:1300882259078938685> Este servidor atingiu o limite máximo de campeonatos que podem ser adicionados. Se quiser adicionar este campeonato, considere remover um usando {cmd}',
     channel_being_used: '<:error:1300882259078938685> O canal {ch} já está sendo usado para anunciar os resultados de um campeonato. Considere usar outro canal para isso.\nVerifique os canais que já estão em uso usando {cmd}',
     resend_time: '<:error:1300882259078938685> Este recurso já foi usado hoje neste servidor. Tente novamente amanhã.',
-    resending: '<:success:1300882212190945292> Reenviando partidas...\n<:warn:869393116854108191>Pode demorar alguns segundos para as partidas serem reenviadas, apenas aguarde.',
+    resending: '<:success:1300882212190945292> Reenviando partidas...\n<:warn:869393116854108191> Pode demorar alguns segundos para as partidas serem reenviadas, apenas aguarde.',
     resend: 'Reenviar partidas',
     confirm: '<:warn:869393116854108191> Você está prestes a FORÇAR o envio das partidas neste servidor!\n<:warn:869393116854108191> Vale lembrar que esta ação é **IRREVERSÍVEL** e só pode ser feita **UMA VEZ por dia**! Se você ainda quer adicionar mais campeonatos, adicione antes de usar este recurso.\nDeseja continuar?',
     continue: 'Continuar',
