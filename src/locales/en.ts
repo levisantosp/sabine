@@ -6,24 +6,24 @@ export const commands = {
       footer: 'Page {p1}/{p2}',
       desc: 'Right predictions: `{right}`\nWrong predictions: `{wrong}`\nTotal predictions: `{t}`'
     },
-    no_predictions: 'You do not have predictions.'
+    no_predictions: '<:error:1300882259078938685> You do not have predictions.'
   },
   player: {
-    insert_player: 'Provide the name of a player.',
-    no_player_found: 'No players have been found with that name.',
+    insert_player: '<:warn:869393116854108191> Provide the name of a player.',
+    no_player_found: '<:error:1300882259078938685> No players have been found with that name.',
     embed: {
       desc: 'Name: `{name}`\nCurrent team: {team}\nPast teams: {pt}\nLast match: {lt}'
     }
   },
   team: {
-    insert_team: 'Provide the name of a team.',
-    no_team_found: 'No teams have been found with that name.',
+    insert_team: '<:warn:869393116854108191> Provide the name of a team.',
+    no_team_found: '<:error:1300882259078938685> No teams have been found with that name.',
     embed: {
       desc: 'Players: {p}\nStaff: {s}\nLast match: {lt}\nNext match: {n}'
     }
   },
   help: {
-    command_not_found: 'Command not found.',
+    command_not_found: '<:error:1300882259078938685> Command not found.',
     name: 'Name',
     aliases: 'Aliases',
     examples: 'Examples',
@@ -42,26 +42,26 @@ export const commands = {
     footer: 'Your position: #{pos}',
     title: 'Users with the most correct predictions',
     field: '`{t}` correct predictions',
-    no_users: 'No users to show in this page.'
+    no_users: '<:error:1300882259078938685> No users to show in this page.'
   },
   admin: {
-    tournament_has_been_added: 'This tournament already has been added.',
-    tournament_added: 'The tournament **{t}** has been added successfully!',
-    channels_must_be_different: 'The matches channel and results channel cannot be the same. It is recommended that the matches channel be a separate channel where there will be no member interaction.',
-    tournament_removed: 'The tournament **{t}** has been removed successfully!',
+    tournament_has_been_added: '<:error:1300882259078938685> This tournament already has been added.',
+    tournament_added: '<:success:1300882212190945292> The tournament **{t}** has been added successfully!',
+    channels_must_be_different: '<:warn:869393116854108191> The matches channel and results channel cannot be the same. It is recommended that the matches channel be a separate channel where there will be no member interaction.',
+    tournament_removed: '<:success:1300882212190945292> The tournament **{t}** has been removed successfully!',
     panel: 'Control Panel',
     event_channels: 'Matches will be announced in {ch1}\nResults will be announced in {ch2}',
     desc: 'Language: `{lang}` (change by using: </admin language:{id}>)\nLimit of tournaments: `{limit}`',
-    invalid_channel: 'Invalid channel type. Consider select a TEXT channel.',
-    limit_reached: 'This server has reached the maximum limit of tournaments that can be added. If you want to add this tournaments, consider removing one using {cmd}',
-    channel_being_used: 'The channel {ch} is already being used to announce the matches of another tournament. Consider using another channel for this.\nCheck the channels that are already in use by using {cmd}',
-    resend_time: 'This feature has already been used today on this server. Try again tomorrow.',
-    resending: 'Resending matches. It may take a few minutes for matches to be resent, just wait.',
+    invalid_channel: '<:error:1300882259078938685> Invalid channel type. Consider select a TEXT channel.',
+    limit_reached: '<:error:1300882259078938685> This server has reached the maximum limit of tournaments that can be added. If you want to add this tournaments, consider removing one using {cmd}',
+    channel_being_used: '<:error:1300882259078938685> The channel {ch} is already being used to send the results of a tournament. Consider using another channel for this.\nCheck the channels that are already in use by using {cmd}',
+    resend_time: '<:error:1300882259078938685> This feature has already been used today on this server. Try again tomorrow.',
+    resending: '<:success:1300882212190945292> Resending matches...\n<:warn:869393116854108191> It may take a few seconds for matches to be resent, just wait.',
     resend: 'Resend matches',
-    confirm: 'You are about to FORCE the submission of matches on this server!\nIt is worth remembering that this action is **IRREVERSIBLE** and can only be done **ONCE a day**! If you still want to add more tournaments, add them before using this feature.\nDo you want to continue?',
+    confirm: '<:warn:869393116854108191> You are about to FORCE the submission of matches on this server!\n<:warn:869393116854108191> It is worth remembering that this action is **IRREVERSIBLE** and can only be done **ONCE a day**! If you still want to add more tournaments, add them before using this feature. Do you want to continue?',
     continue: 'Continue',
     remove_all: 'Remove all',
-    removed_all_tournaments: 'All tournaments have been removed successfully!'
+    removed_all_tournaments: '<:success:1300882212190945292> All tournaments have been removed successfully!'
   },
   info: {
     embed: {
@@ -80,22 +80,21 @@ export const helper = {
   palpitate_modal: {
     title: 'Your prediction for the match'
   },
-  palpitate_response: 'You predicted {t1} `{s1}-{s2}` {t2}',
-  replied: 'You have already predicted this match.',
-  started: 'This match has already started or finished.',
+  palpitate_response: '<:success:1300882212190945292> You predicted {t1} `{s1}-{s2}` {t2}',
+  replied: '<:error:1300882259078938685> You have already predicted this match.',
+  started: '<:error:1300882259078938685> This match has already started or finished.',
   permissions: {
-    user: 'You\'re weak. You lack the following permissions to use this command: {permissions}',
-    bot: 'I lack the following permissions for this command to work properly: {permissins}'
+    user: '<:error:1300882259078938685> You\'re weak. You lack the following permissions to use this command: {permissions}',
+    bot: '<:error:1300882259078938685> I lack the following permissions for this command to work properly: {permissins}'
   },
   error: 'An unexpected error has occurred...\n`{e}`',
   privacy: 'Before you start to use the bot, you must accept the [Terms of Service and Privacy](https://levispires.github.io/sabine-terms/)',
-  verifying: '<a:carregando:809221866434199634> Processing request... just wait.',
-  verified: '<:sucess:869391072323846184> Request processed. You can already make a prediction.',
+  verified: '<:success:1300882212190945292> Make your prediction by clicking the button below.',
   pickem: {
     label: 'Pick\'em',
     res: 'Join the PICK\'EM for a chance to win a <:booster:1272968894239215636> **Discord Nitro** or a <:nitro:1272968817496297542> **Discord Nitro Basic** by joining our official server!\nhttps://discord.gg/g5nmc376yh'
   },
-  banned: '**You are banned and can not use the bot.\nIf you think this is a mistake, contact us in our Discord server!**\n**When:** {when}\n**Ends at:** {ends}\n**Reason:** `{reason}`'
+  banned: '<:error:1300882259078938685> **You are banned and can not use the bot.\n<:warn:869393116854108191> If you think this is a mistake, contact us in our Discord server!**\n**When:** {when}\n**Ends at:** {ends}\n**Reason:** `{reason}`'
 }
 export const permissions = {
   CREATE_INSTANT_INVITE: 'Create Instant Invite',

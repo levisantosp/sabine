@@ -7,24 +7,24 @@ export const commands = {
       footer: 'Página {p1}/{p2}',
       desc: 'Palpites certos: `{right}`\nPalpites errados: `{wrong}`\nPalpites totais: `{t}`'
     },
-    no_predictions: 'Você não possui palpites.'
+    no_predictions: '<:error:1300882259078938685> Você não possui palpites.'
   },
   player: {
-    insert_player: 'Informe o nome de um jogador.',
-    no_player_found: 'Nenhum jogador foi encontrado com esse nome.',
+    insert_player: '<:warn:869393116854108191> Informe o nome de um jogador.',
+    no_player_found: '<:error:1300882259078938685> Nenhum jogador foi encontrado com esse nome.',
     embed: {
       desc: 'Nome: `{name}`\nEquipe atual: {team}\nEquipes passadas: {pt}\nÚltima partida: {lt}'
     }
   },
   team: {
-    insert_team: 'Informe o nome de uma equipe.',
-    no_team_found: 'Nenhuma equipe foi encontrada com esse nome.',
+    insert_team: '<:warn:869393116854108191> Informe o nome de uma equipe.',
+    no_team_found: '<:error:1300882259078938685> Nenhuma equipe foi encontrada com esse nome.',
     embed: {
       desc: 'Jogadores: {p}\nStaff: {s}\nÚltima partida: {lt}\nPróxima partida: {n}'
     }
   },
   help: {
-    command_not_found: 'Comando não encontrado.',
+    command_not_found: '<:error:1300882259078938685> Comando não encontrado.',
     name: 'Nome',
     aliases: 'Alternativas',
     examples: 'Exemplos',
@@ -43,26 +43,26 @@ export const commands = {
     footer: 'Sua posição: #{pos}',
     title: 'Usuários com mais palpites certos',
     field: '`{t}` palpites certos',
-    no_users: 'Sem usuários para mostrar nesta página.'
+    no_users: '<:error:1300882259078938685> Sem usuários para mostrar nesta página.'
   },
   admin: {
-    tournament_has_been_added: 'Este campeonato já foi adicionado.',
-    tournament_added: 'O campeonato **{t}** foi adicionado com sucesso!',
-    channels_must_be_different: 'Os canais de resultados e partidas NÃO PODEM ser iguais. É recomendável que o canal de partidas seja um canal separado onde não haverá interação de membros.',
-    tournament_removed: 'O campeonato **{t}** foi removido com sucesso!',
+    tournament_has_been_added: '<:error:1300882259078938685> Este campeonato já foi adicionado.',
+    tournament_added: '<:success:1300882212190945292> O campeonato **{t}** foi adicionado com sucesso!',
+    channels_must_be_different: '<:error:1300882259078938685> Os canais de resultados e partidas NÃO PODEM ser iguais. É recomendável que o canal de partidas seja um canal separado onde não haverá interação de membros.',
+    tournament_removed: '<:success:1300882212190945292> O campeonato **{t}** foi removido com sucesso!',
     panel: 'Painel de Controle',
     event_channels: 'Partidas serão anunciadas em {ch1}\nResultados serão anunciados em {ch2}',
     desc: 'Idioma: `{lang}` (altere usando: </admin language:{id}>)\nLimite de campeonatos: `{limit}`',
-    invalid_channel: 'Tipo de canal inválido. Considere selecionar um canal de TEXTO.',
-    limit_reached: 'Este servidor atingiu o limite máximo de campeonatos que podem ser adicionados. Se quiser adicionar este campeonato, considere remover um usando {cmd}',
-    channel_being_used: 'O canal {ch} já está sendo usado para anunciar as partidas de outro campeonato. Considere usar outro canal para isso.\nVerifique os canais que já estão em uso usando {cmd}',
-    resend_time: 'Este recurso já foi usado hoje neste servidor. Tente novamente amanhã.',
-    resending: 'Reenviando partidas. Pode demorar alguns minutos para as partidas serem reenviadas, apenas aguarde.',
+    invalid_channel: '<:error:1300882259078938685> Tipo de canal inválido. Considere selecionar um canal de TEXTO.',
+    limit_reached: '<:error:1300882259078938685> Este servidor atingiu o limite máximo de campeonatos que podem ser adicionados. Se quiser adicionar este campeonato, considere remover um usando {cmd}',
+    channel_being_used: '<:error:1300882259078938685> O canal {ch} já está sendo usado para anunciar os resultados de um campeonato. Considere usar outro canal para isso.\nVerifique os canais que já estão em uso usando {cmd}',
+    resend_time: '<:error:1300882259078938685> Este recurso já foi usado hoje neste servidor. Tente novamente amanhã.',
+    resending: '<:success:1300882212190945292> Reenviando partidas...\n<:warn:869393116854108191>Pode demorar alguns segundos para as partidas serem reenviadas, apenas aguarde.',
     resend: 'Reenviar partidas',
-    confirm: 'Você está prestes a FORÇAR o envio das partidas neste servidor!\nVale lembrar que esta ação é **IRREVERSÍVEL** e só pode ser feita **UMA VEZ por dia**! Se você ainda quer adicionar mais campeonatos, adicione antes de usar este recurso.\nDeseja continuar?',
+    confirm: '<:warn:869393116854108191> Você está prestes a FORÇAR o envio das partidas neste servidor!\n<:warn:869393116854108191> Vale lembrar que esta ação é **IRREVERSÍVEL** e só pode ser feita **UMA VEZ por dia**! Se você ainda quer adicionar mais campeonatos, adicione antes de usar este recurso.\nDeseja continuar?',
     continue: 'Continuar',
     remove_all: 'Remover todos',
-    removed_all_tournaments: 'Todos os torneios foram removidos com sucesso!'
+    removed_all_tournaments: '<:success:1300882212190945292> Todos os torneios foram removidos com sucesso!'
   },
   info: {
     embed: {
@@ -81,22 +81,21 @@ export const helper = {
   palpitate_modal: {
     title: 'Seu palpite para a partida'
   },
-  palpitate_response: 'Você palpitou {t1} `{s1}-{s2}` {t2}',
-  replied: 'Você já palpitou essa partida.',
-  started: 'Esta partida já começou ou terminou.',
+  palpitate_response: '<:success:1300882212190945292> Você palpitou {t1} `{s1}-{s2}` {t2}',
+  replied: '<:error:1300882259078938685> Você já palpitou essa partida.',
+  started: '<:error:1300882259078938685> Esta partida já começou ou terminou.',
   permissions: {
-    user: 'Você é fraco. Te faltam as seguintes permissões para usar esse comando: {permissions}',
-    bot: 'Me faltam as seguintes permissões para esse comando funcionar adequadamente: {permissins}'
+    user: '<:error:1300882259078938685> Você é fraco. Te faltam as seguintes permissões para usar esse comando: {permissions}',
+    bot: '<:error:1300882259078938685> Me faltam as seguintes permissões para esse comando funcionar adequadamente: {permissins}'
   },
   error: 'Ocorreu um erro inesperado...\n`{e}`',
   privacy: 'Antes de começar a usar o bot, você deve aceitar os [Termos de Serviço e Privacidade](https://levispires.github.io/sabine-terms/)',
-  verifying: '<a:carregando:809221866434199634> Processando requisição... aguarde.',
-  verified: '<:sucess:869391072323846184> Requisição processada. Você já pode fazer um palpite.',
+  verified: '<:success:1300882212190945292> Faça seu palpite clicando no botão abaixo.',
   pickem: {
     label: 'Bolão',
     res: 'Participe do BOLÃO valendo um <:booster:1272968894239215636> **Discord Nitro** e um <:nitro:1272968817496297542> **Discord Nitro Basic** entrando no nosso servidor oficial!\nhttps://discord.gg/g5nmc376yh'
   },
-  banned: '**Você está banido e não pode mais usar o bot.\nSe você acha que isso é um engano, entre em contato conosco no nosso servidor no Discord!**\n**Quando:** {when}\n**Termina em:** {ends}\n**Motivo:** `{reason}`'
+  banned: '**<:error:1300882259078938685> Você está banido e não pode mais usar o bot.\<:warn:869393116854108191> você acha que isso é um engano, entre em contato conosco no nosso servidor no Discord!**\n**Quando:** {when}\n**Termina em:** {ends}\n**Motivo:** `{reason}`'
 }
 export const permissions = {
   CREATE_INSTANT_INVITE: 'Criar convite instantâneo',
