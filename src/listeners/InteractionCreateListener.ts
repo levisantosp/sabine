@@ -47,9 +47,6 @@ export default class InteractionCreateListener extends Listener {
           await interaction.defer(64)
           const guild = await Guild.findById(interaction.guildID)
           const user = await User.findById(interaction.member!.id) || new User({ _id: interaction.member!.id })
-          await interaction.createFollowup({
-            content: locales(user.lang ?? guild?.lang!, 'helper.verifying')
-          })
           if(user.history.filter((g: any) => g.match === interaction.data.customID.slice(6))[0]?.match === interaction.data.customID.slice(6)) {
             return interaction.editOriginal({
               content: locales(user.lang ?? guild?.lang!, 'helper.replied')
@@ -179,6 +176,7 @@ export default class InteractionCreateListener extends Listener {
         }
       )
       .run()
+      .catch((e: Error) => new Logger(this.client).error(e))
     }
     if(interaction instanceof AutocompleteInteraction) {
       const command = this.client.commands.get(interaction.data.name)
