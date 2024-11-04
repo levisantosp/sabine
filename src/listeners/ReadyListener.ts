@@ -219,7 +219,7 @@ export default class ReadyListener extends Listener {
             .setTitle(data.tournament.name)
             .setDescription(`<t:${data.when / 1000}:F> | <t:${data.when / 1000}:R>`)
             .setThumbnail(data.tournament.image)
-            .addField(`:flag_${data.teams[0].country}: ${data.teams[0].name}\n:flag_${data.teams[1].country}: ${data.teams[1].name}`, '', true)
+            .addField(`:flag_${data.teams[0].country}: ${data.teams[0].name} \`vs\` ${data.teams[1].name} :flag_${data.teams[1].country}:`.replaceAll(':flag_un:', ':united_nations:'), '', true)
             .setFooter(data.stage)
             channel.createMessage({
               embeds: [embed],
