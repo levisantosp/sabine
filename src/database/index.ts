@@ -1,6 +1,6 @@
-import mongoose from 'mongoose'
+import mongoose from "mongoose"
 
-export const User = mongoose.model('users', new mongoose.Schema(
+export const User = mongoose.model("users", new mongoose.Schema(
   {
     _id: String,
     history: {
@@ -18,12 +18,12 @@ export const User = mongoose.model('users', new mongoose.Schema(
     lang: String
   }
 ))
-export const Guild = mongoose.model('guilds', new mongoose.Schema(
+export const Guild = mongoose.model("guilds", new mongoose.Schema(
   {
     _id: String,
     lang: {
       type: String,
-      default: 'en'
+      default: "en"
     },
     events: {
       type: Array,
@@ -48,7 +48,7 @@ export const Guild = mongoose.model('guilds', new mongoose.Schema(
     }
   }
 ))
-export const Blacklist = mongoose.model('blacklist', new mongoose.Schema(
+export const Blacklist = mongoose.model("blacklist", new mongoose.Schema(
   {
     _id: String,
     users: {
@@ -80,7 +80,7 @@ type TBDMatches = {
 }
 export interface GuildSchemaInterface extends mongoose.Document {
   _id: string
-  lang: 'pt' | 'en'
+  lang: "pt" | "en"
   events: GuildSchemaEvent[]
   tournamentsLength: number
   lastResult: string
@@ -93,7 +93,7 @@ export interface UserSchemaInterface extends mongoose.Document {
   history: UserSchemaHistory[]
   guessesRight: number
   guessesWrong: number
-  lang: 'pt' | 'en'
+  lang: "pt" | "en"
 }
 type BlacklistUser = {
   id: string

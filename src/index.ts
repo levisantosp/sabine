@@ -1,9 +1,9 @@
-import 'dotenv/config'
-import App from './structures/client/App'
+import "dotenv/config"
+import App from "./structures/client/App"
 new App({
-  auth: 'Bot ' + process.env.BOT_TOKEN,
+  auth: "Bot " + process.env.BOT_TOKEN,
   gateway: {
-    intents: ['ALL'],
+    intents: ["ALL"],
     autoReconnect: true,
   },
   allowedMentions: {
@@ -12,7 +12,7 @@ new App({
     repliedUser: true,
     roles: false
   },
-  defaultImageFormat: 'png',
+  defaultImageFormat: "png",
   defaultImageSize: 2048
 })
-.start()
+.start();

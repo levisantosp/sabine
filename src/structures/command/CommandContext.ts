@@ -1,72 +1,72 @@
-import { CommandInteraction, CreateMessageOptions, Guild, InitialInteractionContent } from 'oceanic.js'
-import locale, { Args } from '../../locales'
-import App from '../client/App'
-import { GuildSchemaInterface, UserSchemaInterface } from '../../database'
+import { CommandInteraction, ComponentInteraction, File, Guild, InitialInteractionContent, ModalSubmitInteraction } from "oceanic.js"
+import App from "../client/App"
+import locales, { Args } from "../../locales"
+import { GuildSchemaInterface, UserSchemaInterface } from "../../database"
 
 type Database = {
   guild: GuildSchemaInterface
   user: UserSchemaInterface
 }
-interface CommandContextOptions {
-  client: App
-  db: Database
-  guild: Guild
-  callback: CommandInteraction
-  locale: string
+type CommandContextOptions = {
+  client: App;
+  guild: Guild;
+  interaction: CommandInteraction | ComponentInteraction | ModalSubmitInteraction;
+  locale: string;
+  db: Database;
+  args: string[];
 }
 export default class CommandContext {
-  client: App
-  db: Database
-  guild: Guild
-  callback: CommandInteraction
-  locale: string
-  args!: string[]
-  constructor(options: CommandContextOptions) {
-    this.client = options.client
-    this.db = options.db
-    this.guild = options.guild
-    this.callback = options.callback
-    this.locale = options.locale
+  public client: App;
+  public guild: Guild;
+  public interaction: CommandInteraction | ComponentInteraction | ModalSubmitInteraction;
+  public locale: string;
+  public db: Database;
+  public args: string[];
+  public constructor(options: CommandContextOptions) {
+    this.client = options.client;
+    this.guild = options.guild;
+    this.interaction = options.interaction;
+    this.locale = options.locale;
+    this.db = options.db;
+    this.args = options.args;
   }
-  async reply(content: string | InitialInteractionContent, options?: Args) {
-    if(this.callback instanceof CommandInteraction) {
-      switch(typeof content) {
-        case 'string': {
-          if(options?.name && options?.files) {
-            await this.callback.defer()
-            if(this.callback.acknowledged) return this.callback.createFollowup(
-              {
-                content: locale(this.locale, content, options)
-              }
-            )
-            else return this.callback.createMessage(
-              {
-                content: locale(this.locale, content, options)
-              }
-            )
-          }
-          else {
-            if(this.callback.acknowledged) return this.callback.createFollowup(
-              {
-                content: locale(this.locale, content, options)
-              }
-            )
-            else return this.callback.createMessage(
-              {
-                content: locale(this.locale, content, options)
-              }
-            )
-          }
+  public async reply(content: string | InitialInteractionContent, options?: Args) {
+    switch(typeof content) {
+      case "string": {
+        if(options?.files) {
+          if(this.interaction.acknowledged) return this.interaction.createFollowup(
+            {
+              content: locales(this.locale, content, options),
+              files: options.files as File[]
+            }
+          );
+          else return this.interaction.createMessage(
+            {
+              content: locales(this.locale, content, options)
+            }
+          );
         }
-        case 'object': {
-          if(options?.options && options?.name) {
-            if(this.callback.acknowledged) return this.callback.createFollowup(Object.assign(content))
-            else return this.callback.createMessage(Object.assign(content))
-          }
-          else {
-            if(this.callback.acknowledged) return this.callback.createFollowup(Object.assign(content))
-            else return this.callback.createMessage(Object.assign(content))
-          }
+        else {
+          if(this.interaction.acknowledged) return this.interaction.createFollowup(
+            {
+              content: locales(this.locale, content, options)
+            }
+          );
+          else return this.interaction.createMessage(
+            {
+              content: locales(this.locale, content, options)
+            }
+          );
+        }
+      }
+      case "object": {
+        if(options?.files) {
+          if(this.interaction.acknowledged) return this.interaction.createFollowup(Object.assign(content, { files: options.files as File[] }));
+          else return this.interaction.createMessage(Object.assign(content, { files: options.files as File[] }));
+        }
+        else {
+          if(this.interaction.acknowledged) return this.interaction.createFollowup(content);
+          else return this.interaction.createMessage(content);
         }
       }
     }

@@ -1,79 +1,80 @@
-// import { Constants } from 'oceanic.js'
+import { Constants, InitialInteractionContent, NullablePartialEmoji, SelectOption, StringSelectMenu } from "oceanic.js"
 
-// export default class SelectMenuBuilder {
-//   type: 3
-//   custom_id!: string
-//   placeholder?: string
-//   options!: SelectMenuOptions[]
-//   min_values?: number
-//   max_values?: number
-//   disabled?: boolean
-//   constructor() {
-//     this.type = Constants.ComponentTypes.SELECT_MENU
-//   }
-//   setPlaceholder(text: string) {
-//     this.placeholder = text
-//     return this
-//   }
-//   setCustomId(id: string) {
-//     this.custom_id = id
-//     return this
-//   }
-//   addOption(label: string, description: string, value: string, emoji: string) {
-//     if(emoji) {
-//       if(isNaN(Number(emoji))) this.options?.push(
-//         {
-//           label,
-//           description,
-//           value,
-//           emoji: {
-//             name: emoji
-//           }
-//         }
-//       )
-//       else this.options?.push(
-//         {
-//           label,
-//           description,
-//           value,
-//           emoji: {
-//             id: emoji
-//           }
-//         }
-//       )
-//     }
-//     else {
-//       this.options?.push(
-//         {
-//           label,
-//           description,
-//           value
-//         }
-//       )
-//     }
-//     return this
-//   }
-//   setMinValues(number: number) {
-//     this.min_values = number
-//     return this
-//   }
-//   setMaxValues(number: number) {
-//     this.max_values = number
-//     return this
-//   }
-//   setDisabled() {
-//     this.disabled = true
-//     return this
-//   }
-//   build(content = '') {
-//     return {
-//       content,
-//       components: [
-//         {
-//           type: 1,
-//           components: [this]
-//         }
-//       ]
-//     }
-//   }
-// }
+export default class SelectMenuBuilder {
+  public type: number = Constants.ComponentTypes.STRING_SELECT;
+  public customID?: string;
+  public placeholder?: string;
+  public options: SelectOption[] = [];
+  public minValues?: number;
+  public maxValues?: number;
+  public disabled?: boolean;
+  public setCustomId(id: string) {
+    this.customID = id;
+    return this;
+  }
+  public setPlaceholder(text: string) {
+    this.placeholder = text;
+    return this;
+  }
+  public addOption(label: string, value: string, description?: string, emoji?: NullablePartialEmoji) {
+    this.options.push({ label, value, description, emoji });
+    return this;
+  }
+  public addOptions(...options: SelectOption[]) {
+    this.options.push(...options);
+    return this;
+  }
+  public setOption(label: string, value: string, description?: string, emoji?: NullablePartialEmoji) {
+    this.options = [{ label, value, description, emoji }];
+    return this;
+  }
+  public setOptions(...options: SelectOption[]) {
+    this.options = options;
+    return this;
+  }
+  public setMin(min: number) {
+    this.minValues = min;
+    return this;
+  }
+  public setMax(max: number) {
+    this.maxValues = max;
+    return this;
+  }
+  public setDisabled(disabled = true) {
+    this.disabled = disabled;
+    return this;
+  }
+  public build(content?: string | InitialInteractionContent) {
+    const menu: StringSelectMenu = {
+      type: this.type,
+      customID: this.customID!,
+      placeholder: this.placeholder,
+      options: this.options,
+      minValues: this.minValues,
+      maxValues: this.maxValues,
+      disabled: this.disabled,
+    };
+    if(typeof content === "string") {
+      return {
+        content: content ?? "",
+        components: [
+          {
+            type: 1,
+            components: [menu]
+          }
+        ]
+      }
+    }
+    else {
+      return {
+        components: [
+          {
+            type: 1,
+            components: [menu]
+          }
+        ],
+        ...content
+      }
+    }
+  }
+}

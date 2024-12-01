@@ -1,29 +1,33 @@
-import EventsController from './controllers/EventsController'
-import MatchesController from './controllers/MatchesController'
-import PlayersController from './controllers/PlayersController'
-import ResultsController from './controllers/ResultsController'
-import TeamsController from './controllers/TeamsController'
+import EventsController from "./controllers/EventsController"
+import MatchesController from "./controllers/MatchesController"
+import NewsController from "./controllers/NewsController"
+import PlayersController from "./controllers/PlayersController"
+import ResultsController from "./controllers/ResultsController"
+import TeamsController from "./controllers/TeamsController"
 
 export default class MainController {
-  static async getEvents() {
+  public static async getEvents() {
     return await EventsController.get()
   }
-  static async getMatches() {
+  public static async getMatches() {
     return await MatchesController.get()
   }
-  static async getAllPlayers() {
+  public static async getAllPlayers() {
     return await PlayersController.get()
   }
-  static async getPlayerById(id: string | number) {
+  public static async getPlayerById(id: string | number) {
     return await PlayersController.getById(id)
   }
-  static async getResults() {
+  public static async getResults() {
     return await ResultsController.get()
   }
-  static async getAllTeams() {
+  public static async getAllTeams() {
     return await TeamsController.get()
   }
-  static async getTeamById(id: string | number) {
+  public static async getTeamById(id: string | number) {
     return await TeamsController.getById(id)
+  }
+  public static async getAllNews() {
+    return await NewsController.get()
   }
 }
