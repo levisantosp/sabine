@@ -257,7 +257,7 @@ export default createCommand({
     }
     args[i.data.options.getSubCommand()![1] as "add" | "remove"]().catch(e => new Logger(client).error(e));
   },
-  async createInteraction({ ctx, locale }) {
+  async createInteraction({ ctx, locale, client }) {
     if(ctx.args[2] === "resend") {
       await ctx.interaction.defer(64);
       const guild = await Guild.findById(ctx.interaction.guild!.id) as GuildSchemaInterface;
@@ -281,8 +281,86 @@ export default createCommand({
       guild.matches = [];
       guild.tbdMatches = [];
       guild.resendTime = new Date().setHours(24, 0, 0, 0);
+      await ctx.edit("commands.admin.resending");
+      const res = await MainController.getMatches();
+      if(!res || !res.length) return;
+      const res2 = await MainController.getResults();
+      if(guild.matches.length && !res2.some(d => d.id === guild.matches[guild.matches.length - 1])) return;
+      guild.matches = [];
+      let data = res.filter(d => guild.events.some(e => e.name === d.tournament.name));
+      for(const e of guild.events) {
+        if(!client.getChannel(e.channel1)) continue;
+        try {
+          let messages = await client.rest.channels.getMessages(e.channel1, { limit: 100 });
+          let messagesIds = messages.filter(m => m.author.id === client.user.id).map(m => m.id);
+          if(messagesIds.length) {
+            client.rest.channels.deleteMessages(e.channel1, messagesIds).catch(() => {});
+          }
+        }
+        catch {}
+      }
+        try {
+          for(const d of data) {
+            if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue;
+            for(const e of guild.events) {
+              if(e.name === d.tournament.name) {
+                let index = guild.matches.findIndex((m) => m === d.id);
+                if(index > -1) guild.matches.splice(index, 1);
+                guild.matches.push(d.id!);
+      
+                const embed = new EmbedBuilder()
+                .setAuthor({
+                  iconURL: d.tournament.image,
+                  name: d.tournament.name
+                })
+                .setDesc(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
+                .setField(`:flag_${d.teams[0].country}: ${d.teams[0].name} \`vs\` ${d.teams[1].name} :flag_${d.teams[1].country}:`.replaceAll(":flag_un:", ":united_nations:"), "", true)
+                .setFooter({
+                  text: d.stage
+                });
+      
+                const button = new ButtonBuilder()
+                .setLabel(locale("helper.palpitate"))
+                .setCustomId(`guess-${d.id}`)
+                .setStyle("green");
+      
+                const urlButton = new ButtonBuilder()
+                .setLabel(locale("helper.stats"))
+                .setStyle("link")
+                .setURL(`https://vlr.gg/${d.id}`);
+                
+                if(d.stage.toLowerCase().includes("showmatch")) continue;
+                if(d.teams[0].name !== "TBD" && d.teams[1].name !== "TBD") await client.rest.channels.createMessage(e.channel1, {
+                  embeds: [embed],
+                  components: [
+                    {
+                      type: 1,
+                      components: [button, urlButton]
+                    },
+                    // {
+                    //   type: 1,
+                    //   components: [
+                    //     new ButtonBuilder()
+                    //     .setLabel(locales(guild.lang, "helper.pickem.label"))
+                    //     .setStyle("blue")
+                    //     .setCustomId("pickem")
+                    //   ]
+                    // }
+                  ]
+                }).catch(() => {});
+                else {
+                  guild.tbdMatches.push({
+                  id: d.id!,
+                  channel: e.channel1
+                });
+              }    
+            }
+          }
+        }
+      }
+      catch {}
       await guild.save();
-      ctx.edit("commands.admin.resending");
+      ctx.edit("commands.admin.resent");
     }
   }
 });
