@@ -1,6 +1,7 @@
 import locales, { Args } from "../locales"
-import { CommandContext, CommandRunner, createListener, Logger } from "../structures"
+import { ButtonBuilder, CommandContext, CommandRunner, createListener, Logger } from "../structures"
 import { Blacklist, BlacklistSchemaInterface, Guild, GuildSchemaInterface, User, UserSchemaInterface } from "../database"
+import MainController from "../scraper"
 
 export default createListener({
   name: "interactionCreate",
@@ -21,6 +22,97 @@ export default createListener({
       .catch(e => new Logger(client).error(e));
     }
     else if(i.isComponentInteraction()) {
+      if(i.data.customID.startsWith("guess-")) {
+        await i.defer(64);
+        const guild = await Guild.findById(i.guildID) as GuildSchemaInterface;
+        const user = (await User.findById(i.member!.id) || new User({ _id: i.member!.id })) as UserSchemaInterface;
+        if(user.history.filter((g) => g.match === i.data.customID.slice(6))[0]?.match === i.data.customID.slice(6)) {
+          i.editOriginal({
+            content: locales(user.lang ?? guild?.lang!, 'helper.replied')
+          });
+          return;
+        }
+        const res = await MainController.getMatches();
+        const data = res.find(d => d.id == i.data.customID.slice(6));
+        if(data?.status === 'LIVE' || !data) {
+          i.editOriginal({
+            content: locales(user.lang ?? guild?.lang!, 'helper.started')
+          });
+          return;
+        }
+        i.editOriginal({
+          content: locales(user.lang ?? guild?.lang!, 'helper.verified'),
+          components: [
+            {
+              type: 1,
+              components: [
+                new ButtonBuilder()
+                .setStyle('green')
+                .setLabel(locales(user.lang ?? guild?.lang!, 'helper.palpitate'))
+                .setCustomId(`predict-${i.data.customID.slice(6)}`)
+              ]
+            }
+          ]
+        })
+        return;
+      }
+      if(i.data.customID.startsWith('predict-')) {
+        const guild = await Guild.findById(i.guildID) as GuildSchemaInterface;
+        const user = (await User.findById(i.member!.id) || new User({ _id: i.member!.id })) as UserSchemaInterface;
+        if(user.history.filter((g) => g.match === i.data.customID.slice(8))[0]?.match === i.data.customID.slice(8)) {
+          i.editParent({
+            content: locales(user.lang ?? guild?.lang!, 'helper.replied'),
+            components: []
+          });
+          return;
+        }
+        const res = await MainController.getMatches();
+        const data = res.find(d => d.id == i.data.customID.slice(8));
+        if(data?.status === 'LIVE' || !data) {
+          i.editOriginal({
+            content: locales(user.lang ?? guild?.lang!, 'helper.started'),
+            components: []
+          });
+          return;
+        }
+        i.createModal({
+          customID: `modal-${i.data.customID.slice(8)}`,
+          title: locales(user.lang ?? guild?.lang!, 'helper.palpitate_modal.title'),
+          components: [
+            {
+              type: 1,
+              components: [
+                {
+                  type: 4,
+                  customID: 'response-modal-1',
+                  label: data?.teams[0].name,
+                  style: 1,
+                  minLength: 1,
+                  maxLength: 1,
+                  required: true,
+                  placeholder: '0'
+                },
+              ]
+            },
+            {
+              type: 1,
+              components: [
+                {
+                  type: 4,
+                  customID: 'response-modal-2',
+                  label: data?.teams[1].name,
+                  style: 1,
+                  minLength: 1,
+                  maxLength: 1,
+                  required: true,
+                  placeholder: '0'
+                }
+              ]
+            }
+          ]
+        });
+        return;
+      }
       const args = i.data.customID.split(";");
       const command = client.commands.get(args[0]);
       const blacklist = await Blacklist.findById("blacklist") as BlacklistSchemaInterface;
@@ -47,6 +139,35 @@ export default createListener({
       }
       command.createInteraction({ client, ctx, locale })
       .catch(e => new Logger(client).error(e));
+    }
+    else if(i.isModalSubmitInteraction() && i.data.customID.startsWith("modal-")) {
+      const user = (await User.findById(i.user.id) || new User({ _id: i.user.id })) as UserSchemaInterface;
+      const guild = await Guild.findById(i.guildID) as GuildSchemaInterface;
+      const res = await MainController.getMatches();
+      const data = res.find(d => d.id == i.data.customID.slice(6))!;
+      user.history.push({
+        match: data.id!,
+        teams: [
+          {
+            name: data.teams[0].name,
+            score: i.data.components.getComponents()[0].value
+          },
+          {
+            name: data.teams[1].name,
+            score: i.data.components.getComponents()[1].value
+          }
+        ]
+      });
+      await user.save();
+      i.editParent({
+        content: locales(user.lang ?? guild?.lang!, 'helper.palpitate_response', {
+          t1: data.teams[0].name,
+          t2: data.teams[1].name,
+          s1: i.data.components.getComponents()[0].value,
+          s2: i.data.components.getComponents()[1].value
+        }),
+        components: []
+      });
     }
   }
 });
