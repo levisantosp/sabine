@@ -61,7 +61,7 @@ export default createCommand({
           if(cmd[1].options) {
             let options = cmd[1].options.map(op => {
               if(op.type === 1) return `\`/${cmd[0]} ${op.name}\``
-              else if(op.type === 2) return op.options?.map(op2 => `\`/${cmd[0]} ${op.name} ${op2.name}\``).join("n");
+              else if(op.type === 2) return op.options?.map(op2 => `\`/${cmd[0]} ${op.name} ${op2.name}\``).join("\n");
               else return `\`/${cmd[0]}\``
             });
             return options.join("\n");
