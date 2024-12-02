@@ -23,7 +23,7 @@ export default class Logger {
     if(typeof error === "string") {
       const embed = new EmbedBuilder()
       .setTitle("An error has occurred")
-      .setDesc(`Shard ID: \`${shardId}\n\`\`\`\`js\n${error}\`\`\``);
+      .setDesc(`Shard ID: \`${shardId}\`\n\`\`\`\`js\n${error}\`\`\``);
       const channel = await this.client.rest.channels.get(process.env.ERROR_LOG) as TextChannel;
       const webhooks = await channel.getWebhooks();
       let webhook = webhooks.filter(w => w.name === `${this.client.user.username} Logger`)[0];
@@ -37,7 +37,7 @@ export default class Logger {
     else {
       const embed = new EmbedBuilder()
       .setTitle("An error has occurred")
-      .setDesc(`Shard ID: \`${shardId}\n\`\`\`\`js\n${error.stack}\`\`\``);
+      .setDesc(`Shard ID: \`${shardId}\`\n\`\`\`\`js\n${error.stack}\`\`\``);
       const channel = await this.client.rest.channels.get(process.env.ERROR_LOG) as TextChannel;
       const webhooks = await channel.getWebhooks();
       let webhook = webhooks.filter(w => w.name === `${this.client.user.username} Logger`)[0];
