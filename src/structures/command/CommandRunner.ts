@@ -1,7 +1,7 @@
-import { CommandInteraction } from "oceanic.js"
+import { CommandInteraction, TextChannel } from "oceanic.js"
 import App from "../client/App"
 import CommandContext from "./CommandContext"
-import { ButtonBuilder, Logger } from ".."
+import { ButtonBuilder, EmbedBuilder, Logger } from ".."
 import { Blacklist, BlacklistSchemaInterface, Guild, GuildSchemaInterface, User, UserSchemaInterface } from "../../database"
 import locales, { Args } from "../../locales"
 
@@ -69,7 +69,31 @@ export default class CommandRunnner {
     const locale = (content: string, args?: Args) => {
       return locales(user.lang ?? guild.lang, content, args);
     }
-    command.run({ ctx, client, locale, id: interaction.data.id }).catch(e => {
+    command.run({ ctx, client, locale, id: interaction.data.id })
+    .then(async() => {
+      const cmd = (ctx.interaction as CommandInteraction).data.options.getSubCommand() ? `${command.name} ${(ctx.interaction as CommandInteraction).data.options.getSubCommand()?.join(' ')}` : command.name;
+      const embed = new EmbedBuilder()
+      .setAuthor({
+        name: ctx.interaction.user.username,
+        iconURL: ctx.interaction.user.avatarURL()
+      })
+      .setTitle('New slash command executed')
+      .setDesc(`The command \`${cmd}\` has been executed in \`${ctx.guild.name}\``)
+      .addField('Server ID', `\`${ctx.guild.id}\``)
+      .addField('Owner', `\`${ctx.guild.owner?.username}\` (\`${ctx.guild.ownerID}\`)`)
+      .addField('Command author', `\`${ctx.interaction.user.username}\``)
+      .setThumb(ctx.guild.iconURL()!);
+
+      const channel = await client.rest.channels.get(process.env.COMMAND_LOG!) as TextChannel;
+      const webhooks = await channel.getWebhooks();
+      let webhook = webhooks.find(w => w.name === `${client.user.username} Logger`);
+      if(!webhook) webhook = await channel.createWebhook({ name: `${client.user.username} Logger` });
+      webhook.execute({
+        embeds: [embed],
+        avatarURL: client.user.avatarURL()
+      }, webhook.token!);
+    })
+    .catch(e => {
       new Logger(client).error(e);
       ctx.reply("helper.error", { e });
     });
