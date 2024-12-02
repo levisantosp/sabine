@@ -267,8 +267,50 @@ export default createListener({
         }
       }
     }
+    const sendNews = async() => {
+      let data = await MainController.getAllNews();
+      const guild = await Guild.findById("1233965003850125433") as GuildSchemaInterface;
+      if(guild.lastNews && guild.lastNews !== data[0].id) {
+        let news = data.find(e => e.id === guild.lastNews)!;
+        let index = data.indexOf(news);
+        if(index > -1) {
+          data = data.slice(0, index);
+        }
+        else {
+          data = data.slice(0, 1);
+        }
+        for(const d of data) {
+          const embed = new EmbedBuilder()
+          .setAuthor({ name: d.title });
+          if(d.description) embed.setDesc(d.description);
+          const button = new ButtonBuilder()
+          .setStyle("link")
+          .setLabel("Source")
+          .setURL(d.url);
+          client.rest.channels.createMessage("1307375188933083156", embed.build({
+            components: [
+              {
+                type: 1,
+                components: [button]
+              }
+            ]
+          }));
+        }
+      }
+      await Guild.updateOne(
+        {
+          _id: guild.id
+        },
+        {
+          $set: {
+            lastNews: data[0].id
+          }
+        }
+      );
+    }
     const execTasks = async() => {
       try {
+        await sendNews();
         await deleteGuild();
         await sendMatches();
         await sendResults();

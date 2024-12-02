@@ -5,20 +5,20 @@ export default class MatchesController {
   static async get() {
     const html = await (await fetch("https://www.vlr.gg/matches", {
       method: "get"
-    })).text()
-    const $ = load(html)
-    const matches: MatchesData[] = []
+    })).text();
+    const $ = load(html);
+    const matches: MatchesData[] = [];
     $(".wf-module-item.match-item").each((index, element) => {
-      const id = $(element).attr("href")?.split("/")[1]
-      const teams = $(element).find(".match-item-vs-team-name").text().replace(/\t/g, "").trim()
-      const [team1, team2] = teams.split("\n").filter(i => i !== "")
-      const countryElements = $(element).find(".match-item-vs-team .flag")
-      const country1 = countryElements.eq(0).attr("class")?.split(" ")[1].replace("mod-", "")
-      const country2 = countryElements.eq(1).attr("class")?.split(" ")[1].replace("mod-", "")
-      const status = $(element).find(".ml-status").text()
-      const stage = $(element).find(".match-item-event-series").text().trim()
+      const id = $(element).attr("href")?.split("/")[1];
+      const teams = $(element).find(".match-item-vs-team-name").text().replace(/\t/g, "").trim();
+      const [team1, team2] = teams.split("\n").filter(i => i !== "");
+      const countryElements = $(element).find(".match-item-vs-team .flag");
+      const country1 = countryElements.eq(0).attr("class")?.split(" ")[1].replace("mod-", "");
+      const country2 = countryElements.eq(1).attr("class")?.split(" ")[1].replace("mod-", "");
+      const status = $(element).find(".ml-status").text();
+      const stage = $(element).find(".match-item-event-series").text().trim();
       const date = `${$(element.parent!).prev().text().replace("Today", "").trim()} ${$(element).find(".match-item-time").text().trim()}`
-      const timestamp = new Date(new Date(date).toLocaleString("en-US", { timeZone: process.env.TZ })).getTime()
+      const timestamp = new Date(new Date(date).toLocaleString("en-US", { timeZone: process.env.TZ })).getTime();
       matches.push({
         id,
         teams: [
@@ -38,8 +38,8 @@ export default class MatchesController {
         },
         stage,
         when: timestamp
-      })
-    })
-    return matches
+      });
+    });
+    return matches;
   }
 }
