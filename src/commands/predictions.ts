@@ -1,3 +1,4 @@
+import { ComponentInteraction } from "oceanic.js"
 import { ButtonBuilder, createCommand, EmbedBuilder } from "../structures"
 
 export default createCommand({
@@ -37,11 +38,12 @@ export default createCommand({
     }
     let history = ctx.db.user.history.reverse();
     let page = !ctx.args[0] ? 1 : Number(ctx.args[0]);
+    let pages = Math.ceil(ctx.db.user.history.length / 5);
     if(page === 1) history = history.slice(0, 5);
     else history = history.slice(page * 5 - 5, page * 5);
     if(!history.length) {
       ctx.reply("commands.predictions.no_pages");
-      return
+      return;
     }
     const embed = new EmbedBuilder()
     .setAuthor({
@@ -56,7 +58,7 @@ export default createCommand({
     .setFooter({
       text: locale("commands.predictions.embed.footer", {
         p1: isNaN(page) ? 1 : page,
-        p2: Math.ceil(ctx.db.user.history.length / 5)
+        p2: pages
       })
     });
     for(const prediction of history) {
@@ -72,10 +74,10 @@ export default createCommand({
     .setStyle("gray");
     const next = new ButtonBuilder()
     .setEmoji("▶")
-    .setCustomId(`predictions;${ctx.interaction.user.id};${page + 1 > Math.ceil(ctx.db.user.history.length / 5) ? Math.ceil(ctx.db.user.history.length / 5) : page + 1}`)
+    .setCustomId(`predictions;${ctx.interaction.user.id};${page + 1 > pages ? pages : page + 1};next`)
     .setStyle("gray");
     if(page <= 1) previous.setDisabled();
-    if(page >= Math.ceil(ctx.db.user.history.length / 5)) next.setDisabled();
+    if(page >= pages) next.setDisabled();
     ctx.reply(embed.build({
       components: [
         {
@@ -85,8 +87,60 @@ export default createCommand({
       ]
     }));
   },
-  async createInteraction({ ctx }) {
+  async createInteraction({ ctx, locale }) {
+    await (ctx.interaction as ComponentInteraction).deferUpdate();
+    if(!ctx.db.user.history.length) {
+      ctx.reply("commands.predictions.no_predictions");
+      return;
+    }
     let history = ctx.db.user.history.reverse();
-    
+    let page = Number(ctx.args[2]);
+    let pages = Math.ceil(ctx.db.user.history.length / 5);
+    history = history.slice(page * 5 - 5, page * 5);
+    if(!history.length) {
+      ctx.reply("commands.predictions.no_pages");
+      return;
+    }
+    const embed = new EmbedBuilder()
+    .setAuthor({
+      name: locale("commands.predictions.embed.author"),
+      iconURL: ctx.interaction.user.avatarURL()
+    })
+    .setDesc(locale("commands.predictions.embed.desc", {
+      right: ctx.db.user.guessesRight,
+      wrong: ctx.db.user.guessesWrong,
+      t: ctx.db.user.history.length
+    }))
+    .setFooter({
+      text: locale("commands.predictions.embed.footer", {
+        p1: isNaN(page) ? 1 : page,
+        p2: pages
+      })
+    });
+    for(const prediction of history) {
+      embed.addField(`${prediction.teams[0].name} x ${prediction.teams[1].name}`, locale("commands.predictions.embed.field", {
+        score1: prediction.teams[0].score,
+        score2: prediction.teams[1].score,
+        link: `https://www.vlr.gg/${prediction.match}`
+      }));
+    }
+    const previous = new ButtonBuilder()
+    .setEmoji("◀️")
+    .setStyle("gray")
+    .setCustomId(`${ctx.args[0]};${ctx.args[1]};${page - 1};previous`)
+    const next = new ButtonBuilder()
+    .setEmoji("▶")
+    .setStyle("gray")
+    .setCustomId(`${ctx.args[0]};${ctx.args[1]};${page + 1};next`)
+    if(page <= 1) previous.setDisabled();
+    if(page >= pages) next.setDisabled();
+    ctx.edit(embed.build({
+      components: [
+        {
+          type: 1,
+          components: [previous, next]
+        }
+      ]
+    }));
   }
 });

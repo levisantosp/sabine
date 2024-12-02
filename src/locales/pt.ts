@@ -12,14 +12,14 @@ export const commands = {
   },
   player: {
     insert_player: "<:warn:869393116854108191> Informe o nome de um jogador.",
-    no_player_found: "<:error:1300882259078938685> Nenhum jogador foi encontrado com esse nome.",
+    player_not_found: "<:error:1300882259078938685> Nenhum jogador foi encontrado com esse nome.",
     embed: {
       desc: "Nome: `{name}`\nEquipe atual: {team}\nEquipes passadas: {pt}\nÚltima partida: {lt}"
     }
   },
   team: {
     insert_team: "<:warn:869393116854108191> Informe o nome de uma equipe.",
-    no_team_found: "<:error:1300882259078938685> Nenhuma equipe foi encontrada com esse nome.",
+    team_not_found: "<:error:1300882259078938685> Nenhuma equipe foi encontrada com esse nome.",
     embed: {
       desc: "Jogadores: {p}\nStaff: {s}\nÚltima partida: {lt}\nPróxima partida: {n}"
     }
@@ -58,12 +58,13 @@ export const commands = {
     limit_reached: "<:error:1300882259078938685> Este servidor atingiu o limite máximo de campeonatos que podem ser adicionados. Se quiser adicionar este campeonato, considere remover um usando {cmd}",
     channel_being_used: "<:error:1300882259078938685> O canal {ch} já está sendo usado para anunciar os resultados de um campeonato. Considere usar outro canal para isso.\nVerifique os canais que já estão em uso usando {cmd}",
     resend_time: "<:error:1300882259078938685> Este recurso já foi usado hoje neste servidor. Tente novamente amanhã.",
-    resending: "<:success:1300882212190945292> Reenviando partidas...\n<:warn:869393116854108191> Pode demorar alguns segundos para as partidas serem reenviadas, apenas aguarde.",
+    resending: "<a:carregando:809221866434199634> Reenviando partidas... Por favor, aguarde.",
     resend: "Reenviar partidas",
     confirm: "<:warn:869393116854108191> Você está prestes a FORÇAR o envio das partidas neste servidor!\n<:warn:869393116854108191> Vale lembrar que esta ação é **IRREVERSÍVEL** e só pode ser feita **UMA VEZ por dia**! Se você ainda quer adicionar mais campeonatos, adicione antes de usar este recurso.\nDeseja continuar?",
     continue: "Continuar",
     remove_all: "Remover todos",
-    removed_all_tournaments: "<:success:1300882212190945292> Todos os torneios foram removidos com sucesso!"
+    removed_all_tournaments: "<:success:1300882212190945292> Todos os torneios foram removidos com sucesso!",
+    resent: "<:success:1300882212190945292> Partidas reenviadas com sucesso!"
   },
   info: {
     embed: {
@@ -96,7 +97,8 @@ export const helper = {
     label: "Bolão",
     res: "Participe do BOLÃO valendo um <:booster:1272968894239215636> **Discord Nitro** e um <:nitro:1272968817496297542> **Discord Nitro Basic** entrando no nosso servidor oficial!\nhttps://discord.gg/g5nmc376yh"
   },
-  banned: "**<:error:1300882259078938685> Você está banido e não pode mais usar o bot.\<:warn:869393116854108191> você acha que isso é um engano, entre em contato conosco no nosso servidor no Discord!**\n**Quando:** {when}\n**Termina em:** {ends}\n**Motivo:** `{reason}`"
+  banned: "**<:error:1300882259078938685> Você está banido e não pode mais usar o bot.\<:warn:869393116854108191> você acha que isso é um engano, entre em contato conosco no nosso servidor no Discord!**\n**Quando:** {when}\n**Termina em:** {ends}\n**Motivo:** `{reason}`",
+  interaction_failed: "<:error:1300882259078938685> Não foi possível executar esta ação... Se o problema persistir, reporte para a equipe no meu [servidor de suporte](https://discord.gg/g5nmc376yh)."
 }
 export const permissions = {
   CREATE_INSTANT_INVITE: "Criar convite instantâneo",

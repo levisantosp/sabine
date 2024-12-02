@@ -1,0 +1,68 @@
+import { TeamData, TeamsData } from "../../types"
+import MainController from "../scraper"
+import { createCommand, EmbedBuilder, Logger } from "../structures"
+const cache = new Map();
+
+export default createCommand({
+  name: "team",
+  description: "Shows a team info",
+  descriptionLocalizations: {
+    "pt-BR": "Mostra as informações de uma equipe"
+  },
+  options: [
+    {
+      type: 3,
+      name: "team",
+      description: "Select a team",
+      descriptionLocalizations: {
+        "pt-BR": "Selecione uma equipe"
+      },
+      autocomplete: true,
+      required: true
+    }
+  ],
+  syntax: "team [team]",
+  examples: [
+    "team LOUD",
+    "team G2",
+    "team Team Vitality",
+    "team NRG ESPORTS"
+  ],
+  botPermissions: ["EMBED_LINKS"],
+  isThinking: true,
+  async run({ ctx, locale }) {
+    if(!cache.has(ctx.args[0])) {
+      const res = await MainController.getTeamById(ctx.args[0]);
+      cache.set(ctx.args[0], res);
+    }
+    const team: TeamData = cache.get(ctx.args[0]);
+    if(team.name === "") {
+      ctx.reply("commands.team.team_not_found");
+      return;
+    }
+    const embed = new EmbedBuilder()
+    .setTitle(`${team.name} (${team.tag})`)
+    .setThumb(team.logo)
+    .setDesc(locale("commands.team.embed.desc", {
+      p: team.roster.players.map(p => `[${p.user}](${p.url})`).join(", "),
+      s: team.roster.staffs.map(s => `[${s.user}](${s.url})`).join(", "),
+      lt: `[${team.lastResults[0].teams[0].score}-${team.lastResults[0].teams[1].score} vs ${team.lastResults[0].teams[1].name}](${team.lastResults[0].url})`,
+      n: team.upcomingMatches.length ? `[vs ${team.upcomingMatches[0].teams[1].name}](${team.upcomingMatches[0].url})` : ""
+    }));
+    ctx.reply(embed.build());
+  },
+  async createAutocompleteInteraction({ i, client }) {
+    if(!cache.has("teams")) {
+      const res = await MainController.getAllTeams();
+      cache.set("teams", res);
+    }
+    const res: TeamsData[] = cache.get("teams");
+    const teams = res.sort((a, b) => a.name.localeCompare(b.name))
+    .filter(e => {
+      if(e.name.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e;
+    })
+    .slice(0, 25);
+    i.result(teams.map(t => ({ name: `${t.name} (${t.country})`, value: t.id })))
+    .catch((e) => new Logger(client).error(e));
+  }
+});

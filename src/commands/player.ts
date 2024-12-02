@@ -35,6 +35,10 @@ export default createCommand({
       cache.set(ctx.args[0], res);
     }
     const player: PlayerData = cache.get(ctx.args[0]);
+    if(player.user === "") {
+      ctx.reply("commands.player.player_not_found");
+      return;
+    }
     const embed = new EmbedBuilder()
     .setTitle(`:flag_${player.country.flag}: ${player.user}`)
     .setThumb(player.avatar)

@@ -12,8 +12,8 @@ export default class CommandRunnner {
     const command = client.commands.get(interaction.data.name);
     if(!command) return;
     if(!interaction.guildID || !interaction.member || !interaction.guild) return;
-    const guild = await Guild.findById(interaction.guildID) as GuildSchemaInterface;
-    const user = await User.findById(interaction.user.id) as UserSchemaInterface;
+    const guild = (await Guild.findById(interaction.guildID) ?? new Guild({ _id: interaction.guildID })) as GuildSchemaInterface;
+    const user = (await User.findById(interaction.user.id) ?? new User({ _id: interaction.user.id })) as UserSchemaInterface;
     const blacklist = await Blacklist.findById("blacklist") as BlacklistSchemaInterface;
     const ban = blacklist.users.find(user => user.id === interaction.user.id);
     if(blacklist.guilds.find(guild => guild.id === interaction.guildID)) {
@@ -69,6 +69,9 @@ export default class CommandRunnner {
     const locale = (content: string, args?: Args) => {
       return locales(user.lang ?? guild.lang, content, args);
     }
-    command.run({ ctx, client, locale }).catch(e => new Logger(client).error(e));
+    command.run({ ctx, client, locale, id: interaction.data.id }).catch(e => {
+      new Logger(client).error(e);
+      ctx.reply("helper.error", { e });
+    });
   }
 }

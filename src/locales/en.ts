@@ -11,14 +11,14 @@ export const commands = {
   },
   player: {
     insert_player: "<:warn:869393116854108191> Provide the name of a player.",
-    no_player_found: "<:error:1300882259078938685> No players have been found with that name.",
+    player_not_found: "<:error:1300882259078938685> No players have been found with that name.",
     embed: {
       desc: "Name: `{name}`\nCurrent team: {team}\nPast teams: {pt}\nLast match: {lt}"
     }
   },
   team: {
     insert_team: "<:warn:869393116854108191> Provide the name of a team.",
-    no_team_found: "<:error:1300882259078938685> No teams have been found with that name.",
+    team_not_found: "<:error:1300882259078938685> No teams have been found with that name.",
     embed: {
       desc: "Players: {p}\nStaff: {s}\nLast match: {lt}\nNext match: {n}"
     }
@@ -57,12 +57,13 @@ export const commands = {
     limit_reached: "<:error:1300882259078938685> This server has reached the maximum limit of tournaments that can be added. If you want to add this tournaments, consider removing one using {cmd}",
     channel_being_used: "<:error:1300882259078938685> The channel {ch} is already being used to send the results of a tournament. Consider using another channel for this.\nCheck the channels that are already in use by using {cmd}",
     resend_time: "<:error:1300882259078938685> This feature has already been used today on this server. Try again tomorrow.",
-    resending: "<:success:1300882212190945292> Resending matches...\n<:warn:869393116854108191> It may take a few seconds for matches to be resent, just wait.",
+    resending: "<a:carregando:809221866434199634> Resending matches... Please, wait.",
     resend: "Resend matches",
     confirm: "<:warn:869393116854108191> You are about to FORCE the submission of matches on this server!\n<:warn:869393116854108191> It is worth remembering that this action is **IRREVERSIBLE** and can only be done **ONCE a day**! If you still want to add more tournaments, add them before using this feature. Do you want to continue?",
     continue: "Continue",
     remove_all: "Remove all",
-    removed_all_tournaments: "<:success:1300882212190945292> All tournaments have been removed successfully!"
+    removed_all_tournaments: "<:success:1300882212190945292> All tournaments have been removed successfully!",
+    resent: "<:success:1300882212190945292> Matches resent successfully!"
   },
   info: {
     embed: {
@@ -95,7 +96,8 @@ export const helper = {
     label: "Pick\"em",
     res: "Join the PICK\"EM for a chance to win a <:booster:1272968894239215636> **Discord Nitro** or a <:nitro:1272968817496297542> **Discord Nitro Basic** by joining our official server!\nhttps://discord.gg/g5nmc376yh"
   },
-  banned: "<:error:1300882259078938685> **You are banned and can not use the bot.\n<:warn:869393116854108191> If you think this is a mistake, contact us in our Discord server!**\n**When:** {when}\n**Ends at:** {ends}\n**Reason:** `{reason}`"
+  banned: "<:error:1300882259078938685> **You are banned and can not use the bot.\n<:warn:869393116854108191> If you think this is a mistake, contact us in our Discord server!**\n**When:** {when}\n**Ends at:** {ends}\n**Reason:** `{reason}`",
+  interaction_failed: "<:error:1300882259078938685> It was not possible to run this action... If the problem persists, report it to the team in my [support server](https://discord.gg/g5nmc376yh)."
 }
 export const permissions = {
   CREATE_INSTANT_INVITE: "Create Instant Invite",

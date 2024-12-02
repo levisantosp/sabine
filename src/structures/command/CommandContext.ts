@@ -1,4 +1,4 @@
-import { CommandInteraction, ComponentInteraction, File, Guild, InitialInteractionContent, ModalSubmitInteraction } from "oceanic.js"
+import { CommandInteraction, ComponentInteraction, EditInteractionContent, File, Guild, InitialInteractionContent, ModalSubmitInteraction } from "oceanic.js"
 import App from "../client/App"
 import locales, { Args } from "../../locales"
 import { GuildSchemaInterface, UserSchemaInterface } from "../../database"
@@ -67,6 +67,100 @@ export default class CommandContext {
         else {
           if(this.interaction.acknowledged) return this.interaction.createFollowup(content);
           else return this.interaction.createMessage(content);
+        }
+      }
+    }
+  }
+  public async edit(content: string | EditInteractionContent, options?: Args) {
+    if(this.interaction instanceof CommandInteraction) {
+      switch(typeof content) {
+        case "string": {
+          if(options?.files) {
+            if(this.interaction.acknowledged) return this.interaction.editOriginal(
+              {
+                content: locales(this.locale, content, options),
+                files: options.files as File[]
+              }
+            );
+            else return this.interaction.createMessage({
+              content: locales(this.locale, "helper.interaction_failed"),
+              flags: 64
+            });
+          }
+          else {
+            if(this.interaction.acknowledged) return this.interaction.editOriginal(
+              {
+                content: locales(this.locale, content, options)
+              }
+            );
+            else return this.interaction.createMessage({
+              content: locales(this.locale, "helper.interaction_failed"),
+              flags: 64
+            });
+          }
+        }
+        case "object": {
+          if(options?.files) {
+            if(this.interaction.acknowledged) return this.interaction.editOriginal(Object.assign(content, { files: options.files as File[] }));
+            else return this.interaction.createMessage({
+              content: locales(this.locale, "helper.interaction_failed"),
+              flags: 64
+            });
+          }
+          else {
+            if(this.interaction.acknowledged) return this.interaction.editOriginal(content);
+            else return this.interaction.createMessage({
+              content: locales(this.locale, "helper.interaction_failed"),
+              flags: 64
+            });
+          }
+        }
+      }
+    }
+    else if(this.interaction instanceof ComponentInteraction) {
+      switch(typeof content) {
+        case "string": {
+          if(options?.files) {
+            if(this.interaction.acknowledged) return this.interaction.editOriginal(
+              {
+                content: locales(this.locale, content, options),
+                files: options.files as File[],
+                components: []
+              }
+            );
+            else return this.interaction.createMessage({
+              content: locales(this.locale, "helper.interaction_failed"),
+              flags: 64
+            });
+          }
+          else {
+            if(this.interaction.acknowledged) return this.interaction.editOriginal(
+              {
+                content: locales(this.locale, content, options),
+                components: []
+              }
+            );
+            else return this.interaction.createMessage({
+              content: locales(this.locale, "helper.interaction_failed"),
+              flags: 64
+            });
+          }
+        }
+        case "object": {
+          if(options?.files) {
+            if(this.interaction.acknowledged) return this.interaction.editOriginal(Object.assign(content, { files: options.files as File[] }));
+            else return this.interaction.createMessage({
+              content: locales(this.locale, "helper.interaction_failed"),
+              flags: 64
+            });
+          }
+          else {
+            if(this.interaction.acknowledged) return this.interaction.editOriginal(content);
+            else return this.interaction.createMessage({
+              content: locales(this.locale, "helper.interaction_failed"),
+              flags: 64
+            });
+          }
         }
       }
     }

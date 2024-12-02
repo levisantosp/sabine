@@ -9,7 +9,7 @@ export default class EmbedBuilder {
   public thumbnail?: EmbedImageOptions;
   public timestamp?: string;
   public footer?: EmbedFooterOptions;
-  public color?: number = 0x7289DA // discord logo color
+  public color?: number = 10086557 // discord logo color
   public setAuthor(options: EmbedAuthorOptions) {
     this.author = options;
     return this;

@@ -6,7 +6,7 @@ export default createListener({
   name: "interactionCreate",
   async run(client, i) {
     if(i.isCommandInteraction()) {
-      new CommandRunner().run(client, i);
+      new CommandRunner().run(client, i).catch(e => new Logger(client).error(e));
     }
     else if(i.isAutocompleteInteraction()) {
       const command = client.commands.get(i.data.name);
@@ -28,6 +28,7 @@ export default createListener({
       if(!command) return;
       if(!command.createInteraction) return;
       if(!i.guild) return;
+      if(args[1] !== i.user.id) return;
       const guild = await Guild.findById(i.guild.id) as GuildSchemaInterface;
       const user = await User.findById(i.user.id) as UserSchemaInterface;
       const ctx = new CommandContext({
@@ -41,7 +42,10 @@ export default createListener({
           guild
         }
       })
-      command.createInteraction({ client, ctx })
+      const locale = (content: string, args?: Args) => {
+        return locales(user.lang ?? guild.lang, content, args);
+      }
+      command.createInteraction({ client, ctx, locale })
       .catch(e => new Logger(client).error(e));
     }
   }

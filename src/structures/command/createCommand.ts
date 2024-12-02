@@ -7,6 +7,7 @@ type CommandOptions = {
   ctx: CommandContext;
   client: App;
   locale: (content: string, args?: Args) => string;
+  id: string;
 }
 type CreateAutocompleteInteractionOptions = {
   i: AutocompleteInteraction;
@@ -16,6 +17,7 @@ type CreateAutocompleteInteractionOptions = {
 type CreateComponentInteractionOptions = {
   ctx: CommandContext;
   client: App;
+  locale: (content: string, args?: Args) => string;
 }
 export type Command = {
   name: string;
