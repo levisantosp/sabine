@@ -287,7 +287,7 @@ export default createListener({
           .setStyle("link")
           .setLabel("Source")
           .setURL(d.url);
-          client.rest.channels.createMessage("1307375188933083156", embed.build({
+          client.rest.channels.createMessage(process.env.NEWS_CHANNEL ?? "1312978543759851661", embed.build({
             components: [
               {
                 type: 1,
