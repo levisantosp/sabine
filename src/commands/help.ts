@@ -1,5 +1,5 @@
 import translate from "@iamtraction/google-translate"
-import { ButtonBuilder, createCommand, EmbedBuilder } from "../structures"
+import { ButtonBuilder, createCommand, EmbedBuilder, Logger } from "../structures"
 
 export default createCommand({
   name: "help",
@@ -37,7 +37,7 @@ export default createCommand({
       const cmd = client.commands.get(ctx.args[0]);
       if(!cmd || cmd.onlyDev) {
         ctx.reply("commands.help.command_not_found");
-        return
+        return;
       }
       const { permissions } = require(`../locales/${ctx.db.guild.lang}`);
       const embed = new EmbedBuilder()
@@ -99,5 +99,13 @@ export default createCommand({
         }
       ));
     }
+  },
+  async createAutocompleteInteraction({ i, client }) {
+    const commands = Array.from(client.commands).filter(c => {
+      if(c[0].includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return c;
+    })
+    .slice(0, 25);
+    i.result(commands.map(cmd => ({ name: cmd[0], value: cmd[0] })))
+    .catch((e) => new Logger(this.client!).error(e));
   }
 });
