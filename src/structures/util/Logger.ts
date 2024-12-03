@@ -4,7 +4,7 @@ import { App, EmbedBuilder } from ".."
 import { TextChannel } from "oceanic.js"
 
 export default class Logger {
-  private client: App
+  private client: App;
   public constructor(client: App) {
     this.client = client;
   }
@@ -37,7 +37,7 @@ export default class Logger {
     else {
       const embed = new EmbedBuilder()
       .setTitle("An error has occurred")
-      .setDesc(`Shard ID: \`${shardId}\`\n\`\`\`\`js\n${error.stack}\`\`\``);
+      .setDesc(`Shard ID: \`${shardId}\`\n\`\`\`js\n${error.stack}\`\`\``);
       const channel = await this.client.rest.channels.get(process.env.ERROR_LOG) as TextChannel;
       const webhooks = await channel.getWebhooks();
       let webhook = webhooks.filter(w => w.name === `${this.client.user.username} Logger`)[0];
