@@ -77,20 +77,20 @@ export default createListener({
         }
         i.createModal({
           customID: `modal-${i.data.customID.slice(8)}`,
-          title: locales(user.lang ?? guild?.lang!, 'helper.palpitate_modal.title'),
+          title: locales(user.lang ?? guild?.lang!, "helper.palpitate_modal.title"),
           components: [
             {
               type: 1,
               components: [
                 {
                   type: 4,
-                  customID: 'response-modal-1',
+                  customID: "response-modal-1",
                   label: data?.teams[0].name,
                   style: 1,
                   minLength: 1,
-                  maxLength: 1,
+                  maxLength: 2,
                   required: true,
-                  placeholder: '0'
+                  placeholder: "0"
                 },
               ]
             },
@@ -99,13 +99,13 @@ export default createListener({
               components: [
                 {
                   type: 4,
-                  customID: 'response-modal-2',
+                  customID: "response-modal-2",
                   label: data?.teams[1].name,
                   style: 1,
                   minLength: 1,
-                  maxLength: 1,
+                  maxLength: 2,
                   required: true,
-                  placeholder: '0'
+                  placeholder: "0"
                 }
               ]
             }
