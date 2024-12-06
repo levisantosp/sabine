@@ -52,7 +52,8 @@ export const Guild = mongoose.model("guilds", new mongoose.Schema(
       default: 0
     },
     lastNews: String,
-    keys: Array
+    keys: Array,
+    newsChannel: String
   }
 ));
 export const Blacklist = mongoose.model("blacklist", new mongoose.Schema(
@@ -115,6 +116,7 @@ export interface GuildSchemaInterface extends mongoose.Document {
   resendTime: number;
   lastNews?: string;
   keys?: GuildSchemaKey[];
+  newsChannel?: string;
 }
 export interface UserSchemaInterface extends mongoose.Document {
   _id: string;

@@ -63,7 +63,8 @@ export const commands = {
     continue: "Continue",
     remove_all: "Remove all",
     removed_all_tournaments: "<:success:1300882212190945292> All tournaments have been removed successfully!",
-    resent: "<:success:1300882212190945292> Matches resent successfully!"
+    resent: "<:success:1300882212190945292> Matches resent successfully!",
+    buy_premium: "Buy the premium!"
   },
   info: {
     embed: {
@@ -74,6 +75,21 @@ export const commands = {
     guilds: "Servers",
     users: "Users",
     invite: "Invite me!"
+  },
+  premium: {
+    you_dont_have_premium: "<:error:1300882259078938685> You do not have an active plan. Buy one in [support server](https://discord.com/invite/FaqYcpA84r)!",
+    embed: {
+      description: "You are currently subscribed the **Premium {type}**.\nYour plan expires {expiresAt}",
+      field: {
+        value: "Expires {expiresAt}",
+        value2: "Key: `{key}`\nCan be activated {0}",
+        value3: "Key: `{key}`\nExpires {expiresAt}"
+      },
+      title: "Other plans"
+    },
+    button: {
+      label: "View activation keys"
+    }
   }
 }
 export const helper = {
@@ -97,7 +113,8 @@ export const helper = {
     res: "Join the PICK\"EM for a chance to win a <:booster:1272968894239215636> **Discord Nitro** or a <:nitro:1272968817496297542> **Discord Nitro Basic** by joining our official server!\nhttps://discord.gg/g5nmc376yh"
   },
   banned: "<:error:1300882259078938685> **You are banned and can not use the bot.\n<:warn:869393116854108191> If you think this is a mistake, contact us in our Discord server!**\n**When:** {when}\n**Ends at:** {ends}\n**Reason:** `{reason}`",
-  interaction_failed: "<:error:1300882259078938685> It was not possible to run this action... If the problem persists, report it to the team in my [support server](https://discord.gg/g5nmc376yh)."
+  interaction_failed: "<:error:1300882259078938685> It was not possible to run this action... If the problem persists, report it to the team in my [support server](https://discord.gg/g5nmc376yh).",
+  premium_feature: "<:warn:869393116854108191> Oops, looks like you have found a premium feature. Unlock it by buying the premium on our support server!"
 }
 export const permissions = {
   CREATE_INSTANT_INVITE: "Create Instant Invite",

@@ -1,7 +1,7 @@
 import { File } from "oceanic.js"
 
 export type Args = {
-  [key: string]: string | Error | number | File[];
+  [key: string]: string | Error | number | File[] | undefined | null;
 }
 export default function(lang: string, content: string, args?: Args): string {
   let locale = require(`./${lang}`);

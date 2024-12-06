@@ -1,9 +1,9 @@
-import { CreateApplicationCommandOptions, TextChannel } from "oceanic.js"
+import { AnnouncementChannel, CreateApplicationCommandOptions, TextChannel } from "oceanic.js"
 import { ButtonBuilder, createListener, EmbedBuilder, Logger } from "../structures"
 import { Guild, GuildSchemaInterface, User, UserSchemaInterface } from "../database"
 import MainController from "../scraper"
 import locales from "../locales"
-import { ResultsData } from "../../types"
+import { MatchesData, ResultsData } from "../../types"
 
 export default createListener({
   name: "ready",
@@ -45,7 +45,11 @@ export default createListener({
       for(const guild of guilds) {
         if(guild.matches.length && !res2.some(d => d.id === guild.matches[guild.matches.length - 1])) continue;
         guild.matches = [];
-        let data = res.filter(d => guild.events.some(e => e.name === d.tournament.name));
+        let data: MatchesData[];
+        if(guild.events.length > 5 && (!guild.keys || guild.keys.length)) {
+          data = res.filter(d => guild.events.reverse().slice(0, 5).some(e => e.name === d.tournament.name));
+        }
+        else data = res.filter(d => guild.events.some(e => e.name === d.tournament.name));
         for(const e of guild.events) {
           if(!client.getChannel(e.channel1)) continue;
           try {
@@ -127,11 +131,15 @@ export default createListener({
         events: {
           $ne: []
         }
-      });
+      }) as GuildSchemaInterface[];
       if(!guilds.length) return;
       let matches: ResultsData[] = [];
       for(const guild of guilds) {
-        let data = res.filter(d => guild.events.some(e => e.name === d.tournament.name));
+        let data: ResultsData[];
+        if(guild.events.length > 5 && (!guild.keys || guild.keys.length)) {
+          data = res.filter(d => guild.events.reverse().slice(0, 5).some(e => e.name === d.tournament.name));
+        }
+        else data = res.filter(d => guild.events.some(e => e.name === d.tournament.name));
         if(!data || !data[0]) continue;
         if(guild.lastResult && guild.lastResult !== data[0].id) {
           let match = data.find(e => e.id == guild.lastResult);
@@ -269,44 +277,53 @@ export default createListener({
     }
     const sendNews = async() => {
       let data = await MainController.getAllNews();
-      const guild = await Guild.findById("1233965003850125433") as GuildSchemaInterface;
-      if(guild.lastNews && guild.lastNews !== data[0].id) {
-        let news = data.find(e => e.id === guild.lastNews)!;
-        let index = data.indexOf(news);
-        if(index > -1) {
-          data = data.slice(0, index);
-        }
-        else {
-          data = data.slice(0, 1);
-        }
-        for(const d of data) {
-          const embed = new EmbedBuilder()
-          .setAuthor({ name: d.title });
-          if(d.description) embed.setDesc(d.description);
-          const button = new ButtonBuilder()
-          .setStyle("link")
-          .setLabel("Source")
-          .setURL(d.url);
-          client.rest.channels.createMessage(process.env.NEWS_CHANNEL ?? "1312978543759851661", embed.build({
-            components: [
-              {
-                type: 1,
-                components: [button]
-              }
-            ]
-          }));
-        }
-      }
-      await Guild.updateOne(
+      const guilds = await Guild.find(
         {
-          _id: guild.id
-        },
-        {
-          $set: {
-            lastNews: data[0].id
+          newsChannel: { $exists: true },
+          keys: { $ne: [] }
+        }
+      ) as GuildSchemaInterface[];
+      for(const guild of guilds) {
+        if(guild.lastNews && guild.lastNews !== data[0].id) {
+          let news = data.find(e => e.id === guild.lastNews)!;
+          let index = data.indexOf(news);
+          if(index > -1) {
+            data = data.slice(0, index);
+          }
+          else {
+            data = data.slice(0, 1);
+          }
+          for(const d of data) {
+            const embed = new EmbedBuilder()
+            .setAuthor({ name: d.title });
+            if(d.description) embed.setDesc(d.description);
+            const button = new ButtonBuilder()
+            .setStyle("link")
+            .setLabel("Source")
+            .setURL(d.url);
+            const channel = client.getChannel(guild.newsChannel!) as TextChannel | AnnouncementChannel;
+            if(!channel) continue;
+            await channel.createMessage(embed.build({
+              components: [
+                {
+                  type: 1,
+                  components: [button]
+                }
+              ]
+            }));
           }
         }
-      );
+        await Guild.updateOne(
+          {
+            _id: guild.id
+          },
+          {
+            $set: {
+              lastNews: data[0].id
+            }
+          }
+        );
+      }
     }
     const execTasks = async() => {
       try {

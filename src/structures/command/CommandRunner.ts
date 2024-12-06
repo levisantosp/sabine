@@ -47,12 +47,7 @@ export default class CommandRunnner {
       await interaction.defer();
     }
     let args: string[] = interaction.data.options.getSubCommand() ?? [];
-    if(args.length > 0) {
-      for(const option of interaction.data.options.getOptions()) {
-        args.push(option.value.toString());
-      }
-    }
-    else for(const option of interaction.data.options.getOptions()) {
+    for(const option of interaction.data.options.getOptions()) {
       args.push(option.value.toString());
     }
     const ctx = new CommandContext({

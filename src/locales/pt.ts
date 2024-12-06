@@ -53,7 +53,7 @@ export const commands = {
     tournament_removed: "<:success:1300882212190945292> O campeonato **{t}** foi removido com sucesso!",
     panel: "Painel de Controle",
     event_channels: "Partidas serão anunciadas em {ch1}\nResultados serão anunciados em {ch2}",
-    desc: "Idioma: `{lang}` (altere usando: </admin language:{id}>)\nLimite de campeonatos: `{limit}`",
+    desc: "Idioma: `{lang}` (altere usando: </admin language:{id}>)\nLimite de campeonatos: `{limit}`\nCanal de notícias: <#{newsChannel}>",
     invalid_channel: "<:error:1300882259078938685> Tipo de canal inválido. Considere selecionar um canal de TEXTO.",
     limit_reached: "<:error:1300882259078938685> Este servidor atingiu o limite máximo de campeonatos que podem ser adicionados. Se quiser adicionar este campeonato, considere remover um usando {cmd}",
     channel_being_used: "<:error:1300882259078938685> O canal {ch} já está sendo usado para anunciar os resultados de um campeonato. Considere usar outro canal para isso.\nVerifique os canais que já estão em uso usando {cmd}",
@@ -64,7 +64,11 @@ export const commands = {
     continue: "Continuar",
     remove_all: "Remover todos",
     removed_all_tournaments: "<:success:1300882212190945292> Todos os torneios foram removidos com sucesso!",
-    resent: "<:success:1300882212190945292> Partidas reenviadas com sucesso!"
+    resent: "<:success:1300882212190945292> Partidas reenviadas com sucesso!",
+    buy_premium: "Compre o premium!",
+    invalid_channel2: "<:error:1300882259078938685> Tipo de canal inválido. Considere selecionar um canal de TEXTO.",
+    news_enabled: "<:success:1300882212190945292> Funcionalidade de notícias habilitada ao canal {ch}",
+    news_disabled: "<:success:1300882212190945292> Funcionalidade de notícias desabilitada com sucesso!",
   },
   info: {
     embed: {
@@ -89,7 +93,8 @@ export const commands = {
     },
     button: {
       label: "Visualizar chaves de ativação"
-    }
+    },
+    you_dont_have_keys: "<:error:1300882259078938685> Você não possui nenhuma chave de ativação."
   }
 }
 export const helper = {
@@ -113,7 +118,8 @@ export const helper = {
     res: "Participe do BOLÃO valendo um <:booster:1272968894239215636> **Discord Nitro** e um <:nitro:1272968817496297542> **Discord Nitro Basic** entrando no nosso servidor oficial!\nhttps://discord.gg/g5nmc376yh"
   },
   banned: "**<:error:1300882259078938685> Você está banido e não pode mais usar o bot.\<:warn:869393116854108191> você acha que isso é um engano, entre em contato conosco no nosso servidor no Discord!**\n**Quando:** {when}\n**Termina em:** {ends}\n**Motivo:** `{reason}`",
-  interaction_failed: "<:error:1300882259078938685> Não foi possível executar esta ação... Se o problema persistir, reporte para a equipe no meu [servidor de suporte](https://discord.gg/g5nmc376yh)."
+  interaction_failed: "<:error:1300882259078938685> Não foi possível executar esta ação... Se o problema persistir, reporte para a equipe no meu [servidor de suporte](https://discord.gg/g5nmc376yh).",
+  premium_feature: "<:warn:869393116854108191> Opa, parece que você achou uma funcionalidade premium. Desbloqueie ela comprando o premium em nosso servidor de suporte!"
 }
 export const permissions = {
   CREATE_INSTANT_INVITE: "Criar convite instantâneo",

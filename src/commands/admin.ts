@@ -1,6 +1,6 @@
 import { CommandInteraction, ComponentInteraction } from "oceanic.js"
 import { ButtonBuilder, createCommand, EmbedBuilder, Logger } from "../structures"
-import { EventsData } from "../../types"
+import { EventsData, MatchesData } from "../../types"
 import MainController from "../scraper"
 import { Guild, GuildSchemaInterface } from "../database"
 const cache = new Map<string, EventsData[]>();
@@ -143,6 +143,55 @@ export default createCommand({
           required: true
         }
       ]
+    },
+    {
+      type: 2,
+      name: "news",
+      nameLocalizations: {
+        "pt-BR": "noticias"
+      },
+      description: "Add or remove the news feature",
+      descriptionLocalizations: {
+        "pt-BR": "Adiciona ou remove a funcionalidade de notícias"
+      },
+      options: [
+        {
+          type: 1,
+          name: "enable",
+          nameLocalizations: {
+            "pt-BR": "habilitar"
+          },
+          description: "Enable the news feature to the server",
+          descriptionLocalizations: {
+            "pt-BR": "Habilita a funcionalidade de notícias ao servidor"
+          },
+          options: [
+            {
+              type: 7,
+              name: "channel",
+              nameLocalizations: {
+                "pt-BR": "canal"
+              },
+              description: "The channel were the news will be sent",
+              descriptionLocalizations: {
+                "pt-BR": "Canal onde as notícias serão enviadas"
+              },
+              required: true
+            }
+          ]
+        },
+        {
+          type: 1,
+          name: "disable",
+          nameLocalizations: {
+            "pt-BR": "desabilitar"
+          },
+          description: "Disable the news feature for this server",
+          descriptionLocalizations: {
+            "pt-BR": "Desabilita a funcionalidade de notícias para este servidor"
+          }
+        }
+      ]
     }
   ],
   permissions: ["MANAGE_GUILD", "MANAGE_CHANNELS"],
@@ -160,7 +209,8 @@ export default createCommand({
       .setDesc(locale("commands.admin.desc", {
         lang: ctx.db.guild.lang.replace("en", "English").replace("pt", "Português"),
         limit: ctx.db.guild.tournamentsLength === Infinity ? Infinity : `${ctx.db.guild.events.length}/${ctx.db.guild.tournamentsLength}`,
-        id
+        id,
+        newsChannel: ctx.db.guild.newsChannel
       }));
       for(const event of ctx.db.guild.events) {
         embed.addField(event.name, locale("commands.admin.event_channels", {
@@ -226,6 +276,45 @@ export default createCommand({
       }
       options[ctx.args[1] as "remove" | "add"]();
     }
+    else if(ctx.args[0] === "news") {
+      const options = {
+        enable: async() => {
+          if(!["LITE", "PRO", "ULTIMATE"].some(s => ctx.db.guild.keys![0].type === s)) {
+            const button = new ButtonBuilder()
+            .setLabel(locale("commands.admin.buy_premium"))
+            .setStyle("link")
+            .setURL("https://discord.com/invite/FaqYcpA84r");
+            ctx.reply({
+              content: locale("helper.premium_feature"),
+              components: [
+                {
+                  type: 1,
+                  components: [button]
+                }
+              ]
+            });
+            return;
+          }
+          let channel = ctx.guild.channels.get(ctx.args[2])!
+          if(![0, 5].some(t => channel.type === t)) return ctx.reply("commands.admin.invalid_channel2");
+          ctx.db.guild.newsChannel = channel.id;
+          await ctx.db.guild.save();
+          ctx.reply("commands.admin.news_enabled", { ch: channel.mention });
+        },
+        disable: async() => {
+          await Guild.findOneAndUpdate(
+            {
+              _id: ctx.db.guild.id
+            },
+            {
+              $unset: { newsChannel: "" }
+            }
+          );
+          ctx.reply("commands.admin.news_disabled");
+        }
+      }
+      options[ctx.args[1] as "enable" | "disable"]();
+    }
   },
   async createAutocompleteInteraction({ i, client, locale }) {
     if(!cache.has("events")) {
@@ -287,7 +376,11 @@ export default createCommand({
       const res2 = await MainController.getResults();
       if(guild.matches.length && !res2.some(d => d.id === guild.matches[guild.matches.length - 1])) return;
       guild.matches = [];
-      let data = res.filter(d => guild.events.some(e => e.name === d.tournament.name));
+      let data: MatchesData[];
+      if(guild.events.length > 5 && (!guild.keys || guild.keys.length)) {
+        data = res.filter(d => guild.events.reverse().slice(0, 5).some(e => e.name === d.tournament.name));
+      }
+      else data = res.filter(d => guild.events.some(e => e.name === d.tournament.name));
       for(const e of guild.events) {
         if(!client.getChannel(e.channel1)) continue;
         try {
