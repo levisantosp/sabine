@@ -18,38 +18,36 @@ export default createCommand({
     .setThumb(creator.avatarURL())
     .setTitle(locale("commands.info.embed.title"))
     .setFields(
-      [
-        {
-          name: "Patch",
-          value: pkg.version,
-          inline: true
-        },
-        {
-          name: locale("commands.info.lib"),
-          value: "[oceanic.js](https://oceanic.ws/)",
-          inline: true
-        },
-        {
-          name: locale("commands.info.creator"),
-          value: creator.tag,
-          inline: true
-        },
-        {
-          name: locale("commands.info.guilds"),
-          value: client.guilds.size.toString(),
-          inline: true
-        },
-        {
-          name: locale("commands.info.users"),
-          value: client.users.filter(user => !user.bot).length.toString(),
-          inline: true
-        },
-        {
-          name: "Client",
-          value: `Shard ID: \`${ctx.guild.shard.id}\`\nShard Uptime: \`${ms(client.uptime, { language: ctx.db.user.lang ?? ctx.db.guild.lang, round: true })}\`\nClient Uptime: \`${ms(Date.now() - client._uptime, { language: ctx.db.user.lang ?? ctx.db.guild.lang, round: true })}\``,
-          inline: true
-        }
-      ]
+      {
+        name: "Patch",
+        value: pkg.version,
+        inline: true
+      },
+      {
+        name: locale("commands.info.lib"),
+        value: "[oceanic.js](https://oceanic.ws/)",
+        inline: true
+      },
+      {
+        name: locale("commands.info.creator"),
+        value: creator.tag,
+        inline: true
+      },
+      {
+        name: locale("commands.info.guilds"),
+        value: client.guilds.size.toString(),
+        inline: true
+      },
+      {
+        name: locale("commands.info.users"),
+        value: client.users.filter(user => !user.bot).length.toString(),
+        inline: true
+      },
+      {
+        name: "Client",
+        value: `Shard ID: \`${ctx.guild.shard.id}\`\nShard Uptime: \`${ms(client.uptime, { language: ctx.db.user.lang ?? ctx.db.guild.lang, round: true })}\`\nClient Uptime: \`${ms(Date.now() - client._uptime, { language: ctx.db.user.lang ?? ctx.db.guild.lang, round: true })}\``,
+        inline: true
+      }
     );
     ctx.reply(embed.build(
       {

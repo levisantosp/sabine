@@ -44,7 +44,7 @@ export default class EmbedBuilder {
     ];
     return this;
   }
-  public setFields(fields: EmbedField[]) {
+  public setFields(...fields: EmbedField[]) {
     this.fields = fields;
     return this;
   }
