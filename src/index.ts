@@ -1,6 +1,6 @@
 import "dotenv/config"
 import App from "./structures/client/App"
-new App({
+export const client = new App({
   auth: "Bot " + process.env.BOT_TOKEN,
   gateway: {
     intents: ["ALL"],
@@ -14,5 +14,5 @@ new App({
   },
   defaultImageFormat: "png",
   defaultImageSize: 2048
-})
-.start();
+});
+client.start();

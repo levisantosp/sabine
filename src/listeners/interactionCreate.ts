@@ -145,7 +145,7 @@ export default createListener({
       const guild = await Guild.findById(i.guildID) as GuildSchemaInterface;
       const res = await MainController.getMatches();
       const data = res.find(d => d.id == i.data.customID.slice(6))!;
-      user.history.push({
+      await user.addPrediction({
         match: data.id!,
         teams: [
           {
@@ -158,7 +158,6 @@ export default createListener({
           }
         ]
       });
-      await user.save();
       i.editParent({
         content: locales(user.lang ?? guild?.lang!, "helper.palpitate_response", {
           t1: data.teams[0].name,
