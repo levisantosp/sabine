@@ -351,14 +351,14 @@ export default createCommand({
       await ctx.interaction.defer(64);
       const guild = await Guild.findById(ctx.interaction.guild!.id) as GuildSchemaInterface;
       if(guild.resendTime > Date.now()) {
-        ctx.reply('commands.admin.resend_time');
+        ctx.reply("commands.admin.resend_time");
         return;
       }
       const button = new ButtonBuilder()
-      .setLabel(locale('commands.admin.continue'))
-      .setStyle('red')
+      .setLabel(locale("commands.admin.continue"))
+      .setStyle("red")
       .setCustomId(`admin;${ctx.interaction.user.id};continue`);
-      ctx.reply(button.build(locale('commands.admin.confirm')));
+      ctx.reply(button.build(locale("commands.admin.confirm")));
     }
     else if(ctx.args[2] === "continue") {
       await (ctx.interaction as ComponentInteraction).deferUpdate();
