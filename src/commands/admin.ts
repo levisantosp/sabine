@@ -252,6 +252,18 @@ export default createCommand({
     "admin live enable [channel]",
     "admin live disable"
   ],
+  examples: [
+    "admin panel",
+    "admin tournament add VCT Americas",
+    "admin tournament add VCT EMEA",
+    "admin tournament remove VCT AMERICAS",
+    "admin language pt-BR",
+    "admin language en-US",
+    "admin news enable #valorant-news",
+    "admin news disable",
+    "admin live enable #live-feed",
+    "admin live disable"
+  ],
   async run({ ctx, locale, id }) {
     if(ctx.args[0] === "panel") {
       const embed = new EmbedBuilder()
