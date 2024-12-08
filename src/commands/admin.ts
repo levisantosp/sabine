@@ -192,6 +192,52 @@ export default createCommand({
           }
         }
       ]
+    },
+    {
+      type: 2,
+      name: "live",
+      description: "Enable or disable live feed feature for this server",
+      descriptionLocalizations: {
+        "pt-BR": "Habilita ou desabilita a funcionalidade live feed para este servidor"
+      },
+      options: [
+        {
+          type: 1,
+          name: "enable",
+          nameLocalizations: {
+            "pt-BR": "habilitar"
+          },
+          description: "Enable live feed feature for this server",
+          descriptionLocalizations: {
+            "pt-BR": "Habilita a funcionalidade live feed para este servidor"
+          },
+          options: [
+            {
+              type: 7,
+              name: "channel",
+              nameLocalizations: {
+                "pt-BR": "canal"
+              },
+              description: "Select the channel",
+              descriptionLocalizations: {
+                "pt-BR": "Selecione o canal"
+              },
+              required: true
+            }
+          ]
+        },
+        {
+          type: 1,
+          name: "disable",
+          nameLocalizations: {
+            "pt-BR": "desabilitar"
+          },
+          description: "Disable live feed feature for this server",
+          descriptionLocalizations: {
+            "pt-BR": "Desabilita a funcionalidade live feed para este servidor"
+          }
+        }
+      ]
     }
   ],
   permissions: ["MANAGE_GUILD", "MANAGE_CHANNELS"],
@@ -200,7 +246,11 @@ export default createCommand({
     "admin panel",
     "admin tournament add [tournament]",
     "admin tournament remove [tournament]",
-    "adming language [lang]"
+    "adming language [lang]",
+    "admin news enable [channel]",
+    "admin news disable",
+    "admin live enable [channel]",
+    "admin live disable"
   ],
   async run({ ctx, locale, id }) {
     if(ctx.args[0] === "panel") {
@@ -311,6 +361,45 @@ export default createCommand({
             }
           );
           ctx.reply("commands.admin.news_disabled");
+        }
+      }
+      options[ctx.args[1] as "enable" | "disable"]();
+    }
+    else if(ctx.args[0] === "live") {
+      const options = {
+        enable: async() => {
+          if(!["PRO", "ULTIMATE"].some(s => ctx.db.guild.keys![0]?.type === s)) {
+            const button = new ButtonBuilder()
+            .setLabel(locale("commands.admin.buy_premium"))
+            .setStyle("link")
+            .setURL("https://discord.com/invite/FaqYcpA84r");
+            ctx.reply({
+              content: locale("helper.premium_feature"),
+              components: [
+                {
+                  type: 1,
+                  components: [button]
+                }
+              ]
+            });
+            return;
+          }
+          let channel = ctx.guild.channels.get(ctx.args[2])!
+          if(channel.type !== 0) return ctx.reply("commands.admin.invalid_channel");
+          ctx.db.guild.liveFeedChannel = channel.id;
+          await ctx.db.guild.save();
+          ctx.reply("commands.admin.live_feed_enabled", { ch: channel.mention });
+        },
+        disable: async() => {
+          await Guild.findOneAndUpdate(
+            {
+              _id: ctx.db.guild.id
+            },
+            {
+              $unset: { newsChannel: "" }
+            }
+          );
+          ctx.reply("commands.admin.live_feed_disabled");
         }
       }
       options[ctx.args[1] as "enable" | "disable"]();

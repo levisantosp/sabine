@@ -283,6 +283,8 @@ export default createListener({
           keys: { $ne: [] }
         }
       ) as GuildSchemaInterface[];
+      if(!guilds.length) return;
+      let ids: string[] = [];
       for(const guild of guilds) {
         if(guild.lastNews && guild.lastNews !== data[0].id) {
           let news = data.find(e => e.id === guild.lastNews)!;
@@ -313,16 +315,88 @@ export default createListener({
             }));
           }
         }
-        await Guild.updateOne(
-          {
-            _id: guild.id
-          },
-          {
-            $set: {
-              lastNews: data[0].id
-            }
+        ids.push(guild.id);
+      }
+      await Guild.updateMany(
+        {
+          _id: { $in: ids }
+        },
+        {
+          $set: { lastNews: data[0].id }
+        }
+      );
+    }
+    const sendMatchesFromLiveFeed = async() => {
+      const guilds = await Guild.find(
+        {
+          liveFeedChannel: { $exists: true },
+          keys: { $ne: [] }
+        }
+      ) as GuildSchemaInterface[];
+      if(!guilds.length) return;
+      const res = await MainController.getMatches();
+      let data = res.filter(r => r.status === "LIVE");
+      if(!data.length) return;
+      for(const guild of guilds) {
+        const channel = client.getChannel(guild.liveFeedChannel!) as TextChannel;
+        if(!channel) continue;
+        data = data.filter(d => guild.events.some(e => d.tournament.name === e.name));
+        if(!data.length) continue;
+        for(const d of data) {
+          const match = await MainController.getLiveMatch(d.id!);
+          const liveMatch = guild.liveMatches.find(m => m.id === match.id);
+          if(!match.score1 || !match.currentMap) continue;
+          if(!liveMatch) {
+            const embed = new EmbedBuilder()
+            .setAuthor({
+              name: d.tournament.name,
+              iconURL: d.tournament.image
+            })
+            .setTitle("Live Feed")
+            .setDesc(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
+            .setFields(
+              {
+                name: `:flag_${d.teams[0].country}: ${d.teams[0].name} \`${match.teams[0].score}-${match.teams[1].score}\` ${d.teams[1].name} :flag_${d.teams[1].country}:`.replaceAll(":flag_un:", ":united_nations:"),
+                value: locales(guild.lang, "helper.live_feed_value", {
+                  map: match.currentMap,
+                  score: `${match.score1}-${match.score2}`
+                })
+              }
+            )
+            channel.createMessage(embed.build());
+            await Guild.updateOne(
+              {
+                _id: guild.id
+              },
+              {
+                $addToSet: { liveMatches: match }
+              }
+            );
           }
-        );
+          else if(JSON.stringify(match) !== JSON.stringify(liveMatch)) {
+            const embed = new EmbedBuilder()
+            .setAuthor({
+              name: d.tournament.name,
+              iconURL: d.tournament.image
+            })
+            .setTitle("Live Feed")
+            .setDesc(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
+            .setFields(
+              {
+                name: `:flag_${d.teams[0].country}: ${d.teams[0].name} \`${match.teams[0].score}-${match.teams[1].score}\` ${d.teams[1].name} :flag_${d.teams[1].country}:`.replaceAll(":flag_un:", ":united_nations:"),
+                value: locales(guild.lang, "helper.live_feed_value", {
+                  map: match.currentMap,
+                  score: `${match.score1}-${match.score2}`
+                })
+              }
+            )
+            channel.createMessage(embed.build());
+            let index = guild.liveMatches.findIndex(m => m.id === match.id);
+            guild.liveMatches.splice(index, 1);
+            guild.liveMatches.push(match);
+            await guild.save();
+          }
+        }
       }
     }
     const execTasks = async() => {
@@ -332,6 +406,7 @@ export default createListener({
         await sendMatches();
         await sendResults();
         await sendTBDMatches();
+        await sendMatchesFromLiveFeed();
       }
       catch(e) {
         new Logger(client).error(e as Error);

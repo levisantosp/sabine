@@ -2,6 +2,7 @@ import mongoose from "mongoose"
 import { client } from ".."
 import { EmbedBuilder } from "../structures"
 import { TextChannel } from "oceanic.js"
+import { LiveFeed } from "../../types"
 
 const UserSchema = mongoose.model("users", new mongoose.Schema(
   {
@@ -216,7 +217,12 @@ export const Guild = mongoose.model("guilds", new mongoose.Schema(
       default: 0
     },
     lastNews: String,
-    keys: Array
+    keys: Array,
+    liveFeedChannel: String,
+    liveMatches: {
+      type: Array,
+      default: []
+    }
   }
 ));
 export const Blacklist = mongoose.model("blacklist", new mongoose.Schema(
@@ -281,6 +287,8 @@ export interface GuildSchemaInterface extends mongoose.Document {
   lastNews?: string;
   keys?: GuildSchemaKey[];
   newsChannel?: string;
+  liveFeedChannel?: string;
+  liveMatches: LiveFeed[];
 }
 export interface UserSchemaInterface extends User {
   _id: string;

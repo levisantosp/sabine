@@ -1,4 +1,5 @@
 import EventsController from "./controllers/EventsController"
+import LiveFeedController from "./controllers/LiveFeedController"
 import MatchesController from "./controllers/MatchesController"
 import NewsController from "./controllers/NewsController"
 import PlayersController from "./controllers/PlayersController"
@@ -29,5 +30,8 @@ export default class MainController {
   }
   public static async getAllNews() {
     return await NewsController.get()
+  }
+  public static async getLiveMatch(id: string | number) {
+    return await LiveFeedController.getById(id);
   }
 }
