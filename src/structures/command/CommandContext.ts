@@ -2,6 +2,7 @@ import { CommandInteraction, ComponentInteraction, EditInteractionContent, File,
 import App from "../client/App"
 import locales, { Args } from "../../locales"
 import { GuildSchemaInterface, UserSchemaInterface } from "../../database"
+import Logger from "../util/Logger"
 
 type Database = {
   guild: GuildSchemaInterface
@@ -34,39 +35,39 @@ export default class CommandContext {
     switch(typeof content) {
       case "string": {
         if(options?.files) {
-          if(this.interaction.acknowledged) return this.interaction.createFollowup(
+          if(this.interaction.acknowledged) return await this.interaction.createFollowup(
             {
               content: locales(this.locale, content, options),
               files: options.files as File[]
             }
-          );
-          else return this.interaction.createMessage(
+          ).catch(e => new Logger(this.client).error(e));
+          else return await this.interaction.createMessage(
             {
               content: locales(this.locale, content, options)
             }
-          );
+          ).catch(e => new Logger(this.client).error(e));
         }
         else {
-          if(this.interaction.acknowledged) return this.interaction.createFollowup(
+          if(this.interaction.acknowledged) return await this.interaction.createFollowup(
             {
               content: locales(this.locale, content, options)
             }
-          );
-          else return this.interaction.createMessage(
+          ).catch(e => new Logger(this.client).error(e));
+          else return await this.interaction.createMessage(
             {
               content: locales(this.locale, content, options)
             }
-          );
+          ).catch(e => new Logger(this.client).error(e));
         }
       }
       case "object": {
         if(options?.files) {
-          if(this.interaction.acknowledged) return this.interaction.createFollowup(Object.assign(content, { files: options.files as File[] }));
-          else return this.interaction.createMessage(Object.assign(content, { files: options.files as File[] }));
+          if(this.interaction.acknowledged) return await this.interaction.createFollowup(Object.assign(content, { files: options.files as File[] })).catch(e => new Logger(this.client).error(e));
+          else return await this.interaction.createMessage(Object.assign(content, { files: options.files as File[] })).catch(e => new Logger(this.client).error(e));
         }
         else {
-          if(this.interaction.acknowledged) return this.interaction.createFollowup(content);
-          else return this.interaction.createMessage(content);
+          if(this.interaction.acknowledged) return await this.interaction.createFollowup(content).catch(e => new Logger(this.client).error(e));
+          else return await this.interaction.createMessage(content).catch(e => new Logger(this.client).error(e));
         }
       }
     }
@@ -76,43 +77,43 @@ export default class CommandContext {
       switch(typeof content) {
         case "string": {
           if(options?.files) {
-            if(this.interaction.acknowledged) return this.interaction.editOriginal(
+            if(this.interaction.acknowledged) return await this.interaction.editOriginal(
               {
                 content: locales(this.locale, content, options),
                 files: options.files as File[]
               }
-            );
-            else return this.interaction.createMessage({
+            ).catch(e => new Logger(this.client).error(e));
+            else return await this.interaction.createMessage({
               content: locales(this.locale, "helper.interaction_failed"),
               flags: 64
-            });
+            }).catch(e => new Logger(this.client).error(e));
           }
           else {
-            if(this.interaction.acknowledged) return this.interaction.editOriginal(
+            if(this.interaction.acknowledged) return await this.interaction.editOriginal(
               {
                 content: locales(this.locale, content, options)
               }
-            );
-            else return this.interaction.createMessage({
+            ).catch(e => new Logger(this.client).error(e));
+            else return await this.interaction.createMessage({
               content: locales(this.locale, "helper.interaction_failed"),
               flags: 64
-            });
+            }).catch(e => new Logger(this.client).error(e));
           }
         }
         case "object": {
           if(options?.files) {
-            if(this.interaction.acknowledged) return this.interaction.editOriginal(Object.assign(content, { files: options.files as File[] }));
-            else return this.interaction.createMessage({
+            if(this.interaction.acknowledged) return await this.interaction.editOriginal(Object.assign(content, { files: options.files as File[] }));
+            else return await this.interaction.createMessage({
               content: locales(this.locale, "helper.interaction_failed"),
               flags: 64
-            });
+            }).catch(e => new Logger(this.client).error(e));
           }
           else {
-            if(this.interaction.acknowledged) return this.interaction.editOriginal(content);
-            else return this.interaction.createMessage({
+            if(this.interaction.acknowledged) return await this.interaction.editOriginal(content);
+            else return await this.interaction.createMessage({
               content: locales(this.locale, "helper.interaction_failed"),
               flags: 64
-            });
+            }).catch(e => new Logger(this.client).error(e));
           }
         }
       }
@@ -121,45 +122,45 @@ export default class CommandContext {
       switch(typeof content) {
         case "string": {
           if(options?.files) {
-            if(this.interaction.acknowledged) return this.interaction.editOriginal(
+            if(this.interaction.acknowledged) return await this.interaction.editOriginal(
               {
                 content: locales(this.locale, content, options),
                 files: options.files as File[],
                 components: []
               }
-            );
-            else return this.interaction.createMessage({
+            ).catch(e => new Logger(this.client).error(e));
+            else return await this.interaction.createMessage({
               content: locales(this.locale, "helper.interaction_failed"),
               flags: 64
-            });
+            }).catch(e => new Logger(this.client).error(e));
           }
           else {
-            if(this.interaction.acknowledged) return this.interaction.editOriginal(
+            if(this.interaction.acknowledged) return await this.interaction.editOriginal(
               {
                 content: locales(this.locale, content, options),
                 components: []
               }
-            );
-            else return this.interaction.createMessage({
+            ).catch(e => new Logger(this.client).error(e));
+            else return await this.interaction.createMessage({
               content: locales(this.locale, "helper.interaction_failed"),
               flags: 64
-            });
+            }).catch(e => new Logger(this.client).error(e));
           }
         }
         case "object": {
           if(options?.files) {
-            if(this.interaction.acknowledged) return this.interaction.editOriginal(Object.assign(content, { files: options.files as File[] }));
-            else return this.interaction.createMessage({
+            if(this.interaction.acknowledged) return await this.interaction.editOriginal(Object.assign(content, { files: options.files as File[] })).catch(e => new Logger(this.client).error(e));
+            else return await this.interaction.createMessage({
               content: locales(this.locale, "helper.interaction_failed"),
               flags: 64
-            });
+            }).catch(e => new Logger(this.client).error(e));
           }
           else {
-            if(this.interaction.acknowledged) return this.interaction.editOriginal(content);
-            else return this.interaction.createMessage({
+            if(this.interaction.acknowledged) return await this.interaction.editOriginal(content);
+            else return await this.interaction.createMessage({
               content: locales(this.locale, "helper.interaction_failed"),
               flags: 64
-            });
+            }).catch(e => new Logger(this.client).error(e));
           }
         }
       }
