@@ -261,7 +261,6 @@ export default createListener({
               iconURL: data.tournament.image
             })
             .setDesc(`<t:${data.when / 1000}:F> | <t:${data.when / 1000}:R>`)
-            .setThumb(data.tournament.image)
             .setField(`:flag_${data.teams[0].country}: ${data.teams[0].name} \`vs\` ${data.teams[1].name} :flag_${data.teams[1].country}:`.replaceAll(":flag_un:", ":united_nations:"), "", true)
             .setFooter({ text: data.stage })
             channel.createMessage({
