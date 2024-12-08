@@ -5,6 +5,8 @@ services:
       dockerfile: Dockerfile
     image: sabine
     restart: always
+    environment:
+      - TZ=America/Sao_Paulo
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
