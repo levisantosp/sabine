@@ -10,7 +10,22 @@ export default createListener({
   async run(client) {
     Logger.send(`${client.user.tag} online!`);
     if(client.user.id !== "1235576817683922954") {
-      client.editStatus("dnd");
+      client.editStatus("dnd", [
+        {
+          name: "status",
+          state: "Entre no servidor de suporte! Link na bio",
+          type: 4
+        }
+      ]);
+    }
+    else {
+      client.editStatus("online", [
+        {
+          name: "status",
+          state: "Entre no servidor de suporte! Link na bio",
+          type: 4
+        }
+      ])
     }
     const commands: CreateApplicationCommandOptions[] = [];
     client.commands.forEach(cmd => {
