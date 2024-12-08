@@ -112,3 +112,11 @@ type NewsData = {
   url: string;
   id: string;
 }
+type LiveFeed = {
+  teams: PlayerLastResultTeam[];
+  currentMap: string;
+  score1: string;
+  score2: string;
+  id: string | number;
+  url: string;
+}
