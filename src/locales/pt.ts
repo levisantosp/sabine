@@ -3,7 +3,6 @@ export const commands = {
     embed: {
       author: "Seus palpites",
       field: "Palpite: `{score1}-{score2}`\nResultado: [clique aqui]({link})",
-      field2: "Palpite: `{score1}-{score2}`\nResultado: [clique aqui]({link})",
       footer: "Página {p1}/{p2}",
       desc: "Palpites certos: `{right}`\nPalpites errados: `{wrong}`\nPalpites totais: `{t}`"
     },
@@ -53,7 +52,7 @@ export const commands = {
     tournament_removed: "<:success:1300882212190945292> O campeonato **{t}** foi removido com sucesso!",
     panel: "Painel de Controle",
     event_channels: "Partidas serão anunciadas em {ch1}\nResultados serão anunciados em {ch2}",
-    desc: "Idioma: `{lang}` (altere usando: </admin language:{id}>)\nLimite de campeonatos: `{limit}`\nCanal de notícias: <#{newsChannel}>",
+    desc: "Idioma: `{lang}` (altere usando: </admin language:{id}>)\nLimite de campeonatos: `{limit}`\nCanal de notícias: {newsChannel}\nCanal do live feed: {live}",
     invalid_channel: "<:error:1300882259078938685> Tipo de canal inválido. Considere selecionar um canal de TEXTO.",
     limit_reached: "<:error:1300882259078938685> Este servidor atingiu o limite máximo de campeonatos que podem ser adicionados. Se quiser adicionar este campeonato, considere remover um usando {cmd}",
     channel_being_used: "<:error:1300882259078938685> O canal {ch} já está sendo usado para anunciar os resultados de um campeonato. Considere usar outro canal para isso.\nVerifique os canais que já estão em uso usando {cmd}",
@@ -66,7 +65,7 @@ export const commands = {
     removed_all_tournaments: "<:success:1300882212190945292> Todos os torneios foram removidos com sucesso!",
     resent: "<:success:1300882212190945292> Partidas reenviadas com sucesso!",
     buy_premium: "Compre o premium!",
-    invalid_channel2: "<:error:1300882259078938685> Tipo de canal inválido. Considere selecionar um canal de TEXTO.",
+    invalid_channel2: "<:error:1300882259078938685> Tipo de canal inválido. Considere selecionar um canal de TEXTO ou ANÚNCIOS.",
     news_enabled: "<:success:1300882212190945292> Funcionalidade de notícias habilitada ao canal {ch}",
     news_disabled: "<:success:1300882212190945292> Funcionalidade de notícias desabilitada com sucesso!",
     live_feed_enabled: "<:success:1300882212190945292> Funcionalidade Live Feed habilitada ao canal {ch}",

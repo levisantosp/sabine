@@ -52,7 +52,7 @@ export const commands = {
     tournament_removed: "<:success:1300882212190945292> The tournament **{t}** has been removed successfully!",
     panel: "Control Panel",
     event_channels: "Matches will be announced in {ch1}\nResults will be announced in {ch2}",
-    desc: "Language: `{lang}` (change by using: </admin language:{id}>)\nLimit of tournaments: `{limit}`",
+    desc: "Language: `{lang}` (change by using: </admin language:{id}>)\nLimit of tournaments: `{limit}`\nNews channel: {newsChannel}\nLive feed channel: {live}",
     invalid_channel: "<:error:1300882259078938685> Invalid channel type. Consider select a TEXT channel.",
     limit_reached: "<:error:1300882259078938685> This server has reached the maximum limit of tournaments that can be added. If you want to add this tournaments, consider removing one using {cmd}",
     channel_being_used: "<:error:1300882259078938685> The channel {ch} is already being used to send the results of a tournament. Consider using another channel for this.\nCheck the channels that are already in use by using {cmd}",
@@ -64,7 +64,12 @@ export const commands = {
     remove_all: "Remove all",
     removed_all_tournaments: "<:success:1300882212190945292> All tournaments have been removed successfully!",
     resent: "<:success:1300882212190945292> Matches resent successfully!",
-    buy_premium: "Buy the premium!"
+    buy_premium: "Buy the premium!",
+    invalid_channel2: "<:error:1300882259078938685> Invalid channel type. Consider select a TEXT or ANNOUNCEMENT channel.",
+    news_enabled: "<:success:1300882212190945292> News feature enabled to channel {ch}",
+    news_disabled: "<:success:1300882212190945292> News feature disabled successfully!",
+    live_feed_enabled: "<:success:1300882212190945292> Live Feed feature enabled to channel {ch}",
+    live_feed_disabled: "<:success:1300882212190945292> Live Feed feature disabled succesfully!"
   },
   info: {
     embed: {
@@ -89,7 +94,8 @@ export const commands = {
     },
     button: {
       label: "View activation keys"
-    }
+    },
+    you_dont_have_keys: "<:error:1300882259078938685> You do not have any activation key."
   }
 }
 export const helper = {
