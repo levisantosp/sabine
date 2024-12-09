@@ -270,9 +270,10 @@ export default createCommand({
       .setTitle(locale("commands.admin.panel"))
       .setDesc(locale("commands.admin.desc", {
         lang: ctx.db.guild.lang.replace("en", "English").replace("pt", "Português"),
-        limit: ctx.db.guild.tournamentsLength === Infinity ? Infinity : `${ctx.db.guild.events.length}/${ctx.db.guild.tournamentsLength}`,
+        limit: ctx.db.guild.tournamentsLength === Infinity ? "`Infinity`" : `${ctx.db.guild.events.length}/${ctx.db.guild.tournamentsLength}`,
         id,
-        newsChannel: ctx.db.guild.newsChannel
+        newsChannel: !ctx.db.guild.newsChannel ? "`undefined`" : `<#${ctx.db.guild.newsChannel}>`,
+        live: !ctx.db.guild.liveFeedChannel ? "`undefined`" : `<#${ctx.db.guild.liveFeedChannel}>`
       }));
       for(const event of ctx.db.guild.events) {
         embed.addField(event.name, locale("commands.admin.event_channels", {
@@ -284,7 +285,7 @@ export default createCommand({
       .setLabel(locale("commands.admin.resend"))
       .setStyle("red")
       .setCustomId(`admin;${ctx.interaction.user.id};resend`);
-      if(!ctx.db.guild.events.length) button.setDisabled();
+      if(!ctx.db.guild.events.length || ctx.db.guild.resendTime >= Date.now()) button.setDisabled();
       ctx.reply(embed.build(button.build()));
     }
     else if(ctx.args[0] === "language") {
