@@ -218,6 +218,7 @@ export const Guild = mongoose.model("guilds", new mongoose.Schema(
     },
     lastNews: String,
     keys: Array,
+    newsChannel: String,
     liveFeedChannel: String,
     liveMatches: {
       type: Array,
