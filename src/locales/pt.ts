@@ -121,7 +121,8 @@ export const helper = {
   banned: "**<:error:1300882259078938685> Você está banido e não pode mais usar o bot.\<:warn:869393116854108191> você acha que isso é um engano, entre em contato conosco no nosso servidor no Discord!**\n**Quando:** {when}\n**Termina em:** {ends}\n**Motivo:** `{reason}`",
   interaction_failed: "<:error:1300882259078938685> Não foi possível executar esta ação... Se o problema persistir, reporte para a equipe no meu [servidor de suporte](https://discord.gg/g5nmc376yh).",
   premium_feature: "<:warn:869393116854108191> Opa, parece que você achou uma funcionalidade premium. Desbloqueie ela comprando o premium em nosso servidor de suporte!",
-  live_feed_value: "Mapa atual: `{map}`\nPlacar do mapa: `{score}`"
+  live_feed_value: "Mapa atual: `{map}`\nPlacar do mapa: `{score}`",
+  source: "Fonte"
 }
 export const permissions = {
   CREATE_INSTANT_INVITE: "Criar convite instantâneo",
