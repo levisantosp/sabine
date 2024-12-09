@@ -169,6 +169,10 @@ export default createListener({
           }
           data.reverse();
           for(const d of data) {
+            index = guild.liveMatches.findIndex(m => m.id === d.id);
+            if(index > -1) {
+              guild.liveMatches.splice(index, 1);
+            }
             for(const e of guild.events) {
               if(e.name === d.tournament.name) {
                 const embed = new EmbedBuilder()
@@ -231,13 +235,12 @@ export default createListener({
           let guess = user.history.find((h) => h.match === match.id);
           if(!guess) continue;
           if(guess.teams[0].score === match.teams[0].score && guess.teams[1].score === match.teams[1].score) {
-            user.guessesRight += 1;
+            await user.addCorrectPrediction(1, match.id);
           }
           else {
-            user.guessesWrong += 1;
+            await user.addWrongPrediction(1, match.id);
           }
         }
-        user.save();
       }
     }
     const sendTBDMatches = async() => {
@@ -315,7 +318,7 @@ export default createListener({
             if(d.description) embed.setDesc(d.description);
             const button = new ButtonBuilder()
             .setStyle("link")
-            .setLabel("Source")
+            .setLabel(locales(guild.lang, "helper.source"))
             .setURL(d.url);
             const channel = client.getChannel(guild.newsChannel!) as TextChannel | AnnouncementChannel;
             if(!channel) continue;
@@ -352,6 +355,7 @@ export default createListener({
       let data = res.filter(r => r.status === "LIVE");
       if(!data.length) return;
       for(const guild of guilds) {
+        if(!["PRO", "ULTIMATE"].includes(guild.keys![0].type)) continue;
         const channel = client.getChannel(guild.liveFeedChannel!) as TextChannel;
         if(!channel) continue;
         data = data.filter(d => guild.events.some(e => d.tournament.name === e.name));
@@ -393,7 +397,7 @@ export default createListener({
               name: d.tournament.name,
               iconURL: d.tournament.image
             })
-            .setTitle("Live Feed")
+            .setTitle("LIVE FEED")
             .setDesc(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
             .setFields(
               {
