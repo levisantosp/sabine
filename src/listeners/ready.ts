@@ -213,16 +213,8 @@ export default createListener({
           }
           data.reverse();
         }
-        await Guild.updateOne(
-          {
-            _id: guild.id
-          },
-          {
-            $set: {
-              lastResult: data[0].id
-            }
-          }
-        );
+        guild.lastResult = data[0].id;
+        await guild.save();
       }
       const users = await User.find({
         history: {
@@ -370,7 +362,7 @@ export default createListener({
               name: d.tournament.name,
               iconURL: d.tournament.image
             })
-            .setTitle("Live Feed")
+            .setTitle("LIVE FEED")
             .setDesc(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
             .setFields(
               {
