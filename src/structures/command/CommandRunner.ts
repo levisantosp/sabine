@@ -39,20 +39,9 @@ export default class CommandRunnner {
           }
         ]
       });
-    } 
-    if(command.ephemeral) {
-      await interaction.defer(64);
-    }
-    else if(command.isThinking) {
-      await interaction.defer();
     }
     let args: string[] = interaction.data.options.getSubCommand() ?? [];
-    if(args.length > 0) {
-      for(const option of interaction.data.options.getOptions()) {
-        args.push(option.value.toString());
-      }
-    }
-    else for(const option of interaction.data.options.getOptions()) {
+    for(const option of interaction.data.options.getOptions()) {
       args.push(option.value.toString());
     }
     const ctx = new CommandContext({
@@ -65,7 +54,33 @@ export default class CommandRunnner {
         user,
         guild
       }
-    })
+    });
+    const { permissions } = await import(`../../locales/${ctx.locale}.js`);
+    if(command.permissions) {
+      let perms: string[] = []
+      for(let perm of command.permissions) {
+        if(!interaction.member?.permissions.has(perm)) perms.push(perm);
+      }
+      if(perms[0]) return ctx.reply('helper.permissions.user', {
+        permissions: perms.map(p => `\`${permissions[p]}\``).join(', ')
+      });
+    }
+    if(command.botPermissions) {
+      let perms = []
+      let member = client.guilds.get(guild?.id)?.members.get(client.user.id);
+      for(let perm of command.botPermissions) {
+        if(!member?.permissions.has(perm as any)) perms.push(perm);
+      }
+      if(perms[0]) return ctx.reply('helper.permissions.bot', {
+        permissions: perms.map(p => `\`${permissions[p]}\``).join(', ')
+      });
+    }
+    if(command.ephemeral) {
+      await interaction.defer(64);
+    }
+    else if(command.isThinking) {
+      await interaction.defer();
+    }
     const locale = (content: string, args?: Args) => {
       return locales(user.lang ?? guild.lang, content, args);
     }
