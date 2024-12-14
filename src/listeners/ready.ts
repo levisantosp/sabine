@@ -413,10 +413,10 @@ export default createListener({
       try {
         await sendNews();
         await deleteGuild();
+        await sendMatchesFromLiveFeed();
         await sendMatches();
         await sendResults();
         await sendTBDMatches();
-        await sendMatchesFromLiveFeed();
       }
       catch(e) {
         new Logger(client).error(e as Error);
