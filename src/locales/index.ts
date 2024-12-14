@@ -6,7 +6,7 @@ export type Args = {
 export default function(lang: string, content: string, args?: Args): string {
   let locale = require(`./${lang}`);
   for(const param of content.split(".")) {
-    locale = locale[param]
+    locale = locale[param];
     if(!locale) return content;
   }
   if(args) {
