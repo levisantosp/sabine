@@ -128,11 +128,9 @@ export default createListener({
           $ne: []
         }
       });
-      console.log("a");
       if(!guilds.length) return;
       let matches: ResultsData[] = [];
       for(const guild of guilds) {
-        console.log(guild.id);
         let data = res.filter(d => guild.events.some(e => e.name === d.tournament.name));
         if(!data || !data[0]) continue;
         if(guild.lastResult && guild.lastResult !== data[0].id) {
