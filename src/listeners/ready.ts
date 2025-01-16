@@ -311,10 +311,15 @@ export default createListener({
     const execTasks = async() => {
       try {
         await sendNews();
+        Logger.send("sendNews function executed");
         await deleteGuild();
+        Logger.send("deleteGuild function executed");
         await sendMatches();
+        Logger.send("sendMatches function executed");
         await sendResults();
+        Logger.send("sendResults function executed");
         await sendTBDMatches();
+        Logger.send("sendTBDMatches function executed");
       }
       catch(e) {
         new Logger(client).error(e as Error);
