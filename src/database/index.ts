@@ -31,7 +31,7 @@ export class User extends UserSchema {
   public async get(id: string | undefined | null) {
     return await UserSchema.findById(id) as UserSchemaInterface;
   }
-  public async addPremium(premium: "PRO" | "BOOSTER" | "LITE" | "ULTIMATE", by: "ADD_PREMIUM_BY_COMMAND" | "BUY_PREMIUM") {
+  public async addPremium(by: "ADD_PREMIUM_BY_COMMAND" | "BUY_PREMIUM") {
     const keys = await Key.find() as KeySchemaInterface[];
     let keyId: string;
     do {
@@ -60,7 +60,7 @@ export class User extends UserSchema {
     await new Key(
       {
         _id: keyId,
-        type: premium,
+        type: "PREMIUM",
         user: this.id,
         active: false,
         activeIn: [],
@@ -69,7 +69,7 @@ export class User extends UserSchema {
       }
     ).save();
     this.plans.push({
-      type: premium,
+      type: "PREMIUM",
       expiresAt
     });
     this.warned = false;
@@ -82,7 +82,7 @@ export class User extends UserSchema {
     .setFields(
       {
         name: by,
-        value: premium
+        value: "PREMIUM"
       }
     );
     const webhooks = await channel.getWebhooks();
@@ -95,7 +95,6 @@ export class User extends UserSchema {
     return keyId;
   }
   public async removePremium(by: "REMOVE_PREMIUM_BY_AUTO" | "REMOVE_PREMIUM_BY_COMMAND") {
-    let premium = this.plans[0].type;
     this.plans.shift();
     await this.save();
     const channel = client.getChannel(process.env.USERS_LOG) as TextChannel;
@@ -106,7 +105,7 @@ export class User extends UserSchema {
     .setFields(
       {
         name: by,
-        value: premium
+        value: "PREMIUM"
       }
     );
     const webhooks = await channel.getWebhooks();
@@ -264,7 +263,7 @@ type UserSchemaHistory = {
   teams: UserSchemaHistoryTeam[];
 }
 type UserSchemaPremium = {
-  type: "LITE" | "PRO" | "ULTIMATE",
+  type: "PREMIUM",
   expiresAt: number
 }
 type TBDMatches = {
@@ -272,7 +271,7 @@ type TBDMatches = {
   channel: string;
 }
 type GuildSchemaKey = {
-  type: "BOOSTER" | "LITE" | "PRO" | "ULTIMATE"
+  type: "BOOSTER" | "PREMIUM"
   expiresAt?: number;
   id: string;
 }
@@ -321,7 +320,7 @@ export interface BlacklistSchemaInterface extends mongoose.Document {
 export interface KeySchemaInterface extends mongoose.Document {
   _id: string;
   expiresAt?: number;
-  type: "BOOSTER" | "LITE" | "PRO" | "ULTIMATE"
+  type: "BOOSTER" | "PREMIUM"
   user: string;
   active: boolean;
   activeIn: string[];

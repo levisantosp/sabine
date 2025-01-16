@@ -342,7 +342,7 @@ export default createCommand({
     else if(ctx.args[0] === "news") {
       const options = {
         enable: async() => {
-          if(!["LITE", "PRO", "ULTIMATE"].some(s => ctx.db.guild.keys![0].type === s)) {
+          if(!["PREMIUM"].some(s => ctx.db.guild.keys![0].type === s)) {
             const button = new ButtonBuilder()
             .setLabel(locale("commands.admin.buy_premium"))
             .setStyle("link")
@@ -381,7 +381,7 @@ export default createCommand({
     else if(ctx.args[0] === "live") {
       const options = {
         enable: async() => {
-          if(!["PRO", "ULTIMATE"].some(s => ctx.db.guild.keys![0]?.type === s)) {
+          if(!["PREMIUM"].some(s => ctx.db.guild.keys![0]?.type === s)) {
             const button = new ButtonBuilder()
             .setLabel(locale("commands.admin.buy_premium"))
             .setStyle("link")
