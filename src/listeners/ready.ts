@@ -310,16 +310,36 @@ export default createListener({
     }
     const execTasks = async() => {
       try {
-        await sendNews();
-        Logger.send("sendNews function executed");
-        await deleteGuild();
-        Logger.send("deleteGuild function executed");
-        await sendMatches();
-        Logger.send("sendMatches function executed");
-        await sendResults();
-        Logger.send("sendResults function executed");
-        await sendTBDMatches();
-        Logger.send("sendTBDMatches function executed");
+        try {
+          await sendNews();
+        }
+        catch {
+          console.log("error in sendNews function");
+        }
+        try {
+          await deleteGuild();
+        }
+        catch {
+          console.log("error in deleteGuild function");
+        }
+        try {
+          await sendMatches();
+        }
+        catch {
+          console.log("error in sendMatches function");
+        }
+        try {
+          await sendResults();
+        }
+        catch {
+          console.log("error in sendResults function");
+        }
+        try {
+          await sendTBDMatches();
+        }
+        catch {
+          console.log("error in sendTBDMatches function");
+        }
       }
       catch(e) {
         new Logger(client).error(e as Error);
