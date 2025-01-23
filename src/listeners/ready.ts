@@ -313,32 +313,32 @@ export default createListener({
         try {
           await sendNews();
         }
-        catch {
-          console.log("error in sendNews function");
+        catch(e) {
+          new Logger(client).error(e as Error);
         }
         try {
           await deleteGuild();
         }
-        catch {
-          console.log("error in deleteGuild function");
+        catch(e) {
+          new Logger(client).error(e as Error);
         }
         try {
           await sendMatches();
         }
-        catch {
-          console.log("error in sendMatches function");
+        catch(e) {
+          new Logger(client).error(e as Error);
         }
         try {
           await sendResults();
         }
-        catch {
-          console.log("error in sendResults function");
+        catch(e) {
+          new Logger(client).error(e as Error);
         }
         try {
           await sendTBDMatches();
         }
         catch {
-          console.log("error in sendTBDMatches function");
+          new Logger(client).error(e as Error);
         }
       }
       catch(e) {
