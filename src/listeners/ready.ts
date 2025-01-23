@@ -337,7 +337,7 @@ export default createListener({
         try {
           await sendTBDMatches();
         }
-        catch {
+        catch(e) {
           new Logger(client).error(e as Error);
         }
       }
