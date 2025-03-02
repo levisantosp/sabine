@@ -13,7 +13,7 @@ export default createListener({
       client.editStatus("dnd", [
         {
           name: "status",
-          state: "Entre no servidor de suporte! Link na bio",
+          state: "Join support server! Link on about me",
           type: 4
         }
       ]);
@@ -22,7 +22,7 @@ export default createListener({
       client.editStatus("online", [
         {
           name: "status",
-          state: "Entre no servidor de suporte! Link na bio",
+          state: "Join support server! Link on about me",
           type: 4
         }
       ])
@@ -38,7 +38,7 @@ export default createListener({
         type: 1
       });
     });
-    client.application.bulkEditGlobalCommands(commands);
+    await client.application.bulkEditGlobalCommands(commands);
     const deleteGuild = async() => {
       const guilds = await Guild.find();
       for(const guild of guilds) {
@@ -412,12 +412,16 @@ export default createListener({
     }
     const execTasks = async() => {
       try {
-        await sendNews();
-        await deleteGuild();
-        await sendMatchesFromLiveFeed();
-        await sendMatches();
-        await sendResults();
-        await sendTBDMatches();
+        await Promise.all(
+          [
+            sendNews(),
+            deleteGuild(),
+            sendMatchesFromLiveFeed(),
+            sendMatches(),
+            sendResults(),
+            sendTBDMatches()
+          ]
+        );
       }
       catch(e) {
         new Logger(client).error(e as Error);
