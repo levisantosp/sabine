@@ -23,7 +23,7 @@ export default createListener({
         type: 1
       });
     });
-    client.application.bulkEditGlobalCommands(commands);
+    await client.application.bulkEditGlobalCommands(commands);
     const deleteGuild = async() => {
       const guilds = await Guild.find();
       for(const guild of guilds) {
