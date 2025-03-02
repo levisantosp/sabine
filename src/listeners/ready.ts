@@ -83,7 +83,7 @@ export default createListener({
               if(e.name === d.tournament.name) {
                 let index = guild.matches.findIndex((m) => m === d.id);
                 if(index > -1) guild.matches.splice(index, 1);
-                guild.matches.push(d.id!);
+                if(!d.stage.toLowerCase().includes("showmatch")) guild.matches.push(d.id!);
       
                 const embed = new EmbedBuilder()
                 .setAuthor({
