@@ -308,25 +308,37 @@ export default createListener({
         }
       );
     }
-    const execTasks = async() => {
+    // const execTasks = async() => {
+    //   try {
+    //     await Promise.all(
+    //       [
+    //         sendNews(),
+    //         deleteGuild(),
+    //         sendMatches(),
+    //         sendResults(),
+    //         sendTBDMatches(),
+    //       ]
+    //     );
+    //   }
+    //   catch(e) {
+    //     new Logger(client).error(e as Error);
+    //   }
+    //   finally {
+    //     setTimeout(execTasks, process.env.INTERVAL ?? 20000);
+    //   }
+    // }
+    // execTasks();
+    setInterval(async() => {
       try {
-        await Promise.all(
-          [
-            sendNews(),
-            deleteGuild(),
-            sendMatches(),
-            sendResults(),
-            sendTBDMatches(),
-          ]
-        );
+        await sendNews();
+        await deleteGuild();
+        await sendMatches();
+        await sendResults();
+        await sendTBDMatches();
       }
       catch(e) {
         new Logger(client).error(e as Error);
       }
-      finally {
-        setTimeout(execTasks, process.env.INTERVAL ?? 20000);
-      }
-    }
-    execTasks();
+    }, process.env.INTERVAL ?? 20000);
   }
 });
