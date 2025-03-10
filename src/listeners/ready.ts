@@ -412,16 +412,18 @@ export default createListener({
     }
     const execTasks = async() => {
       try {
-        await Promise.all(
-          [
-            sendNews(),
-            deleteGuild(),
-            sendMatchesFromLiveFeed(),
-            sendMatches(),
-            sendResults(),
-            sendTBDMatches()
-          ]
-        );
+        await sendNews();
+        console.log("sendNews()");
+        await deleteGuild();
+        console.log("deleteGuild()");
+        await sendMatchesFromLiveFeed();
+        console.log("sendMatchesFromLiveFeed()");
+        await sendMatches();
+        console.log("sendMatches()");
+        await sendResults();
+        console.log("sendResults()");
+        await sendTBDMatches();
+        console.log("sendTBDMatches()");
       }
       catch(e) {
         new Logger(client).error(e as Error);
