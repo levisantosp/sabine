@@ -99,7 +99,7 @@ export const commands = {
   }
 }
 export const helper = {
-  palpitate: "Make a prediction",
+  palpitate: "Predict",
   stats: "Stats",
   palpitate_modal: {
     title: "Your prediction for the match"

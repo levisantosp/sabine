@@ -99,7 +99,7 @@ export const commands = {
   }
 }
 export const helper = {
-  palpitate: "Fazer um palpite",
+  palpitate: "Palpitar",
   stats: "Estatísticas",
   palpitate_modal: {
     title: "Seu palpite para a partida"
