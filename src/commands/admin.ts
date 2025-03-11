@@ -1,5 +1,5 @@
 import { CommandInteraction, ComponentInteraction } from "oceanic.js"
-import { ButtonBuilder, createCommand, EmbedBuilder, Logger } from "../structures"
+import { ButtonBuilder, createCommand, EmbedBuilder, emojis, Logger } from "../structures"
 import { EventsData, MatchesData } from "../../types"
 import MainController from "../scraper"
 import { Guild, GuildSchemaInterface } from "../database"
@@ -471,7 +471,7 @@ export default createCommand({
       }
       guild.matches = [];
       guild.tbdMatches = [];
-      guild.resendTime = new Date().setHours(24, 0, 0, 0);
+      // guild.resendTime = new Date().setHours(24, 0, 0, 0);
       await ctx.edit("commands.admin.resending");
       const res = await MainController.getMatches();
       if(!res || !res.length) return;
@@ -499,6 +499,8 @@ export default createCommand({
             if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue;
             for(const e of guild.events) {
               if(e.name === d.tournament.name) {
+                const emoji1 = (emojis as any[]).find((e: any) => e.name === d.teams[0].name.toLowerCase() || e.aliases?.find((alias: string) => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0];
+                const emoji2 = (emojis as any[]).find((e: any) => e.name === d.teams[1].name.toLowerCase() || e.aliases?.find((alias: string) => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0];
                 let index = guild.matches.findIndex((m) => m === d.id);
                 if(index > -1) guild.matches.splice(index, 1);
                 guild.matches.push(d.id!);
@@ -508,8 +510,8 @@ export default createCommand({
                   iconURL: d.tournament.image,
                   name: d.tournament.name
                 })
-                .setDesc(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
-                .setField(`:flag_${d.teams[0].country}: ${d.teams[0].name} \`vs\` ${d.teams[1].name} :flag_${d.teams[1].country}:`.replaceAll(":flag_un:", ":united_nations:"), "", true)
+                // .setDesc(`${emoji1} **${d.teams[0].name}** <:versus:1349105624180330516> **${d.teams[1].name}** ${emoji2}\n<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
+                .setField(`${emoji1} **${d.teams[0].name}** <:versus:1349105624180330516> **${d.teams[1].name}** ${emoji2}`, `<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
                 .setFooter({
                   text: d.stage
                 });

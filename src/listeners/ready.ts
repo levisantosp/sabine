@@ -1,5 +1,5 @@
 import { AnnouncementChannel, CreateApplicationCommandOptions, TextChannel } from "oceanic.js"
-import { ButtonBuilder, createListener, EmbedBuilder, Logger } from "../structures"
+import { ButtonBuilder, createListener, EmbedBuilder, emojis, Logger } from "../structures"
 import { Guild, GuildSchemaInterface, User, UserSchemaInterface } from "../database"
 import MainController from "../scraper"
 import locales from "../locales"
@@ -81,6 +81,8 @@ export default createListener({
             if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue;
             for(const e of guild.events) {
               if(e.name === d.tournament.name) {
+                const emoji1 = (emojis as any[]).find((e: any) => e.name === d.teams[0].name.toLowerCase() || e.aliases?.find((alias: string) => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0];
+                const emoji2 = (emojis as any[]).find((e: any) => e.name === d.teams[1].name.toLowerCase() || e.aliases?.find((alias: string) => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0];
                 let index = guild.matches.findIndex((m) => m === d.id);
                 if(index > -1) guild.matches.splice(index, 1);
                 if(!d.stage.toLowerCase().includes("showmatch")) guild.matches.push(d.id!);
@@ -91,7 +93,7 @@ export default createListener({
                   name: d.tournament.name
                 })
                 .setDesc(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
-                .setField(`:flag_${d.teams[0].country}: ${d.teams[0].name} \`vs\` ${d.teams[1].name} :flag_${d.teams[1].country}:`.replaceAll(":flag_un:", ":united_nations:"), "", true)
+                .setField(`${emoji1} ${d.teams[0].name} <:versus:1349105624180330516> ${d.teams[1].name} ${emoji2}`, `<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`, true)
                 .setFooter({
                   text: d.stage
                 });
@@ -175,15 +177,16 @@ export default createListener({
             }
             for(const e of guild.events) {
               if(e.name === d.tournament.name) {
+                const emoji1 = (emojis as any[]).find((e: any) => e.name === d.teams[0].name.toLowerCase() || e.aliases?.find((alias: string) => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0];
+                const emoji2 = (emojis as any[]).find((e: any) => e.name === d.teams[1].name.toLowerCase() || e.aliases?.find((alias: string) => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0];
                 const embed = new EmbedBuilder()
                   .setAuthor({
                     name: d.tournament.name,
                     iconURL: d.tournament.image
                   })
-                  .setDesc(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
                   .addField(
-                    `:flag_${d.teams[0].country}: ${d.teams[0].name} \`${d.teams[0].score}-${d.teams[1].score}\` ${d.teams[1].name} :flag_${d.teams[1].country}:`.replaceAll(":flag_un:", ":united_nations:"),
-                    "",
+                    `${emoji1} ${d.teams[0].name} \`${d.teams[0].score}\` <:versus:1349105624180330516> \`${d.teams[1].score}\` ${d.teams[1].name} ${emoji2}`,
+                    `<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`,
                     true
                   )
                   .setFooter({
@@ -249,14 +252,15 @@ export default createListener({
           const data = res.find(d => d.id === match.id);
           if(!data) continue;
           if(data.teams[0].name !== "TBD" && data.teams[1].name !== "TBD") {
+            const emoji1 = (emojis as any[]).find((e: any) => e.name === data.teams[0].name.toLowerCase() || e.aliases?.find((alias: string) => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[0];
+            const emoji2 = (emojis as any[]).find((e: any) => e.name === data.teams[1].name.toLowerCase() || e.aliases?.find((alias: string) => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[0];
             const channel = client.getChannel(match.channel) as TextChannel;
             const embed = new EmbedBuilder()
             .setAuthor({
               name: data.tournament.name,
               iconURL: data.tournament.image
             })
-            .setDesc(`<t:${data.when / 1000}:F> | <t:${data.when / 1000}:R>`)
-            .setField(`:flag_${data.teams[0].country}: ${data.teams[0].name} \`vs\` ${data.teams[1].name} :flag_${data.teams[1].country}:`.replaceAll(":flag_un:", ":united_nations:"), "", true)
+            .setField(`${emoji1} ${data.teams[0].name} <:versus:1349105624180330516> ${data.teams[1].name} ${emoji2}`, `<t:${data.when / 1000}:F> | <t:${data.when / 1000}:R>`, true)
             .setFooter({ text: data.stage })
             channel.createMessage({
               embeds: [embed],
@@ -336,7 +340,7 @@ export default createListener({
         }
       );
     }
-    const sendMatchesFromLiveFeed = async() => {
+    const sendLiveFeedMatches = async() => {
       const guilds = await Guild.find(
         {
           liveFeedChannel: { $exists: true },
@@ -354,6 +358,8 @@ export default createListener({
         data = data.filter(d => guild.events.some(e => d.tournament.name === e.name));
         if(!data.length) continue;
         for(const d of data) {
+          const emoji1 = (emojis as any[]).find((e: any) => e.name === d.teams[0].name.toLowerCase() || e.aliases?.find((alias: string) => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0];
+          const emoji2 = (emojis as any[]).find((e: any) => e.name === d.teams[1].name.toLowerCase() || e.aliases?.find((alias: string) => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0];
           const match = await MainController.getLiveMatch(d.id!);
           const liveMatch = guild.liveMatches.find(m => m.id === match.id);
           if(!match.score1 || !match.currentMap) continue;
@@ -367,7 +373,7 @@ export default createListener({
             .setDesc(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
             .setFields(
               {
-                name: `:flag_${d.teams[0].country}: ${d.teams[0].name} \`${match.teams[0].score}-${match.teams[1].score}\` ${d.teams[1].name} :flag_${d.teams[1].country}:`.replaceAll(":flag_un:", ":united_nations:"),
+                name: `${emoji1} ${d.teams[0].name} \`${match.teams[0].score}\` <:versus:1349105624180330516> \`${match.teams[1].score}\` ${d.teams[1].name} ${emoji2}`,
                 value: locales(guild.lang, "helper.live_feed_value", {
                   map: match.currentMap,
                   score: `${match.score1}-${match.score2}`
@@ -394,7 +400,7 @@ export default createListener({
             .setDesc(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
             .setFields(
               {
-                name: `:flag_${d.teams[0].country}: ${d.teams[0].name} \`${match.teams[0].score}-${match.teams[1].score}\` ${d.teams[1].name} :flag_${d.teams[1].country}:`.replaceAll(":flag_un:", ":united_nations:"),
+                name: `${emoji1} ${d.teams[0].name} \`${match.teams[0].score}\` <:versus:1349105624180330516> \`${match.teams[1].score}\` ${d.teams[1].name} ${emoji2}`,
                 value: locales(guild.lang, "helper.live_feed_value", {
                   map: match.currentMap,
                   score: `${match.score1}-${match.score2}`
@@ -410,28 +416,13 @@ export default createListener({
         }
       }
     }
-    const execTasks = async() => {
-      try {
-        await sendNews();
-        console.log("sendNews()");
-        await deleteGuild();
-        console.log("deleteGuild()");
-        await sendMatchesFromLiveFeed();
-        console.log("sendMatchesFromLiveFeed()");
-        await sendMatches();
-        console.log("sendMatches()");
-        await sendResults();
-        console.log("sendResults()");
-        await sendTBDMatches();
-        console.log("sendTBDMatches()");
-      }
-      catch(e) {
-        new Logger(client).error(e as Error);
-      }
-      finally {
-        setTimeout(execTasks, process.env.INTERVAL ?? 20000);
-      }
-    }
-    execTasks();
+    setInterval(async() => {
+      await sendNews().catch(e => new Logger(client).error(e));
+      await deleteGuild().catch(e => new Logger(client).error(e));
+      await sendLiveFeedMatches().catch(e => new Logger(client).error(e));
+      await sendMatches().catch(e => new Logger(client).error(e));
+      await sendResults().catch(e => new Logger(client).error(e));
+      await sendTBDMatches().catch(e => new Logger(client).error(e));
+    }, process.env.INTERVAL ?? 20000);
   }
 });

@@ -7,6 +7,7 @@ import ButtonBuilder from "./builders/ButtonBuilder"
 import SelectMenuBuilder from "./builders/SelectMenuBuilder"
 import Logger from "./util/Logger"
 import EmbedBuilder from "./builders/EmbedBuilder"
+import { emojis } from "./util/emojis"
 
 export {
   App,
@@ -18,5 +19,6 @@ export {
   ButtonBuilder,
   SelectMenuBuilder,
   Logger,
-  EmbedBuilder
+  EmbedBuilder,
+  emojis
 }
