@@ -471,7 +471,7 @@ export default createCommand({
       }
       guild.matches = [];
       guild.tbdMatches = [];
-      // guild.resendTime = new Date().setHours(24, 0, 0, 0);
+      guild.resendTime = new Date().setHours(24, 0, 0, 0);
       await ctx.edit("commands.admin.resending");
       const res = await MainController.getMatches();
       if(!res || !res.length) return;
@@ -510,7 +510,6 @@ export default createCommand({
                   iconURL: d.tournament.image,
                   name: d.tournament.name
                 })
-                // .setDesc(`${emoji1} **${d.teams[0].name}** <:versus:1349105624180330516> **${d.teams[1].name}** ${emoji2}\n<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
                 .setField(`${emoji1} **${d.teams[0].name}** <:versus:1349105624180330516> **${d.teams[1].name}** ${emoji2}`, `<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
                 .setFooter({
                   text: d.stage

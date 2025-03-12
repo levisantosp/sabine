@@ -92,7 +92,6 @@ export default createListener({
                   iconURL: d.tournament.image,
                   name: d.tournament.name
                 })
-                .setDesc(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
                 .setField(`${emoji1} ${d.teams[0].name} <:versus:1349105624180330516> ${d.teams[1].name} ${emoji2}`, `<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`, true)
                 .setFooter({
                   text: d.stage
