@@ -409,7 +409,7 @@ export default createCommand({
               _id: ctx.db.guild.id
             },
             {
-              $unset: { newsChannel: "" }
+              $unset: { liveFeedChannel: "" }
             }
           );
           ctx.reply("commands.admin.live_feed_disabled");
