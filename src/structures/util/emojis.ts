@@ -64,7 +64,7 @@ export const emojis = [
   },
   {
     name: "evil geniuses",
-    emoji: "<:eg:1319829648749891664>"
+    emoji: "<a:peepoEG:1349206142349213756>"
   },
   {
     name: "furia",
@@ -83,12 +83,12 @@ export const emojis = [
   },
   {
     name: "loud",
-    emoji: "<:loud:1319733910875406468>",
+    emoji: "<a:peepoLoud:1271960677988438038>",
     aliases: ["loud gc"]
   },
   {
     name: "mibr",
-    emoji: "<:mibr:1319734548853948457>",
+    emoji: "<a:peepoMibr:1349206506352152688>",
     aliases: ["mibr academy", "mibr gc"]
   },
   {
@@ -97,7 +97,7 @@ export const emojis = [
   },
   {
     name: "sentinels",
-    emoji: "<:sentinels:1319734690826944523>"
+    emoji: "<a:peepoSen:1349205709253902489>"
   },
   {
     name: "g2 esports",
@@ -108,6 +108,40 @@ export const emojis = [
     name: "2game esports",
     aliases: ["2game academy", "2game esports gc"],
     emoji: "<:2game:1319734835379703888>"
+  },
+  {
+    name: "corinthians esports",
+    aliases: ["corinthians esports inclusivo"],
+    emoji: "<:sccp_esports:1349204232862961745>"
+  },
+  {
+    name: "red canids",
+    emoji: "<a:red_canids:1349204671285170238>"
+  },
+  {
+    name: "grêmio esports",
+    emoji: "<:gremio_esports:1349207265722368090>"
+  },
+  {
+    name: "tbk esports",
+    emoji: "<:tbk:1349207626457546755>"
+  },
+  {
+    name: "los grandes",
+    emoji: "<:los_grandes:1349207881068838913>"
+  },
+  {
+    name: "envy",
+    emoji: "<:envy:1349208595329192030>"
+  },
+  {
+    name: "tsm",
+    emoji: "<:tsm:1349208771913580574>"
+  },
+  {
+    name: "shopify rebellion black",
+    alises: ["shopify rebellion gold"],
+    emoji: "<:shopify:1349208960699203735>"
   },
   // VCT APAC
   {
