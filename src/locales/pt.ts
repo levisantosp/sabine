@@ -56,7 +56,7 @@ export const commands = {
     invalid_channel: "<:error:1300882259078938685> Tipo de canal inválido. Considere selecionar um canal de TEXTO.",
     limit_reached: "<:error:1300882259078938685> Este servidor atingiu o limite máximo de campeonatos que podem ser adicionados. Se quiser adicionar este campeonato, considere remover um usando {cmd}",
     channel_being_used: "<:error:1300882259078938685> O canal {ch} já está sendo usado para anunciar os resultados de um campeonato. Considere usar outro canal para isso.\nVerifique os canais que já estão em uso usando {cmd}",
-    resend_time: "<:error:1300882259078938685> Este recurso já foi usado hoje neste servidor. Tente novamente amanhã.",
+    resend_time: "<:error:1300882259078938685> Este recurso já foi usado recentemente neste servidor. Tente novamente {t}.",
     resending: "<a:carregando:809221866434199634> Reenviando partidas... Por favor, aguarde.",
     resend: "Reenviar partidas",
     confirm: "<:warn:869393116854108191> Você está prestes a FORÇAR o envio das partidas neste servidor!\n<:warn:869393116854108191> Vale lembrar que esta ação é **IRREVERSÍVEL** e só pode ser feita **UMA VEZ por dia**! Se você ainda quer adicionar mais campeonatos, adicione antes de usar este recurso.\nDeseja continuar?",

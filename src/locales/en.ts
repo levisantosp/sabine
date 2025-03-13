@@ -56,7 +56,7 @@ export const commands = {
     invalid_channel: "<:error:1300882259078938685> Invalid channel type. Consider select a TEXT channel.",
     limit_reached: "<:error:1300882259078938685> This server has reached the maximum limit of tournaments that can be added. If you want to add this tournaments, consider removing one using {cmd}",
     channel_being_used: "<:error:1300882259078938685> The channel {ch} is already being used to send the results of a tournament. Consider using another channel for this.\nCheck the channels that are already in use by using {cmd}",
-    resend_time: "<:error:1300882259078938685> This feature has already been used today on this server. Try again tomorrow.",
+    resend_time: "<:error:1300882259078938685> This feature has already been used recently on this server. Try again {t}.",
     resending: "<a:carregando:809221866434199634> Resending matches... Please, wait.",
     resend: "Resend matches",
     confirm: "<:warn:869393116854108191> You are about to FORCE the submission of matches on this server!\n<:warn:869393116854108191> It is worth remembering that this action is **IRREVERSIBLE** and can only be done **ONCE a day**! If you still want to add more tournaments, add them before using this feature. Do you want to continue?",
