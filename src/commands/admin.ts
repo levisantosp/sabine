@@ -453,7 +453,7 @@ export default createCommand({
       await ctx.interaction.defer(64);
       const guild = await Guild.findById(ctx.interaction.guild!.id) as GuildSchemaInterface;
       if(guild.resendTime > Date.now()) {
-        ctx.reply("commands.admin.resend_time");
+        ctx.reply("commands.admin.resend_time", { t: `<t:${(guild.resendTime / 1000).toFixed(0)}:R>` });
         return;
       }
       const button = new ButtonBuilder()
@@ -471,7 +471,7 @@ export default createCommand({
       }
       guild.matches = [];
       guild.tbdMatches = [];
-      guild.resendTime = new Date().setHours(24, 0, 0, 0);
+      guild.resendTime = Date.now() + 3600000;
       await ctx.edit("commands.admin.resending");
       const res = await MainController.getMatches();
       if(!res || !res.length) return;
