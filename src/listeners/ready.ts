@@ -415,6 +415,24 @@ export default createListener({
         }
       }
     }
+    const deleteLiveFeedMatches = async() => {
+      const guilds = await Guild.find(
+        {
+          liveMatches: { $ne: [] }
+        }
+      ) as GuildSchemaInterface[];
+      if(!guilds.length) return;
+      for(const guild of guilds) {
+        for(const match of guild.liveMatches) {
+          const res = await MainController.getLiveMatch(match.id);
+          if(!res.currentMap) {
+            let index = guild.liveMatches.findIndex(m => m.id === match.id);
+            guild.liveMatches.splice(index, 1);
+          }
+        }
+        await guild.save();
+      }
+    }
     setInterval(async() => {
       await sendNews().catch(e => new Logger(client).error(e));
       await deleteGuild().catch(e => new Logger(client).error(e));
@@ -422,6 +440,7 @@ export default createListener({
       await sendMatches().catch(e => new Logger(client).error(e));
       await sendResults().catch(e => new Logger(client).error(e));
       await sendTBDMatches().catch(e => new Logger(client).error(e));
+      await deleteLiveFeedMatches().catch(e => new Logger(client).error(e));
     }, process.env.INTERVAL ?? 20000);
   }
 });
