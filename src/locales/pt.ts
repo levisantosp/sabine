@@ -59,7 +59,7 @@ export const commands = {
     resend_time: "<:error:1300882259078938685> Este recurso já foi usado recentemente neste servidor. Tente novamente {t}.",
     resending: "<a:carregando:809221866434199634> Reenviando partidas... Por favor, aguarde.",
     resend: "Reenviar partidas",
-    confirm: "<:warn:869393116854108191> Você está prestes a FORÇAR o envio das partidas neste servidor!\n<:warn:869393116854108191> Vale lembrar que esta ação é **IRREVERSÍVEL** e só pode ser feita **UMA VEZ por dia**! Se você ainda quer adicionar mais campeonatos, adicione antes de usar este recurso.\nDeseja continuar?",
+    confirm: "<:warn:869393116854108191> Você está prestes a FORÇAR o envio das partidas neste servidor!\n<:warn:869393116854108191> Vale lembrar que esta ação é **IRREVERSÍVEL** e só pode ser feita **UMA VEZ por hora**! Se você ainda quer adicionar mais campeonatos, adicione antes de usar este recurso.\nDeseja continuar?",
     continue: "Continuar",
     remove_all: "Remover todos",
     removed_all_tournaments: "<:success:1300882212190945292> Todos os torneios foram removidos com sucesso!",

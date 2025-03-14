@@ -59,7 +59,7 @@ export const commands = {
     resend_time: "<:error:1300882259078938685> This feature has already been used recently on this server. Try again {t}.",
     resending: "<a:carregando:809221866434199634> Resending matches... Please, wait.",
     resend: "Resend matches",
-    confirm: "<:warn:869393116854108191> You are about to FORCE the submission of matches on this server!\n<:warn:869393116854108191> It is worth remembering that this action is **IRREVERSIBLE** and can only be done **ONCE a day**! If you still want to add more tournaments, add them before using this feature. Do you want to continue?",
+    confirm: "<:warn:869393116854108191> You are about to FORCE the submission of matches on this server!\n<:warn:869393116854108191> It is worth remembering that this action is **IRREVERSIBLE** and can only be done **ONCE a hour**! If you still want to add more tournaments, add them before using this feature. Do you want to continue?",
     continue: "Continue",
     remove_all: "Remove all",
     removed_all_tournaments: "<:success:1300882212190945292> All tournaments have been removed successfully!",
