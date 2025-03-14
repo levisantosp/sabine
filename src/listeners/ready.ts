@@ -62,7 +62,7 @@ export default createListener({
         guild.matches = [];
         let data: MatchesData[];
         if(guild.events.length > 5 && (!guild.keys || !guild.keys.length)) {
-          data = res.filter(d => guild.events.slice(0, 5).some(e => e.name === d.tournament.name));
+          data = res.filter(d => guild.events.reverse().slice(0, 5).some(e => e.name === d.tournament.name));
         }
         else data = res.filter(d => guild.events.some(e => e.name === d.tournament.name));
         for(const e of guild.events) {
@@ -152,7 +152,7 @@ export default createListener({
       let matches: ResultsData[] = [];
       for(const guild of guilds) {
         let data: ResultsData[];
-        if(guild.events.length > 5 && (!guild.keys || guild.keys.length)) {
+        if(guild.events.length > 5 && (!guild.keys || !guild.keys.length)) {
           data = res.filter(d => guild.events.reverse().slice(0, 5).some(e => e.name === d.tournament.name));
         }
         else data = res.filter(d => guild.events.some(e => e.name === d.tournament.name));
