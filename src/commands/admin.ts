@@ -103,11 +103,11 @@ export default createCommand({
     },
     {
       type: 1,
-      name: "panel",
+      name: "dashboard",
       nameLocalizations: {
         "pt-BR": "painel"
       },
-      description: "Shows the control panel",
+      description: "Shows the dashboard",
       descriptionLocalizations: {
         "pt-BR": "Mostra o painel de controle"
       }
@@ -243,7 +243,7 @@ export default createCommand({
   permissions: ["MANAGE_GUILD", "MANAGE_CHANNELS"],
   botPermissions: ["MANAGE_MESSAGES", "EMBED_LINKS", "SEND_MESSAGES"],
   syntaxes: [
-    "admin panel",
+    "admin dashboard",
     "admin tournament add [tournament]",
     "admin tournament remove [tournament]",
     "adming language [lang]",
@@ -253,7 +253,7 @@ export default createCommand({
     "admin live disable"
   ],
   examples: [
-    "admin panel",
+    "admin dashboard",
     "admin tournament add VCT Americas",
     "admin tournament add VCT EMEA",
     "admin tournament remove VCT AMERICAS",
