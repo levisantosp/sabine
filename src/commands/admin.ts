@@ -479,8 +479,8 @@ export default createCommand({
       if(guild.matches.length && !res2.some(d => d.id === guild.matches[guild.matches.length - 1])) return;
       guild.matches = [];
       let data: MatchesData[];
-      if(guild.events.length > 5 && (!guild.keys || guild.keys.length)) {
-        data = res.filter(d => guild.events.reverse().slice(0, 5).some(e => e.name === d.tournament.name));
+      if(guild.events.length > 5 && (!guild.keys || !guild.keys.length)) {
+        data = res.filter(d => guild.events.slice(0, 5).some(e => e.name === d.tournament.name));
       }
       else data = res.filter(d => guild.events.some(e => e.name === d.tournament.name));
       for(const e of guild.events) {
