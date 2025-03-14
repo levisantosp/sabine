@@ -354,7 +354,10 @@ export default createListener({
         if(!["PREMIUM"].includes(guild.keys![0].type)) continue;
         const channel = client.getChannel(guild.liveFeedChannel!) as TextChannel;
         if(!channel) continue;
-        data = data.filter(d => guild.events.some(e => d.tournament.name === e.name));
+        if (guild.events.length > 5 && (!guild.keys || !guild.keys.length)) {
+          data = data.filter(d => guild.events.reverse().slice(0, 5).some(e => d.tournament.name === e.name));
+        }
+        else data = data.filter(d => guild.events.some(e => d.tournament.name === e.name));
         if(!data.length) continue;
         for(const d of data) {
           const emoji1 = (emojis as any[]).find((e: any) => e.name === d.teams[0].name.toLowerCase() || e.aliases?.find((alias: string) => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0];
