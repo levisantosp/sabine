@@ -265,9 +265,9 @@ export default createCommand({
     "admin live disable"
   ],
   async run({ ctx, locale, id }) {
-    if(ctx.args[0] === "panel") {
+    if(ctx.args[0] === "dashboard") {
       const embed = new EmbedBuilder()
-      .setTitle(locale("commands.admin.panel"))
+      .setTitle(locale("commands.admin.dashboard"))
       .setDesc(locale("commands.admin.desc", {
         lang: ctx.db.guild.lang.replace("en", "English").replace("pt", "Português"),
         limit: ctx.db.guild.tournamentsLength === Infinity ? "`Infinity`" : `${ctx.db.guild.events.length}/${ctx.db.guild.tournamentsLength}`,

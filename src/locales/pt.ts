@@ -50,7 +50,7 @@ export const commands = {
     tournament_added: "<:success:1300882212190945292> O campeonato **{t}** foi adicionado com sucesso!",
     channels_must_be_different: "<:error:1300882259078938685> Os canais de resultados e partidas NÃO PODEM ser iguais. É recomendável que o canal de partidas seja um canal separado onde não haverá interação de membros.",
     tournament_removed: "<:success:1300882212190945292> O campeonato **{t}** foi removido com sucesso!",
-    panel: "Painel de Controle",
+    dashboard: "Painel de Controle",
     event_channels: "Partidas serão anunciadas em {ch1}\nResultados serão anunciados em {ch2}",
     desc: "Idioma: `{lang}` (altere usando: </admin language:{id}>)\nLimite de campeonatos: `{limit}`\nCanal de notícias: {newsChannel}\nCanal do live feed: {live}",
     invalid_channel: "<:error:1300882259078938685> Tipo de canal inválido. Considere selecionar um canal de TEXTO.",

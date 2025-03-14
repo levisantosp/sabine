@@ -50,7 +50,7 @@ export const commands = {
     tournament_added: "<:success:1300882212190945292> The tournament **{t}** has been added successfully!",
     channels_must_be_different: "<:warn:869393116854108191> The matches channel and results channel cannot be the same. It is recommended that the matches channel be a separate channel where there will be no member interaction.",
     tournament_removed: "<:success:1300882212190945292> The tournament **{t}** has been removed successfully!",
-    panel: "Control Panel",
+    dashboar: "Dashboard",
     event_channels: "Matches will be announced in {ch1}\nResults will be announced in {ch2}",
     desc: "Language: `{lang}` (change by using: </admin language:{id}>)\nLimit of tournaments: `{limit}`\nNews channel: {newsChannel}\nLive feed channel: {live}",
     invalid_channel: "<:error:1300882259078938685> Invalid channel type. Consider select a TEXT channel.",
