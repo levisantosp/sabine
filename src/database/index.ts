@@ -24,7 +24,8 @@ const UserSchema = mongoose.model("users", new mongoose.Schema(
       type: Array,
       default: []
     },
-    warned: Boolean
+    warned: Boolean,
+    plan: Object
   }
 ));
 export class User extends UserSchema {
@@ -298,6 +299,7 @@ export interface UserSchemaInterface extends User {
   lang?: "pt" | "en"
   plans: UserSchemaPremium[];
   warned?: boolean;
+  plan?: UserSchemaPremium;
 }
 type BlacklistUser = {
   id: string;
