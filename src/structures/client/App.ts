@@ -3,12 +3,20 @@ import { readdirSync } from "fs"
 import mongoose from "mongoose"
 import { Logger, Command } from ".."
 import path from "path"
+import "dotenv/config"
 
 export default class App extends Client {
   public commands: Map<string, Command> = new Map();
   public _uptime: number = Date.now();
   public constructor(options?: ClientOptions) {
     super(options);
+  }
+  public async loadCommands() {
+    for(const file of readdirSync(path.join(__dirname, "../../commands"))) {
+      const command = (await import(`../../commands/${file}`)).default.default ?? (await import(`../../commands/${file}`)).default;
+      this.commands.set(command.name, command);
+    }
+    return this.commands;
   }
   public async start() {
     Logger.warn("Connecting to database...");
@@ -26,3 +34,19 @@ export default class App extends Client {
     }
   }
 }
+export const client = new App({
+  auth: "Bot " + process.env.BOT_TOKEN,
+  gateway: {
+    intents: ["ALL"],
+    autoReconnect: true,
+    maxShards: "auto"
+  },
+  allowedMentions: {
+    everyone: false,
+    users: true,
+    repliedUser: true,
+    roles: false
+  },
+  defaultImageFormat: "png",
+  defaultImageSize: 2048
+});
