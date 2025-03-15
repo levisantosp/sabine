@@ -14,7 +14,6 @@ export default class App extends Client {
     Logger.warn("Connecting to database...");
     await mongoose.connect(process.env.MONGO_URI!);
     Logger.send("Database connected!");
-    await this.connect();
     for(const file of readdirSync(path.join(__dirname, "../../listeners"))) {
       const listener = (await import(`../../listeners/${file}`)).default.default ?? (await import(`../../listeners/${file}`)).default;
       if(listener.name === "ready") this.once("ready", () => listener.run(this).catch((e: Error) => new Logger(this).error(e)));
@@ -24,5 +23,6 @@ export default class App extends Client {
       const command = (await import(`../../commands/${file}`)).default.default ?? (await import(`../../commands/${file}`)).default;
       this.commands.set(command.name, command);
     }
+    await this.connect();
   }
 }
