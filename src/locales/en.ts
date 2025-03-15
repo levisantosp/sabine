@@ -84,7 +84,7 @@ export const commands = {
   premium: {
     you_dont_have_premium: "<:error:1300882259078938685> You do not have an active plan. Buy one in [support server](https://discord.com/invite/FaqYcpA84r)!",
     embed: {
-      description: "Thank you for supporting the boy by subscribing to the premium.\nYour plan expires {expiresAt}",
+      description: "Thank you for supporting the bot by subscribing to the premium.\nYour plan expires {expiresAt}",
       field: {
         value: "Key: `{key}`\nExpires {expiresAt}"
       }
