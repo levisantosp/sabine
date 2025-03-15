@@ -118,7 +118,7 @@ export default createCommand({
       })
     });
     for(const prediction of history) {
-      embed.addField(`${prediction.teams[0].name} x ${prediction.teams[1].name}`, locale("commands.predictions.embed.field", {
+      embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name}`, locale("commands.predictions.embed.field", {
         score1: prediction.teams[0].score,
         score2: prediction.teams[1].score,
         link: `https://www.vlr.gg/${prediction.match}`
