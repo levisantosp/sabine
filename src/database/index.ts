@@ -1,5 +1,5 @@
 import mongoose from "mongoose"
-import { client } from "../structures/client/App"
+import { client } from ".."
 import { EmbedBuilder } from "../structures"
 import { TextChannel } from "oceanic.js"
 import { LiveFeed } from "../../types"

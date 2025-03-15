@@ -27,6 +27,18 @@ export default createListener({
         }
       ])
     }
+    const commands: CreateApplicationCommandOptions[] = [];
+    client.commands.forEach(cmd => {
+      commands.push({
+        name: cmd.name,
+        nameLocalizations: cmd.nameLocalizations,
+        description: cmd.description,
+        descriptionLocalizations: cmd.descriptionLocalizations,
+        options: cmd.options,
+        type: 1
+      });
+    });
+    await client.application.bulkEditGlobalCommands(commands);
     const deleteGuild = async() => {
       const guilds = await Guild.find();
       for(const guild of guilds) {

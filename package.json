@@ -7,8 +7,7 @@
     "test": "tsx test",
     "start": "rm -rf dist && tsc && node dist/src/index.js",
     "dev": "tsx .",
-    "build": "rm -rf dist && tsc",
-    "cmd": "node scripts/bulkEditGlobalCommands.js"
+    "build": "rm -rf dist && tsc"
   },
   "keywords": [],
   "author": "levispires",
