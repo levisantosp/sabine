@@ -342,7 +342,7 @@ export default createCommand({
     else if(ctx.args[0] === "news") {
       const options = {
         enable: async() => {
-          if(!["PREMIUM"].some(s => ctx.db.guild.keys![0].type === s)) {
+          if(!["PREMIUM"].some(s => ctx.db.guild.key?.type === s)) {
             const button = new ButtonBuilder()
             .setLabel(locale("commands.admin.buy_premium"))
             .setStyle("link")
@@ -381,7 +381,7 @@ export default createCommand({
     else if(ctx.args[0] === "live") {
       const options = {
         enable: async() => {
-          if(!["PREMIUM"].some(s => ctx.db.guild.keys![0]?.type === s)) {
+          if(!["PREMIUM"].some(s => ctx.db.guild.key?.type === s)) {
             const button = new ButtonBuilder()
             .setLabel(locale("commands.admin.buy_premium"))
             .setStyle("link")
@@ -479,7 +479,7 @@ export default createCommand({
       if(guild.matches.length && !res2.some(d => d.id === guild.matches[guild.matches.length - 1])) return;
       guild.matches = [];
       let data: MatchesData[];
-      if(guild.events.length > 5 && (!guild.keys || !guild.keys.length)) {
+      if(guild.events.length > 5 && !guild.key) {
         data = res.filter(d => guild.events.reverse().slice(0, 5).some(e => e.name === d.tournament.name));
       }
       else data = res.filter(d => guild.events.some(e => e.name === d.tournament.name));

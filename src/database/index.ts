@@ -217,7 +217,7 @@ export const Guild = mongoose.model("guilds", new mongoose.Schema(
       default: 0
     },
     lastNews: String,
-    keys: Array,
+    key: Object,
     newsChannel: String,
     liveFeedChannel: String,
     liveMatches: {
@@ -286,7 +286,7 @@ export interface GuildSchemaInterface extends mongoose.Document {
   tbdMatches: TBDMatches[];
   resendTime: number;
   lastNews?: string;
-  keys?: GuildSchemaKey[];
+  key?: GuildSchemaKey;
   newsChannel?: string;
   liveFeedChannel?: string;
   liveMatches: LiveFeed[];

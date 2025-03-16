@@ -61,7 +61,7 @@ export default createListener({
         if(guild.matches.length && !res2.some(d => d.id === guild.matches[guild.matches.length - 1])) continue;
         guild.matches = [];
         let data: MatchesData[];
-        if(guild.events.length > 5 && (!guild.keys || !guild.keys.length)) {
+        if(guild.events.length > 5 && !guild.key) {
           data = res.filter(d => guild.events.reverse().slice(0, 5).some(e => e.name === d.tournament.name));
         }
         else data = res.filter(d => guild.events.some(e => e.name === d.tournament.name));
@@ -152,7 +152,7 @@ export default createListener({
       let matches: ResultsData[] = [];
       for(const guild of guilds) {
         let data: ResultsData[];
-        if(guild.events.length > 5 && (!guild.keys || !guild.keys.length)) {
+        if(guild.events.length > 5 && !guild.key) {
           data = res.filter(d => guild.events.reverse().slice(0, 5).some(e => e.name === d.tournament.name));
         }
         else data = res.filter(d => guild.events.some(e => e.name === d.tournament.name));
@@ -292,13 +292,13 @@ export default createListener({
       const guilds = await Guild.find(
         {
           newsChannel: { $exists: true },
-          keys: { $ne: [] }
+          key: { $exists: true }
         }
       ) as GuildSchemaInterface[];
       if(!guilds.length) return;
       let ids: string[] = [];
       for(const guild of guilds) {
-        if(!["PREMIUM"].includes(guild.keys![0].type)) continue;
+        if(!["PREMIUM"].includes(guild.key!.type)) continue;
         if(guild.lastNews && guild.lastNews !== data[0].id) {
           let news = data.find(e => e.id === guild.lastNews)!;
           let index = data.indexOf(news);
@@ -343,7 +343,7 @@ export default createListener({
       const guilds = await Guild.find(
         {
           liveFeedChannel: { $exists: true },
-          keys: { $ne: [] }
+          key: { $exists: true }
         }
       ) as GuildSchemaInterface[];
       if(!guilds.length) return;
@@ -351,10 +351,10 @@ export default createListener({
       let data = res.filter(r => r.status === "LIVE");
       if(!data.length) return;
       for(const guild of guilds) {
-        if(!["PREMIUM"].includes(guild.keys![0].type)) continue;
+        if(!["PREMIUM"].includes(guild.key!.type)) continue;
         const channel = client.getChannel(guild.liveFeedChannel!) as TextChannel;
         if(!channel) continue;
-        if (guild.events.length > 5 && (!guild.keys || !guild.keys.length)) {
+        if (guild.events.length > 5 && !guild.key) {
           data = data.filter(d => guild.events.reverse().slice(0, 5).some(e => d.tournament.name === e.name));
         }
         else data = data.filter(d => guild.events.some(e => d.tournament.name === e.name));
