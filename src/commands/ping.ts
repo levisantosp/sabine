@@ -7,6 +7,6 @@ export default createCommand({
     "pt-BR": "Mostra a latência do bot"
   },
   async run({ ctx }) {
-    ctx.reply(`🏓 Pong! \`${ctx.guild.shard.latency}ms\``);
+    ctx.reply(`🏓 Pong! \`${ctx.guild.shard.latency}ms\` (Shard \`${ctx.guild.shard.id}\`)`);
   }
 });

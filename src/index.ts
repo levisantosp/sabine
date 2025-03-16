@@ -5,6 +5,7 @@ export const client = new App({
   gateway: {
     intents: ["ALL"],
     autoReconnect: true,
+    maxShards: "auto"
   },
   allowedMentions: {
     everyone: false,
