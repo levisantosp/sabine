@@ -93,6 +93,14 @@ export const commands = {
       label: "Visualizar chaves de ativação"
     },
     you_dont_have_keys: "<:error:1300882259078938685> Você não possui nenhuma chave de ativação."
+  },
+  activatekey: {
+    key_activated: "<:success:1300882212190945292> Sua chave foi ativada com sucesso! Aproveite os benefícios!",
+    invalid_key: "<:error:1300882259078938685> Chave inválida!",
+    button: "Continuar",
+    would_like_to_continue: "<:warn:869393116854108191> Este servidor tem uma chave {key} ativada. Gostaria de continuar?",
+    key_already_activated: "<:error:1300882259078938685> Esta chave já está ativada!",
+    limit_reached: "<:error:1300882259078938685> Esta chave já está ativada em 2 servidores."
   }
 }
 export const helper = {

@@ -93,6 +93,14 @@ export const commands = {
       label: "View activation keys"
     },
     you_dont_have_keys: "<:error:1300882259078938685> You do not have any activation key."
+  },
+  activatekey: {
+    key_activated: "<:success:1300882212190945292> Your key has been activated successfully! Enjoy the benefits!",
+    invalid_key: "<:error:1300882259078938685> Invalid key!",
+    button: "Continue",
+    would_like_to_continue: "<:warn:869393116854108191> This server has a {key} key activated. Would you like to continue?",
+    key_already_activated: "<:error:1300882259078938685> This key is already activated!",
+    limit_reached: "<:error:1300882259078938685> This key is already activated in 2 servers."
   }
 }
 export const helper = {
