@@ -22,6 +22,15 @@ export default createListener({
       .catch(e => new Logger(client).error(e));
     }
     else if(i.isComponentInteraction()) {
+      if(i.data.customID === "pickem") {
+        const guild = await Guild.findById(i.guildID) as GuildSchemaInterface;
+        const user = (await User.findById(i.member!.id) || new User({ _id: i.member!.id })) as UserSchemaInterface;
+        i.createMessage({
+          content: locales(user.lang ?? guild.lang, "helper.pickem.res"),
+          flags: 64
+        });
+        return;
+      }
       if(i.data.customID.startsWith("guess-")) {
         await i.defer(64);
         const guild = await Guild.findById(i.guildID) as GuildSchemaInterface;

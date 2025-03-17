@@ -115,15 +115,15 @@ export default createListener({
                       type: 1,
                       components: [button, urlButton]
                     },
-                    // {
-                    //   type: 1,
-                    //   components: [
-                    //     new ButtonBuilder()
-                    //     .setLabel(locales(guild.lang, "helper.pickem.label"))
-                    //     .setStyle("blue")
-                    //     .setCustomId("pickem")
-                    //   ]
-                    // }
+                    {
+                      type: 1,
+                      components: [
+                        new ButtonBuilder()
+                        .setLabel(locales(guild.lang, "helper.pickem.label"))
+                        .setStyle("blue")
+                        .setCustomId("pickem")
+                      ]
+                    }
                   ]
                 }).catch(() => {});
                 else {
