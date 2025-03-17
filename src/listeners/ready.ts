@@ -95,15 +95,15 @@ export default createListener({
                       type: 1,
                       components: [button, urlButton]
                     },
-                    // {
-                    //   type: 1,
-                    //   components: [
-                    //     new ButtonBuilder()
-                    //     .setLabel(locales(guild.lang, "helper.pickem.label"))
-                    //     .setStyle("blue")
-                    //     .setCustomId("pickem")
-                    //   ]
-                    // }
+                    {
+                      type: 1,
+                      components: [
+                        new ButtonBuilder()
+                        .setLabel(locales(guild.lang, "helper.pickem.label"))
+                        .setStyle("blue")
+                        .setCustomId("pickem")
+                      ]
+                    }
                   ]
                 }).catch(() => {});
                 else {
@@ -172,11 +172,11 @@ export default createListener({
                         new ButtonBuilder()
                           .setLabel(locales(guild.lang, "helper.stats"))
                           .setStyle("link")
-                          .setURL(`https://vlr.gg/${d.id}`)
-                        // new ButtonBuilder()
-                        // .setLabel(locales(guild.lang, "helper.pickem.label"))
-                        // .setStyle("blue")
-                        // .setCustomId("pickem")
+                          .setURL(`https://vlr.gg/${d.id}`),
+                        new ButtonBuilder()
+                        .setLabel(locales(guild.lang, "helper.pickem.label"))
+                        .setStyle("blue")
+                        .setCustomId("pickem")
                       ]
                     }
                   ]

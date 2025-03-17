@@ -3,6 +3,7 @@ import { ButtonBuilder, createCommand, EmbedBuilder, Logger } from "../structure
 import { EventsData } from "../../types"
 import MainController from "../scraper"
 import { Guild, GuildSchemaInterface } from "../database"
+import locales from "../locales"
 const cache = new Map<string, EventsData[]>();
 
 export default createCommand({
@@ -337,15 +338,15 @@ export default createCommand({
                       type: 1,
                       components: [button, urlButton]
                     },
-                    // {
-                    //   type: 1,
-                    //   components: [
-                    //     new ButtonBuilder()
-                    //     .setLabel(locales(guild.lang, "helper.pickem.label"))
-                    //     .setStyle("blue")
-                    //     .setCustomId("pickem")
-                    //   ]
-                    // }
+                    {
+                      type: 1,
+                      components: [
+                        new ButtonBuilder()
+                        .setLabel(locales(guild.lang, "helper.pickem.label"))
+                        .setStyle("blue")
+                        .setCustomId("pickem")
+                      ]
+                    }
                   ]
                 }).catch(() => {});
                 else {
