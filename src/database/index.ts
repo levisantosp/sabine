@@ -174,7 +174,7 @@ export class User extends UserSchema {
     .setDesc(`User: ${user?.mention} (${this.id})`)
     .setFields(
       {
-        name: "CORRECT_PREDICTION",
+        name: "WRONG_PREDICTION",
         value: predictionId
       }
     );
