@@ -97,7 +97,8 @@ export const emojis = [
   },
   {
     name: "sentinels",
-    emoji: "<a:peepoSen:1349205709253902489>"
+    emoji: "<a:peepoSen:1349205709253902489>",
+    aliases: ["cubert academy", "sentinels cubert academy"]
   },
   {
     name: "g2 esports",
