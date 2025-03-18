@@ -532,11 +532,8 @@ export default createCommand({
                   components: [
                     {
                       type: 1,
-                      components: [button, urlButton]
-                    },
-                    {
-                      type: 1,
                       components: [
+                        button, urlButton,
                         new ButtonBuilder()
                         .setLabel(locales(guild.lang, "helper.pickem.label"))
                         .setStyle("blue")
