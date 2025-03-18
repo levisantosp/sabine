@@ -144,6 +144,10 @@ export const emojis = [
     alises: ["shopify rebellion gold"],
     emoji: "<:shopify:1349208960699203735>"
   },
+  {
+    name: "m80",
+    emoji: "<:m80:1351346019568193609>"
+  },
   // VCT APAC
   {
     name: "detonation focusme",
