@@ -119,4 +119,5 @@ type LiveFeed = {
   score2: string;
   id: string | number;
   url: string;
+  stage: string;
 }

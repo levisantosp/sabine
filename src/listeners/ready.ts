@@ -362,23 +362,24 @@ export default createListener({
           const match = await MainController.getLiveMatch(d.id!);
           const liveMatch = guild.liveMatches.find(m => m.id === match.id);
           if(!match.score1 || !match.currentMap) continue;
+          const embed = new EmbedBuilder()
+          .setAuthor({
+            name: d.tournament.name,
+            iconURL: d.tournament.image
+          })
+          .setTitle("LIVE FEED")
+          .setDesc(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
+          .setFields(
+            {
+              name: `${emoji1} ${d.teams[0].name} \`${match.teams[0].score}\` <:versus:1349105624180330516> \`${match.teams[1].score}\` ${d.teams[1].name} ${emoji2}`,
+              value: locales(guild.lang, "helper.live_feed_value", {
+                map: match.currentMap,
+                score: `${match.score1}-${match.score2}`
+              })
+            }
+          )
+          .setFooter({ text: match.stage });
           if(!liveMatch) {
-            const embed = new EmbedBuilder()
-            .setAuthor({
-              name: d.tournament.name,
-              iconURL: d.tournament.image
-            })
-            .setTitle("LIVE FEED")
-            .setDesc(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
-            .setFields(
-              {
-                name: `${emoji1} ${d.teams[0].name} \`${match.teams[0].score}\` <:versus:1349105624180330516> \`${match.teams[1].score}\` ${d.teams[1].name} ${emoji2}`,
-                value: locales(guild.lang, "helper.live_feed_value", {
-                  map: match.currentMap,
-                  score: `${match.score1}-${match.score2}`
-                })
-              }
-            )
             channel.createMessage(embed.build());
             await Guild.updateOne(
               {
@@ -390,22 +391,6 @@ export default createListener({
             );
           }
           else if(JSON.stringify(match) !== JSON.stringify(liveMatch)) {
-            const embed = new EmbedBuilder()
-            .setAuthor({
-              name: d.tournament.name,
-              iconURL: d.tournament.image
-            })
-            .setTitle("LIVE FEED")
-            .setDesc(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
-            .setFields(
-              {
-                name: `${emoji1} ${d.teams[0].name} \`${match.teams[0].score}\` <:versus:1349105624180330516> \`${match.teams[1].score}\` ${d.teams[1].name} ${emoji2}`,
-                value: locales(guild.lang, "helper.live_feed_value", {
-                  map: match.currentMap,
-                  score: `${match.score1}-${match.score2}`
-                })
-              }
-            )
             channel.createMessage(embed.build());
             let index = guild.liveMatches.findIndex(m => m.id === match.id);
             guild.liveMatches.splice(index, 1);

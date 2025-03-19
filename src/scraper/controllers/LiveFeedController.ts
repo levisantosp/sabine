@@ -1,4 +1,5 @@
 import { load } from "cheerio"
+import { LiveFeed } from "../../../types";
 
 export default class LiveFeedController {
   public static async getById(id: string | number) {
@@ -14,6 +15,7 @@ export default class LiveFeedController {
     const currentMap = maps[Number($(".vm-stats-gamesnav-item.js-map-switch.mod-active.mod-live").find("span").text().trim()) - 1]; //?? $(".vm-stats-game-header").find("span").text();
     const mapScore0 = $(".vm-stats-game.mod-active").find("div").find(".score").eq(0).text().trim();
     const mapScore1 = $(".vm-stats-game.mod-active").find("div").find(".score").eq(1).text().trim();
+    const stage = $(".match-header-event-series").text().replace(/\t/g, "").replace(/\n/g, "");
     return {
       teams: [
         {
@@ -29,7 +31,8 @@ export default class LiveFeedController {
       score1: mapScore0,
       score2: mapScore1,
       id,
-      url: "https://www.vlr.gg/" + id
-    }
+      url: "https://www.vlr.gg/" + id,
+      stage
+    } as LiveFeed
   }
 }
