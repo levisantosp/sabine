@@ -379,8 +379,19 @@ export default createListener({
             }
           )
           .setFooter({ text: match.stage });
+          const button = new ButtonBuilder()
+          .setStyle("link")
+          .setLabel(locales(guild.lang, "helper.stats"))
+          .setURL(match.url);
           if(!liveMatch) {
-            channel.createMessage(embed.build());
+            channel.createMessage(embed.build({
+              components: [
+                {
+                  type: 1,
+                  components: [button]
+                }
+              ]
+            }));
             await Guild.updateOne(
               {
                 _id: guild.id
@@ -391,7 +402,14 @@ export default createListener({
             );
           }
           else if(JSON.stringify(match) !== JSON.stringify(liveMatch)) {
-            channel.createMessage(embed.build());
+            channel.createMessage(embed.build({
+              components: [
+                {
+                  type: 1,
+                  components: [button]
+                }
+              ]
+            }));
             let index = guild.liveMatches.findIndex(m => m.id === match.id);
             guild.liveMatches.splice(index, 1);
             guild.liveMatches.push(match);
