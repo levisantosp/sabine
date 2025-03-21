@@ -352,7 +352,6 @@ export default createListener({
           if(!["PREMIUM"].includes(guild.key!.type)) continue;
           const channel = client.getChannel(guild.liveFeedChannel!) as TextChannel;
           if(!channel) continue;
-          else data = data.filter(d => guild.events.some(e => d.tournament.name === e.name));
           if(!guild.events.some(e => e.name === d.tournament.name)) continue;
           const emoji1 = (emojis as any[]).find((e: any) => e.name === d.teams[0].name.toLowerCase() || e.aliases?.find((alias: string) => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]
           const emoji2 = (emojis as any[]).find((e: any) => e.name === d.teams[1].name.toLowerCase() || e.aliases?.find((alias: string) => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]
