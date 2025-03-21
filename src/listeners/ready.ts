@@ -25,7 +25,7 @@ export default createListener({
           state: "Join support server! Link on about me",
           type: 4
         }
-      ])
+      ]);
     }
     const commands: CreateApplicationCommandOptions[] = [];
     client.commands.forEach(cmd => {
@@ -39,17 +39,17 @@ export default createListener({
       });
     });
     await client.application.bulkEditGlobalCommands(commands);
-    const deleteGuild = async() => {
-      const guilds = await Guild.find();
+    const deleteGuild = async () => {
+      const guilds = await Guild.find()
       for(const guild of guilds) {
         if(!client.guilds.get(guild.id)) {
           await guild.deleteOne();
         }
       }
     }
-    const sendMatches = async() => {
-      const res = await MainController.getMatches();
-      if(!res || !res.length) return;
+    const sendMatches = async () => {
+      const res = await MainController.getMatches()
+      if(!res || !res.length) return
       const guilds = await Guild.find({
         events: {
           $ne: []
@@ -71,10 +71,10 @@ export default createListener({
             let messages = await client.rest.channels.getMessages(e.channel1, { limit: 100 });
             let messagesIds = messages.filter(m => m.author.id === client.user.id).map(m => m.id);
             if(messagesIds.length) {
-              client.rest.channels.deleteMessages(e.channel1, messagesIds).catch(() => {});
+              client.rest.channels.deleteMessages(e.channel1, messagesIds).catch(() => { });
             }
           }
-          catch {}
+          catch { }
         }
         try {
           for(const d of data) {
@@ -86,27 +86,27 @@ export default createListener({
                 let index = guild.matches.findIndex((m) => m === d.id);
                 if(index > -1) guild.matches.splice(index, 1);
                 if(!d.stage.toLowerCase().includes("showmatch")) guild.matches.push(d.id!);
-      
+
                 const embed = new EmbedBuilder()
-                .setAuthor({
-                  iconURL: d.tournament.image,
-                  name: d.tournament.name
-                })
-                .setField(`${emoji1} ${d.teams[0].name} <:versus:1349105624180330516> ${d.teams[1].name} ${emoji2}`, `<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`, true)
-                .setFooter({
-                  text: d.stage
-                });
-      
+                  .setAuthor({
+                    iconURL: d.tournament.image,
+                    name: d.tournament.name
+                  })
+                  .setField(`${emoji1} ${d.teams[0].name} <:versus:1349105624180330516> ${d.teams[1].name} ${emoji2}`, `<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`, true)
+                  .setFooter({
+                    text: d.stage
+                  });
+
                 const button = new ButtonBuilder()
-                .setLabel(locales(guild.lang, "helper.palpitate"))
-                .setCustomId(`guess-${d.id}`)
-                .setStyle("green");
-      
+                  .setLabel(locales(guild.lang, "helper.palpitate"))
+                  .setCustomId(`guess-${d.id}`)
+                  .setStyle("green");
+
                 const urlButton = new ButtonBuilder()
-                .setLabel(locales(guild.lang, "helper.stats"))
-                .setStyle("link")
-                .setURL(`https://vlr.gg/${d.id}`);
-                
+                  .setLabel(locales(guild.lang, "helper.stats"))
+                  .setStyle("link")
+                  .setURL(`https://vlr.gg/${d.id}`);
+
                 if(d.stage.toLowerCase().includes("showmatch")) continue;
                 if(d.teams[0].name !== "TBD" && d.teams[1].name !== "TBD") await client.rest.channels.createMessage(e.channel1, {
                   embeds: [embed],
@@ -116,28 +116,28 @@ export default createListener({
                       components: [
                         button, urlButton,
                         new ButtonBuilder()
-                        .setLabel(locales(guild.lang, "helper.pickem.label"))
-                        .setStyle("blue")
-                        .setCustomId("pickem")
+                          .setLabel(locales(guild.lang, "helper.pickem.label"))
+                          .setStyle("blue")
+                          .setCustomId("pickem")
                       ]
                     }
                   ]
-                }).catch(() => {});
+                }).catch(() => { })
                 else {
                   guild.tbdMatches.push({
                     id: d.id!,
                     channel: e.channel1
                   });
-                }    
+                }
               }
             }
           }
         }
-        catch {}
+        catch { }
         guild.save();
       }
     }
-    const sendResults = async() => {
+    const sendResults = async () => {
       const res = await MainController.getResults();
       if(!res || !res.length) return;
       const guilds = await Guild.find({
@@ -146,7 +146,7 @@ export default createListener({
         }
       }) as GuildSchemaInterface[];
       if(!guilds.length) return;
-      let matches: ResultsData[] = [];
+      let matches: ResultsData[] = []
       for(const guild of guilds) {
         let data: ResultsData[];
         if(guild.events.length > 5 && !guild.key) {
@@ -165,7 +165,7 @@ export default createListener({
             data = data.slice(0, 1);
             matches = data;
           }
-          data.reverse();
+          data.reverse()
           for(const d of data) {
             index = guild.liveMatches.findIndex(m => m.id === d.id);
             if(index > -1) {
@@ -187,8 +187,8 @@ export default createListener({
                   )
                   .setFooter({
                     text: d.stage
-                  })
-                
+                  });
+
                 client.rest.channels.createMessage(e.channel2, {
                   embeds: [embed],
                   components: [
@@ -196,17 +196,17 @@ export default createListener({
                       type: 1,
                       components: [
                         new ButtonBuilder()
-                        .setLabel(locales(guild.lang, "helper.stats"))
-                        .setStyle("link")
-                        .setURL(`https://vlr.gg/${d.id}`),
+                          .setLabel(locales(guild.lang, "helper.stats"))
+                          .setStyle("link")
+                          .setURL(`https://vlr.gg/${d.id}`),
                         new ButtonBuilder()
-                        .setLabel(locales(guild.lang, "helper.pickem.label"))
-                        .setStyle("blue")
-                        .setCustomId("pickem")
+                          .setLabel(locales(guild.lang, "helper.pickem.label"))
+                          .setStyle("blue")
+                          .setCustomId("pickem")
                       ]
                     }
                   ]
-                }).catch(() => {});
+                }).catch(() => { });
               }
             }
           }
@@ -219,7 +219,7 @@ export default createListener({
         history: {
           $ne: []
         }
-      }) as UserSchemaInterface[];
+      }) as UserSchemaInterface[]
       if(!matches.length) return;
       for(const user of users) {
         for(const match of matches) {
@@ -234,7 +234,7 @@ export default createListener({
         }
       }
     }
-    const sendTBDMatches = async() => {
+    const sendTBDMatches = async () => {
       const res = await MainController.getMatches();
       if(!res || !res.length) return;
       const guilds = await Guild.find({
@@ -252,12 +252,12 @@ export default createListener({
             const emoji2 = (emojis as any[]).find((e: any) => e.name === data.teams[1].name.toLowerCase() || e.aliases?.find((alias: string) => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[0];
             const channel = client.getChannel(match.channel) as TextChannel;
             const embed = new EmbedBuilder()
-            .setAuthor({
-              name: data.tournament.name,
-              iconURL: data.tournament.image
-            })
-            .setField(`${emoji1} ${data.teams[0].name} <:versus:1349105624180330516> ${data.teams[1].name} ${emoji2}`, `<t:${data.when / 1000}:F> | <t:${data.when / 1000}:R>`, true)
-            .setFooter({ text: data.stage })
+              .setAuthor({
+                name: data.tournament.name,
+                iconURL: data.tournament.image
+              })
+              .setField(`${emoji1} ${data.teams[0].name} <:versus:1349105624180330516> ${data.teams[1].name} ${emoji2}`, `<t:${data.when / 1000}:F> | <t:${data.when / 1000}:R>`, true)
+              .setFooter({ text: data.stage });
             channel.createMessage({
               embeds: [embed],
               components: [
@@ -265,18 +265,18 @@ export default createListener({
                   type: 1,
                   components: [
                     new ButtonBuilder()
-                    .setLabel(locales(guild.lang, "helper.palpitate"))
-                    .setCustomId(`guess-${match.id}`)
-                    .setStyle("green"),
+                      .setLabel(locales(guild.lang, "helper.palpitate"))
+                      .setCustomId(`guess-${match.id}`)
+                      .setStyle("green"),
                     new ButtonBuilder()
-                    .setLabel(locales(guild.lang, "helper.stats"))
-                    .setStyle("link")
-                    .setURL(`https://vlr.gg/${data.id}`)
+                      .setLabel(locales(guild.lang, "helper.stats"))
+                      .setStyle("link")
+                      .setURL(`https://vlr.gg/${data.id}`)
                   ]
                 }
               ]
             })
-            .catch(() => {});
+            .catch(() => { });
             let index = guild.tbdMatches.findIndex((m) => m.id === match.id);
             guild.tbdMatches.splice(index, 1);
             guild.save();
@@ -284,8 +284,8 @@ export default createListener({
         }
       }
     }
-    const sendNews = async() => {
-      let data = await MainController.getAllNews();
+    const sendNews = async () => {
+      let data = await MainController.getAllNews()
       const guilds = await Guild.find(
         {
           newsChannel: { $exists: true },
@@ -307,12 +307,12 @@ export default createListener({
           }
           for(const d of data) {
             const embed = new EmbedBuilder()
-            .setAuthor({ name: d.title });
+              .setAuthor({ name: d.title });
             if(d.description) embed.setDesc(d.description);
             const button = new ButtonBuilder()
-            .setStyle("link")
-            .setLabel(locales(guild.lang, "helper.source"))
-            .setURL(d.url);
+              .setStyle("link")
+              .setLabel(locales(guild.lang, "helper.source"))
+              .setURL(d.url);
             const channel = client.getChannel(guild.newsChannel!) as TextChannel | AnnouncementChannel;
             if(!channel) continue;
             await channel.createMessage(embed.build({
@@ -336,7 +336,7 @@ export default createListener({
         }
       );
     }
-    const sendLiveFeedMatches = async() => {
+    const sendLiveFeedMatches = async () => {
       const guilds = await Guild.find(
         {
           liveFeedChannel: { $exists: true },
@@ -347,42 +347,40 @@ export default createListener({
       const res = await MainController.getMatches();
       let data = res.filter(r => r.status === "LIVE");
       if(!data.length) return;
-      for(const guild of guilds) {
-        if(!["PREMIUM"].includes(guild.key!.type)) continue;
-        const channel = client.getChannel(guild.liveFeedChannel!) as TextChannel;
-        if(!channel) continue;
-        if (guild.events.length > 5 && !guild.key) {
-          data = data.filter(d => guild.events.reverse().slice(0, 5).some(e => d.tournament.name === e.name));
-        }
-        else data = data.filter(d => guild.events.some(e => d.tournament.name === e.name));
-        if(!data.length) continue;
-        for(const d of data) {
-          const emoji1 = (emojis as any[]).find((e: any) => e.name === d.teams[0].name.toLowerCase() || e.aliases?.find((alias: string) => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0];
-          const emoji2 = (emojis as any[]).find((e: any) => e.name === d.teams[1].name.toLowerCase() || e.aliases?.find((alias: string) => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0];
-          const match = await MainController.getLiveMatch(d.id!);
-          const liveMatch = guild.liveMatches.find(m => m.id === match.id);
+      for(const d of data) {
+        for(const guild of guilds) {
+          if(!["PREMIUM"].includes(guild.key!.type)) continue;
+          const channel = client.getChannel(guild.liveFeedChannel!) as TextChannel;
+          if(!channel) continue;
+          else data = data.filter(d => guild.events.some(e => d.tournament.name === e.name));
+          if(!guild.events.some(e => e.name === d.tournament.name)) continue;
+          console.log(guild.id);
+          const emoji1 = (emojis as any[]).find((e: any) => e.name === d.teams[0].name.toLowerCase() || e.aliases?.find((alias: string) => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]
+          const emoji2 = (emojis as any[]).find((e: any) => e.name === d.teams[1].name.toLowerCase() || e.aliases?.find((alias: string) => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]
+          const match = await MainController.getLiveMatch(d.id!)
+          const liveMatch = guild.liveMatches.find(m => m.id === match.id)
           if(!match.score1 || !match.currentMap) continue;
           const embed = new EmbedBuilder()
-          .setAuthor({
-            name: d.tournament.name,
-            iconURL: d.tournament.image
-          })
-          .setTitle("LIVE FEED")
-          .setDesc(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
-          .setFields(
-            {
-              name: `${emoji1} ${d.teams[0].name} \`${match.teams[0].score}\` <:versus:1349105624180330516> \`${match.teams[1].score}\` ${d.teams[1].name} ${emoji2}`,
-              value: locales(guild.lang, "helper.live_feed_value", {
-                map: match.currentMap,
-                score: `${match.score1}-${match.score2}`
-              })
-            }
-          )
-          .setFooter({ text: match.stage });
+            .setAuthor({
+              name: d.tournament.name,
+              iconURL: d.tournament.image
+            })
+            .setTitle("LIVE FEED")
+            .setDesc(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
+            .setFields(
+              {
+                name: `${emoji1} ${d.teams[0].name} \`${match.teams[0].score}\` <:versus:1349105624180330516> \`${match.teams[1].score}\` ${d.teams[1].name} ${emoji2}`,
+                value: locales(guild.lang, "helper.live_feed_value", {
+                  map: match.currentMap,
+                  score: `${match.score1}-${match.score2}`
+                })
+              }
+            )
+            .setFooter({ text: match.stage })
           const button = new ButtonBuilder()
-          .setStyle("link")
-          .setLabel(locales(guild.lang, "helper.stats"))
-          .setURL(match.url);
+            .setStyle("link")
+            .setLabel(locales(guild.lang, "helper.stats"))
+            .setURL(match.url)
           if(!liveMatch) {
             channel.createMessage(embed.build({
               components: [
@@ -391,7 +389,7 @@ export default createListener({
                   components: [button]
                 }
               ]
-            }));
+            }))
             await Guild.updateOne(
               {
                 _id: guild.id
@@ -399,7 +397,7 @@ export default createListener({
               {
                 $addToSet: { liveMatches: match }
               }
-            );
+            )
           }
           else if(JSON.stringify(match) !== JSON.stringify(liveMatch)) {
             channel.createMessage(embed.build({
@@ -409,41 +407,41 @@ export default createListener({
                   components: [button]
                 }
               ]
-            }));
-            let index = guild.liveMatches.findIndex(m => m.id === match.id);
-            guild.liveMatches.splice(index, 1);
-            guild.liveMatches.push(match);
-            await guild.save();
+            }))
+            let index = guild.liveMatches.findIndex(m => m.id === match.id)
+            guild.liveMatches.splice(index, 1)
+            guild.liveMatches.push(match)
+            await guild.save()
           }
         }
       }
     }
-    const deleteLiveFeedMatches = async() => {
+    const deleteLiveFeedMatches = async () => {
       const guilds = await Guild.find(
         {
           liveMatches: { $ne: [] }
         }
-      ) as GuildSchemaInterface[];
-      if(!guilds.length) return;
+      ) as GuildSchemaInterface[]
+      if(!guilds.length) return
       for(const guild of guilds) {
         for(const match of guild.liveMatches) {
-          const res = await MainController.getLiveMatch(match.id);
+          const res = await MainController.getLiveMatch(match.id)
           if(!res.currentMap) {
-            let index = guild.liveMatches.findIndex(m => m.id === match.id);
-            guild.liveMatches.splice(index, 1);
+            let index = guild.liveMatches.findIndex(m => m.id === match.id)
+            guild.liveMatches.splice(index, 1)
           }
         }
-        await guild.save();
+        await guild.save()
       }
     }
-    setInterval(async() => {
-      await sendNews().catch(e => new Logger(client).error(e));
-      await deleteGuild().catch(e => new Logger(client).error(e));
-      await sendLiveFeedMatches().catch(e => new Logger(client).error(e));
-      await sendMatches().catch(e => new Logger(client).error(e));
-      await sendResults().catch(e => new Logger(client).error(e));
-      await sendTBDMatches().catch(e => new Logger(client).error(e));
-      await deleteLiveFeedMatches().catch(e => new Logger(client).error(e));
-    }, process.env.INTERVAL ?? 20000);
+    setInterval(async () => {
+      await sendNews().catch(e => new Logger(client).error(e))
+      await deleteGuild().catch(e => new Logger(client).error(e))
+      await sendLiveFeedMatches().catch(e => new Logger(client).error(e))
+      await sendMatches().catch(e => new Logger(client).error(e))
+      await sendResults().catch(e => new Logger(client).error(e))
+      await sendTBDMatches().catch(e => new Logger(client).error(e))
+      await deleteLiveFeedMatches().catch(e => new Logger(client).error(e))
+    }, process.env.INTERVAL ?? 20000)
   }
-});
+})
