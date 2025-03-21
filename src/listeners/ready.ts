@@ -354,7 +354,6 @@ export default createListener({
           if(!channel) continue;
           else data = data.filter(d => guild.events.some(e => d.tournament.name === e.name));
           if(!guild.events.some(e => e.name === d.tournament.name)) continue;
-          console.log(guild.id);
           const emoji1 = (emojis as any[]).find((e: any) => e.name === d.teams[0].name.toLowerCase() || e.aliases?.find((alias: string) => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]
           const emoji2 = (emojis as any[]).find((e: any) => e.name === d.teams[1].name.toLowerCase() || e.aliases?.find((alias: string) => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]
           const match = await MainController.getLiveMatch(d.id!)
@@ -397,7 +396,7 @@ export default createListener({
               {
                 $addToSet: { liveMatches: match }
               }
-            )
+            );
           }
           else if(JSON.stringify(match) !== JSON.stringify(liveMatch)) {
             channel.createMessage(embed.build({
@@ -407,11 +406,11 @@ export default createListener({
                   components: [button]
                 }
               ]
-            }))
-            let index = guild.liveMatches.findIndex(m => m.id === match.id)
-            guild.liveMatches.splice(index, 1)
-            guild.liveMatches.push(match)
-            await guild.save()
+            }));
+            let index = guild.liveMatches.findIndex(m => m.id === match.id);
+            guild.liveMatches.splice(index, 1);
+            guild.liveMatches.push(match);
+            await guild.save();
           }
         }
       }
@@ -421,27 +420,27 @@ export default createListener({
         {
           liveMatches: { $ne: [] }
         }
-      ) as GuildSchemaInterface[]
+      ) as GuildSchemaInterface[];
       if(!guilds.length) return
       for(const guild of guilds) {
         for(const match of guild.liveMatches) {
-          const res = await MainController.getLiveMatch(match.id)
+          const res = await MainController.getLiveMatch(match.id);
           if(!res.currentMap) {
-            let index = guild.liveMatches.findIndex(m => m.id === match.id)
-            guild.liveMatches.splice(index, 1)
+            let index = guild.liveMatches.findIndex(m => m.id === match.id);
+            guild.liveMatches.splice(index, 1);
           }
         }
-        await guild.save()
+        await guild.save();
       }
     }
     setInterval(async () => {
-      await sendNews().catch(e => new Logger(client).error(e))
-      await deleteGuild().catch(e => new Logger(client).error(e))
-      await sendLiveFeedMatches().catch(e => new Logger(client).error(e))
-      await sendMatches().catch(e => new Logger(client).error(e))
-      await sendResults().catch(e => new Logger(client).error(e))
-      await sendTBDMatches().catch(e => new Logger(client).error(e))
-      await deleteLiveFeedMatches().catch(e => new Logger(client).error(e))
-    }, process.env.INTERVAL ?? 20000)
+      await sendNews().catch(e => new Logger(client).error(e));
+      await deleteGuild().catch(e => new Logger(client).error(e));
+      await sendLiveFeedMatches().catch(e => new Logger(client).error(e));
+      await sendMatches().catch(e => new Logger(client).error(e));
+      await sendResults().catch(e => new Logger(client).error(e));
+      await sendTBDMatches().catch(e => new Logger(client).error(e));
+      await deleteLiveFeedMatches().catch(e => new Logger(client).error(e));
+    }, process.env.INTERVAL ?? 20000);
   }
 })
