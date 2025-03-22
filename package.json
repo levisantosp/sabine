@@ -5,6 +5,7 @@
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
+    "test": "rm -rf test.js && tsc test.ts && node test.js",
     "start": "rm -rf dist && tsc && node dist/index.js",
     "build": "rm -rf dist && tsc"
   },
