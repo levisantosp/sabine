@@ -1,5 +1,6 @@
-import { Key, KeySchemaInterface } from "../database";
-import { ButtonBuilder, createCommand } from "../structures";
+import { Key, KeySchemaInterface } from "../database/index.js"
+import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
+import createCommand from "../structures/command/createCommand.js"
 
 export default createCommand({
   name: "activatekey",

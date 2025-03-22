@@ -1,6 +1,8 @@
 import { ComponentInteraction } from "oceanic.js"
-import { User, UserSchemaInterface } from "../database"
-import { ButtonBuilder, createCommand, EmbedBuilder } from "../structures"
+import { User, UserSchemaInterface } from "../database/index.js"
+import createCommand from "../structures/command/createCommand.js"
+import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
+import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
 
 export default createCommand({
   name: "ranking",

@@ -1,5 +1,5 @@
 import { load } from "cheerio"
-import { LiveFeed } from "../../../types";
+import { LiveFeed } from "../../../types/index.js"
 
 export default class LiveFeedController {
   public static async getById(id: string | number) {

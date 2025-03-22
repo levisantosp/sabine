@@ -1,5 +1,5 @@
 import { load } from "cheerio"
-import { MatchesData } from "../../../types"
+import { MatchesData } from "../../../types/index.js"
 
 export default class MatchesController {
   static async get() {

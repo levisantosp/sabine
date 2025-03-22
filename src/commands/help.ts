@@ -1,5 +1,8 @@
 import translate from "@iamtraction/google-translate"
-import { ButtonBuilder, createCommand, EmbedBuilder, Logger } from "../structures"
+import createCommand from "../structures/command/createCommand.js"
+import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
+import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
+import Logger from "../structures/util/Logger.js"
 
 export default createCommand({
   name: "help",

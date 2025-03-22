@@ -1,9 +1,13 @@
 import { CommandInteraction, ComponentInteraction } from "oceanic.js"
-import { ButtonBuilder, createCommand, EmbedBuilder, emojis, Logger } from "../structures"
-import { EventsData, MatchesData } from "../../types"
-import MainController from "../scraper"
-import { Guild, GuildSchemaInterface } from "../database"
-import locales from "../locales"
+import { EventsData, MatchesData } from "../../types/index.js"
+import MainController from "../scraper/index.js"
+import { Guild, GuildSchemaInterface } from "../database/index.js"
+import locales from "../locales/index.js"
+import createCommand from "../structures/command/createCommand.js"
+import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
+import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
+import Logger from "../structures/util/Logger.js"
+import { emojis } from "../structures/util/emojis.js"
 const cache = new Map<string, EventsData[]>();
 
 export default createCommand({

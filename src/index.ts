@@ -1,5 +1,5 @@
 import "dotenv/config"
-import App from "./structures/client/App"
+import App from "./structures/client/App.js"
 export const client = new App({
   auth: "Bot " + process.env.BOT_TOKEN,
   gateway: {

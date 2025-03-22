@@ -1,5 +1,7 @@
 import { ComponentInteraction } from "oceanic.js"
-import { ButtonBuilder, createCommand, EmbedBuilder } from "../structures"
+import createCommand from "../structures/command/createCommand.js"
+import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
+import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
 
 export default createCommand({
   name: "predictions",

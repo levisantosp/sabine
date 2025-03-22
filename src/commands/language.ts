@@ -1,4 +1,4 @@
-import { createCommand } from "../structures"
+import createCommand from "../structures/command/createCommand.js"
 
 export default createCommand({
   name: "language",

@@ -1,7 +1,7 @@
 import { ApplicationCommandOptions, AutocompleteInteraction, ComponentInteraction, Constants, Locale, User } from "oceanic.js"
-import App from "../client/App"
-import CommandContext from "./CommandContext"
-import { Args } from "../../locales"
+import App from "../client/App.js"
+import CommandContext from "./CommandContext.js"
+import { Args } from "../../locales/index.js"
 
 type CommandOptions = {
   ctx: CommandContext;

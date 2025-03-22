@@ -1,7 +1,11 @@
-import locales, { Args } from "../locales"
-import { ButtonBuilder, CommandContext, CommandRunner, createListener, Logger } from "../structures"
-import { Blacklist, BlacklistSchemaInterface, Guild, GuildSchemaInterface, User, UserSchemaInterface } from "../database"
-import MainController from "../scraper"
+import locales, { Args } from "../locales/index.js"
+import { Blacklist, BlacklistSchemaInterface, Guild, GuildSchemaInterface, User, UserSchemaInterface } from "../database/index.js"
+import MainController from "../scraper/index.js"
+import createListener from "../structures/client/createListener.js"
+import CommandRunner from "../structures/command/CommandRunner.js"
+import Logger from "../structures/util/Logger.js"
+import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
+import CommandContext from "../structures/command/CommandContext.js"
 
 export default createListener({
   name: "interactionCreate",

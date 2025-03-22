@@ -1,8 +1,8 @@
 import mongoose from "mongoose"
-import { client } from ".."
-import { EmbedBuilder } from "../structures"
 import { TextChannel } from "oceanic.js"
-import { LiveFeed } from "../../types"
+import { LiveFeed } from "../../types/index.js"
+import { client } from "../index.js"
+import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
 
 const UserSchema = mongoose.model("users", new mongoose.Schema(
   {

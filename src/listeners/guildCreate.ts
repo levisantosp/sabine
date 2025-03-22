@@ -1,6 +1,7 @@
 import { TextChannel } from "oceanic.js"
-import { Blacklist, BlacklistSchemaInterface } from "../database"
-import { createListener, EmbedBuilder } from "../structures"
+import { Blacklist, BlacklistSchemaInterface } from "../database/index.js"
+import createListener from "../structures/client/createListener.js"
+import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
 
 export default createListener({
   name: "guildCreate",

@@ -1,6 +1,7 @@
-import { locale } from "moment"
-import { Key, KeySchemaInterface, User, UserSchemaInterface } from "../database"
-import { ButtonBuilder, createCommand, EmbedBuilder } from "../structures"
+import { Key, KeySchemaInterface } from "../database/index.js"
+import createCommand from "../structures/command/createCommand.js"
+import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
+import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
 
 export default createCommand({
   name: "premium",

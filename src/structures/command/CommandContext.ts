@@ -1,8 +1,8 @@
 import { CommandInteraction, ComponentInteraction, EditInteractionContent, File, Guild, InitialInteractionContent, ModalSubmitInteraction } from "oceanic.js"
-import App from "../client/App"
-import locales, { Args } from "../../locales"
-import { GuildSchemaInterface, UserSchemaInterface } from "../../database"
-import Logger from "../util/Logger"
+import App from "../client/App.js"
+import locales, { Args } from "../../locales/index.js"
+import { GuildSchemaInterface, UserSchemaInterface } from "../../database/index.js"
+import Logger from "../util/Logger.js"
 
 type Database = {
   guild: GuildSchemaInterface

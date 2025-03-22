@@ -1,6 +1,14 @@
-import { ButtonBuilder, createCommand, EmbedBuilder } from "../structures"
-import pkg from "../../package.json"
 import ms from "humanize-duration"
+import createCommand from "../structures/command/createCommand.js"
+import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
+import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
+import { fileURLToPath } from "url"
+import path from "path"
+import { readFileSync } from "fs"
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const pkgFile = path.resolve(__dirname, "../../package.json");
+const pkg = JSON.parse(readFileSync(pkgFile, "utf-8"));
 
 export default createCommand({
   name: "info",

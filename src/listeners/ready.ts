@@ -1,9 +1,13 @@
 import { AnnouncementChannel, CreateApplicationCommandOptions, TextChannel } from "oceanic.js"
-import { ButtonBuilder, createListener, EmbedBuilder, emojis, Logger } from "../structures"
-import { Guild, GuildSchemaInterface, User, UserSchemaInterface } from "../database"
-import MainController from "../scraper"
-import locales from "../locales"
-import { MatchesData, ResultsData } from "../../types"
+import { Guild, GuildSchemaInterface, User, UserSchemaInterface } from "../database/index.js"
+import MainController from "../scraper/index.js"
+import locales from "../locales/index.js"
+import { MatchesData, ResultsData } from "../../types/index.js"
+import createListener from "../structures/client/createListener.js"
+import Logger from "../structures/util/Logger.js"
+import { emojis } from "../structures/util/emojis.js"
+import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
+import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
 
 export default createListener({
   name: "ready",

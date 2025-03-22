@@ -1,11 +1,13 @@
 import { CommandInteraction, TextChannel } from "oceanic.js"
-import App from "../client/App"
-import CommandContext from "./CommandContext"
-import { ButtonBuilder, EmbedBuilder, Logger } from ".."
-import { Blacklist, BlacklistSchemaInterface, Guild, GuildSchemaInterface, User, UserSchemaInterface } from "../../database"
-import locales, { Args } from "../../locales"
+import App from "../client/App.js"
+import CommandContext from "./CommandContext.js"
+import { Blacklist, BlacklistSchemaInterface, Guild, GuildSchemaInterface, User, UserSchemaInterface } from "../../database/index.js"
+import locales, { Args } from "../../locales/index.js"
+import ButtonBuilder from "../builders/ButtonBuilder.js"
+import EmbedBuilder from "../builders/EmbedBuilder.js"
+import Logger from "../util/Logger.js"
 
-export default class CommandRunnner {
+export default class CommandRunner {
   public async run(
     client: App, interaction: CommandInteraction
   ) {

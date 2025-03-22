@@ -3,10 +3,9 @@
   "version": "1.4.0",
   "description": "a valorant champions tour tracker for discord",
   "main": "src/index.ts",
+  "type": "module",
   "scripts": {
-    "test": "tsx test",
-    "start": "rm -rf dist && tsc && node dist/src/index.js",
-    "dev": "tsx .",
+    "start": "rm -rf dist && tsc && node dist/index.js",
     "build": "rm -rf dist && tsc"
   },
   "keywords": [],
