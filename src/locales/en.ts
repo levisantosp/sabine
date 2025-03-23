@@ -4,7 +4,7 @@ export const commands = {
       author: "Your predictions",
       field: "Prediction: `{score1}-{score2}`\nResult: [click here]({link})",
       footer: "Page {p1}/{p2}",
-      desc: "Right predictions: `{right}`\nWrong predictions: `{wrong}`\nTotal predictions: `{t}`"
+      desc: "Correct predictions: `{right}`\nWrong predictions: `{wrong}`\nTotal predictions: `{t}`"
     },
     no_predictions: "<:error:1300882259078938685> You do not have predictions.",
     no_pages: "<:error:1300882259078938685> Nothing to show in this page."
