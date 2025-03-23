@@ -43,7 +43,7 @@ export default createListener({
       });
     });
     await client.application.bulkEditGlobalCommands(commands);
-    const deleteGuild = async () => {
+    const deleteGuild = async() => {
       const guilds = await Guild.find()
       for(const guild of guilds) {
         if(!client.guilds.get(guild.id)) {
@@ -51,7 +51,7 @@ export default createListener({
         }
       }
     }
-    const sendMatches = async () => {
+    const sendMatches = async() => {
       const res = await MainController.getMatches()
       if(!res || !res.length) return
       const guilds = await Guild.find({
@@ -141,7 +141,7 @@ export default createListener({
         guild.save();
       }
     }
-    const sendResults = async () => {
+    const sendResults = async() => {
       const res = await MainController.getResults();
       if(!res || !res.length) return;
       const guilds = await Guild.find({
@@ -224,21 +224,21 @@ export default createListener({
           $ne: []
         }
       }) as UserSchemaInterface[]
-      if(!matches.length) return;
+      if(!matches.length || !users.length) return;
       for(const user of users) {
         for(const match of matches) {
           let guess = user.history.find((h) => h.match === match.id);
           if(!guess) continue;
           if(guess.teams[0].score === match.teams[0].score && guess.teams[1].score === match.teams[1].score) {
-            await user.addCorrectPrediction(1, match.id);
+            await user.addCorrectPrediction(match.id);
           }
           else {
-            await user.addWrongPrediction(1, match.id);
+            await user.addWrongPrediction(match.id);
           }
         }
       }
     }
-    const sendTBDMatches = async () => {
+    const sendTBDMatches = async() => {
       const res = await MainController.getMatches();
       if(!res || !res.length) return;
       const guilds = await Guild.find({
@@ -246,6 +246,7 @@ export default createListener({
           $ne: []
         }
       }) as GuildSchemaInterface[];
+      if(!guilds.length) return;
       for(const guild of guilds) {
         if(!guild.tbdMatches.length) continue;
         for(const match of guild.tbdMatches) {
@@ -288,8 +289,8 @@ export default createListener({
         }
       }
     }
-    const sendNews = async () => {
-      let data = await MainController.getAllNews()
+    const sendNews = async() => {
+      let data = await MainController.getAllNews();
       const guilds = await Guild.find(
         {
           newsChannel: { $exists: true },
@@ -340,7 +341,7 @@ export default createListener({
         }
       );
     }
-    const sendLiveFeedMatches = async () => {
+    const sendLiveFeedMatches = async() => {
       const guilds = await Guild.find(
         {
           liveFeedChannel: { $exists: true },
@@ -418,7 +419,7 @@ export default createListener({
         }
       }
     }
-    const deleteLiveFeedMatches = async () => {
+    const deleteLiveFeedMatches = async() => {
       const guilds = await Guild.find(
         {
           liveMatches: { $ne: [] }
@@ -436,7 +437,7 @@ export default createListener({
         await guild.save();
       }
     }
-    setInterval(async () => {
+    setInterval(async() => {
       await sendNews().catch(e => new Logger(client).error(e));
       await deleteGuild().catch(e => new Logger(client).error(e));
       await sendLiveFeedMatches().catch(e => new Logger(client).error(e));

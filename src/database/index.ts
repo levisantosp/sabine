@@ -141,7 +141,7 @@ export class User extends UserSchema {
     });
     return this as UserSchemaInterface;
   }
-  public async addCorrectPrediction(amount: number, predictionId: string) {
+  public async addCorrectPrediction(predictionId: string) {
     this.guessesRight += 1;
     await this.save();
     const channel = client.getChannel(process.env.USERS_LOG) as TextChannel;
@@ -164,7 +164,7 @@ export class User extends UserSchema {
     });
     return this as UserSchemaInterface;
   }
-  public async addWrongPrediction(amount: number, predictionId: string) {
+  public async addWrongPrediction(predictionId: string) {
     this.guessesWrong += 1;
     await this.save();
     const channel = client.getChannel(process.env.USERS_LOG) as TextChannel;
