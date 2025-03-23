@@ -1,12 +1,12 @@
 {
   "name": "sabine",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "a valorant champions tour tracker for discord",
   "main": "src/index.ts",
+  "type": "module",
   "scripts": {
-    "test": "tsx test",
-    "start": "rm -rf dist && tsc && node dist/src/index.js",
-    "dev": "tsx .",
+    "test": "rm -rf test.js && tsc test.ts && node test.js",
+    "start": "rm -rf dist && tsc && node dist/index.js",
     "build": "rm -rf dist && tsc"
   },
   "keywords": [],
@@ -19,7 +19,7 @@
     "colors": "^1.4.0",
     "humanize-duration": "^3.32.1",
     "moment": "^2.30.1",
-    "mongoose": "^8.6.0",
+    "mongoose": "^8.9.5",
     "oceanic.js": "^1.11.2"
   },
   "devDependencies": {

@@ -1,5 +1,7 @@
 import { ComponentInteraction } from "oceanic.js"
-import { ButtonBuilder, createCommand, EmbedBuilder } from "../structures"
+import createCommand from "../structures/command/createCommand.js"
+import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
+import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
 
 export default createCommand({
   name: "predictions",
@@ -62,7 +64,7 @@ export default createCommand({
       })
     });
     for(const prediction of history) {
-      embed.addField(`${prediction.teams[0].name} x ${prediction.teams[1].name}`, locale("commands.predictions.embed.field", {
+      embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name}`, locale("commands.predictions.embed.field", {
         score1: prediction.teams[0].score,
         score2: prediction.teams[1].score,
         link: `https://www.vlr.gg/${prediction.match}`
@@ -118,7 +120,7 @@ export default createCommand({
       })
     });
     for(const prediction of history) {
-      embed.addField(`${prediction.teams[0].name} x ${prediction.teams[1].name}`, locale("commands.predictions.embed.field", {
+      embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name}`, locale("commands.predictions.embed.field", {
         score1: prediction.teams[0].score,
         score2: prediction.teams[1].score,
         link: `https://www.vlr.gg/${prediction.match}`

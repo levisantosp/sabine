@@ -3,7 +3,6 @@ export const commands = {
     embed: {
       author: "Seus palpites",
       field: "Palpite: `{score1}-{score2}`\nResultado: [clique aqui]({link})",
-      field2: "Palpite: `{score1}-{score2}`\nResultado: [clique aqui]({link})",
       footer: "Página {p1}/{p2}",
       desc: "Palpites certos: `{right}`\nPalpites errados: `{wrong}`\nPalpites totais: `{t}`"
     },
@@ -51,20 +50,28 @@ export const commands = {
     tournament_added: "<:success:1300882212190945292> O campeonato **{t}** foi adicionado com sucesso!",
     channels_must_be_different: "<:error:1300882259078938685> Os canais de resultados e partidas NÃO PODEM ser iguais. É recomendável que o canal de partidas seja um canal separado onde não haverá interação de membros.",
     tournament_removed: "<:success:1300882212190945292> O campeonato **{t}** foi removido com sucesso!",
-    panel: "Painel de Controle",
+    dashboard: "Painel de Controle",
     event_channels: "Partidas serão anunciadas em {ch1}\nResultados serão anunciados em {ch2}",
-    desc: "Idioma: `{lang}` (altere usando: </admin language:{id}>)\nLimite de campeonatos: `{limit}`",
+    desc: "Idioma: `{lang}` (altere usando: </admin language:{id}>)\nLimite de campeonatos: `{limit}`\nCanal de notícias: {newsChannel}\nCanal do live feed: {live}",
     invalid_channel: "<:error:1300882259078938685> Tipo de canal inválido. Considere selecionar um canal de TEXTO.",
     limit_reached: "<:error:1300882259078938685> Este servidor atingiu o limite máximo de campeonatos que podem ser adicionados. Se quiser adicionar este campeonato, considere remover um usando {cmd}",
     channel_being_used: "<:error:1300882259078938685> O canal {ch} já está sendo usado para anunciar os resultados de um campeonato. Considere usar outro canal para isso.\nVerifique os canais que já estão em uso usando {cmd}",
-    resend_time: "<:error:1300882259078938685> Este recurso já foi usado hoje neste servidor. Tente novamente amanhã.",
+    resend_time: "<:error:1300882259078938685> Este recurso já foi usado recentemente neste servidor. Tente novamente {t}.",
     resending: "<a:carregando:809221866434199634> Reenviando partidas... Por favor, aguarde.",
     resend: "Reenviar partidas",
-    confirm: "<:warn:869393116854108191> Você está prestes a FORÇAR o envio das partidas neste servidor!\n<:warn:869393116854108191> Vale lembrar que esta ação é **IRREVERSÍVEL** e só pode ser feita **UMA VEZ por dia**! Se você ainda quer adicionar mais campeonatos, adicione antes de usar este recurso.\nDeseja continuar?",
+    confirm: "<:warn:869393116854108191> Você está prestes a FORÇAR o envio das partidas neste servidor!\n<:warn:869393116854108191> Vale lembrar que esta ação é **IRREVERSÍVEL** e só pode ser feita **UMA VEZ por hora**! Se você ainda quer adicionar mais campeonatos, adicione antes de usar este recurso.\nDeseja continuar?",
     continue: "Continuar",
     remove_all: "Remover todos",
     removed_all_tournaments: "<:success:1300882212190945292> Todos os torneios foram removidos com sucesso!",
-    resent: "<:success:1300882212190945292> Partidas reenviadas com sucesso!"
+    resent: "<:success:1300882212190945292> Partidas reenviadas com sucesso!",
+    buy_premium: "Compre o premium!",
+    invalid_channel2: "<:error:1300882259078938685> Tipo de canal inválido. Considere selecionar um canal de TEXTO ou ANÚNCIOS.",
+    news_enabled: "<:success:1300882212190945292> Funcionalidade de notícias habilitada ao canal {ch}",
+    news_disabled: "<:success:1300882212190945292> Funcionalidade de notícias desabilitada com sucesso!",
+    live_feed_enabled: "<:success:1300882212190945292> Funcionalidade Live Feed habilitada ao canal {ch}",
+    live_feed_disabled: "<:success:1300882212190945292> Funcionalidade Live Feed desabilitada com sucesso!",
+    no_premium: "<:error:1300882259078938685> Este servidor não tem nenhum chave premium ativada.",
+    premium: "Este servidor está com a chave {key} ativada.\nA chave expira {expiresAt}"
   },
   info: {
     embed: {
@@ -75,10 +82,31 @@ export const commands = {
     guilds: "Servidores",
     users: "Usuários",
     invite: "Me adicione!"
+  },
+  premium: {
+    you_dont_have_premium: "<:error:1300882259078938685> Você não tem um plano premium ativo. Compre um no [servidor de suporte](https://discord.com/invite/FaqYcpA84r)!",
+    embed: {
+      description: "Obrigado por apoiar o bot assinando o premium!\nSeu plano expira {expiresAt}",
+      field: {
+        value: "Chave: `{key}`\nExpira {expiresAt}"
+      }
+    },
+    button: {
+      label: "Visualizar chaves de ativação"
+    },
+    you_dont_have_keys: "<:error:1300882259078938685> Você não possui nenhuma chave de ativação."
+  },
+  activatekey: {
+    key_activated: "<:success:1300882212190945292> Sua chave foi ativada com sucesso! Aproveite os benefícios!",
+    invalid_key: "<:error:1300882259078938685> Chave inválida!",
+    button: "Continuar",
+    would_like_to_continue: "<:warn:869393116854108191> Este servidor tem uma chave {key} ativada. Gostaria de continuar?",
+    key_already_activated: "<:error:1300882259078938685> Esta chave já está ativada!",
+    limit_reached: "<:error:1300882259078938685> Esta chave já está ativada em 2 servidores."
   }
 }
 export const helper = {
-  palpitate: "Fazer um palpite",
+  palpitate: "Palpitar",
   stats: "Estatísticas",
   palpitate_modal: {
     title: "Seu palpite para a partida"
@@ -98,7 +126,10 @@ export const helper = {
     res: "Participe do BOLÃO valendo um <:booster:1272968894239215636> **Discord Nitro** e um <:nitro:1272968817496297542> **Discord Nitro Basic** entrando no nosso servidor oficial!\nhttps://discord.gg/g5nmc376yh"
   },
   banned: "**<:error:1300882259078938685> Você está banido e não pode mais usar o bot.\<:warn:869393116854108191> você acha que isso é um engano, entre em contato conosco no nosso servidor no Discord!**\n**Quando:** {when}\n**Termina em:** {ends}\n**Motivo:** `{reason}`",
-  interaction_failed: "<:error:1300882259078938685> Não foi possível executar esta ação... Se o problema persistir, reporte para a equipe no meu [servidor de suporte](https://discord.gg/g5nmc376yh)."
+  interaction_failed: "<:error:1300882259078938685> Não foi possível executar esta ação... Se o problema persistir, reporte para a equipe no meu [servidor de suporte](https://discord.gg/g5nmc376yh).",
+  premium_feature: "<:warn:869393116854108191> Opa, parece que você achou uma funcionalidade premium. Desbloqueie ela comprando o premium em nosso servidor de suporte!",
+  live_feed_value: "Mapa atual: `{map}`\nPlacar do mapa: `{score}`",
+  source: "Ver artigo completo"
 }
 export const permissions = {
   CREATE_INSTANT_INVITE: "Criar convite instantâneo",

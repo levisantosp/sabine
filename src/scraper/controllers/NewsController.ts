@@ -1,5 +1,5 @@
 import { load } from "cheerio"
-import { NewsData } from "../../../types"
+import { NewsData } from "../../../types/index.js"
 
 export default class NewsController {
   public static async get() {

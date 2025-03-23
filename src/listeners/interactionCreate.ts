@@ -1,7 +1,11 @@
-import locales, { Args } from "../locales"
-import { ButtonBuilder, CommandContext, CommandRunner, createListener, Logger } from "../structures"
-import { Blacklist, BlacklistSchemaInterface, Guild, GuildSchemaInterface, User, UserSchemaInterface } from "../database"
-import MainController from "../scraper"
+import locales, { Args } from "../locales/index.js"
+import { Blacklist, BlacklistSchemaInterface, Guild, GuildSchemaInterface, User, UserSchemaInterface } from "../database/index.js"
+import MainController from "../scraper/index.js"
+import createListener from "../structures/client/createListener.js"
+import CommandRunner from "../structures/command/CommandRunner.js"
+import Logger from "../structures/util/Logger.js"
+import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
+import CommandContext from "../structures/command/CommandContext.js"
 
 export default createListener({
   name: "interactionCreate",
@@ -37,27 +41,27 @@ export default createListener({
         const user = (await User.findById(i.member!.id) || new User({ _id: i.member!.id })) as UserSchemaInterface;
         if(user.history.filter((g) => g.match === i.data.customID.slice(6))[0]?.match === i.data.customID.slice(6)) {
           i.editOriginal({
-            content: locales(user.lang ?? guild?.lang!, 'helper.replied')
+            content: locales(user.lang ?? guild?.lang!, "helper.replied")
           });
           return;
         }
         const res = await MainController.getMatches();
         const data = res.find(d => d.id == i.data.customID.slice(6));
-        if(data?.status === 'LIVE' || !data) {
+        if(data?.status === "LIVE" || !data) {
           i.editOriginal({
-            content: locales(user.lang ?? guild?.lang!, 'helper.started')
+            content: locales(user.lang ?? guild?.lang!, "helper.started")
           });
           return;
         }
         i.editOriginal({
-          content: locales(user.lang ?? guild?.lang!, 'helper.verified'),
+          content: locales(user.lang ?? guild?.lang!, "helper.verified"),
           components: [
             {
               type: 1,
               components: [
                 new ButtonBuilder()
-                .setStyle('green')
-                .setLabel(locales(user.lang ?? guild?.lang!, 'helper.palpitate'))
+                .setStyle("green")
+                .setLabel(locales(user.lang ?? guild?.lang!, "helper.palpitate"))
                 .setCustomId(`predict-${i.data.customID.slice(6)}`)
               ]
             }
@@ -65,21 +69,21 @@ export default createListener({
         })
         return;
       }
-      if(i.data.customID.startsWith('predict-')) {
+      if(i.data.customID.startsWith("predict-")) {
         const guild = await Guild.findById(i.guildID) as GuildSchemaInterface;
         const user = (await User.findById(i.member!.id) || new User({ _id: i.member!.id })) as UserSchemaInterface;
         if(user.history.filter((g) => g.match === i.data.customID.slice(8))[0]?.match === i.data.customID.slice(8)) {
           i.editParent({
-            content: locales(user.lang ?? guild?.lang!, 'helper.replied'),
+            content: locales(user.lang ?? guild?.lang!, "helper.replied"),
             components: []
           });
           return;
         }
         const res = await MainController.getMatches();
         const data = res.find(d => d.id == i.data.customID.slice(8));
-        if(data?.status === 'LIVE' || !data) {
+        if(data?.status === "LIVE" || !data) {
           i.editOriginal({
-            content: locales(user.lang ?? guild?.lang!, 'helper.started'),
+            content: locales(user.lang ?? guild?.lang!, "helper.started"),
             components: []
           });
           return;
@@ -154,7 +158,7 @@ export default createListener({
       const guild = await Guild.findById(i.guildID) as GuildSchemaInterface;
       const res = await MainController.getMatches();
       const data = res.find(d => d.id == i.data.customID.slice(6))!;
-      user.history.push({
+      await user.addPrediction({
         match: data.id!,
         teams: [
           {
@@ -167,9 +171,8 @@ export default createListener({
           }
         ]
       });
-      await user.save();
       i.editParent({
-        content: locales(user.lang ?? guild?.lang!, 'helper.palpitate_response', {
+        content: locales(user.lang ?? guild?.lang!, "helper.palpitate_response", {
           t1: data.teams[0].name,
           t2: data.teams[1].name,
           s1: i.data.components.getComponents()[0].value,

@@ -1,7 +1,9 @@
-import { PlayerData, PlayersData } from "../../types"
-import MainController from "../scraper"
-import { createCommand, EmbedBuilder, Logger } from "../structures"
-const cache = new Map()
+import { PlayerData, PlayersData } from "../../types/index.js"
+import MainController from "../scraper/index.js"
+import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
+import createCommand from "../structures/command/createCommand.js"
+import Logger from "../structures/util/Logger.js"
+const cache = new Map();
 
 export default createCommand({
   name: "player",

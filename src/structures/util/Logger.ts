@@ -1,7 +1,8 @@
 import colors from "colors"
 import moment from "moment"
-import { App, EmbedBuilder } from ".."
 import { TextChannel } from "oceanic.js"
+import App from "../client/App.js"
+import EmbedBuilder from "../builders/EmbedBuilder.js"
 
 export default class Logger {
   private client: App;

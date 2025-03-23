@@ -1,9 +1,10 @@
-import EventsController from "./controllers/EventsController"
-import MatchesController from "./controllers/MatchesController"
-import NewsController from "./controllers/NewsController"
-import PlayersController from "./controllers/PlayersController"
-import ResultsController from "./controllers/ResultsController"
-import TeamsController from "./controllers/TeamsController"
+import EventsController from "./controllers/EventsController.js"
+import LiveFeedController from "./controllers/LiveFeedController.js"
+import MatchesController from "./controllers/MatchesController.js"
+import NewsController from "./controllers/NewsController.js"
+import PlayersController from "./controllers/PlayersController.js"
+import ResultsController from "./controllers/ResultsController.js"
+import TeamsController from "./controllers/TeamsController.js"
 
 export default class MainController {
   public static async getEvents() {
@@ -29,5 +30,8 @@ export default class MainController {
   }
   public static async getAllNews() {
     return await NewsController.get()
+  }
+  public static async getLiveMatch(id: string | number) {
+    return await LiveFeedController.getById(id);
   }
 }

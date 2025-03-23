@@ -1,9 +1,13 @@
 import { CommandInteraction, ComponentInteraction } from "oceanic.js"
-import { ButtonBuilder, createCommand, EmbedBuilder, Logger } from "../structures"
-import { EventsData } from "../../types"
-import MainController from "../scraper"
-import { Guild, GuildSchemaInterface } from "../database"
-import locales from "../locales"
+import { EventsData, MatchesData } from "../../types/index.js"
+import MainController from "../scraper/index.js"
+import { Guild, GuildSchemaInterface } from "../database/index.js"
+import locales from "../locales/index.js"
+import createCommand from "../structures/command/createCommand.js"
+import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
+import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
+import Logger from "../structures/util/Logger.js"
+import { emojis } from "../structures/util/emojis.js"
 const cache = new Map<string, EventsData[]>();
 
 export default createCommand({
@@ -104,11 +108,11 @@ export default createCommand({
     },
     {
       type: 1,
-      name: "panel",
+      name: "dashboard",
       nameLocalizations: {
         "pt-BR": "painel"
       },
-      description: "Shows the control panel",
+      description: "Shows the dashboard",
       descriptionLocalizations: {
         "pt-BR": "Mostra o painel de controle"
       }
@@ -144,24 +148,145 @@ export default createCommand({
           required: true
         }
       ]
+    },
+    {
+      type: 2,
+      name: "news",
+      nameLocalizations: {
+        "pt-BR": "noticias"
+      },
+      description: "Add or remove the news feature",
+      descriptionLocalizations: {
+        "pt-BR": "Adiciona ou remove a funcionalidade de notícias"
+      },
+      options: [
+        {
+          type: 1,
+          name: "enable",
+          nameLocalizations: {
+            "pt-BR": "habilitar"
+          },
+          description: "Enable the news feature to the server",
+          descriptionLocalizations: {
+            "pt-BR": "Habilita a funcionalidade de notícias ao servidor"
+          },
+          options: [
+            {
+              type: 7,
+              name: "channel",
+              nameLocalizations: {
+                "pt-BR": "canal"
+              },
+              description: "The channel were the news will be sent",
+              descriptionLocalizations: {
+                "pt-BR": "Canal onde as notícias serão enviadas"
+              },
+              required: true
+            }
+          ]
+        },
+        {
+          type: 1,
+          name: "disable",
+          nameLocalizations: {
+            "pt-BR": "desabilitar"
+          },
+          description: "Disable the news feature for this server",
+          descriptionLocalizations: {
+            "pt-BR": "Desabilita a funcionalidade de notícias para este servidor"
+          }
+        }
+      ]
+    },
+    {
+      type: 2,
+      name: "live",
+      description: "Enable or disable live feed feature for this server",
+      descriptionLocalizations: {
+        "pt-BR": "Habilita ou desabilita a funcionalidade live feed para este servidor"
+      },
+      options: [
+        {
+          type: 1,
+          name: "enable",
+          nameLocalizations: {
+            "pt-BR": "habilitar"
+          },
+          description: "Enable live feed feature for this server",
+          descriptionLocalizations: {
+            "pt-BR": "Habilita a funcionalidade live feed para este servidor"
+          },
+          options: [
+            {
+              type: 7,
+              name: "channel",
+              nameLocalizations: {
+                "pt-BR": "canal"
+              },
+              description: "Select the channel",
+              descriptionLocalizations: {
+                "pt-BR": "Selecione o canal"
+              },
+              required: true
+            }
+          ]
+        },
+        {
+          type: 1,
+          name: "disable",
+          nameLocalizations: {
+            "pt-BR": "desabilitar"
+          },
+          description: "Disable live feed feature for this server",
+          descriptionLocalizations: {
+            "pt-BR": "Desabilita a funcionalidade live feed para este servidor"
+          }
+        }
+      ]
+    },
+    {
+      type: 1,
+      name: "premium",
+      description: "Shows information about server premium",
+      descriptionLocalizations: {
+        "pt-BR": "Mostra informações sobre o premium do servidor"
+      }
     }
   ],
   permissions: ["MANAGE_GUILD", "MANAGE_CHANNELS"],
   botPermissions: ["MANAGE_MESSAGES", "EMBED_LINKS", "SEND_MESSAGES"],
   syntaxes: [
-    "admin panel",
+    "admin dashboard",
     "admin tournament add [tournament]",
     "admin tournament remove [tournament]",
-    "adming language [lang]"
+    "adming language [lang]",
+    "admin news enable [channel]",
+    "admin news disable",
+    "admin live enable [channel]",
+    "admin live disable"
+  ],
+  examples: [
+    "admin dashboard",
+    "admin tournament add VCT Americas",
+    "admin tournament add VCT EMEA",
+    "admin tournament remove VCT AMERICAS",
+    "admin language pt-BR",
+    "admin language en-US",
+    "admin news enable #valorant-news",
+    "admin news disable",
+    "admin live enable #live-feed",
+    "admin live disable"
   ],
   async run({ ctx, locale, id }) {
-    if(ctx.args[0] === "panel") {
+    if(ctx.args[0] === "dashboard") {
       const embed = new EmbedBuilder()
-      .setTitle(locale("commands.admin.panel"))
+      .setTitle(locale("commands.admin.dashboard"))
       .setDesc(locale("commands.admin.desc", {
         lang: ctx.db.guild.lang.replace("en", "English").replace("pt", "Português"),
-        limit: ctx.db.guild.tournamentsLength === Infinity ? Infinity : `${ctx.db.guild.events.length}/${ctx.db.guild.tournamentsLength}`,
-        id
+        limit: ctx.db.guild.tournamentsLength === Infinity ? "`Infinity`" : `${ctx.db.guild.events.length}/${ctx.db.guild.tournamentsLength}`,
+        id,
+        newsChannel: !ctx.db.guild.newsChannel ? "`undefined`" : `<#${ctx.db.guild.newsChannel}>`,
+        live: !ctx.db.guild.liveFeedChannel ? "`undefined`" : `<#${ctx.db.guild.liveFeedChannel}>`
       }));
       for(const event of ctx.db.guild.events) {
         embed.addField(event.name, locale("commands.admin.event_channels", {
@@ -173,7 +298,7 @@ export default createCommand({
       .setLabel(locale("commands.admin.resend"))
       .setStyle("red")
       .setCustomId(`admin;${ctx.interaction.user.id};resend`);
-      if(!ctx.db.guild.events.length) button.setDisabled();
+      if(!ctx.db.guild.events.length || ctx.db.guild.resendTime >= Date.now()) button.setDisabled();
       ctx.reply(embed.build(button.build()));
     }
     else if(ctx.args[0] === "language") {
@@ -227,6 +352,97 @@ export default createCommand({
       }
       options[ctx.args[1] as "remove" | "add"]();
     }
+    else if(ctx.args[0] === "news") {
+      const options = {
+        enable: async() => {
+          if(!["PREMIUM"].some(s => ctx.db.guild.key?.type === s)) {
+            const button = new ButtonBuilder()
+            .setLabel(locale("commands.admin.buy_premium"))
+            .setStyle("link")
+            .setURL("https://discord.com/invite/FaqYcpA84r");
+            ctx.reply({
+              content: locale("helper.premium_feature"),
+              components: [
+                {
+                  type: 1,
+                  components: [button]
+                }
+              ]
+            });
+            return;
+          }
+          let channel = ctx.guild.channels.get(ctx.args[2])!
+          if(![0, 5].some(t => channel.type === t)) return ctx.reply("commands.admin.invalid_channel2");
+          ctx.db.guild.newsChannel = channel.id;
+          await ctx.db.guild.save();
+          ctx.reply("commands.admin.news_enabled", { ch: channel.mention });
+        },
+        disable: async() => {
+          await Guild.findOneAndUpdate(
+            {
+              _id: ctx.db.guild.id
+            },
+            {
+              $unset: { newsChannel: "" }
+            }
+          );
+          ctx.reply("commands.admin.news_disabled");
+        }
+      }
+      options[ctx.args[1] as "enable" | "disable"]();
+    }
+    else if(ctx.args[0] === "live") {
+      const options = {
+        enable: async() => {
+          if(!["PREMIUM"].some(s => ctx.db.guild.key?.type === s)) {
+            const button = new ButtonBuilder()
+            .setLabel(locale("commands.admin.buy_premium"))
+            .setStyle("link")
+            .setURL("https://discord.com/invite/FaqYcpA84r");
+            ctx.reply({
+              content: locale("helper.premium_feature"),
+              components: [
+                {
+                  type: 1,
+                  components: [button]
+                }
+              ]
+            });
+            return;
+          }
+          let channel = ctx.guild.channels.get(ctx.args[2])!
+          if(channel.type !== 0) return ctx.reply("commands.admin.invalid_channel");
+          ctx.db.guild.liveFeedChannel = channel.id;
+          await ctx.db.guild.save();
+          ctx.reply("commands.admin.live_feed_enabled", { ch: channel.mention });
+        },
+        disable: async() => {
+          await Guild.findOneAndUpdate(
+            {
+              _id: ctx.db.guild.id
+            },
+            {
+              $unset: { liveFeedChannel: "" }
+            }
+          );
+          ctx.reply("commands.admin.live_feed_disabled");
+        }
+      }
+      options[ctx.args[1] as "enable" | "disable"]();
+    }
+    else if(ctx.args[0] === "premium") {
+      if(!ctx.db.guild.key) {
+        ctx.reply("commands.admin.no_premium");
+        return;
+      }
+      const embed = new EmbedBuilder()
+      .setTitle("Premium")
+      .setDesc(locale("commands.admin.premium", {
+        key: ctx.db.guild.key.type,
+        expiresAt: `<t:${(ctx.db.guild.key.expiresAt! / 1000).toFixed(0)}:R>`
+      }));
+      ctx.reply(embed.build());
+    }
   },
   async createAutocompleteInteraction({ i, client, locale }) {
     if(!cache.has("events")) {
@@ -263,14 +479,14 @@ export default createCommand({
       await ctx.interaction.defer(64);
       const guild = await Guild.findById(ctx.interaction.guild!.id) as GuildSchemaInterface;
       if(guild.resendTime > Date.now()) {
-        ctx.reply('commands.admin.resend_time');
+        ctx.reply("commands.admin.resend_time", { t: `<t:${(guild.resendTime / 1000).toFixed(0)}:R>` });
         return;
       }
       const button = new ButtonBuilder()
-      .setLabel(locale('commands.admin.continue'))
-      .setStyle('red')
+      .setLabel(locale("commands.admin.continue"))
+      .setStyle("red")
       .setCustomId(`admin;${ctx.interaction.user.id};continue`);
-      ctx.reply(button.build(locale('commands.admin.confirm')));
+      ctx.reply(button.build(locale("commands.admin.confirm")));
     }
     else if(ctx.args[2] === "continue") {
       await (ctx.interaction as ComponentInteraction).deferUpdate();
@@ -281,14 +497,18 @@ export default createCommand({
       }
       guild.matches = [];
       guild.tbdMatches = [];
-      guild.resendTime = new Date().setHours(24, 0, 0, 0);
+      guild.resendTime = Date.now() + 3600000;
       await ctx.edit("commands.admin.resending");
       const res = await MainController.getMatches();
       if(!res || !res.length) return;
       const res2 = await MainController.getResults();
       if(guild.matches.length && !res2.some(d => d.id === guild.matches[guild.matches.length - 1])) return;
       guild.matches = [];
-      let data = res.filter(d => guild.events.some(e => e.name === d.tournament.name));
+      let data: MatchesData[];
+      if(guild.events.length > 5 && !guild.key) {
+        data = res.filter(d => guild.events.reverse().slice(0, 5).some(e => e.name === d.tournament.name));
+      }
+      else data = res.filter(d => guild.events.some(e => e.name === d.tournament.name));
       for(const e of guild.events) {
         if(!client.getChannel(e.channel1)) continue;
         try {
@@ -305,6 +525,8 @@ export default createCommand({
             if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue;
             for(const e of guild.events) {
               if(e.name === d.tournament.name) {
+                const emoji1 = (emojis as any[]).find((e: any) => e.name === d.teams[0].name.toLowerCase() || e.aliases?.find((alias: string) => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0];
+                const emoji2 = (emojis as any[]).find((e: any) => e.name === d.teams[1].name.toLowerCase() || e.aliases?.find((alias: string) => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0];
                 let index = guild.matches.findIndex((m) => m === d.id);
                 if(index > -1) guild.matches.splice(index, 1);
                 guild.matches.push(d.id!);
@@ -314,8 +536,7 @@ export default createCommand({
                   iconURL: d.tournament.image,
                   name: d.tournament.name
                 })
-                .setDesc(`<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
-                .setField(`:flag_${d.teams[0].country}: ${d.teams[0].name} \`vs\` ${d.teams[1].name} :flag_${d.teams[1].country}:`.replaceAll(":flag_un:", ":united_nations:"), "", true)
+                .setField(`${emoji1} **${d.teams[0].name}** <:versus:1349105624180330516> **${d.teams[1].name}** ${emoji2}`, `<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
                 .setFooter({
                   text: d.stage
                 });
@@ -336,11 +557,8 @@ export default createCommand({
                   components: [
                     {
                       type: 1,
-                      components: [button, urlButton]
-                    },
-                    {
-                      type: 1,
                       components: [
+                        button, urlButton,
                         new ButtonBuilder()
                         .setLabel(locales(guild.lang, "helper.pickem.label"))
                         .setStyle("blue")

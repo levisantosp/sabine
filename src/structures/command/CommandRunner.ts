@@ -1,11 +1,13 @@
 import { CommandInteraction, TextChannel } from "oceanic.js"
-import App from "../client/App"
-import CommandContext from "./CommandContext"
-import { ButtonBuilder, EmbedBuilder, Logger } from ".."
-import { Blacklist, BlacklistSchemaInterface, Guild, GuildSchemaInterface, User, UserSchemaInterface } from "../../database"
-import locales, { Args } from "../../locales"
+import App from "../client/App.js"
+import CommandContext from "./CommandContext.js"
+import { Blacklist, BlacklistSchemaInterface, Guild, GuildSchemaInterface, User, UserSchemaInterface } from "../../database/index.js"
+import locales, { Args } from "../../locales/index.js"
+import ButtonBuilder from "../builders/ButtonBuilder.js"
+import EmbedBuilder from "../builders/EmbedBuilder.js"
+import Logger from "../util/Logger.js"
 
-export default class CommandRunnner {
+export default class CommandRunner {
   public async run(
     client: App, interaction: CommandInteraction
   ) {
@@ -21,7 +23,7 @@ export default class CommandRunnner {
     }
     if(ban) {
       return interaction.createMessage({
-        content: locales(guild.lang, 'helper.banned', {
+        content: locales(guild.lang, "helper.banned", {
           reason: ban.reason,
           ends: ban.endsAt === Infinity ? Infinity : `<t:${ban.endsAt}:F> | <t:${ban.endsAt}:R>`,
           when: `<t:${ban.when}:F> | <t:${ban.when}:R>`
@@ -32,9 +34,9 @@ export default class CommandRunnner {
             type: 1,
             components: [
               new ButtonBuilder()
-              .setStyle('link')
-              .setLabel(locales(guild.lang, 'commands.help.community'))
-              .setURL('https://discord.gg/g5nmc376yh')
+              .setStyle("link")
+              .setLabel(locales(guild.lang, "commands.help.community"))
+              .setURL("https://discord.gg/g5nmc376yh")
             ]
           }
         ]
@@ -86,17 +88,17 @@ export default class CommandRunnner {
     }
     command.run({ ctx, client, locale, id: interaction.data.id })
     .then(async() => {
-      const cmd = (ctx.interaction as CommandInteraction).data.options.getSubCommand() ? `${command.name} ${(ctx.interaction as CommandInteraction).data.options.getSubCommand()?.join(' ')}` : command.name;
+      const cmd = (ctx.interaction as CommandInteraction).data.options.getSubCommand() ? `${command.name} ${(ctx.interaction as CommandInteraction).data.options.getSubCommand()?.join(" ")}` : command.name;
       const embed = new EmbedBuilder()
       .setAuthor({
         name: ctx.interaction.user.username,
         iconURL: ctx.interaction.user.avatarURL()
       })
-      .setTitle('New slash command executed')
+      .setTitle("New slash command executed")
       .setDesc(`The command \`${cmd}\` has been executed in \`${ctx.guild.name}\``)
-      .addField('Server ID', `\`${ctx.guild.id}\``)
-      .addField('Owner', `\`${ctx.guild.owner?.username}\` (\`${ctx.guild.ownerID}\`)`)
-      .addField('Command author', `\`${ctx.interaction.user.username}\``)
+      .addField("Server ID", `\`${ctx.guild.id}\``)
+      .addField("Owner", `\`${ctx.guild.owner?.username}\` (\`${ctx.guild.ownerID}\`)`)
+      .addField("Command author", `\`${ctx.interaction.user.username}\``)
       .setThumb(ctx.guild.iconURL()!);
 
       const channel = await client.rest.channels.get(process.env.COMMAND_LOG!) as TextChannel;

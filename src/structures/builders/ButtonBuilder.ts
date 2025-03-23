@@ -8,19 +8,19 @@ export default class ButtonBuilder {
   public emoji?: NullablePartialEmoji;
   public url!: string;
   public disabled?: boolean;
-  public setStyle(style: 'blue' | 'gray' | 'green' | 'red' | 'link') {
+  public setStyle(style: "blue" | "gray" | "green" | "red" | "link") {
     switch(style.toLowerCase()) {
-      case 'blue': this.style = Constants.ButtonStyles.PRIMARY;
+      case "blue": this.style = Constants.ButtonStyles.PRIMARY;
       break;
-      case 'gray': this.style = Constants.ButtonStyles.SECONDARY;
+      case "gray": this.style = Constants.ButtonStyles.SECONDARY;
       break;
-      case 'green': this.style = Constants.ButtonStyles.SUCCESS;
+      case "green": this.style = Constants.ButtonStyles.SUCCESS;
       break;
-      case 'red': this.style = Constants.ButtonStyles.DANGER;
+      case "red": this.style = Constants.ButtonStyles.DANGER;
       break;
-      case 'link': this.style = Constants.ButtonStyles.LINK;
+      case "link": this.style = Constants.ButtonStyles.LINK;
       break;
-      default: throw new Error('Invalid style! Please, choose: \'BLUE\', \'GRAY\', \'GREEN\', \'RED\', \'LINK\'');
+      default: throw new Error("Invalid style! Please, choose: \"BLUE\", \"GRAY\", \"GREEN\", \"RED\", \"LINK\"");
     }
     return this;
   }

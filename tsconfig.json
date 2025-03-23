@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "node16",
+    "module": "ES2022",
     "outDir": "./dist",
     "lib": ["ES2023", "DOM"],
     "removeComments": true,
@@ -10,7 +10,8 @@
     "strict": true,                                 
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "moduleResolution": "node"
   },
   "include": ["src", "env.d.ts", "types"],
   "exclude": ["node_modules"]

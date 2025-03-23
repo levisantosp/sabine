@@ -1,5 +1,5 @@
 import { load } from "cheerio"
-import { MatchesData } from "../../../types"
+import { MatchesData } from "../../../types/index.js"
 
 export default class MatchesController {
   static async get() {
@@ -18,7 +18,7 @@ export default class MatchesController {
       const status = $(element).find(".ml-status").text();
       const stage = $(element).find(".match-item-event-series").text().trim();
       const date = `${$(element.parent!).prev().text().replace("Today", "").trim()} ${$(element).find(".match-item-time").text().trim()}`
-      const timestamp = new Date(new Date(date).toLocaleString("en-US", { timeZone: process.env.TZ })).getTime();
+      const timestamp = new Date(new Date(date).toLocaleString("en-US", { timeZone: process.env.TZ })).getTime() + 7200000;
       matches.push({
         id,
         teams: [

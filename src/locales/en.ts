@@ -4,7 +4,7 @@ export const commands = {
       author: "Your predictions",
       field: "Prediction: `{score1}-{score2}`\nResult: [click here]({link})",
       footer: "Page {p1}/{p2}",
-      desc: "Right predictions: `{right}`\nWrong predictions: `{wrong}`\nTotal predictions: `{t}`"
+      desc: "Correct predictions: `{right}`\nWrong predictions: `{wrong}`\nTotal predictions: `{t}`"
     },
     no_predictions: "<:error:1300882259078938685> You do not have predictions.",
     no_pages: "<:error:1300882259078938685> Nothing to show in this page."
@@ -50,20 +50,28 @@ export const commands = {
     tournament_added: "<:success:1300882212190945292> The tournament **{t}** has been added successfully!",
     channels_must_be_different: "<:warn:869393116854108191> The matches channel and results channel cannot be the same. It is recommended that the matches channel be a separate channel where there will be no member interaction.",
     tournament_removed: "<:success:1300882212190945292> The tournament **{t}** has been removed successfully!",
-    panel: "Control Panel",
+    dashboar: "Dashboard",
     event_channels: "Matches will be announced in {ch1}\nResults will be announced in {ch2}",
-    desc: "Language: `{lang}` (change by using: </admin language:{id}>)\nLimit of tournaments: `{limit}`",
+    desc: "Language: `{lang}` (change by using: </admin language:{id}>)\nLimit of tournaments: `{limit}`\nNews channel: {newsChannel}\nLive feed channel: {live}",
     invalid_channel: "<:error:1300882259078938685> Invalid channel type. Consider select a TEXT channel.",
     limit_reached: "<:error:1300882259078938685> This server has reached the maximum limit of tournaments that can be added. If you want to add this tournaments, consider removing one using {cmd}",
     channel_being_used: "<:error:1300882259078938685> The channel {ch} is already being used to send the results of a tournament. Consider using another channel for this.\nCheck the channels that are already in use by using {cmd}",
-    resend_time: "<:error:1300882259078938685> This feature has already been used today on this server. Try again tomorrow.",
+    resend_time: "<:error:1300882259078938685> This feature has already been used recently on this server. Try again {t}.",
     resending: "<a:carregando:809221866434199634> Resending matches... Please, wait.",
     resend: "Resend matches",
-    confirm: "<:warn:869393116854108191> You are about to FORCE the submission of matches on this server!\n<:warn:869393116854108191> It is worth remembering that this action is **IRREVERSIBLE** and can only be done **ONCE a day**! If you still want to add more tournaments, add them before using this feature. Do you want to continue?",
+    confirm: "<:warn:869393116854108191> You are about to FORCE the submission of matches on this server!\n<:warn:869393116854108191> It is worth remembering that this action is **IRREVERSIBLE** and can only be done **ONCE a hour**! If you still want to add more tournaments, add them before using this feature. Do you want to continue?",
     continue: "Continue",
     remove_all: "Remove all",
     removed_all_tournaments: "<:success:1300882212190945292> All tournaments have been removed successfully!",
-    resent: "<:success:1300882212190945292> Matches resent successfully!"
+    resent: "<:success:1300882212190945292> Matches resent successfully!",
+    buy_premium: "Buy the premium!",
+    invalid_channel2: "<:error:1300882259078938685> Invalid channel type. Consider select a TEXT or ANNOUNCEMENT channel.",
+    news_enabled: "<:success:1300882212190945292> News feature enabled to channel {ch}",
+    news_disabled: "<:success:1300882212190945292> News feature disabled successfully!",
+    live_feed_enabled: "<:success:1300882212190945292> Live Feed feature enabled to channel {ch}",
+    live_feed_disabled: "<:success:1300882212190945292> Live Feed feature disabled succesfully!",
+    no_premium: "<:error:1300882259078938685> This server does not have any premium keys.",
+    premium: "This server has the {key} key activated."
   },
   info: {
     embed: {
@@ -74,10 +82,31 @@ export const commands = {
     guilds: "Servers",
     users: "Users",
     invite: "Invite me!"
+  },
+  premium: {
+    you_dont_have_premium: "<:error:1300882259078938685> You do not have an active plan. Buy one in [support server](https://discord.com/invite/FaqYcpA84r)!",
+    embed: {
+      description: "Thank you for supporting the bot by subscribing to the premium.\nYour plan expires {expiresAt}",
+      field: {
+        value: "Key: `{key}`\nExpires {expiresAt}"
+      }
+    },
+    button: {
+      label: "View activation keys"
+    },
+    you_dont_have_keys: "<:error:1300882259078938685> You do not have any activation key."
+  },
+  activatekey: {
+    key_activated: "<:success:1300882212190945292> Your key has been activated successfully! Enjoy the benefits!",
+    invalid_key: "<:error:1300882259078938685> Invalid key!",
+    button: "Continue",
+    would_like_to_continue: "<:warn:869393116854108191> This server has a {key} key activated. Would you like to continue?",
+    key_already_activated: "<:error:1300882259078938685> This key is already activated!",
+    limit_reached: "<:error:1300882259078938685> This key is already activated in 2 servers."
   }
 }
 export const helper = {
-  palpitate: "Make a prediction",
+  palpitate: "Predict",
   stats: "Stats",
   palpitate_modal: {
     title: "Your prediction for the match"
@@ -94,10 +123,13 @@ export const helper = {
   verified: "<:success:1300882212190945292> Make your prediction by clicking the button below.",
   pickem: {
     label: "Pick'em",
-    res: "Join the PICK'EM for a chance to win a <:booster:1272968894239215636> **Discord Nitro** or a <:nitro:1272968817496297542> **Discord Nitro Basic** by joining our official server!\nhttps://discord.gg/g5nmc376yh"
+    res: "Join the PICK\'EM for a chance to win a <:booster:1272968894239215636> **Discord Nitro** or a <:nitro:1272968817496297542> **Discord Nitro Basic** by joining our official server!\nhttps://discord.gg/g5nmc376yh"
   },
   banned: "<:error:1300882259078938685> **You are banned and can not use the bot.\n<:warn:869393116854108191> If you think this is a mistake, contact us in our Discord server!**\n**When:** {when}\n**Ends at:** {ends}\n**Reason:** `{reason}`",
-  interaction_failed: "<:error:1300882259078938685> It was not possible to run this action... If the problem persists, report it to the team in my [support server](https://discord.gg/g5nmc376yh)."
+  interaction_failed: "<:error:1300882259078938685> It was not possible to run this action... If the problem persists, report it to the team in my [support server](https://discord.gg/g5nmc376yh).",
+  premium_feature: "<:warn:869393116854108191> Oops, looks like you have found a premium feature. Unlock it by buying the premium on our support server!",
+  live_feed_value: "Current map: `{map}`\nMap score: `{score}`",
+  source: "View full article"
 }
 export const permissions = {
   CREATE_INSTANT_INVITE: "Create Instant Invite",

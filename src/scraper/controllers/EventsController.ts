@@ -1,5 +1,5 @@
 import { load } from "cheerio"
-import { EventsData } from "../../../types"
+import { EventsData } from "../../../types/index.js"
 
 export default class EventsController {
   static async get() {

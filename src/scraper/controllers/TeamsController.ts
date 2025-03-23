@@ -1,5 +1,5 @@
 import { load } from "cheerio"
-import { PlayerLastResult, TeamsData, UpcomingMatch } from "../../../types"
+import { PlayerLastResult, TeamsData, UpcomingMatch } from "../../../types/index.js"
 
 export default class TeamsController {
   static async get() {
@@ -39,11 +39,13 @@ export default class TeamsController {
     });
     for(const element of rosterElements) {
       if($(element).find(".wf-tag").text()) {
-        staffs.push({
-          id: $(element).find("a").attr("href")?.split("/")[2],
-          user: $(element).find(".team-roster-item-name-alias").text().trim(),
-          url: "https://vlr.gg" + $(element).find("a").attr("href")
-        });
+        if($(element).find(".wf-tag").text().trim() !== "Inactive") {
+          staffs.push({
+            id: $(element).find("a").attr("href")?.split("/")[2],
+            user: $(element).find(".team-roster-item-name-alias").text().trim(),
+            url: "https://vlr.gg" + $(element).find("a").attr("href")
+          });
+        }
       }
       else {
         players.push({

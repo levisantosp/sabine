@@ -1,10 +1,11 @@
 import "dotenv/config"
-import App from "./structures/client/App"
-new App({
+import App from "./structures/client/App.js"
+export const client = new App({
   auth: "Bot " + process.env.BOT_TOKEN,
   gateway: {
     intents: ["ALL"],
     autoReconnect: true,
+    maxShards: "auto"
   },
   allowedMentions: {
     everyone: false,
@@ -14,5 +15,5 @@ new App({
   },
   defaultImageFormat: "png",
   defaultImageSize: 2048
-})
-.start();
+});
+client.start();
