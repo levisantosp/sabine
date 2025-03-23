@@ -243,6 +243,14 @@ export default createCommand({
           }
         }
       ]
+    },
+    {
+      type: 1,
+      name: "premium",
+      description: "Shows information about server premium",
+      descriptionLocalizations: {
+        "pt-BR": "Mostra informações sobre o premium do servidor"
+      }
     }
   ],
   permissions: ["MANAGE_GUILD", "MANAGE_CHANNELS"],
@@ -421,6 +429,19 @@ export default createCommand({
         }
       }
       options[ctx.args[1] as "enable" | "disable"]();
+    }
+    else if(ctx.args[0] === "premium") {
+      if(!ctx.db.guild.key) {
+        ctx.reply("commands.admin.no_premium");
+        return;
+      }
+      const embed = new EmbedBuilder()
+      .setTitle("Premium")
+      .setDesc(locale("commands.admin.premium", {
+        key: ctx.db.guild.key.type,
+        expiresAt: `<t:${(ctx.db.guild.key.expiresAt! / 1000).toFixed(0)}:R>`
+      }));
+      ctx.reply(embed.build());
     }
   },
   async createAutocompleteInteraction({ i, client, locale }) {
