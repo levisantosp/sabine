@@ -69,7 +69,9 @@ export const commands = {
     news_enabled: "<:success:1300882212190945292> Funcionalidade de notícias habilitada ao canal {ch}",
     news_disabled: "<:success:1300882212190945292> Funcionalidade de notícias desabilitada com sucesso!",
     live_feed_enabled: "<:success:1300882212190945292> Funcionalidade Live Feed habilitada ao canal {ch}",
-    live_feed_disabled: "<:success:1300882212190945292> Funcionalidade Live Feed desabilitada com sucesso!"
+    live_feed_disabled: "<:success:1300882212190945292> Funcionalidade Live Feed desabilitada com sucesso!",
+    no_premium: "<:error:1300882259078938685> Este servidor não tem nenhum chave premium ativada.",
+    premium: "Este servidor está com a chave {key} ativada.\nA chave expira {expiresAt}"
   },
   info: {
     embed: {

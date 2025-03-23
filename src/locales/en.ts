@@ -69,7 +69,9 @@ export const commands = {
     news_enabled: "<:success:1300882212190945292> News feature enabled to channel {ch}",
     news_disabled: "<:success:1300882212190945292> News feature disabled successfully!",
     live_feed_enabled: "<:success:1300882212190945292> Live Feed feature enabled to channel {ch}",
-    live_feed_disabled: "<:success:1300882212190945292> Live Feed feature disabled succesfully!"
+    live_feed_disabled: "<:success:1300882212190945292> Live Feed feature disabled succesfully!",
+    no_premium: "<:error:1300882259078938685> This server does not have any premium keys.",
+    premium: "This server has the {key} key activated."
   },
   info: {
     embed: {
