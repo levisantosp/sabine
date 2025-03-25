@@ -458,7 +458,7 @@ export default createListener({
       });
     });
     await client.application.bulkEditGlobalCommands(commands);
-    await run_tasks(client);
+    // await run_tasks(client);
     // setInterval(async() => {
     //   await send_news(client).catch(e => new Logger(client).error(e));
     //   await delete_guild(client).catch(e => new Logger(client).error(e));
