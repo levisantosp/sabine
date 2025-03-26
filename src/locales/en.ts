@@ -129,7 +129,8 @@ export const helper = {
   interaction_failed: "<:error:1300882259078938685> It was not possible to run this action... If the problem persists, report it to the team in my [support server](https://discord.gg/g5nmc376yh).",
   premium_feature: "<:warn:869393116854108191> Oops, looks like you have found a premium feature. Unlock it by buying the premium on our support server!",
   live_feed_value: "Current map: `{map}`\nMap score: `{score}`",
-  source: "View full article"
+  source: "View full article",
+  live_now: "LIVE NOW"
 }
 export const permissions = {
   CREATE_INSTANT_INVITE: "Create Instant Invite",
