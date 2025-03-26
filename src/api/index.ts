@@ -1,5 +1,4 @@
 import ValorantEvents from "./services/valorant/EventsService.js"
-import ValorantLiveFeed from "./services/valorant/LiveFeedService.js"
 import ValorantMatches from "./services/valorant/MatchesService.js"
 import ValorantPlayers from "./services/valorant/PlayersService.js"
 import ValorantTeams from "./services/valorant/TeamsService.js"
@@ -27,9 +26,6 @@ export default class Service {
   }
   public async getTeamById(id: string | number) {
     return await ValorantTeams.getById(this.__auth, id);
-  }
-  public async getLiveMatch(id: string | number) {
-    return await ValorantLiveFeed.getById(this.__auth, id);
   }
   public async getResults() {
     return await ValorantResults.get(this.__auth);
