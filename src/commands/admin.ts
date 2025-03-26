@@ -8,7 +8,6 @@ import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
 import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
 import Logger from "../structures/util/Logger.js"
 import { emojis } from "../structures/util/emojis.js"
-const cache = new Map<string, EventsData[]>();
 const service = new Service(process.env.AUTH);
 
 export default createCommand({
@@ -446,11 +445,7 @@ export default createCommand({
     }
   },
   async createAutocompleteInteraction({ i, client, locale }) {
-    if(!cache.has("events")) {
-      const res = await service.getEvents();
-      cache.set("events", res);
-    }
-    const res = cache.get("events")!;
+    const res = await service.getEvents();
     const events = res.filter(e => e.status !== "completed")
     .map(e => e.name)
     .filter(e => {

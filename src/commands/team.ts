@@ -3,7 +3,6 @@ import Service from "../api/index.js"
 import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
 import createCommand from "../structures/command/createCommand.js"
 import Logger from "../structures/util/Logger.js"
-const cache = new Map();
 const service = new Service(process.env.AUTH);
 
 export default createCommand({
@@ -34,11 +33,7 @@ export default createCommand({
   botPermissions: ["EMBED_LINKS"],
   isThinking: true,
   async run({ ctx, locale }) {
-    if(!cache.has(ctx.args[0])) {
-      const res = await service.getTeamById(ctx.args[0]);
-      cache.set(ctx.args[0], res);
-    }
-    const team: TeamData = cache.get(ctx.args[0]);
+    const team = await service.getTeamById(ctx.args[0]);
     if(team.name === "") {
       ctx.reply("commands.team.team_not_found");
       return;
@@ -55,11 +50,7 @@ export default createCommand({
     ctx.reply(embed.build());
   },
   async createAutocompleteInteraction({ i, client }) {
-    if(!cache.has("teams")) {
-      const res = await service.getAllTeams();
-      cache.set("teams", res);
-    }
-    const res: TeamsData[] = cache.get("teams");
+    const res = await service.getAllTeams();
     const teams = res.sort((a, b) => a.name.localeCompare(b.name))
     .filter(e => {
       if(e.name.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e;
