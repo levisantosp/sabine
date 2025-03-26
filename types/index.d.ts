@@ -1,21 +1,19 @@
-import { AutocompleteInteraction, Constants, InteractionDataOptions } from "oceanic.js"
-
-type EventsData = {
+export type EventsData = {
   id?: string;
   name: string;
   status?: string;
   image: string;
   url: string;
 }
-type MatchTeam = {
+export type MatchTeam = {
   name: string;
   country?: string;
 }
-type MatchTournament = {
+export type MatchTournament = {
   name: string;
   image: string;
 }
-type MatchesData = {
+export type MatchesData = {
   id?: string;
   teams: MatchTeam[];
   status: string;
@@ -23,35 +21,35 @@ type MatchesData = {
   stage: string;
   when: number;
 }
-type PlayersData = {
+export type PlayersData = {
   name: string;
   teamTag: string;
   country: string;
   id: string;
 }
-type PlayerCountry = {
+export type PlayerCountry = {
   name: string;
   flag?: string;
 }
-type PlayerPastTeam = {
+export type PlayerPastTeam = {
   id: string;
   url: string;
   name: string;
 }
-type PlayerLastResultTeam = {
+export type PlayerLastResultTeam = {
   name: string;
   score: string;
 }
-type PlayerLastResult = {
+export type PlayerLastResult = {
   id: string;
   teams: PlayerLastResultTeam[];
   url: string;
 }
-type PlayerCurrentTeam = {
+export type PlayerCurrentTeam = {
   name: string;
   url: string;
 }
-type PlayerData = {
+export type PlayerData = {
   avatar: string;
   user: string;
   realName: string;
@@ -59,14 +57,15 @@ type PlayerData = {
   team: PlayerCurrentTeam;
   pastTeams: PlayerPastTeam[];
   lastResults: PlayerLastResult[];
+  id: string;
 }
-type ResultsTeam = {
+export type ResultsTeam = {
   name: string;
   score: string;
   country: string;
   winner: boolean;
 }
-type ResultsData = {
+export type ResultsData = {
   id: string;
   teams: ResultsTeam[];
   status: string;
@@ -74,30 +73,30 @@ type ResultsData = {
   stage: string;
   when: number;
 }
-type TeamsData = {
+export type TeamsData = {
   id: string;
   name: string;
   url?: string;
   image?: string;
   country: string;
 }
-type Roster = {
+export type Roster = {
   id: string;
   user: string;
   url: string;
 }
-type TeamRoster = {
+export type TeamRoster = {
   players: Roster[];
   staffs: Roster[];
 }
-type UpcomingMatchTeam = {
+export type UpcomingMatchTeam = {
   name: string;
 }
-type UpcomingMatch = {
+export type UpcomingMatch = {
   teams: UpcomingMatchTeam[];
   url: string;
 }
-type TeamData = {
+export type TeamData = {
   id: string;
   name: string;
   tag: string;
@@ -106,13 +105,13 @@ type TeamData = {
   lastResults: PlayerLastResult[];
   upcomingMatches: UpcomingMatch[];
 }
-type NewsData = {
+export type NewsData = {
   title: string;
   description?: string;
   url: string;
   id: string;
 }
-type LiveFeed = {
+export type LiveFeed = {
   teams: PlayerLastResultTeam[];
   currentMap: string;
   score1: string;
