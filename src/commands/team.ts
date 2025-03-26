@@ -1,4 +1,3 @@
-import { TeamData, TeamsData } from "../../types/index.js"
 import Service from "../api/index.js"
 import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
 import createCommand from "../structures/command/createCommand.js"

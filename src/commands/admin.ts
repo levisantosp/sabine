@@ -1,5 +1,5 @@
 import { CommandInteraction, ComponentInteraction } from "oceanic.js"
-import { EventsData, MatchesData } from "../../types/index.js"
+import { MatchesData } from "../../types/index.js"
 import Service from "../api/index.js"
 import { Guild, GuildSchemaInterface } from "../database/index.js"
 import locales from "../locales/index.js"
