@@ -1,7 +1,7 @@
 {
   "name": "sabine",
   "version": "1.5.0",
-  "description": "your esports coverage bot for discord",
+  "description": "your esports coverage discord bot",
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
@@ -10,7 +10,7 @@
     "build": "rm -rf dist && tsc"
   },
   "keywords": [],
-  "author": "levispires",
+  "author": "levisantosp",
   "license": "ISC",
   "dependencies": {
     "@fastify/type-provider-typebox": "^5.1.0",
