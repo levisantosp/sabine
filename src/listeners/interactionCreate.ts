@@ -1,11 +1,12 @@
 import locales, { Args } from "../locales/index.js"
 import { Blacklist, BlacklistSchemaInterface, Guild, GuildSchemaInterface, User, UserSchemaInterface } from "../database/index.js"
-import MainController from "../scraper/index.js"
+import Service from "../api/index.js"
 import createListener from "../structures/client/createListener.js"
 import CommandRunner from "../structures/command/CommandRunner.js"
 import Logger from "../structures/util/Logger.js"
 import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
 import CommandContext from "../structures/command/CommandContext.js"
+const service = new Service(process.env.AUTH);
 
 export default createListener({
   name: "interactionCreate",
@@ -45,7 +46,7 @@ export default createListener({
           });
           return;
         }
-        const res = await MainController.getMatches();
+        const res = await service.getMatches();
         const data = res.find(d => d.id == i.data.customID.slice(6));
         if(data?.status === "LIVE" || !data) {
           i.editOriginal({
@@ -79,7 +80,7 @@ export default createListener({
           });
           return;
         }
-        const res = await MainController.getMatches();
+        const res = await service.getMatches();
         const data = res.find(d => d.id == i.data.customID.slice(8));
         if(data?.status === "LIVE" || !data) {
           i.editOriginal({
@@ -156,7 +157,7 @@ export default createListener({
     else if(i.isModalSubmitInteraction() && i.data.customID.startsWith("modal-")) {
       const user = (await User.findById(i.user.id) || new User({ _id: i.user.id })) as UserSchemaInterface;
       const guild = await Guild.findById(i.guildID) as GuildSchemaInterface;
-      const res = await MainController.getMatches();
+      const res = await service.getMatches();
       const data = res.find(d => d.id == i.data.customID.slice(6))!;
       await user.addPrediction({
         match: data.id!,

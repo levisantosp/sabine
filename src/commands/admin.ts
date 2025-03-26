@@ -1,6 +1,6 @@
 import { CommandInteraction, ComponentInteraction } from "oceanic.js"
 import { EventsData, MatchesData } from "../../types/index.js"
-import MainController from "../scraper/index.js"
+import Service from "../api/index.js"
 import { Guild, GuildSchemaInterface } from "../database/index.js"
 import locales from "../locales/index.js"
 import createCommand from "../structures/command/createCommand.js"
@@ -9,6 +9,7 @@ import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
 import Logger from "../structures/util/Logger.js"
 import { emojis } from "../structures/util/emojis.js"
 const cache = new Map<string, EventsData[]>();
+const service = new Service(process.env.AUTH);
 
 export default createCommand({
   name: "admin",
@@ -446,7 +447,7 @@ export default createCommand({
   },
   async createAutocompleteInteraction({ i, client, locale }) {
     if(!cache.has("events")) {
-      const res = await MainController.getEvents();
+      const res = await service.getEvents();
       cache.set("events", res);
     }
     const res = cache.get("events")!;
@@ -499,9 +500,9 @@ export default createCommand({
       guild.tbdMatches = [];
       guild.resendTime = Date.now() + 3600000;
       await ctx.edit("commands.admin.resending");
-      const res = await MainController.getMatches();
+      const res = await service.getMatches();
       if(!res || !res.length) return;
-      const res2 = await MainController.getResults();
+      const res2 = await service.getResults();
       if(guild.matches.length && !res2.some(d => d.id === guild.matches[guild.matches.length - 1])) return;
       guild.matches = [];
       let data: MatchesData[];

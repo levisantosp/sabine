@@ -1,9 +1,10 @@
 import { TeamData, TeamsData } from "../../types/index.js"
-import MainController from "../scraper/index.js"
+import Service from "../api/index.js"
 import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
 import createCommand from "../structures/command/createCommand.js"
 import Logger from "../structures/util/Logger.js"
 const cache = new Map();
+const service = new Service(process.env.AUTH);
 
 export default createCommand({
   name: "team",
@@ -34,7 +35,7 @@ export default createCommand({
   isThinking: true,
   async run({ ctx, locale }) {
     if(!cache.has(ctx.args[0])) {
-      const res = await MainController.getTeamById(ctx.args[0]);
+      const res = await service.getTeamById(ctx.args[0]);
       cache.set(ctx.args[0], res);
     }
     const team: TeamData = cache.get(ctx.args[0]);
@@ -55,7 +56,7 @@ export default createCommand({
   },
   async createAutocompleteInteraction({ i, client }) {
     if(!cache.has("teams")) {
-      const res = await MainController.getAllTeams();
+      const res = await service.getAllTeams();
       cache.set("teams", res);
     }
     const res: TeamsData[] = cache.get("teams");

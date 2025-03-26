@@ -1,9 +1,10 @@
 import { PlayerData, PlayersData } from "../../types/index.js"
-import MainController from "../scraper/index.js"
+import Service from "../api/index.js"
 import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
 import createCommand from "../structures/command/createCommand.js"
 import Logger from "../structures/util/Logger.js"
 const cache = new Map();
+const service = new Service(process.env.AUTH);
 
 export default createCommand({
   name: "player",
@@ -33,7 +34,7 @@ export default createCommand({
   botPermissions: ["EMBED_LINKS"],
   async run({ ctx, locale }) {
     if(!cache.has(ctx.args[0])) {
-      const res = await MainController.getPlayerById(ctx.args[0]);
+      const res = await service.getPlayerById(ctx.args[0]);
       cache.set(ctx.args[0], res);
     }
     const player: PlayerData = cache.get(ctx.args[0]);
@@ -54,7 +55,7 @@ export default createCommand({
   },
   async createAutocompleteInteraction({ i, client }) {
     if(!cache.get("players")) {
-      const res = await MainController.getAllPlayers();
+      const res = await service.getAllPlayers();
       cache.set("players", res);
     }
     const res: PlayersData[] = cache.get("players");
