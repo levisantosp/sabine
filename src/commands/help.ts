@@ -3,6 +3,8 @@ import createCommand from "../structures/command/createCommand.js"
 import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
 import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
 import Logger from "../structures/util/Logger.js"
+import { createRequire } from "module"
+const require = createRequire(import.meta.url);
 
 export default createCommand({
   name: "help",
