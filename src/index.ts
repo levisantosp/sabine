@@ -220,6 +220,26 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
         }));
       }
     }
+  }); 
+  fastify.post("/webhooks/live/lol", {
+    schema: {
+      body: Type.Array(
+        Type.Object({
+          id: Type.String(),
+          teams: Type.Array(
+            Type.Object({
+              name: Type.String(),
+              score: Type.String()
+            })
+          ),
+          url: Type.String(),
+          stage: Type.String(),
+          tournament: Type.Object({ name: Type.String() })
+        })
+      )
+    }
+  }, async(req) => {
+    console.log(req.body);
   });
 }
 const server = fastify();
