@@ -4,7 +4,7 @@ export const commands = {
       author: "Seus palpites",
       field: "Palpite: `{score1}-{score2}`\nEstatísticas: [clique aqui]({link})",
       footer: "Página {p1}/{p2}",
-      desc: "Palpites certos: `{right}`\nPalpites errados: `{wrong}`\nPalpites totais: `{t}`"
+      desc: "Palpites certos: `{correct}`\nPalpites errados: `{wrong}`\nPalpites totais: `{t}`"
     },
     no_predictions: "<:error:1300882259078938685> Você não possui palpites.",
     no_pages: "<:error:1300882259078938685> Nada para mostrar nesta página."
