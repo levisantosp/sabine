@@ -2,8 +2,8 @@ export type EventsData = {
   id?: string;
   name: string;
   status?: string;
-  image: string;
-  url: string;
+  image?: string;
+  url?: string;
 }
 export type MatchTeam = {
   name: string;
@@ -11,15 +11,16 @@ export type MatchTeam = {
 }
 export type MatchTournament = {
   name: string;
-  image: string;
+  image?: string;
 }
 export type MatchesData = {
   id?: string;
   teams: MatchTeam[];
-  status: string;
+  status?: string;
   tournament: MatchTournament;
   stage: string;
   when: number;
+  url?: string;
 }
 export type PlayersData = {
   name: string;
@@ -38,7 +39,7 @@ export type PlayerPastTeam = {
 }
 export type PlayerLastResultTeam = {
   name: string;
-  score: string;
+  score?: string;
 }
 export type PlayerLastResult = {
   id: string;
@@ -68,10 +69,11 @@ export type ResultsTeam = {
 export type ResultsData = {
   id: string;
   teams: ResultsTeam[];
-  status: string;
+  status?: string;
   tournament: MatchTournament;
   stage: string;
   when: number;
+  url?: string;
 }
 export type TeamsData = {
   id: string;
@@ -109,14 +111,15 @@ export type NewsData = {
   title: string;
   description?: string;
   url: string;
-  id: string;
+  id?: string;
 }
 export type LiveFeed = {
   teams: PlayerLastResultTeam[];
-  currentMap: string;
-  score1: string;
-  score2: string;
+  currentMap?: string;
+  score1?: string;
+  score2?: string;
   id: string | number;
   url: string;
   stage: string;
+  tournament: MatchTournament;
 }

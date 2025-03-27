@@ -11,6 +11,10 @@ const UserSchema = mongoose.model("users", new mongoose.Schema(
       type: Array,
       default: []
     },
+    lol_predictions: {
+      type: Array,
+      default: []
+    },
     wrong_predictions: {
       type: Number,
       default: 0
@@ -143,7 +147,27 @@ export class User extends UserSchema {
       return this as UserSchemaInterface;
     }
     if(game === "lol") {
-      
+      this.lol_predictions.push(prediction);
+      await this.save();
+      const channel = client.getChannel(process.env.USERS_LOG) as TextChannel;
+      const user = client.users.get(this.id);
+      const embed = new EmbedBuilder()
+      .setTitle("New register")
+      .setDesc(`User: ${user?.mention} (${this.id})`)
+      .setFields(
+        {
+          name: "NEW_PREDICTION",
+          value: `\`\`\`js\n${JSON.stringify(prediction, null, 2)}\`\`\``
+        }
+      );
+      const webhooks = await channel.getWebhooks();
+      let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0];
+      if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" });
+      webhook.execute({
+        avatarURL: client.user.avatarURL(),
+        embeds: [embed]
+      });
+      return this as UserSchemaInterface;
     }
   }
   public async addCorrectPrediction(predictionId: string) {
@@ -217,7 +241,7 @@ export const Guild = mongoose.model("guilds", new mongoose.Schema(
       type: Array,
       default: []
     },
-    resendTime: {
+    valorant_resend_time: {
       type: Number,
       default: 0
     },
@@ -227,6 +251,30 @@ export const Guild = mongoose.model("guilds", new mongoose.Schema(
     valorant_live_matches: {
       type: Array,
       default: []
+    },
+    lol_events: {
+      type: Array,
+      default: []
+    },
+    lol_last_result: String,
+    lol_matches: {
+      type: Array,
+      default: []
+    },
+    lol_tbd_matches: {
+      type: Array,
+      default: []
+    },
+    lol_last_news: String,
+    lol_news_channel: String,
+    lol_livefeed_channel: String,
+    lol_live_matches: {
+      type: Array,
+      default: []
+    },
+    lol_resend_time: {
+      type: Number,
+      default: 0
     }
   }
 ));
@@ -266,12 +314,13 @@ type UserSchemaPredictionTeam = {
 type UserSchemaPrediction = {
   match: string;
   teams: UserSchemaPredictionTeam[];
+  status?: "pending" | "correct" | "wrong"
 }
 type UserSchemaPremium = {
   type: "PREMIUM",
   expiresAt: number
 }
-type TBDMatches = {
+type TBDMatch = {
   id: string;
   channel: string;
 }
@@ -285,20 +334,29 @@ export interface GuildSchemaInterface extends mongoose.Document {
   lang: "pt" | "en";
   valorant_events: GuildSchemaEvent[];
   tournamentsLength: number;
+  valorant_resend_time: number;
+  valorant_last_news?: string;
+  key?: GuildSchemaKey;
   valorant_last_result?: string;
   valorant_matches: string[];
-  valorant_tbd_matches: TBDMatches[];
-  resendTime: number;
-  valorant_last_news?: string;
-  lol_last_news?: string;
-  key?: GuildSchemaKey;
+  valorant_tbd_matches: TBDMatch[];
   valorant_news_channel?: string;
   valorant_livefeed_channel?: string;
   valorant_live_matches: LiveFeed[];
+  lol_events: GuildSchemaEvent[];
+  lol_last_result: string;
+  lol_matches: string[];
+  lol_tbd_matches: TBDMatch[];
+  lol_last_news?: string;
+  lol_news_channel?: string;
+  lol_livefeed_channel?: string;
+  lol_live_matches: LiveFeed[];
+  lol_resend_time: number;
 }
 export interface UserSchemaInterface extends User {
   _id: string;
   valorant_predictions: UserSchemaPrediction[];
+  lol_predictions: UserSchemaPrediction[];
   correct_predictions: number;
   wrong_predictions: number;
   lang?: "pt" | "en"
