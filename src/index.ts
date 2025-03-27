@@ -242,7 +242,7 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
       )
     }
   }, async(req) => {
-    console.log(req.body);
+    console.log("webhook received");
   });
 }
 const server = fastify();
