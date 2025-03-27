@@ -59,6 +59,7 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
       )
     }
   }, async(req) => {
+    if(!client.ready) return;
     const guilds = await Guild.find({
       events: { $ne: [] }
     }) as GuildSchemaInterface[];
@@ -66,16 +67,16 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
     let matches: ResultsData[];
     for(const guild of guilds) {
       let data: ResultsData[];
-      if(guild.events.length > 5 && !guild.key) {
+      if(guild.valorant_events.length > 5 && !guild.key) {
         req.body
-        data = req.body.filter(d => guild.events.reverse().slice(0, 5).some(e => e.name === d.tournament.name));
+        data = req.body.filter(d => guild.valorant_events.reverse().slice(0, 5).some(e => e.name === d.tournament.name));
       }
-      else data = req.body.filter(d => guild.events.some(e => e.name === d.tournament.name));
+      else data = req.body.filter(d => guild.valorant_events.some(e => e.name === d.tournament.name));
       if(!data || !data[0]) continue;
       matches = data;
       data.reverse();
       for(const d of data) {
-        for(const e of guild.events) {
+        for(const e of guild.valorant_events) {
           if(e.name === d.tournament.name) {
             const emoji1 = emojis.find(e => e.name === d.teams[0].name.toLowerCase() || e.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0].emoji;
             const emoji2 = emojis.find(e => e.name === d.teams[1].name.toLowerCase() || e.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0].emoji;
@@ -111,7 +112,7 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
         }
       }
       data.reverse();
-      guild.lastResult = data[0].id;
+      guild.valorant_last_result = data[0].id;
       await guild.save();
     }
   });
@@ -139,16 +140,17 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
       )
     }
   }, async(req) => {
+    if(!client.ready) return;
     const guilds = await Guild.find({
-      liveFeedChannel: { $exists: true },
+      valorant_livefeed_channel: { $exists: true },
       key: { $exists: true }
     }) as GuildSchemaInterface[];
     if(!guilds.length) return;
     for(const data of req.body) {
       for(const guild of guilds) {
-        const channel = client.getChannel(guild.liveFeedChannel!) as TextChannel;
+        const channel = client.getChannel(guild.valorant_livefeed_channel!) as TextChannel;
         if(!channel) continue;
-        if(!guild.events.some(e => e.name === data.tournament.name)) continue;
+        if(!guild.valorant_events.some(e => e.name === data.tournament.name)) continue;
         const emoji1 = emojis.find(e => e.name === data.teams[0].name.toLowerCase() || e.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[0].emoji;
         const emoji2 = emojis.find(e => e.name === data.teams[1].name.toLowerCase() || e.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[0].emoji;
         const embed = new EmbedBuilder()
@@ -192,13 +194,14 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
       )
     }
   }, async(req) => {
+    if(!client.ready) return;
     const guilds = await Guild.find({
-      newsChannel: { $exists: true },
+      valorant_news_channel: { $exists: true },
       key: { $exists: true }
     }) as GuildSchemaInterface[];
     if(!guilds.length) return;
     for(const guild of guilds) {
-      const channel = client.getChannel(guild.newsChannel!) as TextChannel;
+      const channel = client.getChannel(guild.valorant_news_channel!) as TextChannel;
       if(!channel) continue;
       for(const data of req.body) {
         const embed = new EmbedBuilder()
