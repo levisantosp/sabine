@@ -63,8 +63,8 @@ export type PlayerData = {
 export type ResultsTeam = {
   name: string;
   score: string;
-  country: string;
-  winner: boolean;
+  country?: string;
+  winner?: boolean;
 }
 export type ResultsData = {
   id: string;
