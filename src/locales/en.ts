@@ -128,7 +128,7 @@ export const commands = {
 export const helper = {
   palpitate: "Predict",
   stats: "Stats",
-  palpitate_modal: {
+  prediction_modal: {
     title: "Your prediction for the match"
   },
   palpitate_response: "<:success:1300882212190945292> You predicted {t1} `{s1}-{s2}` {t2}",

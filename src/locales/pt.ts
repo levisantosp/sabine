@@ -129,7 +129,7 @@ export const commands = {
 export const helper = {
   palpitate: "Palpitar",
   stats: "Estatísticas",
-  palpitate_modal: {
+  prediction_modal: {
     title: "Seu palpite para a partida"
   },
   palpitate_response: "<:success:1300882212190945292> Você palpitou {t1} `{s1}-{s2}` {t2}",
