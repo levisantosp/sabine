@@ -18,7 +18,7 @@ export default createListener({
       if(!command) return;
       if(!command.createAutocompleteInteraction) return;
       const user = await User.findById(i.user.id) as UserSchemaInterface;
-      const guild = await Guild.findById(i.guildID) as GuildSchemaInterface;
+      const guild = (await Guild.findById(i.guildID) ?? new Guild({ _id: i.guildID })) as GuildSchemaInterface;
       const locale = (content: string, args?: Args) => {
         return locales(user.lang ?? guild.lang, content, args);
       }
@@ -27,7 +27,7 @@ export default createListener({
     }
     else if(i.isComponentInteraction()) {
       if(i.data.customID === "pickem") {
-        const guild = await Guild.findById(i.guildID) as GuildSchemaInterface;
+        const guild = (await Guild.findById(i.guildID) ?? new Guild({ _id: i.guildID })) as GuildSchemaInterface;
         const user = (await User.findById(i.member!.id) || new User({ _id: i.member!.id })) as UserSchemaInterface;
         i.createMessage({
           content: locales(user.lang ?? guild.lang, "helper.pickem.res"),
@@ -37,7 +37,7 @@ export default createListener({
       }
       if(i.data.customID.startsWith("guess-")) {
         await i.defer(64);
-        const guild = await Guild.findById(i.guildID) as GuildSchemaInterface;
+        const guild = (await Guild.findById(i.guildID) ?? new Guild({ _id: i.guildID })) as GuildSchemaInterface;
         const user = (await User.findById(i.member!.id) || new User({ _id: i.member!.id })) as UserSchemaInterface;
         if(user.history.filter((g) => g.match === i.data.customID.slice(6))[0]?.match === i.data.customID.slice(6)) {
           i.editOriginal({
@@ -70,7 +70,7 @@ export default createListener({
         return;
       }
       if(i.data.customID.startsWith("predict-")) {
-        const guild = await Guild.findById(i.guildID) as GuildSchemaInterface;
+        const guild = (await Guild.findById(i.guildID) ?? new Guild({ _id: i.guildID })) as GuildSchemaInterface;
         const user = (await User.findById(i.member!.id) || new User({ _id: i.member!.id })) as UserSchemaInterface;
         if(user.history.filter((g) => g.match === i.data.customID.slice(8))[0]?.match === i.data.customID.slice(8)) {
           i.editParent({
@@ -134,7 +134,7 @@ export default createListener({
       if(!command.createInteraction) return;
       if(!i.guild) return;
       if(args[1] !== i.user.id) return;
-      const guild = await Guild.findById(i.guild.id) as GuildSchemaInterface;
+      const guild = (await Guild.findById(i.guildID) ?? new Guild({ _id: i.guildID })) as GuildSchemaInterface;
       const user = await User.findById(i.user.id) as UserSchemaInterface;
       const ctx = new CommandContext({
         args,
@@ -155,7 +155,7 @@ export default createListener({
     }
     else if(i.isModalSubmitInteraction() && i.data.customID.startsWith("modal-")) {
       const user = (await User.findById(i.user.id) || new User({ _id: i.user.id })) as UserSchemaInterface;
-      const guild = await Guild.findById(i.guildID) as GuildSchemaInterface;
+      const guild = (await Guild.findById(i.guildID) ?? new Guild({ _id: i.guildID })) as GuildSchemaInterface;
       const res = await MainController.getMatches();
       const data = res.find(d => d.id == i.data.customID.slice(6))!;
       await user.addPrediction({
