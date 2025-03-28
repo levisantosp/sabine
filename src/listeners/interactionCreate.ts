@@ -215,7 +215,7 @@ export default createListener({
                 s1: i.data.components.getComponents()[0].value,
                 s2: i.data.components.getComponents()[1].value
               }),
-              components: []
+              flags: 64
             });
           },
           lol: async() => {
