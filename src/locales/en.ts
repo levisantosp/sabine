@@ -64,12 +64,9 @@ export const commands = {
     remove_all: "Remove all",
     removed_all_tournaments: "<:success:1300882212190945292> All tournaments have been removed successfully!",
     resent: "<:success:1300882212190945292> Matches resent successfully!",
-    buy_premium: "Buy the premium!",
     invalid_channel2: "<:error:1300882259078938685> Invalid channel type. Consider select a TEXT or ANNOUNCEMENT channel.",
     news_enabled: "<:success:1300882212190945292> News feature enabled to channel {ch}",
     news_disabled: "<:success:1300882212190945292> News feature disabled successfully!",
-    live_feed_enabled: "<:success:1300882212190945292> Live Feed feature enabled to channel {ch}",
-    live_feed_disabled: "<:success:1300882212190945292> Live Feed feature disabled succesfully!",
     no_premium: "<:error:1300882259078938685> This server does not have any premium keys.",
     premium: "This server has the {key} key activated.",
     lol_esports_coverage: "League of Legends e-sports coverage",
@@ -114,6 +111,18 @@ export const commands = {
     remove_all: "Remove all",
     invalid_channel: "<:error:1300882259078938685> Invalid channel type. Consider select a TEXT channel.",
     limit_reached: "<:error:1300882259078938685> This server has reached the maximum limit of tournaments that can be added. If you want to add this tournaments, consider removing one using {cmd}"
+  },
+  news: {
+    invalid_channel: "<:error:1300882259078938685> Invalid channel type. Consider select a TEXT or ANNOUNCEMENT channel.",
+    news_enabled: "<:success:1300882212190945292> News feature enabled to channel {ch}",
+    news_disabled: "<:success:1300882212190945292> News feature disabled successfully!",
+    buy_premium: "Buy the premium!"
+  },
+  live: {
+    invalid_channel: "<:error:1300882259078938685> Invalid channel type. Consider select a TEXT channel.",
+    news_enabled: "<:success:1300882212190945292> Live feed feature enabled to channel {ch}",
+    news_disabled: "<:success:1300882212190945292> Live feed feature disabled successfully!",
+    buy_premium: "Buy the premium!"
   }
 }
 export const helper = {

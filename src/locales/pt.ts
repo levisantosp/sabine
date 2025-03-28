@@ -68,8 +68,6 @@ export const commands = {
     invalid_channel2: "<:error:1300882259078938685> Tipo de canal inválido. Considere selecionar um canal de TEXTO ou ANÚNCIOS.",
     news_enabled: "<:success:1300882212190945292> Funcionalidade de notícias habilitada ao canal {ch}",
     news_disabled: "<:success:1300882212190945292> Funcionalidade de notícias desabilitada com sucesso!",
-    live_feed_enabled: "<:success:1300882212190945292> Funcionalidade Live Feed habilitada ao canal {ch}",
-    live_feed_disabled: "<:success:1300882212190945292> Funcionalidade Live Feed desabilitada com sucesso!",
     no_premium: "<:error:1300882259078938685> Este servidor não tem nenhum chave premium ativada.",
     premium: "Este servidor está com a chave {key} ativada.\nA chave expira {expiresAt}",
     lol_esports_coverage: "Cobertura de e-sports de League of Legends",
@@ -114,6 +112,18 @@ export const commands = {
     remove_all: "Remover todos",
     invalid_channel: "<:error:1300882259078938685> Tipo de canal inválido. Considere selecionar um canal de TEXTO.",
     limit_reached: "<:error:1300882259078938685> Este servidor atingiu o limite máximo de campeonatos que podem ser adicionados. Se quiser adicionar este campeonato, considere remover um usando {cmd}"
+  },
+  news: {
+    invalid_channel: "<:error:1300882259078938685> Tipo de canal inválido. Considere selecionar um canal de TEXTO ou ANÚNCIO.",
+    news_enabled: "<:success:1300882212190945292> Funcionalidade de notícias habilitada no canal {ch}",
+    news_disabled: "<:success:1300882212190945292> Funcionalidade de notícias desabilitada com sucesso!",
+    buy_premium: "Compre o premium!"
+  },
+  live: {
+    invalid_channel: "<:error:1300882259078938685> Tipo de canal inválido. Considere selecionar um canal de TEXTO.",
+    news_enabled: "<:success:1300882212190945292> Funcionalidade de transmissão ao vivo habilitada no canal {ch}",
+    news_disabled: "<:success:1300882212190945292> Funcionalidade de transmissão ao vivo desabilitada com sucesso!",
+    buy_premium: "Compre o premium!"
   }
 }
 export const helper = {

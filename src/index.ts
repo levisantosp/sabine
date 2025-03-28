@@ -2,7 +2,7 @@ import "dotenv/config"
 import App from "./structures/client/App.js"
 import { FastifyPluginAsyncTypebox, Type } from "@fastify/type-provider-typebox"
 import fastify from "fastify"
-import { Guild, GuildSchemaInterface } from "./database/index.js"
+import { Guild, GuildSchemaInterface, User, UserSchemaInterface } from "./database/index.js"
 import { ResultsData } from "../types/index.js"
 import { emojis } from "./structures/util/emojis.js"
 import EmbedBuilder from "./structures/builders/EmbedBuilder.js"
@@ -63,8 +63,12 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
     const guilds = await Guild.find({
       events: { $ne: [] }
     }) as GuildSchemaInterface[];
+    const users = await User.find({
+      valorant_predictions: {
+        $ne: []
+      }
+    }) as UserSchemaInterface[];
     if(!guilds.length) return;
-    let matches: ResultsData[];
     for(const guild of guilds) {
       let data: ResultsData[];
       if(guild.valorant_events.length > 5 && !guild.key) {
@@ -73,7 +77,6 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
       }
       else data = req.body.filter(d => guild.valorant_events.some(e => e.name === d.tournament.name));
       if(!data || !data[0]) continue;
-      matches = data;
       data.reverse();
       for(const d of data) {
         for(const e of guild.valorant_events) {
@@ -114,6 +117,19 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
       data.reverse();
       guild.valorant_last_result = data[0].id;
       await guild.save();
+      if(!users.length) return;
+      for(const user of users) {
+        for(const data of req.body) {
+          const pred = user.valorant_predictions.find(p => p.match === data.id);
+          if(!pred) continue;
+          if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
+            await user.addCorrectPrediction(data.id);
+          }
+          else {
+            await user.addWrongPrediction(data.id);
+          }
+        }
+      }
     }
   });
   fastify.post("/webhooks/live/valorant", {
@@ -242,7 +258,173 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
       )
     }
   }, async(req) => {
-    console.log("webhook received");
+    if(!client.ready) return;
+    const guilds = await Guild.find({
+      lol_livefeed_channel: { $exists: true },
+      key: { $exists: true }
+    }) as GuildSchemaInterface[];
+    if(!guilds.length) return;
+    for(const data of req.body) {
+      for(const guild of guilds) {
+        const channel = client.getChannel(guild.lol_livefeed_channel!) as TextChannel;
+        if(!channel) continue;
+        if(!guild.lol_events.some(e => e.name === data.tournament.name)) continue;
+        const emoji1 = emojis.find(e => e.name === data.teams[0].name.toLowerCase() || e.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[1].emoji;
+        const emoji2 = emojis.find(e => e.name === data.teams[1].name.toLowerCase() || e.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[1].emoji;
+        const embed = new EmbedBuilder()
+        .setAuthor({
+          name: data.tournament.name
+        })
+        .setTitle(locales(guild.lang, "helper.live_now"))
+        .setField(
+          `${emoji1} ${data.teams[0].name} \`${data.teams[0].score}\` <:versus:1349105624180330516> \`${data.teams[1].score}\` ${data.teams[1].name} ${emoji2}`,
+          ""
+        )
+        .setFooter({ text: data.stage });
+        const button = new ButtonBuilder()
+        .setStyle("link")
+        .setLabel(locales(guild.lang, "helper.stats"))
+        .setURL(data.url);
+        await channel.createMessage(embed.build({
+          components: [
+            {
+              type: 1,
+              components: [button]
+            }
+          ]
+        }));
+      }
+    }
+  });
+  fastify.post("/webhooks/news/lol", {
+    schema: {
+      body: Type.Array(
+        Type.Object({
+          title: Type.String(),
+          url: Type.String()
+        })
+      )
+    }
+  }, async(req) => {
+    if(!client.ready) return;
+    const guilds = await Guild.find({
+      lol_news_channel: { $exists: true },
+      key: { $exists: true }
+    }) as GuildSchemaInterface[];
+    if(!guilds.length) return;
+    for(const data of req.body) {
+      for(const guild of guilds) {
+        const channel = client.getChannel(guild.lol_news_channel!) as TextChannel;
+        if(!channel) continue;
+        const embed = new EmbedBuilder().setTitle(data.title);
+        const button = new ButtonBuilder()
+        .setStyle("link")
+        .setLabel(locales(guild.lang, "helper.source"))
+        .setURL(data.url);
+        await channel.createMessage(embed.build({
+          components: [
+            {
+              type: 1,
+              components: [button]
+            }
+          ]
+        }));
+      }
+    }
+  });
+  fastify.post("/webhooks/results/lol", {
+    schema: {
+      body: Type.Array(
+        Type.Object({
+          id: Type.String(),
+          teams: Type.Array(
+            Type.Object({
+              name: Type.String(),
+              score: Type.String()
+            })
+          ),
+          tournament: Type.Object({
+            name: Type.String()
+          }),
+          stage: Type.String(),
+          when: Type.Number(),
+          url: Type.String()
+        })
+      )
+    }
+  }, async(req) => {
+    if(!client.ready) return;
+    const guilds = await Guild.find({
+      events: { $ne: [] }
+    }) as GuildSchemaInterface[];
+    const users = await User.find({
+      lol_predictions: {
+        $ne: []
+      }
+    }) as UserSchemaInterface[];
+    if(!guilds.length) return;
+    for(const guild of guilds) {
+      let data: ResultsData[];
+      if(guild.lol_events.length > 5 && !guild.key) {
+        req.body
+        data = req.body.filter(d => guild.lol_events.reverse().slice(0, 5).some(e => e.name === d.tournament.name));
+      }
+      else data = req.body.filter(d => guild.lol_events.some(e => e.name === d.tournament.name));
+      if(!data || !data[0]) continue;
+      data.reverse();
+      for(const d of data) {
+        for(const e of guild.lol_events) {
+          if(e.name === d.tournament.name) {
+            const emoji1 = emojis.find(e => e.name === d.teams[0].name.toLowerCase() || e.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0].emoji;
+            const emoji2 = emojis.find(e => e.name === d.teams[1].name.toLowerCase() || e.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0].emoji;
+            const embed = new EmbedBuilder()
+            .setAuthor({
+              name: d.tournament.name,
+              iconURL: d.tournament.image
+            })
+            .setField(
+              `${emoji1} ${d.teams[0].name} \`${d.teams[0].score}\` <:versus:1349105624180330516> \`${d.teams[1].score}\` ${d.teams[1].name} ${emoji2}`,
+              `<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`,
+              true
+            )
+            .setFooter({ text: d.stage });
+            client.rest.channels.createMessage(e.channel2, embed.build({
+              components: [
+                {
+                  type: 1,
+                  components: [
+                    new ButtonBuilder()
+                    .setLabel(locales(guild.lang, "helper.stats"))
+                    .setStyle("link")
+                    .setURL(`https://vlr.gg/${d.id}`),
+                    new ButtonBuilder()
+                    .setLabel(locales(guild.lang, "helper.pickem.label"))
+                    .setStyle("blue")
+                    .setCustomId("pickem")
+                  ]
+                }
+              ]
+            }));
+          }
+        }
+      }
+      data.reverse();
+      guild.lol_last_result = data[0].id;
+      await guild.save();
+      if(!users.length) return;
+      for(const user of users) {
+        for(const data of req.body) {
+          const pred = user.lol_predictions.find(p => p.match === data.id);
+          if(!pred) continue;
+          if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
+            await user.addCorrectPrediction(data.id);
+          }
+          else {
+            await user.addWrongPrediction(data.id);
+          }
+        }
+      }
+    }
   });
 }
 const server = fastify();
