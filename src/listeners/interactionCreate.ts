@@ -42,13 +42,62 @@ export default createListener({
       }
       const args = i.data.customID.split(";");
       if(args[0] === "predict") {
+        const guild = await Guild.findById(i.guildID) as GuildSchemaInterface;
+        const user = (await User.findById(i.user.id) || new User({ _id: i.user.id })) as UserSchemaInterface;
         const games = {
           valorant: async() => {
-
+            if(user.valorant_predictions.find(p => p.match === args[2])) {
+              return await i.createMessage({
+                content: locales(user.lang ?? guild.lang, "helper.replied"),
+                flags: 64
+              });
+            }
+            const res = await service.getMatches("valorant");
+            const data = res.find(d => d.id === args[2]);
+            if(data?.status === "LIVE" || !data) {
+              return await i.createMessage({
+                content: locales(user.lang ?? guild.lang, "helper.started"),
+                flags: 64
+              });
+            }
+            await i.createModal({
+              customID: `prediction;valorant;${args[2]}`,
+              title: locales(user.lang ?? guild.lang, "helper.prediction_modal.title"),
+              components: [
+                {
+                  type: 1,
+                  components: [
+                    {
+                      type: 4,
+                      customID: "response-modal-1",
+                      label: data.teams[0].name,
+                      style: 1,
+                      minLength: 1,
+                      maxLength: 2,
+                      required: true,
+                      placeholder: "0"
+                    },
+                  ]
+                },
+                {
+                  type: 1,
+                  components: [
+                    {
+                      type: 4,
+                      customID: "response-modal-2",
+                      label: data.teams[1].name,
+                      style: 1,
+                      minLength: 1,
+                      maxLength: 2,
+                      required: true,
+                      placeholder: "0"
+                    }
+                  ]
+                }
+              ]
+            });
           },
           lol: async() => {
-            const guild = await Guild.findById(i.guildID) as GuildSchemaInterface;
-            const user = (await User.findById(i.user.id) || new User({ _id: i.user.id })) as UserSchemaInterface;
             if(user.lol_predictions.find(p => p.match === args[2])) {
               return await i.createMessage({
                 content: locales(user.lang ?? guild.lang, "helper.replied"),
