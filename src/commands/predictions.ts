@@ -162,7 +162,6 @@ export default createCommand({
       });
       for(const prediction of preds) {
         let status: string;
-        console.log(prediction.status)
         if(prediction.status === "correct") {
           status = "\nStatus: <:success:1300882212190945292>"
         }
