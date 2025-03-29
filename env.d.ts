@@ -12,6 +12,7 @@ declare global {
       USERS_LOG: string;
       AUTH: string;
       API_URL: string;
+      PORT: number;
     }
   }
 }

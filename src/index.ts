@@ -429,4 +429,4 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
 }
 const server = fastify();
 server.register(routes);
-server.listen({ host: "0.0.0.0", port: 3001 });
+server.listen({ host: "0.0.0.0", port: process.env.PORT ?? 3001 });
