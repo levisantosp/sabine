@@ -29,4 +29,4 @@ jobs:
           SSH_PORT: 22
       - name: update sabine
         run: |
-          ssh prod 'cd sabine/sabine && git pull && docker compose up -d --build'
+          ssh prod 'cd sabine/sabine && git pull && docker compose stop && docker compose down -v && docker compose up -d --build'
