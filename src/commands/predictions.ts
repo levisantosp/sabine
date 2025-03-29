@@ -104,6 +104,9 @@ export default createCommand({
         if(prediction.status === "wrong") {
           status = "\n<:error:1300882259078938685>"
         }
+        else if(prediction.status === "pending") {
+          status = "\nStatus: <a:carregando:809221866434199634>"
+        }
         else status = ""
         embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name}`, locale("commands.predictions.embed.field", {
           score1: prediction.teams[0].score,
@@ -236,6 +239,9 @@ export default createCommand({
         }
         if(prediction.status === "wrong") {
           status = "\n<:error:1300882259078938685>"
+        }
+        else if(prediction.status === "pending") {
+          status = "\nStatus: <a:carregando:809221866434199634>"
         }
         else status = ""
         embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name}`, locale("commands.predictions.embed.field", {
