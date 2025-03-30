@@ -101,8 +101,8 @@ export default createCommand({
         if(prediction.status === "correct") {
           status = "\nStatus: <:success:1300882212190945292>"
         }
-        if(prediction.status === "wrong") {
-          status = "\n<:error:1300882259078938685>"
+        else if(prediction.status === "wrong") {
+          status = "\nStatus: <:error:1300882259078938685>"
         }
         else if(prediction.status === "pending") {
           status = "\nStatus: <a:carregando:809221866434199634>"
@@ -169,7 +169,7 @@ export default createCommand({
           status = "\nStatus: <:success:1300882212190945292>"
         }
         else if(prediction.status === "wrong") {
-          status = "\n<:error:1300882259078938685>"
+          status = "\nStatus: <:error:1300882259078938685>"
         }
         else if(prediction.status === "pending") {
           status = "\nStatus: <a:carregando:809221866434199634>"
@@ -222,7 +222,7 @@ export default createCommand({
         iconURL: ctx.interaction.user.avatarURL()
       })
       .setDesc(locale("commands.predictions.embed.desc", {
-        right: ctx.db.user.correct_predictions,
+        correct: ctx.db.user.correct_predictions,
         wrong: ctx.db.user.wrong_predictions,
         t: ctx.db.user.valorant_predictions.length
       }))
@@ -237,8 +237,8 @@ export default createCommand({
         if(prediction.status === "correct") {
           status = "\nStatus: <:success:1300882212190945292>"
         }
-        if(prediction.status === "wrong") {
-          status = "\n<:error:1300882259078938685>"
+        else if(prediction.status === "wrong") {
+          status = "\nStatus: <:error:1300882259078938685>"
         }
         else if(prediction.status === "pending") {
           status = "\nStatus: <a:carregando:809221866434199634>"
@@ -289,7 +289,7 @@ export default createCommand({
         iconURL: ctx.interaction.user.avatarURL()
       })
       .setDesc(locale("commands.predictions.embed.desc", {
-        right: ctx.db.user.correct_predictions,
+        correct: ctx.db.user.correct_predictions,
         wrong: ctx.db.user.wrong_predictions,
         t: ctx.db.user.lol_predictions.length
       }))
@@ -304,8 +304,11 @@ export default createCommand({
         if(prediction.status === "correct") {
           status = "\nStatus: <:success:1300882212190945292>"
         }
-        if(prediction.status === "wrong") {
-          status = "\n<:error:1300882259078938685>"
+        else if(prediction.status === "wrong") {
+          status = "\nStatus: <:error:1300882259078938685>"
+        }
+        else if(prediction.status === "pending") {
+          status = "\nStatus: <a:carregando:809221866434199634>"
         }
         else status = ""
         if(prediction) embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name}`, locale("commands.predictions.embed.field", {
