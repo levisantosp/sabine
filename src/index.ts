@@ -117,17 +117,17 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
       data.reverse();
       guild.valorant_last_result = data[0].id;
       await guild.save();
-      if(!users.length) return;
-      for(const user of users) {
-        for(const data of req.body) {
-          const pred = user.valorant_predictions.find(p => p.match === data.id);
-          if(!pred) continue;
-          if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
-            await user.addCorrectPrediction(data.id);
-          }
-          else {
-            await user.addWrongPrediction(data.id);
-          }
+    }
+    if(!users.length) return;
+    for(const user of users) {
+      for(const data of req.body) {
+        const pred = user.valorant_predictions.find(p => p.match === data.id);
+        if(!pred) continue;
+        if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
+          await user.add_correct_prediction("valorant", data.id);
+        }
+        else {
+          await user.add_wrong_prediction("valorant", data.id);
         }
       }
     }
@@ -373,6 +373,7 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
       if(!data || !data[0]) continue;
       data.reverse();
       for(const d of data) {
+        if(d.teams[0].score === "0" && d.teams[1].score === "0") continue;
         for(const e of guild.lol_events) {
           if(e.name === d.tournament.name) {
             const emoji1 = emojis.find(e => e.name === d.teams[0].name.toLowerCase() || e.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0].emoji;
@@ -396,7 +397,7 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
                     new ButtonBuilder()
                     .setLabel(locales(guild.lang, "helper.stats"))
                     .setStyle("link")
-                    .setURL(`https://vlr.gg/${d.id}`),
+                    .setURL(d.url!),
                     new ButtonBuilder()
                     .setLabel(locales(guild.lang, "helper.pickem.label"))
                     .setStyle("blue")
@@ -411,17 +412,17 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
       data.reverse();
       guild.lol_last_result = data[0].id;
       await guild.save();
-      if(!users.length) return;
-      for(const user of users) {
-        for(const data of req.body) {
-          const pred = user.lol_predictions.find(p => p.match === data.id);
-          if(!pred) continue;
-          if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
-            await user.addCorrectPrediction(data.id);
-          }
-          else {
-            await user.addWrongPrediction(data.id);
-          }
+    }
+    if(!users.length) return;
+    for(const user of users) {
+      for(const data of req.body) {
+        const pred = user.lol_predictions.find(p => p.match === data.id);
+        if(!pred) continue;
+        if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
+          await user.add_correct_prediction("lol", data.id);
+        }
+        else {
+          await user.add_wrong_prediction("lol", data.id);
         }
       }
     }

@@ -194,7 +194,7 @@ export default createListener({
             }
             const res = await service.getMatches("valorant");
             const data = res.find(d => d.id === args[2])!;
-            await user.addPrediction("valorant", {
+            await user.add_prediction("valorant", {
               match: data.id!,
               teams: [
                 {
@@ -227,7 +227,7 @@ export default createListener({
             }
             const res = await service.getMatches("lol");
             const data = res.find(d => d.id === args[2])!;
-            await user.addPrediction("lol", {
+            await user.add_prediction("lol", {
               match: data.id!,
               teams: [
                 {

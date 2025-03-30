@@ -122,7 +122,7 @@ export class User extends UserSchema {
     });
     return this as UserSchemaInterface;
   }
-  public async addPrediction(game: "valorant" | "lol", prediction: UserSchemaPrediction) {
+  public async add_prediction(game: "valorant" | "lol", prediction: UserSchemaPrediction) {
     if(game === "valorant") {
       this.valorant_predictions.push(prediction);
       await this.save();
@@ -170,50 +170,114 @@ export class User extends UserSchema {
       return this as UserSchemaInterface;
     }
   }
-  public async addCorrectPrediction(predictionId: string) {
-    this.correct_predictions += 1;
-    await this.save();
-    const channel = client.getChannel(process.env.USERS_LOG) as TextChannel;
-    const user = client.users.get(this.id);
-    const embed = new EmbedBuilder()
-    .setTitle("New register")
-    .setDesc(`User: ${user?.mention} (${this.id})`)
-    .setFields(
-      {
-        name: "CORRECT_PREDICTION",
-        value: predictionId
-      }
-    );
-    const webhooks = await channel.getWebhooks();
-    let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0];
-    if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" });
-    webhook.execute({
-      avatarURL: client.user.avatarURL(),
-      embeds: [embed]
-    });
+  public async add_correct_prediction(game: "valorant" | "lol", predictionId: string) {
+    if(game === "valorant") {
+      let index = this.valorant_predictions.findIndex(p => p.match === predictionId);
+      this.valorant_predictions[index].status = "correct"
+      await this.updateOne({
+        $inc: { correct_predictions: 1 },
+        $set: { valorant_predictions: this.valorant_predictions }
+      });
+      const channel = client.getChannel(process.env.USERS_LOG) as TextChannel;
+      const user = client.users.get(this.id);
+      const embed = new EmbedBuilder()
+      .setTitle("New register")
+      .setDesc(`User: ${user?.mention} (${this.id})`)
+      .setFields(
+        {
+          name: "CORRECT_PREDICTION",
+          value: predictionId
+        }
+      );
+      const webhooks = await channel.getWebhooks();
+      let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0];
+      if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" });
+      webhook.execute({
+        avatarURL: client.user.avatarURL(),
+        embeds: [embed]
+      });
+    }
+    else {
+      let index = this.lol_predictions.findIndex(p => p.match === predictionId);
+      this.lol_predictions[index].status = "correct"
+      await this.updateOne({
+        $inc: { correct_predictions: 1 },
+        $set: { lol_predictions: this.lol_predictions }
+      });
+      const channel = client.getChannel(process.env.USERS_LOG) as TextChannel;
+      const user = client.users.get(this.id);
+      const embed = new EmbedBuilder()
+      .setTitle("New register")
+      .setDesc(`User: ${user?.mention} (${this.id})`)
+      .setFields(
+        {
+          name: "CORRECT_PREDICTION",
+          value: predictionId
+        }
+      );
+      const webhooks = await channel.getWebhooks();
+      let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0];
+      if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" });
+      webhook.execute({
+        avatarURL: client.user.avatarURL(),
+        embeds: [embed]
+      });
+    }
     return this as UserSchemaInterface;
   }
-  public async addWrongPrediction(predictionId: string) {
-    this.wrong_predictions += 1;
-    await this.save();
-    const channel = client.getChannel(process.env.USERS_LOG) as TextChannel;
-    const user = client.users.get(this.id);
-    const embed = new EmbedBuilder()
-    .setTitle("New register")
-    .setDesc(`User: ${user?.mention} (${this.id})`)
-    .setFields(
-      {
-        name: "WRONG_PREDICTION",
-        value: predictionId
-      }
-    );
-    const webhooks = await channel.getWebhooks();
-    let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0];
-    if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" });
-    webhook.execute({
-      avatarURL: client.user.avatarURL(),
-      embeds: [embed]
-    });
+  public async add_wrong_prediction(game: "valorant" | "lol", predictionId: string) {
+    if(game === "valorant") {
+      let index = this.valorant_predictions.findIndex(p => p.match === predictionId);
+      this.valorant_predictions[index].status = "correct"
+      await this.updateOne({
+        $inc: { wrong_predictions: 1 },
+        $set: { valorant_predictions: this.valorant_predictions }
+      });
+      const channel = client.getChannel(process.env.USERS_LOG) as TextChannel;
+      const user = client.users.get(this.id);
+      const embed = new EmbedBuilder()
+      .setTitle("New register")
+      .setDesc(`User: ${user?.mention} (${this.id})`)
+      .setFields(
+        {
+          name: "WRONG_PREDICTION",
+          value: predictionId
+        }
+      );
+      const webhooks = await channel.getWebhooks();
+      let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0];
+      if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" });
+      webhook.execute({
+        avatarURL: client.user.avatarURL(),
+        embeds: [embed]
+      });
+    }
+    else {
+      let index = this.lol_predictions.findIndex(p => p.match === predictionId);
+      this.lol_predictions[index].status = "correct"
+      await this.updateOne({
+        $inc: { wrong_predictions: 1 },
+        $set: { lol_predictions: this.lol_predictions }
+      });
+      const channel = client.getChannel(process.env.USERS_LOG) as TextChannel;
+      const user = client.users.get(this.id);
+      const embed = new EmbedBuilder()
+      .setTitle("New register")
+      .setDesc(`User: ${user?.mention} (${this.id})`)
+      .setFields(
+        {
+          name: "WRONG_PREDICTION",
+          value: predictionId
+        }
+      );
+      const webhooks = await channel.getWebhooks();
+      let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0];
+      if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" });
+      webhook.execute({
+        avatarURL: client.user.avatarURL(),
+        embeds: [embed]
+      });
+    }
     return this as UserSchemaInterface;
   }
 }
