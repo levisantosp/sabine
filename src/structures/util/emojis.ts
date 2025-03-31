@@ -184,7 +184,7 @@ export const emojis = [
   },
   {
     name: "rex regum qeon",
-    emoji: "<:prx:1319736078546243618>"
+    emoji: "<:rrq:1356243109331341353>"
   },
   {
     name: "t1",
