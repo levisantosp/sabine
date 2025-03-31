@@ -67,10 +67,10 @@ export default createCommand({
   async run({ ctx, locale, client }) {
     if(ctx.args[0] === "local") {
       let users = (await User.find({
-        guessesRight: {
+        correct_predictions: {
           $gt: 0
         }
-      }) as UserSchemaInterface[]).filter(user => ctx.guild.members.get(user.id)).sort((a, b) => b.guessesRight - a.guessesRight);
+      }) as UserSchemaInterface[]).filter(user => ctx.guild.members.get(user.id)).sort((a, b) => b.correct_predictions - a.correct_predictions);
       let array = users;
       let page = Number(ctx.args[1]);
       if(!page || page === 1 || isNaN(page)) {
@@ -102,7 +102,7 @@ export default createCommand({
         if(pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
         if(pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
         embed.addField(field, locale("commands.ranking.field", {
-          t: user.guessesRight
+          t: user.correct_predictions
         }));
       }
       embed.setFooter({
@@ -131,10 +131,10 @@ export default createCommand({
     }
     else {
       let users = (await User.find({
-        guessesRight: {
+        correct_predictions: {
           $gt: 0
         }
-      }) as UserSchemaInterface[]).sort((a, b) => b.guessesRight - a.guessesRight);
+      }) as UserSchemaInterface[]).sort((a, b) => b.correct_predictions - a.correct_predictions);
       let array = users;
       let page = Number(ctx.args[1]);
       if(!page || page === 1 || isNaN(page)) {
@@ -166,7 +166,7 @@ export default createCommand({
         if(pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
         if(pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
         embed.addField(field, locale("commands.ranking.field", {
-          t: user.guessesRight
+          t: user.correct_predictions
         }));
       }
       embed.setFooter({
@@ -198,10 +198,10 @@ export default createCommand({
     await (ctx.interaction as ComponentInteraction).deferUpdate();
     if(ctx.args[4] === "local") {
       let users = (await User.find({
-        guessesRight: {
+        correct_predictions: {
           $gt: 0
         }
-      }) as UserSchemaInterface[]).filter(user => ctx.guild.members.get(user.id)).sort((a, b) => b.guessesRight - a.guessesRight);
+      }) as UserSchemaInterface[]).filter(user => ctx.guild.members.get(user.id)).sort((a, b) => b.correct_predictions - a.correct_predictions);
       let array = users;
       let page = Number(ctx.args[2]);
       let pages = Math.ceil(array.length / 10);
@@ -230,7 +230,7 @@ export default createCommand({
         if(pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
         if(pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
         embed.addField(field, locale("commands.ranking.field", {
-          t: user.guessesRight
+          t: user.correct_predictions
         }));
       }
       embed.setFooter({
@@ -259,10 +259,10 @@ export default createCommand({
     }
     else {
       let users = (await User.find({
-        guessesRight: {
+        correct_predictions: {
           $gt: 0
         }
-      }) as UserSchemaInterface[]).sort((a, b) => b.guessesRight - a.guessesRight);
+      }) as UserSchemaInterface[]).sort((a, b) => b.correct_predictions - a.correct_predictions);
       let array = users;
       let page = Number(ctx.args[2]);
       let pages = Math.ceil(array.length / 10);
@@ -291,7 +291,7 @@ export default createCommand({
         if(pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
         if(pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
         embed.addField(field, locale("commands.ranking.field", {
-          t: user.guessesRight
+          t: user.correct_predictions
         }));
       }
       embed.setFooter({

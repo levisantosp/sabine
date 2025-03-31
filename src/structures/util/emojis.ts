@@ -1,5 +1,14 @@
 export const emojis = [
-  "<:valorant_team:1349065037880365057>",
+  // DEFAULT TEAM EMOJIS
+  {
+    emoji: "<:valorant_team:1349065037880365057>"
+  },
+  {
+    emoji: "<:lol_team:1351581864468549784>"
+  },
+  {
+    emoji: "<:cs_team:1354150393281511515>"
+  },
   // VCT CHINA
   {
     name: "all gamers",
@@ -175,7 +184,7 @@ export const emojis = [
   },
   {
     name: "rex regum qeon",
-    emoji: "<:prx:1319736078546243618>"
+    emoji: "<:rrq:1356243109331341353>"
   },
   {
     name: "t1",

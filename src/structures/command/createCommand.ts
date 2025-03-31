@@ -13,6 +13,7 @@ type CreateAutocompleteInteractionOptions = {
   i: AutocompleteInteraction;
   locale: (content: string, args?: Args) => string;
   client: App;
+  args?: string[];
 }
 type CreateComponentInteractionOptions = {
   ctx: CommandContext;

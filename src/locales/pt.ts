@@ -2,9 +2,9 @@ export const commands = {
   predictions: {
     embed: {
       author: "Seus palpites",
-      field: "Palpite: `{score1}-{score2}`\nResultado: [clique aqui]({link})",
+      field: "Palpite: `{score1}-{score2}`\nEstatísticas: [clique aqui]({link})",
       footer: "Página {p1}/{p2}",
-      desc: "Palpites certos: `{right}`\nPalpites errados: `{wrong}`\nPalpites totais: `{t}`"
+      desc: "Palpites certos: `{correct}`\nPalpites errados: `{wrong}`\nPalpites totais: `{t}`"
     },
     no_predictions: "<:error:1300882259078938685> Você não possui palpites.",
     no_pages: "<:error:1300882259078938685> Nada para mostrar nesta página."
@@ -52,13 +52,13 @@ export const commands = {
     tournament_removed: "<:success:1300882212190945292> O campeonato **{t}** foi removido com sucesso!",
     dashboard: "Painel de Controle",
     event_channels: "Partidas serão anunciadas em {ch1}\nResultados serão anunciados em {ch2}",
-    desc: "Idioma: `{lang}` (altere usando: </admin language:{id}>)\nLimite de campeonatos: `{limit}`\nCanal de notícias: {newsChannel}\nCanal do live feed: {live}",
+    desc: "- Idioma: `{lang}` (altere usando: </admin language:{id}>)\n- Limite de campeonatos: `{limit}`\n- Canal de notícias de VALORANT: {vlr_news}\n- Canal de live feed do VALORANT: {vlr_live}\n- Canal de notícias de League of Legends: {lol_news}\n- Canal de live feed de League of Legends: {lol_live}",
     invalid_channel: "<:error:1300882259078938685> Tipo de canal inválido. Considere selecionar um canal de TEXTO.",
     limit_reached: "<:error:1300882259078938685> Este servidor atingiu o limite máximo de campeonatos que podem ser adicionados. Se quiser adicionar este campeonato, considere remover um usando {cmd}",
     channel_being_used: "<:error:1300882259078938685> O canal {ch} já está sendo usado para anunciar os resultados de um campeonato. Considere usar outro canal para isso.\nVerifique os canais que já estão em uso usando {cmd}",
     resend_time: "<:error:1300882259078938685> Este recurso já foi usado recentemente neste servidor. Tente novamente {t}.",
     resending: "<a:carregando:809221866434199634> Reenviando partidas... Por favor, aguarde.",
-    resend: "Reenviar partidas",
+    resend: "Reenviar partidas de {game}",
     confirm: "<:warn:869393116854108191> Você está prestes a FORÇAR o envio das partidas neste servidor!\n<:warn:869393116854108191> Vale lembrar que esta ação é **IRREVERSÍVEL** e só pode ser feita **UMA VEZ por hora**! Se você ainda quer adicionar mais campeonatos, adicione antes de usar este recurso.\nDeseja continuar?",
     continue: "Continuar",
     remove_all: "Remover todos",
@@ -68,10 +68,11 @@ export const commands = {
     invalid_channel2: "<:error:1300882259078938685> Tipo de canal inválido. Considere selecionar um canal de TEXTO ou ANÚNCIOS.",
     news_enabled: "<:success:1300882212190945292> Funcionalidade de notícias habilitada ao canal {ch}",
     news_disabled: "<:success:1300882212190945292> Funcionalidade de notícias desabilitada com sucesso!",
-    live_feed_enabled: "<:success:1300882212190945292> Funcionalidade Live Feed habilitada ao canal {ch}",
-    live_feed_disabled: "<:success:1300882212190945292> Funcionalidade Live Feed desabilitada com sucesso!",
     no_premium: "<:error:1300882259078938685> Este servidor não tem nenhum chave premium ativada.",
-    premium: "Este servidor está com a chave {key} ativada.\nA chave expira {expiresAt}"
+    premium: "Este servidor está com a chave {key} ativada.\nA chave expira {expiresAt}",
+    lol_esports_coverage: "Cobertura de e-sports de League of Legends",
+    vlr_esports_coverage: "Cobertura de e-sports de VALORANT",
+    tournaments: "## Torneios de {game} adicionados"
   },
   info: {
     embed: {
@@ -103,12 +104,32 @@ export const commands = {
     would_like_to_continue: "<:warn:869393116854108191> Este servidor tem uma chave {key} ativada. Gostaria de continuar?",
     key_already_activated: "<:error:1300882259078938685> Esta chave já está ativada!",
     limit_reached: "<:error:1300882259078938685> Esta chave já está ativada em 2 servidores."
+  },
+  tournament: {
+    tournament_added: "<:success:1300882212190945292> O torneio **{t}** foi adicionado com sucesso!",
+    channels_must_be_different: "<:warn:869393116854108191> Os canais de resultados e partidas NÃO PODEM ser iguais. É recomendável que o canal de partidas seja um canal separado onde não haverá interação de membros.",
+    tournament_removed: "<:success:1300882212190945292> O torneio **{t}** foi removido com sucesso!",
+    remove_all: "Remover todos",
+    invalid_channel: "<:error:1300882259078938685> Tipo de canal inválido. Considere selecionar um canal de TEXTO.",
+    limit_reached: "<:error:1300882259078938685> Este servidor atingiu o limite máximo de campeonatos que podem ser adicionados. Se quiser adicionar este campeonato, considere remover um usando {cmd}"
+  },
+  news: {
+    invalid_channel: "<:error:1300882259078938685> Tipo de canal inválido. Considere selecionar um canal de TEXTO ou ANÚNCIO.",
+    news_enabled: "<:success:1300882212190945292> Funcionalidade de notícias habilitada no canal {ch}",
+    news_disabled: "<:success:1300882212190945292> Funcionalidade de notícias desabilitada com sucesso!",
+    buy_premium: "Compre o premium!"
+  },
+  live: {
+    invalid_channel: "<:error:1300882259078938685> Tipo de canal inválido. Considere selecionar um canal de TEXTO.",
+    news_enabled: "<:success:1300882212190945292> Funcionalidade de transmissão ao vivo habilitada no canal {ch}",
+    news_disabled: "<:success:1300882212190945292> Funcionalidade de transmissão ao vivo desabilitada com sucesso!",
+    buy_premium: "Compre o premium!"
   }
 }
 export const helper = {
   palpitate: "Palpitar",
   stats: "Estatísticas",
-  palpitate_modal: {
+  prediction_modal: {
     title: "Seu palpite para a partida"
   },
   palpitate_response: "<:success:1300882212190945292> Você palpitou {t1} `{s1}-{s2}` {t2}",
@@ -129,7 +150,8 @@ export const helper = {
   interaction_failed: "<:error:1300882259078938685> Não foi possível executar esta ação... Se o problema persistir, reporte para a equipe no meu [servidor de suporte](https://discord.gg/g5nmc376yh).",
   premium_feature: "<:warn:869393116854108191> Opa, parece que você achou uma funcionalidade premium. Desbloqueie ela comprando o premium em nosso servidor de suporte!",
   live_feed_value: "Mapa atual: `{map}`\nPlacar do mapa: `{score}`",
-  source: "Ver artigo completo"
+  source: "Ver artigo completo",
+  live_now: "AO VIVO AGORA"
 }
 export const permissions = {
   CREATE_INSTANT_INVITE: "Criar convite instantâneo",

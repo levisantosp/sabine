@@ -10,6 +10,9 @@ declare global {
       SHARD_LOG: string;
       INTERVAL: number;
       USERS_LOG: string;
+      AUTH: string;
+      API_URL: string;
+      PORT: number;
     }
   }
 }
