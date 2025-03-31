@@ -228,7 +228,7 @@ export class User extends UserSchema {
   public async add_wrong_prediction(game: "valorant" | "lol", predictionId: string) {
     if(game === "valorant") {
       let index = this.valorant_predictions.findIndex(p => p.match === predictionId);
-      this.valorant_predictions[index].status = "correct"
+      this.valorant_predictions[index].status = "wrong"
       await this.updateOne({
         $inc: { wrong_predictions: 1 },
         $set: { valorant_predictions: this.valorant_predictions }
@@ -254,7 +254,7 @@ export class User extends UserSchema {
     }
     else {
       let index = this.lol_predictions.findIndex(p => p.match === predictionId);
-      this.lol_predictions[index].status = "correct"
+      this.lol_predictions[index].status = "wrong"
       await this.updateOne({
         $inc: { wrong_predictions: 1 },
         $set: { lol_predictions: this.lol_predictions }
