@@ -58,6 +58,7 @@ export default createCommand({
         id: key.id,
         expiresAt: key.expiresAt
       }
+      ctx.db.guild.tournamentsLength = 20;
       key.active = true;
       key.activeIn.push(ctx.guild.id);
       await key.save();
@@ -85,6 +86,7 @@ export default createCommand({
       type: key.type,
       expiresAt: key.expiresAt
     }
+    ctx.db.guild.tournamentsLength = 20;
     key.active = true;
     key.activeIn.push(ctx.guild.id);
     await key.save();
