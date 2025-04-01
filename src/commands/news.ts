@@ -100,7 +100,7 @@ export default createCommand({
   ],
   async run({ ctx, locale }) {
     if(ctx.args[0] === "enable") {
-      if(!ctx.db.guild.partner || !["PREMIUM"].some(k => k === ctx.db.guild.key?.type)) {
+      if(!ctx.db.guild.partner && !["PREMIUM"].some(k => k === ctx.db.guild.key?.type)) {
         const button = new ButtonBuilder()
         .setLabel(locale("commands.news.buy_premium"))
         .setStyle("link")
