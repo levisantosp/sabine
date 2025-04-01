@@ -59,7 +59,9 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
       )
     }
   }, async(req) => {
-    if(!client.ready) return;
+    if(!client.ready) {
+      await client.restMode();
+    }
     const guilds = await Guild.find({
       events: { $ne: [] }
     }) as GuildSchemaInterface[];
@@ -156,7 +158,9 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
       )
     }
   }, async(req) => {
-    if(!client.ready) return;
+    if(!client.ready) {
+      await client.restMode();
+    }
     const guilds = await Guild.find({
       valorant_livefeed_channel: { $exists: true },
       key: { $exists: true }
@@ -164,6 +168,7 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
     if(!guilds.length) return;
     for(const data of req.body) {
       for(const guild of guilds) {
+        if(!["PREMIUM"].some(x => x === guild.key?.type) || !guild.partner) continue;
         const channel = client.getChannel(guild.valorant_livefeed_channel!) as TextChannel;
         if(!channel) continue;
         if(!guild.valorant_events.some(e => e.name === data.tournament.name)) continue;
@@ -210,13 +215,16 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
       )
     }
   }, async(req) => {
-    if(!client.ready) return;
+    if(!client.ready) {
+      await client.restMode();
+    }
     const guilds = await Guild.find({
       valorant_news_channel: { $exists: true },
       key: { $exists: true }
     }) as GuildSchemaInterface[];
     if(!guilds.length) return;
     for(const guild of guilds) {
+      if(!["PREMIUM"].some(x => x === guild.key?.type) || !guild.partner) continue;
       const channel = client.getChannel(guild.valorant_news_channel!) as TextChannel;
       if(!channel) continue;
       for(const data of req.body) {
@@ -258,7 +266,9 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
       )
     }
   }, async(req) => {
-    if(!client.ready) return;
+    if(!client.ready) {
+      await client.restMode();
+    }
     const guilds = await Guild.find({
       lol_livefeed_channel: { $exists: true },
       key: { $exists: true }
@@ -266,6 +276,7 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
     if(!guilds.length) return;
     for(const data of req.body) {
       for(const guild of guilds) {
+        if(!["PREMIUM"].some(x => x === guild.key?.type) || !guild.partner) continue;
         const channel = client.getChannel(guild.lol_livefeed_channel!) as TextChannel;
         if(!channel) continue;
         if(!guild.lol_events.some(e => e.name === data.tournament.name)) continue;
@@ -306,7 +317,9 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
       )
     }
   }, async(req) => {
-    if(!client.ready) return;
+    if(!client.ready) {
+      await client.restMode();
+    }
     const guilds = await Guild.find({
       lol_news_channel: { $exists: true },
       key: { $exists: true }
@@ -314,6 +327,7 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
     if(!guilds.length) return;
     for(const data of req.body) {
       for(const guild of guilds) {
+        if(!["PREMIUM"].some(x => x === guild.key?.type) || !guild.partner) continue;
         const channel = client.getChannel(guild.lol_news_channel!) as TextChannel;
         if(!channel) continue;
         const embed = new EmbedBuilder().setTitle(data.title);
@@ -353,7 +367,9 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
       )
     }
   }, async(req) => {
-    if(!client.ready) return;
+    if(!client.ready) {
+      await client.restMode();
+    }
     const guilds = await Guild.find({
       events: { $ne: [] }
     }) as GuildSchemaInterface[];

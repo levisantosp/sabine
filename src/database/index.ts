@@ -339,7 +339,9 @@ export const Guild = mongoose.model("guilds", new mongoose.Schema(
     lol_resend_time: {
       type: Number,
       default: 0
-    }
+    },
+    partner: Boolean,
+    invite: String
   }
 ));
 export const Blacklist = mongoose.model("blacklist", new mongoose.Schema(
@@ -416,6 +418,8 @@ export interface GuildSchemaInterface extends mongoose.Document {
   lol_livefeed_channel?: string;
   lol_live_matches: LiveFeed[];
   lol_resend_time: number;
+  partner?: boolean;
+  invite?: string;
 }
 export interface UserSchemaInterface extends User {
   _id: string;
