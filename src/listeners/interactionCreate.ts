@@ -167,7 +167,7 @@ export default createListener({
         client,
         guild: i.guild,
         interaction: i,
-        locale: user.lang ?? guild.lang,
+        locale: user?.lang ?? guild.lang,
         db: {
           user,
           guild
