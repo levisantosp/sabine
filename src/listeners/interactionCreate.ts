@@ -161,7 +161,7 @@ export default createListener({
       if(!i.guild) return;
       if(args[1] !== i.user.id) return;
       const guild = (await Guild.findById(i.guildID) ?? new Guild({ _id: i.guildID })) as GuildSchemaInterface;
-      const user = await User.findById(i.user.id) as UserSchemaInterface;
+      const user = (await User.findById(i.user.id) ?? new User({ _id: i.user.id })) as UserSchemaInterface;
       const ctx = new CommandContext({
         args,
         client,
