@@ -371,10 +371,6 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
                                                                         type: 1,
                                                                         components: [
                                                                                 new ButtonBuilder()
-                                                                                        .setLabel(locales(guild.lang, "helper.stats"))
-                                                                                        .setStyle("link")
-                                                                                        .setURL(d.url!),
-                                                                                new ButtonBuilder()
                                                                                         .setLabel(locales(guild.lang, "helper.pickem.label"))
                                                                                         .setStyle("blue")
                                                                                         .setCustomId("pickem")
