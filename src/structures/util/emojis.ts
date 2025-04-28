@@ -84,7 +84,7 @@ export const emojis = [
         {
                 name: "krü esports",
                 emoji: "<:kru:1319734403475181629>",
-                aliases: ["kru blaze", "krü blaze"]
+                aliases: ["kru blaze", "krü blaze", "visa krü"]
         },
         {
                 name: "leviatán",
