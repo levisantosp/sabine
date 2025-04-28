@@ -53,8 +53,8 @@ const send_valorant_matches = async (client: App) => {
                                 if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
                                 for(const e of guild.valorant_events) {
                                         if(e.name === d.tournament.name) {
-                                                const emoji1 = emojis.find(e => e.name === d.teams[0].name.toLowerCase() || e.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0].emoji
-                                                const emoji2 = emojis.find(e => e.name === d.teams[1].name.toLowerCase() || e.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0].emoji
+                                                const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
+                                                const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
                                                 let index = guild.valorant_matches.findIndex((m) => m === d.id)
                                                 if(index > -1) guild.valorant_matches.splice(index, 1)
                                                 if(!d.stage.toLowerCase().includes("showmatch")) guild.valorant_matches.push(d.id!)
@@ -121,8 +121,8 @@ const send_valorant_TBD_matches = async (client: App) => {
                         const data = res.find(d => d.id === match.id)
                         if(!data) continue
                         if(data.teams[0].name !== "TBD" && data.teams[1].name !== "TBD") {
-                                const emoji1 = emojis.find(e => e.name === data.teams[0].name.toLowerCase() || e.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[0].emoji
-                                const emoji2 = emojis.find(e => e.name === data.teams[1].name.toLowerCase() || e.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[0].emoji
+                                const emoji1 = emojis.find(e => e?.name === data.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
+                                const emoji2 = emojis.find(e => e?.name === data.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
                                 const channel = client.getChannel(match.channel) as TextChannel
                                 const embed = new EmbedBuilder()
                                         .setAuthor({
@@ -197,8 +197,8 @@ const send_lol_matches = async(client: App) => {
                                 if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
                                 for(const e of guild.lol_events) {
                                         if(e.name === d.tournament.name) {
-                                                const emoji1 = emojis.find(e => e.name === d.teams[0].name.toLowerCase() || e.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[1].emoji
-                                                const emoji2 = emojis.find(e => e.name === d.teams[1].name.toLowerCase() || e.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[1].emoji
+                                                const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
+                                                const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
                                                 let index = guild.lol_matches.findIndex((m) => m === d.id)
                                                 if(index > -1) guild.lol_matches.splice(index, 1)
                                                 if(!d.stage.toLowerCase().includes("showmatch")) guild.lol_matches.push(d.id!)
@@ -263,8 +263,8 @@ const send_lol_tbd_matches = async (client: App) => {
                         const data = res.find(d => d.id === match.id)
                         if(!data) continue
                         if(data.teams[0].name !== "TBD" && data.teams[1].name !== "TBD") {
-                                const emoji1 = emojis.find(e => e.name === data.teams[0].name.toLowerCase() || e.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[1].emoji
-                                const emoji2 = emojis.find(e => e.name === data.teams[1].name.toLowerCase() || e.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[1].emoji
+                                const emoji1 = emojis.find(e => e?.name === data.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
+                                const emoji2 = emojis.find(e => e?.name === data.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
                                 const channel = client.getChannel(match.channel) as TextChannel
                                 const embed = new EmbedBuilder()
                                         .setAuthor({

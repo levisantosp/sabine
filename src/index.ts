@@ -83,8 +83,8 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
                         for(const d of data) {
                                 for(const e of guild.valorant_events) {
                                         if(e.name === d.tournament.name) {
-                                                const emoji1 = emojis.find(e => e.name === d.teams[0].name.toLowerCase() || e.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0].emoji
-                                                const emoji2 = emojis.find(e => e.name === d.teams[1].name.toLowerCase() || e.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0].emoji
+                                                const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
+                                                const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
                                                 const embed = new EmbedBuilder()
                                                         .setAuthor({
                                                                 name: d.tournament.name,
@@ -173,8 +173,8 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
                                 const channel = client.getChannel(guild.valorant_livefeed_channel!) as TextChannel
                                 if(!channel) continue
                                 if(!guild.valorant_events.some(e => e.name === data.tournament.name)) continue
-                                const emoji1 = emojis.find(e => e.name === data.teams[0].name.toLowerCase() || e.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[0].emoji
-                                const emoji2 = emojis.find(e => e.name === data.teams[1].name.toLowerCase() || e.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[0].emoji
+                                const emoji1 = emojis.find(e => e?.name === data.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
+                                const emoji2 = emojis.find(e => e?.name === data.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
                                 const embed = new EmbedBuilder()
                                         .setAuthor({
                                                 name: data.tournament.name,
@@ -288,8 +288,8 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
                                 const channel = client.getChannel(guild.lol_livefeed_channel!) as TextChannel
                                 if(!channel) continue
                                 if(!guild.lol_events.some(e => e.name === data.tournament.name)) continue
-                                const emoji1 = emojis.find(e => e.name === data.teams[0].name.toLowerCase() || e.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[1].emoji
-                                const emoji2 = emojis.find(e => e.name === data.teams[1].name.toLowerCase() || e.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[1].emoji
+                                const emoji1 = emojis.find(e => e?.name === data.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
+                                const emoji2 = emojis.find(e => e?.name === data.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
                                 const embed = new EmbedBuilder()
                                         .setAuthor({
                                                 name: data.tournament.name,
@@ -352,8 +352,8 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
                                 if(d.teams[0].score === "0" && d.teams[1].score === "0") continue
                                 for(const e of guild.lol_events) {
                                         if(e.name === d.tournament.name) {
-                                                const emoji1 = emojis.find(e => e.name === d.teams[0].name.toLowerCase() || e.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0].emoji
-                                                const emoji2 = emojis.find(e => e.name === d.teams[1].name.toLowerCase() || e.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0].emoji
+                                                const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
+                                                const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
                                                 const embed = new EmbedBuilder()
                                                         .setAuthor({
                                                                 name: d.tournament.name,
