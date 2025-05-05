@@ -244,7 +244,7 @@ export default createListener({
                                                         })
                                                 }
                                                 const res = await service.getMatches("lol")
-                                                const data = res.find(d => d.id === args[2])!
+                                                const data = res.find(d => d.id?.toString() === args[2])!
                                                 await user.add_prediction("lol", {
                                                         match: data.id!,
                                                         teams: [
