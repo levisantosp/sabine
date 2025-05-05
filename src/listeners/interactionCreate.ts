@@ -104,8 +104,9 @@ export default createListener({
                                                         })
                                                 }
                                                 const res = await service.getMatches("lol")
-                                                const data = res.find(d => d.id === args[2])
-                                                if(data?.status === "inProgress" || !data) {
+                                                const data = res.find(d => d.id?.toString() === args[2])
+                                                
+                                                if(!data || data.status !== "not_started") {
                                                         return await i.createMessage({
                                                                 content: locales(user.lang ?? guild.lang, "helper.started"),
                                                                 flags: 64
