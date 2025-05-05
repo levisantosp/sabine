@@ -351,10 +351,6 @@ export default createCommand({
                                                                 .setLabel(locale("helper.palpitate"))
                                                                 .setCustomId(`predict;lol;${d.id}`)
                                                                 .setStyle("green")
-                                                        const urlButton = new ButtonBuilder()
-                                                                .setLabel(locale("helper.stats"))
-                                                                .setStyle("link")
-                                                                .setURL(`https://loltv.gg/match/${d.id}`)
 
                                                         if(d.stage.toLowerCase().includes("showmatch")) continue
                                                         if(d.teams[0].name !== "TBD" && d.teams[1].name !== "TBD") await client.rest.channels.createMessage(e.channel1, {
@@ -363,7 +359,7 @@ export default createCommand({
                                                                         {
                                                                                 type: 1,
                                                                                 components: [
-                                                                                        button, urlButton,
+                                                                                        button,
                                                                                         new ButtonBuilder()
                                                                                                 .setLabel(locales(guild.lang, "helper.pickem.label"))
                                                                                                 .setStyle("blue")
