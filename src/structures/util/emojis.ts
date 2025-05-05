@@ -79,7 +79,7 @@ export const emojis = [
         {
                 name: "furia",
                 emoji: "<:furia:1319734325838610594>",
-                aliases: ["furia academy"]
+                aliases: ["furia academy", "furia esports"]
         },
         {
                 name: "krü esports",
@@ -122,7 +122,7 @@ export const emojis = [
         },
         {
                 name: "corinthians esports",
-                aliases: ["corinthians esports inclusivo"],
+                aliases: ["corinthians esports inclusivo", "corinthians e-sports", "corinthians esports"],
                 emoji: "<:sccp_esports:1349204232862961745>"
         },
         {
@@ -170,7 +170,11 @@ export const emojis = [
         {
                 name: "pain gaming",
                 emoji: "<:pain:1366545677932433578>"
-        },,
+        },
+        {
+                name: "flamengo esports",
+                emoji: "<:fla_esports:1369055007948673024>"
+        },
         // VCT APAC
         {
                 name: "detonation focusme",
