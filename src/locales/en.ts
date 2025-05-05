@@ -151,7 +151,7 @@ export const helper = {
         live_feed_value: "Current map: `{map}`\nMap score: `{score}`",
         source: "View full article",
         live_now: "LIVE NOW",
-        stream: "Streams"
+        streams: "Streams"
 }
 export const permissions = {
         CREATE_INSTANT_INVITE: "Create Instant Invite",
