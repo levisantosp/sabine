@@ -152,6 +152,24 @@ export default createListener({
                                 games[args[1] as "valorant" | "lol"]().catch(e => new Logger(client).error(e))
                                 return
                         }
+                        if(args[0] === "stream") {
+                                const res = await service.getLiveMatches()
+                                const match = res.filter(r => r.id.toString() === args[2])[0]
+                                
+                                if(!match || !match.streams) return console.log(res)
+                                
+                                let content = ""
+                                for(const stream of match.streams) {
+                                        content += `- ${stream.raw_url}\n`
+                                }
+
+                                await i.createMessage({
+                                        content,
+                                        flags: 64
+                                })
+
+                                return
+                        }
                         const command = client.commands.get(args[0])
                         const blacklist = await Blacklist.findById("blacklist") as BlacklistSchemaInterface
                         if(blacklist.users.find(user => user.id === i.user.id)) return

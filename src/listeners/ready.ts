@@ -206,7 +206,7 @@ const send_lol_matches = async(client: App) => {
                                                 const embed = new EmbedBuilder()
                                                         .setAuthor({
                                                                 iconURL: d.tournament.image,
-                                                                name: d.tournament.name
+                                                                name: d.tournament.full_name!
                                                         })
                                                         .setField(`${emoji1} ${d.teams[0].name} <:versus:1349105624180330516> ${d.teams[1].name} ${emoji2}`, `<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`, true)
                                                         .setFooter({
@@ -268,7 +268,7 @@ const send_lol_tbd_matches = async (client: App) => {
                                 const channel = client.getChannel(match.channel) as TextChannel
                                 const embed = new EmbedBuilder()
                                         .setAuthor({
-                                                name: data.tournament.name,
+                                                name: data.tournament.full_name!,
                                                 iconURL: data.tournament.image
                                         })
                                         .setField(`${emoji1} ${data.teams[0].name} <:versus:1349105624180330516> ${data.teams[1].name} ${emoji2}`, `<t:${data.when / 1000}:F> | <t:${data.when / 1000}:R>`, true)

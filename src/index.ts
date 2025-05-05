@@ -8,7 +8,7 @@ import { emojis } from "./structures/util/emojis.js"
 import EmbedBuilder from "./structures/builders/EmbedBuilder.js"
 import ButtonBuilder from "./structures/builders/ButtonBuilder.js"
 import locales from "./locales/index.js"
-import { TextChannel } from "oceanic.js"
+import { TextChannel, URLButton } from "oceanic.js"
 
 export const client = new App({
         auth: "Bot " + process.env.BOT_TOKEN,
@@ -60,7 +60,7 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
                 }
         }, async (req) => {
                 if(!client.ready) {
-                        await client.restMode()
+                        await client.restMode(true)
                 }
                 const guilds = await Guild.find({
                         events: { $ne: [] }
@@ -160,7 +160,7 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
                 }
         }, async (req) => {
                 if(!client.ready) {
-                        await client.restMode()
+                        await client.restMode(true)
                 }
                 const guilds = await Guild.find({
                         valorant_livefeed_channel: { $exists: true },
@@ -218,7 +218,7 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
                 }
         }, async (req) => {
                 if(!client.ready) {
-                        await client.restMode()
+                        await client.restMode(true)
                 }
                 const guilds = await Guild.find({
                         valorant_news_channel: { $exists: true },
@@ -258,6 +258,7 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
                                         id: Type.String(),
                                         tournament: Type.Object({
                                                 name: Type.String(),
+                                                full_name: Type.String(),
                                                 image: Type.String()
                                         }),
                                         teams: Type.Union([
@@ -269,13 +270,22 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
                                                 ),
                                                 Type.Array(Type.Never())
                                         ]),
-                                        stage: Type.Optional(Type.String())
+                                        stage: Type.Optional(Type.String()),
+                                        streams: Type.Array(
+                                                Type.Object({
+                                                        main: Type.Boolean(),
+                                                        language: Type.String(),
+                                                        embed_url: Type.String(),
+                                                        official: Type.Boolean(),
+                                                        raw_url: Type.String()
+                                                })
+                                        )
                                 })
                         )
                 }
         }, async (req) => {
                 if(!client.ready) {
-                        await client.restMode()
+                        await client.restMode(true)
                 }
                 const guilds = await Guild.find({
                         lol_livefeed_channel: { $exists: true },
@@ -292,7 +302,7 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
                                 const emoji2 = emojis.find(e => e?.name === data.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
                                 const embed = new EmbedBuilder()
                                         .setAuthor({
-                                                name: data.tournament.name,
+                                                name: data.tournament.full_name,
                                                 iconURL: data.tournament.image
                                         })
                                         .setTitle(locales(guild.lang, "helper.live_now"))
@@ -300,9 +310,14 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
                                                 `${emoji1} ${data.teams[0].name} \`${data.teams[0].score}\` <:versus:1349105624180330516> \`${data.teams[1].score}\` ${data.teams[1].name} ${emoji2}`,
                                                 ""
                                         )
-                                        if(data.stage) embed.setFooter({ text: data.stage })
+                                if(data.stage) embed.setFooter({ text: data.stage })
+                                
+                                const button = new ButtonBuilder()
+                                .setStyle("blue")
+                                .setLabel(locales(guild.lang, "helper.streams"))
+                                .setCustomId(`stream;lol;${data.id}`)
 
-                                await channel.createMessage(embed.build())
+                                await channel.createMessage(embed.build(button.build()))
                         }
                 }
         })
@@ -319,7 +334,9 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
                                                 })
                                         ),
                                         tournament: Type.Object({
-                                                name: Type.String()
+                                                name: Type.String(),
+                                                full_name: Type.String(),
+                                                image: Type.String()
                                         }),
                                         stage: Type.String(),
                                         when: Type.Number()
@@ -328,7 +345,7 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
                 }
         }, async (req) => {
                 if(!client.ready) {
-                        await client.restMode()
+                        await client.restMode(true)
                 }
                 const guilds = await Guild.find({
                         events: { $ne: [] }
@@ -356,7 +373,7 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
                                                 const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
                                                 const embed = new EmbedBuilder()
                                                         .setAuthor({
-                                                                name: d.tournament.name,
+                                                                name: d.tournament.full_name!,
                                                                 iconURL: d.tournament.image
                                                         })
                                                         .setField(
