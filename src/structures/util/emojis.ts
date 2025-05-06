@@ -140,7 +140,8 @@ export const emojis = [
         },
         {
                 name: "los grandes",
-                emoji: "<:los_grandes:1349207881068838913>"
+                emoji: "<:los_grandes:1349207881068838913>",
+                aliases: ["los"]
         },
         {
                 name: "envy",
