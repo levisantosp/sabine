@@ -152,7 +152,7 @@ export const emojis = [
         },
         {
                 name: "shopify rebellion",
-                alises: ["shopify rebellion gold", "shopify rebellion black"],
+                aliases: ["shopify rebellion gold", "shopify rebellion black"],
                 emoji: "<:shopify:1349208960699203735>"
         },
         {
