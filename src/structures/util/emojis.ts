@@ -1,4 +1,10 @@
-export const emojis = [
+export type Emoji = {
+        name?: string
+        aliases?: string[]
+        emoji: string
+}
+
+export const emojis: Emoji[] = [
         // DEFAULT TEAM EMOJIS
         {
                 emoji: "<:valorant_team:1349065037880365057>"
