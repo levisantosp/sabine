@@ -97,7 +97,7 @@ export default createListener({
                                                 })
                                         },
                                         lol: async () => {
-                                                if(user.lol_predictions.find(p => p.match === args[2])) {
+                                                if(user.lol_predictions.find(p => p.match.toString() === args[2])) {
                                                         return await i.createMessage({
                                                                 content: locales(user.lang ?? guild.lang, "helper.replied"),
                                                                 flags: 64
