@@ -165,7 +165,8 @@ export const emojis = [
         },
         {
                 name: "vivo keyd stars",
-                emoji: "<:keyd:1366545502354804796>"
+                emoji: "<:keyd:1366545502354804796>",
+                aliases: ["vivo keyd stars academy"]
         },
         {
                 name: "pain gaming",
