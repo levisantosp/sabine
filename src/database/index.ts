@@ -45,7 +45,7 @@ export class User extends UserSchema {
                         const upperCaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                         const lowerCaseLetters = "abcdefghijklmnopqrstuvwxyz"
                         const digits = "0123456789"
-                        for (const char of pattern) {
+                        for(const char of pattern) {
                                 if(char === "@") {
                                         keyId += upperCaseLetters.charAt(Math.floor(Math.random() * upperCaseLetters.length))
                                 }

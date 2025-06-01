@@ -23,7 +23,7 @@ export default createListener({
                                 return locales(user.lang ?? guild.lang, content, args)
                         }
                         let args: string[] = i.data.options.getSubCommand() ?? []
-                        for (const option of i.data.options.getOptions()) {
+                        for(const option of i.data.options.getOptions()) {
                                 args.push(option.value.toString())
                         }
                         command.createAutocompleteInteraction({ i, locale, client, args })
