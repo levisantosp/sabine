@@ -66,45 +66,45 @@ export default createCommand({
     "predictions valorant 5"
   ],
   async run({ ctx, locale }) {
-    if(ctx.args[0] === "valorant") {
-      if(!ctx.db.user.valorant_predictions.length) {
-        ctx.reply("commands.predictions.no_predictions");
-        return;
+    if (ctx.args[0] === "valorant") {
+      if (!ctx.db.user.valorant_predictions.length) {
+        ctx.reply("commands.predictions.no_predictions")
+        return
       }
-      let preds = ctx.db.user.valorant_predictions.reverse();
-      let page = !ctx.args[1] ? 1 : Number(ctx.args[1]);
-      let pages = Math.ceil(ctx.db.user.valorant_predictions.length / 5);
-      if(page === 1) preds = preds.slice(0, 5);
-      else preds = preds.slice(page * 5 - 5, page * 5);
-      if(!preds.length) {
-        ctx.reply("commands.predictions.no_pages");
-        return;
+      let preds = ctx.db.user.valorant_predictions.reverse()
+      let page = !ctx.args[1] ? 1 : Number(ctx.args[1])
+      let pages = Math.ceil(ctx.db.user.valorant_predictions.length / 5)
+      if (page === 1) preds = preds.slice(0, 5)
+      else preds = preds.slice(page * 5 - 5, page * 5)
+      if (!preds.length) {
+        ctx.reply("commands.predictions.no_pages")
+        return
       }
       const embed = new EmbedBuilder()
-      .setAuthor({
-        name: locale("commands.predictions.embed.author"),
-        iconURL: ctx.interaction.user.avatarURL()
-      })
-      .setDesc(locale("commands.predictions.embed.desc", {
-        correct: ctx.db.user.correct_predictions,
-        wrong: ctx.db.user.wrong_predictions,
-        t: ctx.db.user.valorant_predictions.length
-      }))
-      .setFooter({
-        text: locale("commands.predictions.embed.footer", {
-          p1: isNaN(page) ? 1 : page,
-          p2: pages
+        .setAuthor({
+          name: locale("commands.predictions.embed.author"),
+          iconURL: ctx.interaction.user.avatarURL()
         })
-      });
-      for(const prediction of preds) {
-        let status: string;
-        if(prediction.status === "correct") {
+        .setDesc(locale("commands.predictions.embed.desc", {
+          correct: ctx.db.user.correct_predictions,
+          wrong: ctx.db.user.wrong_predictions,
+          t: ctx.db.user.valorant_predictions.length
+        }))
+        .setFooter({
+          text: locale("commands.predictions.embed.footer", {
+            p1: isNaN(page) ? 1 : page,
+            p2: pages
+          })
+        })
+      for (const prediction of preds) {
+        let status: string
+        if (prediction.status === "correct") {
           status = "\nStatus: <:success:1300882212190945292>"
         }
-        else if(prediction.status === "wrong") {
+        else if (prediction.status === "wrong") {
           status = "\nStatus: <:error:1300882259078938685>"
         }
-        else if(prediction.status === "pending") {
+        else if (prediction.status === "pending") {
           status = "\nStatus: <a:carregando:809221866434199634>"
         }
         else status = ""
@@ -112,18 +112,18 @@ export default createCommand({
           score1: prediction.teams[0].score,
           score2: prediction.teams[1].score,
           link: `https://www.vlr.gg/${prediction.match}`
-        }) + status);
+        }) + status)
       }
       const previous = new ButtonBuilder()
-      .setEmoji("◀️")
-      .setCustomId(`predictions;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;valorant`)
-      .setStyle("gray");
+        .setEmoji("◀️")
+        .setCustomId(`predictions;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;valorant`)
+        .setStyle("gray")
       const next = new ButtonBuilder()
-      .setEmoji("▶")
-      .setCustomId(`predictions;${ctx.interaction.user.id};${page + 1 > pages ? pages : page + 1};next;valorant`)
-      .setStyle("gray");
-      if(page <= 1) previous.setDisabled();
-      if(page >= pages) next.setDisabled();
+        .setEmoji("▶")
+        .setCustomId(`predictions;${ctx.interaction.user.id};${page + 1 > pages ? pages : page + 1};next;valorant`)
+        .setStyle("gray")
+      if (page <= 1) previous.setDisabled()
+      if (page >= pages) next.setDisabled()
       ctx.reply(embed.build({
         components: [
           {
@@ -131,47 +131,47 @@ export default createCommand({
             components: [previous, next]
           }
         ]
-      }));
+      }))
     }
     else {
-      if(!ctx.db.user.lol_predictions.length) {
-        ctx.reply("commands.predictions.no_predictions");
-        return;
+      if (!ctx.db.user.lol_predictions.length) {
+        ctx.reply("commands.predictions.no_predictions")
+        return
       }
-      let preds = ctx.db.user.lol_predictions.reverse();
-      let page = !ctx.args[1] ? 1 : Number(ctx.args[1]);
-      let pages = Math.ceil(ctx.db.user.lol_predictions.length / 5);
-      if(page === 1) preds = preds.slice(0, 5);
-      else preds = preds.slice(page * 5 - 5, page * 5);
-      if(!preds.length) {
-        ctx.reply("commands.predictions.no_pages");
-        return;
+      let preds = ctx.db.user.lol_predictions.reverse()
+      let page = !ctx.args[1] ? 1 : Number(ctx.args[1])
+      let pages = Math.ceil(ctx.db.user.lol_predictions.length / 5)
+      if (page === 1) preds = preds.slice(0, 5)
+      else preds = preds.slice(page * 5 - 5, page * 5)
+      if (!preds.length) {
+        ctx.reply("commands.predictions.no_pages")
+        return
       }
       const embed = new EmbedBuilder()
-      .setAuthor({
-        name: locale("commands.predictions.embed.author"),
-        iconURL: ctx.interaction.user.avatarURL()
-      })
-      .setDesc(locale("commands.predictions.embed.desc", {
-        correct: ctx.db.user.correct_predictions,
-        wrong: ctx.db.user.wrong_predictions,
-        t: ctx.db.user.lol_predictions.length
-      }))
-      .setFooter({
-        text: locale("commands.predictions.embed.footer", {
-          p1: isNaN(page) ? 1 : page,
-          p2: pages
+        .setAuthor({
+          name: locale("commands.predictions.embed.author"),
+          iconURL: ctx.interaction.user.avatarURL()
         })
-      });
-      for(const prediction of preds) {
-        let status: string;
-        if(prediction.status === "correct") {
+        .setDesc(locale("commands.predictions.embed.desc", {
+          correct: ctx.db.user.correct_predictions,
+          wrong: ctx.db.user.wrong_predictions,
+          t: ctx.db.user.lol_predictions.length
+        }))
+        .setFooter({
+          text: locale("commands.predictions.embed.footer", {
+            p1: isNaN(page) ? 1 : page,
+            p2: pages
+          })
+        })
+      for (const prediction of preds) {
+        let status: string
+        if (prediction.status === "correct") {
           status = "\nStatus: <:success:1300882212190945292>"
         }
-        else if(prediction.status === "wrong") {
+        else if (prediction.status === "wrong") {
           status = "\nStatus: <:error:1300882259078938685>"
         }
-        else if(prediction.status === "pending") {
+        else if (prediction.status === "pending") {
           status = "\nStatus: <a:carregando:809221866434199634>"
         }
         else status = ""
@@ -179,18 +179,18 @@ export default createCommand({
           score1: prediction.teams[0].score,
           score2: prediction.teams[1].score,
           link: `https://loltv.gg/match/${prediction.match}`
-        }) + status);
+        }) + status)
       }
       const previous = new ButtonBuilder()
-      .setEmoji("◀️")
-      .setCustomId(`predictions;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;lol`)
-      .setStyle("gray");
+        .setEmoji("◀️")
+        .setCustomId(`predictions;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;lol`)
+        .setStyle("gray")
       const next = new ButtonBuilder()
-      .setEmoji("▶")
-      .setCustomId(`predictions;${ctx.interaction.user.id};${page + 1 > pages ? pages : page + 1};next;lol`)
-      .setStyle("gray");
-      if(page <= 1) previous.setDisabled();
-      if(page >= pages) next.setDisabled();
+        .setEmoji("▶")
+        .setCustomId(`predictions;${ctx.interaction.user.id};${page + 1 > pages ? pages : page + 1};next;lol`)
+        .setStyle("gray")
+      if (page <= 1) previous.setDisabled()
+      if (page >= pages) next.setDisabled()
       ctx.reply(embed.build({
         components: [
           {
@@ -198,49 +198,49 @@ export default createCommand({
             components: [previous, next]
           }
         ]
-      }));
+      }))
     }
   },
   async createInteraction({ ctx, locale }) {
-    if(ctx.args[4] === "valorant") {
-      await(ctx.interaction as ComponentInteraction).deferUpdate();
-      if(!ctx.db.user.valorant_predictions.length) {
-        ctx.reply("commands.predictions.no_predictions");
-        return;
+    if (ctx.args[4] === "valorant") {
+      await (ctx.interaction as ComponentInteraction).deferUpdate()
+      if (!ctx.db.user.valorant_predictions.length) {
+        ctx.reply("commands.predictions.no_predictions")
+        return
       }
-      let preds = ctx.db.user.valorant_predictions.reverse();
-      let page = Number(ctx.args[2]);
-      let pages = Math.ceil(ctx.db.user.valorant_predictions.length / 5);
-      preds = preds.slice(page * 5 - 5, page * 5);
-      if(!preds.length) {
-        ctx.reply("commands.predictions.no_pages");
-        return;
+      let preds = ctx.db.user.valorant_predictions.reverse()
+      let page = Number(ctx.args[2])
+      let pages = Math.ceil(ctx.db.user.valorant_predictions.length / 5)
+      preds = preds.slice(page * 5 - 5, page * 5)
+      if (!preds.length) {
+        ctx.reply("commands.predictions.no_pages")
+        return
       }
       const embed = new EmbedBuilder()
-      .setAuthor({
-        name: locale("commands.predictions.embed.author"),
-        iconURL: ctx.interaction.user.avatarURL()
-      })
-      .setDesc(locale("commands.predictions.embed.desc", {
-        correct: ctx.db.user.correct_predictions,
-        wrong: ctx.db.user.wrong_predictions,
-        t: ctx.db.user.valorant_predictions.length
-      }))
-      .setFooter({
-        text: locale("commands.predictions.embed.footer", {
-          p1: isNaN(page) ? 1 : page,
-          p2: pages
+        .setAuthor({
+          name: locale("commands.predictions.embed.author"),
+          iconURL: ctx.interaction.user.avatarURL()
         })
-      });
-      for(const prediction of preds) {
-        let status: string;
-        if(prediction.status === "correct") {
+        .setDesc(locale("commands.predictions.embed.desc", {
+          correct: ctx.db.user.correct_predictions,
+          wrong: ctx.db.user.wrong_predictions,
+          t: ctx.db.user.valorant_predictions.length
+        }))
+        .setFooter({
+          text: locale("commands.predictions.embed.footer", {
+            p1: isNaN(page) ? 1 : page,
+            p2: pages
+          })
+        })
+      for (const prediction of preds) {
+        let status: string
+        if (prediction.status === "correct") {
           status = "\nStatus: <:success:1300882212190945292>"
         }
-        else if(prediction.status === "wrong") {
+        else if (prediction.status === "wrong") {
           status = "\nStatus: <:error:1300882259078938685>"
         }
-        else if(prediction.status === "pending") {
+        else if (prediction.status === "pending") {
           status = "\nStatus: <a:carregando:809221866434199634>"
         }
         else status = ""
@@ -248,18 +248,18 @@ export default createCommand({
           score1: prediction.teams[0].score,
           score2: prediction.teams[1].score,
           link: `https://www.vlr.gg/${prediction.match}`
-        }) + status);
+        }) + status)
       }
       const previous = new ButtonBuilder()
-      .setEmoji("◀️")
-      .setStyle("gray")
-      .setCustomId(`${ctx.args[0]};${ctx.args[1]};${page - 1};previous;valorant`)
+        .setEmoji("◀️")
+        .setStyle("gray")
+        .setCustomId(`${ctx.args[0]};${ctx.args[1]};${page - 1};previous;valorant`)
       const next = new ButtonBuilder()
-      .setEmoji("▶")
-      .setStyle("gray")
-      .setCustomId(`${ctx.args[0]};${ctx.args[1]};${page + 1};next;valorant`)
-      if(page <= 1) previous.setDisabled();
-      if(page >= pages) next.setDisabled();
+        .setEmoji("▶")
+        .setStyle("gray")
+        .setCustomId(`${ctx.args[0]};${ctx.args[1]};${page + 1};next;valorant`)
+      if (page <= 1) previous.setDisabled()
+      if (page >= pages) next.setDisabled()
       ctx.edit(embed.build({
         components: [
           {
@@ -267,66 +267,66 @@ export default createCommand({
             components: [previous, next]
           }
         ]
-      }));
+      }))
     }
     else {
-      await(ctx.interaction as ComponentInteraction).deferUpdate();
-      if(!ctx.db.user.lol_predictions.length) {
-        ctx.reply("commands.predictions.no_predictions");
-        return;
+      await (ctx.interaction as ComponentInteraction).deferUpdate()
+      if (!ctx.db.user.lol_predictions.length) {
+        ctx.reply("commands.predictions.no_predictions")
+        return
       }
-      let preds = ctx.db.user.lol_predictions.reverse();
-      let page = Number(ctx.args[2]);
-      let pages = Math.ceil(ctx.db.user.lol_predictions.length / 5);
-      preds = preds.slice(page * 5 - 5, page * 5);
-      if(!preds.length) {
-        ctx.reply("commands.predictions.no_pages");
-        return;
+      let preds = ctx.db.user.lol_predictions.reverse()
+      let page = Number(ctx.args[2])
+      let pages = Math.ceil(ctx.db.user.lol_predictions.length / 5)
+      preds = preds.slice(page * 5 - 5, page * 5)
+      if (!preds.length) {
+        ctx.reply("commands.predictions.no_pages")
+        return
       }
       const embed = new EmbedBuilder()
-      .setAuthor({
-        name: locale("commands.predictions.embed.author"),
-        iconURL: ctx.interaction.user.avatarURL()
-      })
-      .setDesc(locale("commands.predictions.embed.desc", {
-        correct: ctx.db.user.correct_predictions,
-        wrong: ctx.db.user.wrong_predictions,
-        t: ctx.db.user.lol_predictions.length
-      }))
-      .setFooter({
-        text: locale("commands.predictions.embed.footer", {
-          p1: isNaN(page) ? 1 : page,
-          p2: pages
+        .setAuthor({
+          name: locale("commands.predictions.embed.author"),
+          iconURL: ctx.interaction.user.avatarURL()
         })
-      });
-      for(const prediction of preds) {
-        let status: string;
-        if(prediction.status === "correct") {
+        .setDesc(locale("commands.predictions.embed.desc", {
+          correct: ctx.db.user.correct_predictions,
+          wrong: ctx.db.user.wrong_predictions,
+          t: ctx.db.user.lol_predictions.length
+        }))
+        .setFooter({
+          text: locale("commands.predictions.embed.footer", {
+            p1: isNaN(page) ? 1 : page,
+            p2: pages
+          })
+        })
+      for (const prediction of preds) {
+        let status: string
+        if (prediction.status === "correct") {
           status = "\nStatus: <:success:1300882212190945292>"
         }
-        else if(prediction.status === "wrong") {
+        else if (prediction.status === "wrong") {
           status = "\nStatus: <:error:1300882259078938685>"
         }
-        else if(prediction.status === "pending") {
+        else if (prediction.status === "pending") {
           status = "\nStatus: <a:carregando:809221866434199634>"
         }
         else status = ""
-        if(prediction) embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name}`, locale("commands.predictions.embed.field", {
+        if (prediction) embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name}`, locale("commands.predictions.embed.field", {
           score1: prediction.teams[0].score,
           score2: prediction.teams[1].score,
           link: `https://www.loltv.gg/match/${prediction.match}`
-        }) + status);
+        }) + status)
       }
       const previous = new ButtonBuilder()
-      .setEmoji("◀️")
-      .setStyle("gray")
-      .setCustomId(`${ctx.args[0]};${ctx.args[1]};${page - 1};previous;lol`)
+        .setEmoji("◀️")
+        .setStyle("gray")
+        .setCustomId(`${ctx.args[0]};${ctx.args[1]};${page - 1};previous;lol`)
       const next = new ButtonBuilder()
-      .setEmoji("▶")
-      .setStyle("gray")
-      .setCustomId(`${ctx.args[0]};${ctx.args[1]};${page + 1};next;lol`)
-      if(page <= 1) previous.setDisabled();
-      if(page >= pages) next.setDisabled();
+        .setEmoji("▶")
+        .setStyle("gray")
+        .setCustomId(`${ctx.args[0]};${ctx.args[1]};${page + 1};next;lol`)
+      if (page <= 1) previous.setDisabled()
+      if (page >= pages) next.setDisabled()
       ctx.edit(embed.build({
         components: [
           {
@@ -334,7 +334,7 @@ export default createCommand({
             components: [previous, next]
           }
         ]
-      }));
+      }))
     }
   }
-});
+})

@@ -5,10 +5,10 @@ import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
 import { fileURLToPath } from "url"
 import path from "path"
 import { readFileSync } from "fs"
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const pkgFile = path.resolve(__dirname, "../../package.json");
-const pkg = JSON.parse(readFileSync(pkgFile, "utf-8"));
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const pkgFile = path.resolve(__dirname, "../../package.json")
+const pkg = JSON.parse(readFileSync(pkgFile, "utf-8"))
 
 export default createCommand({
   name: "info",
@@ -17,46 +17,46 @@ export default createCommand({
     "pt-BR": "Mostra as informações do bot"
   },
   async run({ ctx, client, locale }) {
-    const creator = client.users.get("441932495693414410")!;
+    const creator = client.users.get("441932495693414410")!
     const embed = new EmbedBuilder()
-    .setAuthor({
-      name: client.user.username,
-      iconURL: client.user.avatarURL()
-    })
-    .setThumb(creator.avatarURL())
-    .setTitle(locale("commands.info.embed.title"))
-    .setFields(
-      {
-        name: "Patch",
-        value: pkg.version,
-        inline: true
-      },
-      {
-        name: locale("commands.info.lib"),
-        value: "[oceanic.js](https://oceanic.ws/)",
-        inline: true
-      },
-      {
-        name: locale("commands.info.creator"),
-        value: creator.tag,
-        inline: true
-      },
-      {
-        name: locale("commands.info.guilds"),
-        value: client.guilds.size.toString(),
-        inline: true
-      },
-      {
-        name: locale("commands.info.users"),
-        value: client.users.filter(user => !user.bot).length.toString(),
-        inline: true
-      },
-      {
-        name: "Client",
-        value: `Shards: \`${client.shards.size}\`\nShard ID: \`${ctx.guild.shard.id}\`\nShard Uptime: \`${ms(client.uptime, { language: ctx.db.user.lang ?? ctx.db.guild.lang, round: true })}\`\nClient Uptime: \`${ms(Date.now() - client._uptime, { language: ctx.db.user.lang ?? ctx.db.guild.lang, round: true })}\``,
-        inline: true
-      }
-    );
+      .setAuthor({
+        name: client.user.username,
+        iconURL: client.user.avatarURL()
+      })
+      .setThumb(creator.avatarURL())
+      .setTitle(locale("commands.info.embed.title"))
+      .setFields(
+        {
+          name: "Patch",
+          value: pkg.version,
+          inline: true
+        },
+        {
+          name: locale("commands.info.lib"),
+          value: "[oceanic.js](https://oceanic.ws/)",
+          inline: true
+        },
+        {
+          name: locale("commands.info.creator"),
+          value: creator.tag,
+          inline: true
+        },
+        {
+          name: locale("commands.info.guilds"),
+          value: client.guilds.size.toString(),
+          inline: true
+        },
+        {
+          name: locale("commands.info.users"),
+          value: client.users.filter(user => !user.bot).length.toString(),
+          inline: true
+        },
+        {
+          name: "Client",
+          value: `Shards: \`${client.shards.size}\`\nShard ID: \`${ctx.guild.shard.id}\`\nShard Uptime: \`${ms(client.uptime, { language: ctx.db.user.lang ?? ctx.db.guild.lang, round: true })}\`\nClient Uptime: \`${ms(Date.now() - client._uptime, { language: ctx.db.user.lang ?? ctx.db.guild.lang, round: true })}\``,
+          inline: true
+        }
+      )
     ctx.reply(embed.build(
       {
         components: [
@@ -64,17 +64,17 @@ export default createCommand({
             type: 1,
             components: [
               new ButtonBuilder()
-              .setLabel(locale("commands.help.community"))
-              .setStyle("link")
-              .setURL("https://discord.gg/g5nmc376yh"),
+                .setLabel(locale("commands.help.community"))
+                .setStyle("link")
+                .setURL("https://discord.gg/g5nmc376yh"),
               new ButtonBuilder()
-              .setLabel(locale("commands.info.invite"))
-              .setStyle("link")
-              .setURL("https://discord.com/oauth2/authorize?client_id=1235576817683922954&scope=bot&permissions=388096")
+                .setLabel(locale("commands.info.invite"))
+                .setStyle("link")
+                .setURL("https://discord.com/oauth2/authorize?client_id=1235576817683922954&scope=bot&permissions=388096")
             ]
           }
         ]
       }
     ))
   }
-});
+})

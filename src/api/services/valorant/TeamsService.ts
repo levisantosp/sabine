@@ -6,15 +6,15 @@ export default class TeamsService {
       headers: {
         authorization: auth
       }
-    })).json();
-    return data as TeamsData[];
+    })).json()
+    return data as TeamsData[]
   }
   public static async getById(auth: string, id: string | number) {
     const data = await (await fetch(process.env.API_URL + "/teams/valorant?id=" + id, {
       headers: {
         authorization: auth
       }
-    })).json();
-    return data as TeamData;
+    })).json()
+    return data as TeamData
   }
 }

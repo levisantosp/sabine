@@ -39,18 +39,18 @@ export default createCommand({
     "language pt-BR"
   ],
   async run({ ctx }) {
-    switch(ctx.args[0]) {
+    switch (ctx.args[0]) {
       case "pt": {
         ctx.db.user.lang = "pt"
-        await ctx.db.user.save();
-        ctx.reply("Agora eu irei interagir em português com você!");
+        await ctx.db.user.save()
+        ctx.reply("Agora eu irei interagir em português com você!")
       }
-      break;
+        break
       case "en": {
         ctx.db.user.lang = "en"
-        await ctx.db.user.save();
-        ctx.reply("Now I will interact in english with you!");
+        await ctx.db.user.save()
+        ctx.reply("Now I will interact in english with you!")
       }
     }
   }
-});
+})

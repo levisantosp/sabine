@@ -6,7 +6,7 @@ export default class ResultsService {
       headers: {
         authorization: auth
       }
-    })).json();
-    return data as ResultsData[];
+    })).json()
+    return data as ResultsData[]
   }
 }

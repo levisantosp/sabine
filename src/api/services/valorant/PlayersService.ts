@@ -6,15 +6,15 @@ export default class PlayersService {
       headers: {
         authorization: auth
       }
-    })).json();
-    return data as PlayersData[];
+    })).json()
+    return data as PlayersData[]
   }
   public static async getById(auth: string, id: string | number) {
     const data = await (await fetch(process.env.API_URL + "/players/valorant?id=" + id, {
       headers: {
         authorization: auth
       }
-    })).json();
-    return data as PlayerData;
+    })).json()
+    return data as PlayerData
   }
 }

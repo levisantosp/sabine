@@ -6,7 +6,7 @@ export default class MatchesService {
       headers: {
         authorization: auth
       }
-    })).json();
-    return data as MatchesData[];
+    })).json()
+    return data as MatchesData[]
   }
 }

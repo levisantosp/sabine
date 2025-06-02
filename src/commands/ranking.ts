@@ -65,61 +65,61 @@ export default createCommand({
   ],
   isThinking: true,
   async run({ ctx, locale, client }) {
-    if(ctx.args[0] === "local") {
+    if (ctx.args[0] === "local") {
       let users = (await User.find({
         correct_predictions: {
           $gt: 0
         }
-      }) as UserSchemaInterface[]).filter(user => ctx.guild.members.get(user.id)).sort((a, b) => b.correct_predictions - a.correct_predictions);
-      let array = users;
-      let page = Number(ctx.args[1]);
-      if(!page || page === 1 || isNaN(page)) {
-        users = users.slice(0, 10);
-        page = 1;
+      }) as UserSchemaInterface[]).filter(user => ctx.guild.members.get(user.id)).sort((a, b) => b.correct_predictions - a.correct_predictions)
+      let array = users
+      let page = Number(ctx.args[1])
+      if (!page || page === 1 || isNaN(page)) {
+        users = users.slice(0, 10)
+        page = 1
       }
-      else users = users.slice(page * 10 - 10, page * 10);
-      if(!users.length) {
-        ctx.reply("commands.ranking.no_users");
-        return;
+      else users = users.slice(page * 10 - 10, page * 10)
+      if (!users.length) {
+        ctx.reply("commands.ranking.no_users")
+        return
       }
       const embed = new EmbedBuilder()
-      .setAuthor({
-        name: locale("commands.ranking.author", {
-          page,
-          pages: Math.ceil(array.length / 10)
+        .setAuthor({
+          name: locale("commands.ranking.author", {
+            page,
+            pages: Math.ceil(array.length / 10)
+          })
         })
-      })
-      .setTitle(locale("commands.ranking.title"))
-      .setThumb((await client.rest.users.get(array[0].id!))?.avatarURL()!);
-  
-      let pos = 0;
-      if(!isNaN(page) && page > 1) pos = page * 10 - 10;
-      for(const user of users) {
-        pos++;
-        const u = client.users.get(user.id);
-        let field =  `${pos} - ${!u ? "*unknown*" : u.username}`
-        if(pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
-        if(pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
-        if(pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
+        .setTitle(locale("commands.ranking.title"))
+        .setThumb((await client.rest.users.get(array[0].id!))?.avatarURL()!)
+
+      let pos = 0
+      if (!isNaN(page) && page > 1) pos = page * 10 - 10
+      for (const user of users) {
+        pos++
+        const u = client.users.get(user.id)
+        let field = `${pos} - ${!u ? "*unknown*" : u.username}`
+        if (pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
+        if (pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
+        if (pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
         embed.addField(field, locale("commands.ranking.field", {
           t: user.correct_predictions
-        }));
+        }))
       }
       embed.setFooter({
         text: locale("commands.ranking.footer", {
           pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
         })
-      });
+      })
       const previous = new ButtonBuilder()
-      .setEmoji("◀️")
-      .setCustomId(`ranking;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;local`)
-      .setStyle("gray");
+        .setEmoji("◀️")
+        .setCustomId(`ranking;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;local`)
+        .setStyle("gray")
       const next = new ButtonBuilder()
-      .setEmoji("▶")
-      .setCustomId(`ranking;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;local`)
-      .setStyle("gray");
-      if(page <= 1) previous.setDisabled();
-      if(page >= Math.ceil(array.length / 10)) next.setDisabled();
+        .setEmoji("▶")
+        .setCustomId(`ranking;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;local`)
+        .setStyle("gray")
+      if (page <= 1) previous.setDisabled()
+      if (page >= Math.ceil(array.length / 10)) next.setDisabled()
       ctx.reply(embed.build({
         components: [
           {
@@ -127,63 +127,63 @@ export default createCommand({
             components: [previous, next]
           }
         ]
-      }));
+      }))
     }
     else {
       let users = (await User.find({
         correct_predictions: {
           $gt: 0
         }
-      }) as UserSchemaInterface[]).sort((a, b) => b.correct_predictions - a.correct_predictions);
-      let array = users;
-      let page = Number(ctx.args[1]);
-      if(!page || page === 1 || isNaN(page)) {
-        users = users.slice(0, 10);
-        page = 1;
+      }) as UserSchemaInterface[]).sort((a, b) => b.correct_predictions - a.correct_predictions)
+      let array = users
+      let page = Number(ctx.args[1])
+      if (!page || page === 1 || isNaN(page)) {
+        users = users.slice(0, 10)
+        page = 1
       }
-      else users = users.slice(page * 10 - 10, page * 10);
-      if(!users.length) {
-        ctx.reply("commands.ranking.no_users");
-        return;
+      else users = users.slice(page * 10 - 10, page * 10)
+      if (!users.length) {
+        ctx.reply("commands.ranking.no_users")
+        return
       }
       const embed = new EmbedBuilder()
-      .setAuthor({
-        name: locale("commands.ranking.author", {
-          page,
-          pages: Math.ceil(array.length / 10)
+        .setAuthor({
+          name: locale("commands.ranking.author", {
+            page,
+            pages: Math.ceil(array.length / 10)
+          })
         })
-      })
-      .setTitle(locale("commands.ranking.title"))
-      .setThumb((await client.rest.users.get(array[0].id!))?.avatarURL());
-  
-      let pos = 0;
-      if(!isNaN(page) && page > 1) pos = page * 10 - 10;
-      for(const user of users) {
-        pos++;
+        .setTitle(locale("commands.ranking.title"))
+        .setThumb((await client.rest.users.get(array[0].id!))?.avatarURL())
+
+      let pos = 0
+      if (!isNaN(page) && page > 1) pos = page * 10 - 10
+      for (const user of users) {
+        pos++
         const u = client.users.get(user.id)
         let field = `${pos} - ${!u ? "*unknown*" : u.username}`
-        if(pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
-        if(pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
-        if(pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
+        if (pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
+        if (pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
+        if (pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
         embed.addField(field, locale("commands.ranking.field", {
           t: user.correct_predictions
-        }));
+        }))
       }
       embed.setFooter({
         text: locale("commands.ranking.footer", {
           pos: array.findIndex((user) => user.id === ctx.interaction.user.id) + 1
         })
-      });
+      })
       const previous = new ButtonBuilder()
-      .setEmoji("◀️")
-      .setCustomId(`ranking;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous`)
-      .setStyle("gray");
+        .setEmoji("◀️")
+        .setCustomId(`ranking;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous`)
+        .setStyle("gray")
       const next = new ButtonBuilder()
-      .setEmoji("▶")
-      .setCustomId(`ranking;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next`)
-      .setStyle("gray");
-      if(page <= 1) previous.setDisabled();
-      if(page >= Math.ceil(array.length / 10)) next.setDisabled();
+        .setEmoji("▶")
+        .setCustomId(`ranking;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next`)
+        .setStyle("gray")
+      if (page <= 1) previous.setDisabled()
+      if (page >= Math.ceil(array.length / 10)) next.setDisabled()
       ctx.reply(embed.build({
         components: [
           {
@@ -191,63 +191,63 @@ export default createCommand({
             components: [previous, next]
           }
         ]
-      }));
+      }))
     }
   },
   async createInteraction({ ctx, locale, client }) {
-    await (ctx.interaction as ComponentInteraction).deferUpdate();
-    if(ctx.args[4] === "local") {
+    await (ctx.interaction as ComponentInteraction).deferUpdate()
+    if (ctx.args[4] === "local") {
       let users = (await User.find({
         correct_predictions: {
           $gt: 0
         }
-      }) as UserSchemaInterface[]).filter(user => ctx.guild.members.get(user.id)).sort((a, b) => b.correct_predictions - a.correct_predictions);
-      let array = users;
-      let page = Number(ctx.args[2]);
-      let pages = Math.ceil(array.length / 10);
-      users = users.slice(page * 10 - 10, page * 10);
-      if(!users.length) {
-        ctx.reply("commands.ranking.no_users");
-        return;
+      }) as UserSchemaInterface[]).filter(user => ctx.guild.members.get(user.id)).sort((a, b) => b.correct_predictions - a.correct_predictions)
+      let array = users
+      let page = Number(ctx.args[2])
+      let pages = Math.ceil(array.length / 10)
+      users = users.slice(page * 10 - 10, page * 10)
+      if (!users.length) {
+        ctx.reply("commands.ranking.no_users")
+        return
       }
       const embed = new EmbedBuilder()
-      .setAuthor({
-        name: locale("commands.ranking.author", {
-          page,
-          pages: Math.ceil(array.length / 10)
+        .setAuthor({
+          name: locale("commands.ranking.author", {
+            page,
+            pages: Math.ceil(array.length / 10)
+          })
         })
-      })
-      .setTitle(locale("commands.ranking.title"))
-      .setThumb((await client.rest.users.get(array[0].id!))?.avatarURL()!);
-  
-      let pos = 0;
-      if(!isNaN(page) && page > 1) pos = page * 10 - 10;
-      for(const user of users) {
-        pos++;
-        const u = client.users.get(user.id);
-        let field =  `${pos} - ${!u ? "*unknown*" : u.username}`
-        if(pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
-        if(pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
-        if(pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
+        .setTitle(locale("commands.ranking.title"))
+        .setThumb((await client.rest.users.get(array[0].id!))?.avatarURL()!)
+
+      let pos = 0
+      if (!isNaN(page) && page > 1) pos = page * 10 - 10
+      for (const user of users) {
+        pos++
+        const u = client.users.get(user.id)
+        let field = `${pos} - ${!u ? "*unknown*" : u.username}`
+        if (pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
+        if (pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
+        if (pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
         embed.addField(field, locale("commands.ranking.field", {
           t: user.correct_predictions
-        }));
+        }))
       }
       embed.setFooter({
         text: locale("commands.ranking.footer", {
           pos: array.findIndex((user) => user.id === ctx.interaction.user.id) + 1
         })
-      });
+      })
       const previous = new ButtonBuilder()
-      .setEmoji("◀️")
-      .setCustomId(`ranking;${ctx.interaction.user.id};${page - 1};previous;local`)
-      .setStyle("gray");
+        .setEmoji("◀️")
+        .setCustomId(`ranking;${ctx.interaction.user.id};${page - 1};previous;local`)
+        .setStyle("gray")
       const next = new ButtonBuilder()
-      .setEmoji("▶")
-      .setCustomId(`ranking;${ctx.interaction.user.id};${page + 1};next;local`)
-      .setStyle("gray");
-      if(page <= 1) previous.setDisabled();
-      if(page >= pages) next.setDisabled();
+        .setEmoji("▶")
+        .setCustomId(`ranking;${ctx.interaction.user.id};${page + 1};next;local`)
+        .setStyle("gray")
+      if (page <= 1) previous.setDisabled()
+      if (page >= pages) next.setDisabled()
       ctx.edit(embed.build({
         components: [
           {
@@ -255,60 +255,60 @@ export default createCommand({
             components: [previous, next]
           }
         ]
-      }));
+      }))
     }
     else {
       let users = (await User.find({
         correct_predictions: {
           $gt: 0
         }
-      }) as UserSchemaInterface[]).sort((a, b) => b.correct_predictions - a.correct_predictions);
-      let array = users;
-      let page = Number(ctx.args[2]);
-      let pages = Math.ceil(array.length / 10);
-      users = users.slice(page * 10 - 10, page * 10);
-      if(!users.length) {
-        ctx.reply("commands.ranking.no_users");
-        return;
+      }) as UserSchemaInterface[]).sort((a, b) => b.correct_predictions - a.correct_predictions)
+      let array = users
+      let page = Number(ctx.args[2])
+      let pages = Math.ceil(array.length / 10)
+      users = users.slice(page * 10 - 10, page * 10)
+      if (!users.length) {
+        ctx.reply("commands.ranking.no_users")
+        return
       }
       const embed = new EmbedBuilder()
-      .setAuthor({
-        name: locale("commands.ranking.author", {
-          page,
-          pages: Math.ceil(array.length / 10)
+        .setAuthor({
+          name: locale("commands.ranking.author", {
+            page,
+            pages: Math.ceil(array.length / 10)
+          })
         })
-      })
-      .setTitle(locale("commands.ranking.title"))
-      .setThumb((await client.rest.users.get(array[0].id!))?.avatarURL()!);
-  
-      let pos = 0;
-      if(!isNaN(page) && page > 1) pos = page * 10 - 10;
-      for(const user of users) {
-        pos++;
-        const u = client.users.get(user.id);
-        let field =  `${pos} - ${!u ? "*unknown*" : u.username}`
-        if(pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
-        if(pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
-        if(pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
+        .setTitle(locale("commands.ranking.title"))
+        .setThumb((await client.rest.users.get(array[0].id!))?.avatarURL()!)
+
+      let pos = 0
+      if (!isNaN(page) && page > 1) pos = page * 10 - 10
+      for (const user of users) {
+        pos++
+        const u = client.users.get(user.id)
+        let field = `${pos} - ${!u ? "*unknown*" : u.username}`
+        if (pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
+        if (pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
+        if (pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
         embed.addField(field, locale("commands.ranking.field", {
           t: user.correct_predictions
-        }));
+        }))
       }
       embed.setFooter({
         text: locale("commands.ranking.footer", {
           pos: array.findIndex((user) => user.id === ctx.interaction.user.id) + 1
         })
-      });
+      })
       const previous = new ButtonBuilder()
-      .setEmoji("◀️")
-      .setCustomId(`ranking;${ctx.interaction.user.id};${page - 1};previous`)
-      .setStyle("gray");
+        .setEmoji("◀️")
+        .setCustomId(`ranking;${ctx.interaction.user.id};${page - 1};previous`)
+        .setStyle("gray")
       const next = new ButtonBuilder()
-      .setEmoji("▶")
-      .setCustomId(`ranking;${ctx.interaction.user.id};${page + 1};next`)
-      .setStyle("gray");
-      if(page <= 1) previous.setDisabled();
-      if(page >= pages) next.setDisabled();
+        .setEmoji("▶")
+        .setCustomId(`ranking;${ctx.interaction.user.id};${page + 1};next`)
+        .setStyle("gray")
+      if (page <= 1) previous.setDisabled()
+      if (page >= pages) next.setDisabled()
       ctx.edit(embed.build({
         components: [
           {
@@ -316,7 +316,7 @@ export default createCommand({
             components: [previous, next]
           }
         ]
-      }));
+      }))
     }
   }
-});
+})

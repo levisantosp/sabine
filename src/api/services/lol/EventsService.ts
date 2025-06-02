@@ -6,7 +6,7 @@ export default class EventsService {
       headers: {
         authorization: auth
       }
-    })).json();
-    return data as EventsData[];
+    })).json()
+    return data as EventsData[]
   }
 }
