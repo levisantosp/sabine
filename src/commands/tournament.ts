@@ -196,12 +196,12 @@ export default createCommand({
     "tournament remove lol Worlds"
   ],
   async run({ ctx, id, locale }) {
-    if (ctx.args[0] === "add") {
+    if(ctx.args[0] === "add") {
       const games = {
-        valorant: async () => {
-          if ((ctx.db.guild.lol_events.length + ctx.db.guild.valorant_events.length) >= ctx.db.guild.tournamentsLength) return ctx.reply("commands.tournament.limit_reached", { cmd: `</tournament remove valorant:${id}>` })
-          if (ctx.args[3] === ctx.args[4]) return ctx.reply("commands.tournament.channels_must_be_different")
-          if (ctx.guild.channels.get(ctx.args[3])?.type !== 0 || ctx.guild.channels.get(ctx.args[4])?.type !== 0) return ctx.reply("commands.tournament.invalid_channel")
+        valorant: async() => {
+          if((ctx.db.guild.lol_events.length + ctx.db.guild.valorant_events.length) >= ctx.db.guild.tournamentsLength) return ctx.reply("commands.tournament.limit_reached", { cmd: `</tournament remove valorant:${id}>` })
+          if(ctx.args[3] === ctx.args[4]) return ctx.reply("commands.tournament.channels_must_be_different")
+          if(ctx.guild.channels.get(ctx.args[3])?.type !== 0 || ctx.guild.channels.get(ctx.args[4])?.type !== 0) return ctx.reply("commands.tournament.invalid_channel")
           ctx.db.guild.valorant_events.push({
             name: ctx.args[2],
             channel1: ctx.args[3],
@@ -212,10 +212,10 @@ export default createCommand({
             t: ctx.args[2]
           })
         },
-        lol: async () => {
-          if ((ctx.db.guild.lol_events.length + ctx.db.guild.valorant_events.length) >= ctx.db.guild.tournamentsLength) return ctx.reply("commands.tournament.limit_reached", { cmd: `</tournament remove lol:${id}>` })
-          if (ctx.args[3] === ctx.args[4]) return ctx.reply("commands.tournament.channels_must_be_different")
-          if (ctx.guild.channels.get(ctx.args[3])?.type !== 0 || ctx.guild.channels.get(ctx.args[4])?.type !== 0) return ctx.reply("commands.tournament.invalid_channel")
+        lol: async() => {
+          if((ctx.db.guild.lol_events.length + ctx.db.guild.valorant_events.length) >= ctx.db.guild.tournamentsLength) return ctx.reply("commands.tournament.limit_reached", { cmd: `</tournament remove lol:${id}>` })
+          if(ctx.args[3] === ctx.args[4]) return ctx.reply("commands.tournament.channels_must_be_different")
+          if(ctx.guild.channels.get(ctx.args[3])?.type !== 0 || ctx.guild.channels.get(ctx.args[4])?.type !== 0) return ctx.reply("commands.tournament.invalid_channel")
           ctx.db.guild.lol_events.push({
             name: ctx.args[2],
             channel1: ctx.args[3],
@@ -231,8 +231,8 @@ export default createCommand({
     }
     else {
       const games = {
-        valorant: async () => {
-          if (ctx.args[2] === locale("commands.tournament.remove_all")) {
+        valorant: async() => {
+          if(ctx.args[2] === locale("commands.tournament.remove_all")) {
             ctx.db.guild.valorant_events = []
             await ctx.db.guild.save()
             return ctx.reply("commands.tournament.tournament_removed")
@@ -243,8 +243,8 @@ export default createCommand({
             t: ctx.args[2]
           })
         },
-        lol: async () => {
-          if (ctx.args[2] === locale("commands.tournament.remove_all")) {
+        lol: async() => {
+          if(ctx.args[2] === locale("commands.tournament.remove_all")) {
             ctx.db.guild.lol_events = []
             await ctx.db.guild.save()
             return ctx.reply("commands.tournament.tournament_removed")
@@ -260,25 +260,25 @@ export default createCommand({
     }
   },
   async createAutocompleteInteraction({ i, client, locale, args }) {
-    if (!args) return
-    if (args[1] === "valorant") {
+    if(!args) return
+    if(args[1] === "valorant") {
       const res = await service.getEvents("valorant")
       const events = res.filter(e => e.status !== "completed")
         .map(e => e.name)
         .filter(e => {
-          if (e.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e
+          if(e.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e
         })
         .slice(0, 25)
       const actions = {
-        add: async () => {
+        add: async() => {
           i.result(events.map(e => ({ name: e, value: e })))
             .catch(e => new Logger(client).error(e))
         },
-        remove: async () => {
+        remove: async() => {
           const guild = await Guild.findById(i.guildID) as GuildSchemaInterface
           const events = guild.valorant_events.map(e => e.name)
             .filter(e => {
-              if (e.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e
+              if(e.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e
             })
           events.unshift(locale("commands.tournament.remove_all"))
           i.result(events.map(e => ({ name: e, value: e })))
@@ -291,19 +291,19 @@ export default createCommand({
       const res = await service.getEvents("lol")
       const events = res.map(e => e.name)
         .filter(e => {
-          if (e.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e
+          if(e.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e
         })
         .slice(0, 25)
       const actions = {
-        add: async () => {
+        add: async() => {
           i.result(events.map(e => ({ name: e, value: e })))
             .catch(e => new Logger(client).error(e))
         },
-        remove: async () => {
+        remove: async() => {
           const guild = await Guild.findById(i.guildID) as GuildSchemaInterface
           const events = guild.lol_events.map(e => e.name)
             .filter(e => {
-              if (e.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e
+              if(e.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e
             })
           events.unshift(locale("commands.tournament.remove_all"))
           i.result(events.map(e => ({ name: e, value: e })))

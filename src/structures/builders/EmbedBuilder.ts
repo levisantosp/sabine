@@ -65,7 +65,7 @@ export default class EmbedBuilder {
     return this
   }
   public build(content?: string | InteractionContent) {
-    if (typeof content === "string") {
+    if(typeof content === "string") {
       return {
         content: content ?? "",
         embeds: [this]

@@ -35,7 +35,7 @@ export const client = new App({
 
 client.start()
 
-const routes: FastifyPluginAsyncTypebox = async (fastify) => {
+const routes: FastifyPluginAsyncTypebox = async(fastify) => {
   fastify.post("/webhooks/results/valorant", {
     schema: {
       body: Type.Array(
@@ -65,7 +65,7 @@ const routes: FastifyPluginAsyncTypebox = async (fastify) => {
         )
       )
     }
-  }, async (req) => {
+  }, async(req) => {
     if(!client.ready) {
       await client.restMode(true)
     }
@@ -165,7 +165,7 @@ const routes: FastifyPluginAsyncTypebox = async (fastify) => {
         })
       )
     }
-  }, async (req) => {
+  }, async(req) => {
     if(!client.ready) {
       await client.restMode(true)
     }
@@ -223,7 +223,7 @@ const routes: FastifyPluginAsyncTypebox = async (fastify) => {
         })
       )
     }
-  }, async (req) => {
+  }, async(req) => {
     if(!client.ready) {
       await client.restMode(true)
     }
@@ -290,15 +290,16 @@ const routes: FastifyPluginAsyncTypebox = async (fastify) => {
         })
       )
     }
-  }, async (req) => {
+  }, async(req) => {
     if(!client.ready) {
       await client.restMode(true)
     }
     const guilds = await Guild.find({
-      lol_livefeed_channel: { $exists: true },
-      key: { $exists: true }
+      lol_livefeed_channel: { $exists: true }
     }) as GuildSchemaInterface[]
+
     if(!guilds.length) return
+
     for(const data of req.body) {
       for(const guild of guilds) {
         if(!guild.partner && !["PREMIUM"].some(x => x === guild.key?.type)) continue
@@ -350,7 +351,7 @@ const routes: FastifyPluginAsyncTypebox = async (fastify) => {
         })
       )
     }
-  }, async (req) => {
+  }, async(req) => {
     if(!client.ready) {
       await client.restMode(true)
     }

@@ -10,27 +10,27 @@ const service = new Service(process.env.AUTH)
 export default createListener({
   name: "interactionCreate",
   async run(client, i) {
-    if (i.isCommandInteraction()) {
+    if(i.isCommandInteraction()) {
       new CommandRunner().run(client, i).catch(e => new Logger(client).error(e))
     }
-    else if (i.isAutocompleteInteraction()) {
+    else if(i.isAutocompleteInteraction()) {
       const command = client.commands.get(i.data.name)
-      if (!command) return
-      if (!command.createAutocompleteInteraction) return
+      if(!command) return
+      if(!command.createAutocompleteInteraction) return
       const user = await User.findById(i.user.id) as UserSchemaInterface
       const guild = (await Guild.findById(i.guildID) ?? new Guild({ _id: i.guildID })) as GuildSchemaInterface
       const locale = (content: string, args?: Args) => {
         return locales(user.lang ?? guild.lang, content, args)
       }
       let args: string[] = i.data.options.getSubCommand() ?? []
-      for (const option of i.data.options.getOptions()) {
+      for(const option of i.data.options.getOptions()) {
         args.push(option.value.toString())
       }
       command.createAutocompleteInteraction({ i, locale, client, args })
         .catch(e => new Logger(client).error(e))
     }
-    else if (i.isComponentInteraction()) {
-      if (i.data.customID === "pickem") {
+    else if(i.isComponentInteraction()) {
+      if(i.data.customID === "pickem") {
         const guild = (await Guild.findById(i.guildID) ?? new Guild({ _id: i.guildID })) as GuildSchemaInterface
         const user = (await User.findById(i.member!.id) || new User({ _id: i.member!.id })) as UserSchemaInterface
         await i.createMessage({
@@ -40,12 +40,12 @@ export default createListener({
         return
       }
       const args = i.data.customID.split(";")
-      if (args[0] === "predict") {
+      if(args[0] === "predict") {
         const guild = await Guild.findById(i.guildID) as GuildSchemaInterface
         const user = (await User.findById(i.user.id) || new User({ _id: i.user.id })) as UserSchemaInterface
         const games = {
-          valorant: async () => {
-            if (user.valorant_predictions.find(p => p.match === args[2])) {
+          valorant: async() => {
+            if(user.valorant_predictions.find(p => p.match === args[2])) {
               return await i.createMessage({
                 content: locales(user.lang ?? guild.lang, "helper.replied"),
                 flags: 64
@@ -53,7 +53,7 @@ export default createListener({
             }
             const res = await service.getMatches("valorant")
             const data = res.find(d => d.id === args[2])
-            if (data?.status === "LIVE" || !data) {
+            if(data?.status === "LIVE" || !data) {
               return await i.createMessage({
                 content: locales(user.lang ?? guild.lang, "helper.started"),
                 flags: 64
@@ -96,8 +96,8 @@ export default createListener({
               ]
             })
           },
-          lol: async () => {
-            if (user.lol_predictions.find(p => p.match.toString() === args[2])) {
+          lol: async() => {
+            if(user.lol_predictions.find(p => p.match.toString() === args[2])) {
               return await i.createMessage({
                 content: locales(user.lang ?? guild.lang, "helper.replied"),
                 flags: 64
@@ -106,7 +106,7 @@ export default createListener({
             const res = await service.getMatches("lol")
             const data = res.find(d => d.id?.toString() === args[2])
 
-            if (!data || data.status !== "not_started") {
+            if(!data || data.status !== "not_started") {
               return await i.createMessage({
                 content: locales(user.lang ?? guild.lang, "helper.started"),
                 flags: 64
@@ -153,14 +153,14 @@ export default createListener({
         games[args[1] as "valorant" | "lol"]().catch(e => new Logger(client).error(e))
         return
       }
-      if (args[0] === "stream") {
+      if(args[0] === "stream") {
         const res = await service.getLiveMatches()
         const match = res.filter(r => r.id.toString() === args[2])[0]
 
-        if (!match || !match.streams) return console.log(res)
+        if(!match || !match.streams) return console.log(res)
 
         let content = ""
-        for (const stream of match.streams) {
+        for(const stream of match.streams) {
           content += `- ${stream.raw_url}\n`
         }
 
@@ -173,11 +173,11 @@ export default createListener({
       }
       const command = client.commands.get(args[0])
       const blacklist = await Blacklist.findById("blacklist") as BlacklistSchemaInterface
-      if (blacklist.users.find(user => user.id === i.user.id)) return
-      if (!command) return
-      if (!command.createInteraction) return
-      if (!i.guild) return
-      if (args[1] !== i.user.id) return
+      if(blacklist.users.find(user => user.id === i.user.id)) return
+      if(!command) return
+      if(!command.createInteraction) return
+      if(!i.guild) return
+      if(args[1] !== i.user.id) return
       const guild = (await Guild.findById(i.guildID) ?? new Guild({ _id: i.guildID })) as GuildSchemaInterface
       const user = (await User.findById(i.user.id) ?? new User({ _id: i.user.id })) as UserSchemaInterface
       const ctx = new CommandContext({
@@ -197,14 +197,14 @@ export default createListener({
       command.createInteraction({ client, ctx, locale })
         .catch(e => new Logger(client).error(e))
     }
-    else if (i.isModalSubmitInteraction()) {
+    else if(i.isModalSubmitInteraction()) {
       const args = i.data.customID.split(";")
-      if (args[0] === "prediction") {
+      if(args[0] === "prediction") {
         const user = (await User.findById(i.user.id) || new User({ _id: i.user.id })) as UserSchemaInterface
         const guild = await Guild.findById(i.guildID) as GuildSchemaInterface
         const games = {
-          valorant: async () => {
-            if (user.valorant_predictions.find(p => p.match === args[2])) {
+          valorant: async() => {
+            if(user.valorant_predictions.find(p => p.match === args[2])) {
               return await i.createMessage({
                 content: locales(user.lang ?? guild.lang, "helper.replied"),
                 flags: 64
@@ -236,8 +236,8 @@ export default createListener({
               flags: 64
             })
           },
-          lol: async () => {
-            if (user.lol_predictions.find(p => p.match.toString() === args[2])) {
+          lol: async() => {
+            if(user.lol_predictions.find(p => p.match.toString() === args[2])) {
               return await i.createMessage({
                 content: locales(user.lang ?? guild.lang, "helper.replied"),
                 flags: 64

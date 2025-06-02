@@ -54,7 +54,7 @@ export default class SelectMenuBuilder {
       maxValues: this.maxValues,
       disabled: this.disabled,
     }
-    if (typeof content === "string") {
+    if(typeof content === "string") {
       return {
         content: content ?? "",
         components: [

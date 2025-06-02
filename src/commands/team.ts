@@ -33,7 +33,7 @@ export default createCommand({
   isThinking: true,
   async run({ ctx, locale }) {
     const team = await service.getTeamById(ctx.args[0])
-    if (team.name === "") {
+    if(team.name === "") {
       ctx.reply("commands.team.team_not_found")
       return
     }
@@ -52,7 +52,7 @@ export default createCommand({
     const res = await service.getAllTeams()
     const teams = res.sort((a, b) => a.name.localeCompare(b.name))
       .filter(e => {
-        if (e.name.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e
+        if(e.name.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e
       })
       .slice(0, 25)
     i.result(teams.map(t => ({ name: `${t.name} (${t.country})`, value: t.id })))

@@ -12,16 +12,16 @@ export default class CommandRunner {
     client: App, interaction: CommandInteraction
   ) {
     const command = client.commands.get(interaction.data.name)
-    if (!command) return
-    if (!interaction.guildID || !interaction.member || !interaction.guild) return
+    if(!command) return
+    if(!interaction.guildID || !interaction.member || !interaction.guild) return
     const guild = (await Guild.findById(interaction.guildID) ?? new Guild({ _id: interaction.guildID })) as GuildSchemaInterface
     const user = (await User.findById(interaction.user.id) ?? new User({ _id: interaction.user.id })) as UserSchemaInterface
     const blacklist = await Blacklist.findById("blacklist") as BlacklistSchemaInterface
     const ban = blacklist.users.find(user => user.id === interaction.user.id)
-    if (blacklist.guilds.find(guild => guild.id === interaction.guildID)) {
+    if(blacklist.guilds.find(guild => guild.id === interaction.guildID)) {
       return await interaction.guild.leave()
     }
-    if (ban) {
+    if(ban) {
       return interaction.createMessage({
         content: locales(guild.lang, "helper.banned", {
           reason: ban.reason,
@@ -43,7 +43,7 @@ export default class CommandRunner {
       })
     }
     let args: string[] = interaction.data.options.getSubCommand() ?? []
-    for (const option of interaction.data.options.getOptions()) {
+    for(const option of interaction.data.options.getOptions()) {
       args.push(option.value.toString())
     }
     const ctx = new CommandContext({
@@ -58,36 +58,36 @@ export default class CommandRunner {
       }
     })
     const { permissions } = await import(`../../locales/${ctx.locale}.js`)
-    if (command.permissions) {
+    if(command.permissions) {
       let perms: string[] = []
-      for (let perm of command.permissions) {
-        if (!interaction.member?.permissions.has(perm)) perms.push(perm)
+      for(let perm of command.permissions) {
+        if(!interaction.member?.permissions.has(perm)) perms.push(perm)
       }
-      if (perms[0]) return ctx.reply('helper.permissions.user', {
+      if(perms[0]) return ctx.reply('helper.permissions.user', {
         permissions: perms.map(p => `\`${permissions[p]}\``).join(', ')
       })
     }
-    if (command.botPermissions) {
+    if(command.botPermissions) {
       let perms = []
       let member = client.guilds.get(guild?.id)?.members.get(client.user.id)
-      for (let perm of command.botPermissions) {
-        if (!member?.permissions.has(perm as any)) perms.push(perm)
+      for(let perm of command.botPermissions) {
+        if(!member?.permissions.has(perm as any)) perms.push(perm)
       }
-      if (perms[0]) return ctx.reply('helper.permissions.bot', {
+      if(perms[0]) return ctx.reply('helper.permissions.bot', {
         permissions: perms.map(p => `\`${permissions[p]}\``).join(', ')
       })
     }
-    if (command.ephemeral) {
+    if(command.ephemeral) {
       await interaction.defer(64)
     }
-    else if (command.isThinking) {
+    else if(command.isThinking) {
       await interaction.defer()
     }
     const locale = (content: string, args?: Args) => {
       return locales(user.lang ?? guild.lang, content, args)
     }
     command.run({ ctx, client, locale, id: interaction.data.id })
-      .then(async () => {
+      .then(async() => {
         const cmd = (ctx.interaction as CommandInteraction).data.options.getSubCommand() ? `${command.name} ${(ctx.interaction as CommandInteraction).data.options.getSubCommand()?.join(" ")}` : command.name
         const embed = new EmbedBuilder()
           .setAuthor({
@@ -104,7 +104,7 @@ export default class CommandRunner {
         const channel = await client.rest.channels.get(process.env.COMMAND_LOG!) as TextChannel
         const webhooks = await channel.getWebhooks()
         let webhook = webhooks.find(w => w.name === `${client.user.username} Logger`)
-        if (!webhook) webhook = await channel.createWebhook({ name: `${client.user.username} Logger` })
+        if(!webhook) webhook = await channel.createWebhook({ name: `${client.user.username} Logger` })
         webhook.execute({
           embeds: [embed],
           avatarURL: client.user.avatarURL()

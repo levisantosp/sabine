@@ -96,8 +96,8 @@ export default createCommand({
     }
   ],
   async run({ ctx, locale }) {
-    if (ctx.args[0] === "enable") {
-      if (!ctx.db.guild.partner && !["PREMIUM"].some(k => k === ctx.db.guild.key?.type)) {
+    if(ctx.args[0] === "enable") {
+      if(!ctx.db.guild.partner && !["PREMIUM"].some(k => k === ctx.db.guild.key?.type)) {
         const button = new ButtonBuilder()
           .setLabel(locale("commands.news.buy_premium"))
           .setStyle("link")
@@ -114,16 +114,16 @@ export default createCommand({
         return
       }
       const games = {
-        valorant: async () => {
+        valorant: async() => {
           let channel = ctx.guild.channels.get(ctx.args[2])!
-          if (![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
+          if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
           ctx.db.guild.valorant_livefeed_channel = channel.id
           await ctx.db.guild.save()
           await ctx.reply("commands.live.live_enabled", { ch: channel.mention })
         },
-        lol: async () => {
+        lol: async() => {
           let channel = ctx.guild.channels.get(ctx.args[2])!
-          if (![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
+          if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
           ctx.db.guild.lol_livefeed_channel = channel.id
           await ctx.db.guild.save()
           await ctx.reply("commands.live.live_enabled", { ch: channel.mention })
@@ -133,17 +133,17 @@ export default createCommand({
     }
     else {
       const games = {
-        valorant: async () => {
+        valorant: async() => {
           let channel = ctx.guild.channels.get(ctx.args[2])!
-          if (![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
+          if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
           ctx.db.guild.updateOne({
             $unset: { valorant_livefeed_channel: "" }
           })
           await ctx.reply("commands.live.live_disabled")
         },
-        lol: async () => {
+        lol: async() => {
           let channel = ctx.guild.channels.get(ctx.args[2])!
-          if (![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
+          if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
           ctx.db.guild.updateOne({
             $unset: { lol_livefeed_channel: "" }
           })

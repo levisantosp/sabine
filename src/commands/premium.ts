@@ -11,7 +11,7 @@ export default createCommand({
   },
   botPermissions: ["EMBED_LINKS"],
   async run({ ctx, locale }) {
-    if (!ctx.db.user.plan) {
+    if(!ctx.db.user.plan) {
       ctx.reply("commands.premium.you_dont_have_premium")
       return
     }
@@ -32,12 +32,12 @@ export default createCommand({
   async createInteraction({ ctx, locale }) {
     await ctx.interaction.defer(64)
     const keys = await Key.find({ user: { $eq: ctx.args[1] } }) as KeySchemaInterface[]
-    if (!keys.length) {
+    if(!keys.length) {
       ctx.reply("commands.premium.you_dont_have_keys")
       return
     }
     const embed = new EmbedBuilder()
-    for (const key of keys) {
+    for(const key of keys) {
       embed.addField(
         key.type,
         locale(

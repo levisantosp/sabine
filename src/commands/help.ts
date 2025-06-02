@@ -38,9 +38,9 @@ export default createCommand({
     "help player"
   ],
   async run({ ctx, client, locale }) {
-    if (ctx.args[0]) {
+    if(ctx.args[0]) {
       const cmd = client.commands.get(ctx.args[0])
-      if (!cmd || cmd.onlyDev) {
+      if(!cmd || cmd.onlyDev) {
         ctx.reply("commands.help.command_not_found")
         return
       }
@@ -53,20 +53,20 @@ export default createCommand({
         .addField(locale("commands.help.name"), `\`${cmd.name}\``)
         .setFooter({ text: locale("commands.help.footer") })
         .setThumb(client.user.avatarURL())
-      if (cmd.syntax) embed.addField(locale("commands.help.syntax"), `\`/${cmd.syntax}\``)
-      if (cmd.syntaxes) embed.addField(locale("commands.help.syntax"), cmd.syntaxes.map(syntax => `\`/${syntax}\``).join("\n"))
-      if (cmd.examples) embed.addField(locale("commands.help.examples"), cmd.examples.map(ex => `\`/${ex}\``).join("\n"))
-      if (cmd.permissions) embed.addField(locale("commands.help.permissions"), cmd.permissions.map(perm => `\`${permissions[perm]}\``).join(", "), true)
-      if (cmd.botPermissions) embed.addField(locale("commands.help.bot_permissions"), cmd.botPermissions.map(perm => `\`${permissions[perm]}\``).join(", "), true)
+      if(cmd.syntax) embed.addField(locale("commands.help.syntax"), `\`/${cmd.syntax}\``)
+      if(cmd.syntaxes) embed.addField(locale("commands.help.syntax"), cmd.syntaxes.map(syntax => `\`/${syntax}\``).join("\n"))
+      if(cmd.examples) embed.addField(locale("commands.help.examples"), cmd.examples.map(ex => `\`/${ex}\``).join("\n"))
+      if(cmd.permissions) embed.addField(locale("commands.help.permissions"), cmd.permissions.map(perm => `\`${permissions[perm]}\``).join(", "), true)
+      if(cmd.botPermissions) embed.addField(locale("commands.help.bot_permissions"), cmd.botPermissions.map(perm => `\`${permissions[perm]}\``).join(", "), true)
       ctx.reply(embed.build())
     }
     else {
       const commands = Array.from(client.commands).map(cmd => {
-        if (!cmd[1].onlyDev) {
-          if (cmd[1].options) {
+        if(!cmd[1].onlyDev) {
+          if(cmd[1].options) {
             let options = cmd[1].options.map(op => {
-              if (op.type === 1) return `\`/${cmd[0]} ${op.name}\``
-              else if (op.type === 2) return op.options?.map(op2 => `\`/${cmd[0]} ${op.name} ${op2.name}\``).join("\n")
+              if(op.type === 1) return `\`/${cmd[0]} ${op.name}\``
+              else if(op.type === 2) return op.options?.map(op2 => `\`/${cmd[0]} ${op.name} ${op2.name}\``).join("\n")
               else return `\`/${cmd[0]}\``
             })
             return options.join("\n")
@@ -107,7 +107,7 @@ export default createCommand({
   },
   async createAutocompleteInteraction({ i, client }) {
     const commands = Array.from(client.commands).filter(c => {
-      if (c[0].includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return c
+      if(c[0].includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return c
     })
       .slice(0, 25)
     i.result(commands.map(cmd => ({ name: cmd[0], value: cmd[0] })))

@@ -80,7 +80,7 @@ export default createCommand({
 		"admin language en-US"
 	],
 	async run({ ctx, locale, id }) {
-		if (ctx.args[0] === "dashboard") {
+		if(ctx.args[0] === "dashboard") {
 			const embed = new EmbedBuilder()
 				.setTitle(locale("commands.admin.dashboard"))
 				.setDesc(locale("commands.admin.desc", {
@@ -123,14 +123,14 @@ export default createCommand({
 				]
 			}))
 		}
-		else if (ctx.args[0] === "language") {
+		else if(ctx.args[0] === "language") {
 			const options = {
-				en: async () => {
+				en: async() => {
 					ctx.db.guild.lang = "en"
 					await ctx.db.guild.save()
 					ctx.reply("Now I will interact in English on this server!")
 				},
-				pt: async () => {
+				pt: async() => {
 					ctx.db.guild.lang = "pt"
 					await ctx.db.guild.save()
 					ctx.reply("Agora eu irei interagir em português neste servidor!")
@@ -138,8 +138,8 @@ export default createCommand({
 			}
 			options[(ctx.interaction as CommandInteraction).data.options.getStringOption("lang")?.value as "pt" | "en"]()
 		}
-		else if (ctx.args[0] === "premium") {
-			if (!ctx.db.guild.key) {
+		else if(ctx.args[0] === "premium") {
+			if(!ctx.db.guild.key) {
 				ctx.reply("commands.admin.no_premium")
 				return
 			}
@@ -153,11 +153,11 @@ export default createCommand({
 		}
 	},
 	async createInteraction({ ctx, locale, client }) {
-		if (ctx.args[2] === "vlr") {
+		if(ctx.args[2] === "vlr") {
 			await ctx.interaction.defer(64)
 			const embed = new EmbedBuilder()
 				.setDesc(locale("commands.admin.tournaments", { game: "VALORANT" }))
-			for (const event of ctx.db.guild.valorant_events) {
+			for(const event of ctx.db.guild.valorant_events) {
 				embed.addField(event.name, locale("commands.admin.event_channels", {
 					ch1: `<#${event.channel1}>`,
 					ch2: `<#${event.channel2}>`
@@ -165,11 +165,11 @@ export default createCommand({
 			}
 			ctx.reply(embed.build())
 		}
-		else if (ctx.args[2] === "lol") {
+		else if(ctx.args[2] === "lol") {
 			await ctx.interaction.defer(64)
 			const embed = new EmbedBuilder()
 				.setDesc(locale("commands.admin.tournaments", { game: "League of Legends" }))
-			for (const event of ctx.db.guild.lol_events) {
+			for(const event of ctx.db.guild.lol_events) {
 				embed.addField(event.name, locale("commands.admin.event_channels", {
 					ch1: `<#${event.channel1}>`,
 					ch2: `<#${event.channel2}>`
@@ -177,10 +177,10 @@ export default createCommand({
 			}
 			ctx.reply(embed.build())
 		}
-		else if (ctx.args[2] === "resend" && ctx.args[3] === "vlr") {
+		else if(ctx.args[2] === "resend" && ctx.args[3] === "vlr") {
 			await ctx.interaction.defer(64)
 			const guild = await Guild.findById(ctx.interaction.guild!.id) as GuildSchemaInterface
-			if (guild.valorant_resend_time > Date.now()) {
+			if(guild.valorant_resend_time > Date.now()) {
 				ctx.reply("commands.admin.resend_time", { t: `<t:${(guild.valorant_resend_time / 1000).toFixed(0)}:R>` })
 				return
 			}
@@ -190,10 +190,10 @@ export default createCommand({
 				.setCustomId(`admin;${ctx.interaction.user.id};continue;vlr`)
 			ctx.reply(button.build(locale("commands.admin.confirm")))
 		}
-		else if (ctx.args[2] === "resend" && ctx.args[3] === "lol") {
+		else if(ctx.args[2] === "resend" && ctx.args[3] === "lol") {
 			await ctx.interaction.defer(64)
 			const guild = await Guild.findById(ctx.interaction.guild!.id) as GuildSchemaInterface
-			if (guild.lol_resend_time > Date.now()) {
+			if(guild.lol_resend_time > Date.now()) {
 				ctx.reply("commands.admin.resend_time", { t: `<t:${(guild.lol_resend_time / 1000).toFixed(0)}:R>` })
 				return
 			}
@@ -203,10 +203,10 @@ export default createCommand({
 				.setCustomId(`admin;${ctx.interaction.user.id};continue;lol`)
 			ctx.reply(button.build(locale("commands.admin.confirm")))
 		}
-		else if (ctx.args[2] === "continue" && ctx.args[3] === "vlr") {
+		else if(ctx.args[2] === "continue" && ctx.args[3] === "vlr") {
 			await (ctx.interaction as ComponentInteraction).deferUpdate()
 			const guild = (await Guild.findById(ctx.interaction.guildID!))!
-			if (guild.valorant_resend_time > Date.now()) {
+			if(guild.valorant_resend_time > Date.now()) {
 				ctx.edit("commands.admin.resend_time", { t: `<t:${(guild.valorant_resend_time / 1000).toFixed(0)}:R>` })
 				return
 			}
@@ -215,35 +215,35 @@ export default createCommand({
 			guild.valorant_resend_time = Date.now() + 3600000
 			await ctx.edit("commands.admin.resending")
 			const res = await service.getMatches("valorant")
-			if (!res || !res.length) return
+			if(!res || !res.length) return
 			const res2 = await service.getResults("valorant")
-			if (guild.valorant_matches.length && !res2.some(d => d.id === guild.valorant_matches[guild.valorant_matches.length - 1])) return
+			if(guild.valorant_matches.length && !res2.some(d => d.id === guild.valorant_matches[guild.valorant_matches.length - 1])) return
 			guild.valorant_matches = []
 			let data: MatchesData[]
-			if (guild.valorant_events.length > 5 && !guild.key) {
+			if(guild.valorant_events.length > 5 && !guild.key) {
 				data = res.filter(d => guild.valorant_events.reverse().slice(0, 5).some(e => e.name === d.tournament.name))
 			}
 			else data = res.filter(d => guild.valorant_events.some(e => e.name === d.tournament.name))
-			for (const e of guild.valorant_events) {
-				if (!client.getChannel(e.channel1)) continue
+			for(const e of guild.valorant_events) {
+				if(!client.getChannel(e.channel1)) continue
 				try {
 					let messages = await client.rest.channels.getMessages(e.channel1, { limit: 100 })
 					let messagesIds = messages.filter(m => m.author.id === client.user.id).map(m => m.id)
-					if (messagesIds.length) {
+					if(messagesIds.length) {
 						client.rest.channels.deleteMessages(e.channel1, messagesIds).catch(() => { })
 					}
 				}
 				catch { }
 			}
 			try {
-				for (const d of data) {
-					if (new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
-					for (const e of guild.valorant_events) {
-						if (e.name === d.tournament.name) {
+				for(const d of data) {
+					if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
+					for(const e of guild.valorant_events) {
+						if(e.name === d.tournament.name) {
 							const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
 							const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
 							let index = guild.valorant_matches.findIndex((m) => m === d.id)
-							if (index > -1) guild.valorant_matches.splice(index, 1)
+							if(index > -1) guild.valorant_matches.splice(index, 1)
 							guild.valorant_matches.push(d.id!)
 
 							const embed = new EmbedBuilder()
@@ -266,8 +266,8 @@ export default createCommand({
 								.setStyle("link")
 								.setURL(`https://vlr.gg/${d.id}`)
 
-							if (d.stage.toLowerCase().includes("showmatch")) continue
-							if (d.teams[0].name !== "TBD" && d.teams[1].name !== "TBD") await client.rest.channels.createMessage(e.channel1, {
+							if(d.stage.toLowerCase().includes("showmatch")) continue
+							if(d.teams[0].name !== "TBD" && d.teams[1].name !== "TBD") await client.rest.channels.createMessage(e.channel1, {
 								embeds: [embed],
 								components: [
 									{
@@ -296,10 +296,10 @@ export default createCommand({
 			await guild.save()
 			ctx.edit("commands.admin.resent")
 		}
-		else if (ctx.args[2] === "continue" && ctx.args[3] === "lol") {
+		else if(ctx.args[2] === "continue" && ctx.args[3] === "lol") {
 			await (ctx.interaction as ComponentInteraction).deferUpdate()
 			const guild = (await Guild.findById(ctx.interaction.guildID!))!
-			if (guild.lol_resend_time > Date.now()) {
+			if(guild.lol_resend_time > Date.now()) {
 				ctx.edit("commands.admin.resend_time", { t: `<t:${(guild.lol_resend_time / 1000).toFixed(0)}:R>` })
 				return
 			}
@@ -308,34 +308,34 @@ export default createCommand({
 			guild.lol_resend_time = Date.now() + 3600000
 			await ctx.edit("commands.admin.resending")
 			const res = await service.getMatches("lol")
-			if (!res || !res.length) return
+			if(!res || !res.length) return
 			const res2 = await service.getResults("lol")
-			if (guild.lol_matches.length && !res2.some(d => d.id === guild.lol_matches[guild.lol_matches.length - 1])) return
+			if(guild.lol_matches.length && !res2.some(d => d.id === guild.lol_matches[guild.lol_matches.length - 1])) return
 			let data: MatchesData[]
-			if (guild.lol_events.length > 5 && !guild.key) {
+			if(guild.lol_events.length > 5 && !guild.key) {
 				data = res.filter(d => guild.lol_events.reverse().slice(0, 5).some(e => e.name === d.tournament.name))
 			}
 			else data = res.filter(d => guild.lol_events.some(e => e.name === d.tournament.name))
-			for (const e of guild.lol_events) {
-				if (!client.getChannel(e.channel1)) continue
+			for(const e of guild.lol_events) {
+				if(!client.getChannel(e.channel1)) continue
 				try {
 					let messages = await client.rest.channels.getMessages(e.channel1, { limit: 100 })
 					let messagesIds = messages.filter(m => m.author.id === client.user.id).map(m => m.id)
-					if (messagesIds.length) {
+					if(messagesIds.length) {
 						client.rest.channels.deleteMessages(e.channel1, messagesIds).catch(() => { })
 					}
 				}
 				catch { }
 			}
 			try {
-				for (const d of data) {
-					if (new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
-					for (const e of guild.lol_events) {
-						if (e.name === d.tournament.name) {
+				for(const d of data) {
+					if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
+					for(const e of guild.lol_events) {
+						if(e.name === d.tournament.name) {
 							const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
 							const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
 							let index = guild.lol_matches.findIndex((m) => m === d.id)
-							if (index > -1) guild.lol_matches.splice(index, 1)
+							if(index > -1) guild.lol_matches.splice(index, 1)
 							guild.lol_matches.push(d.id!)
 
 							const embed = new EmbedBuilder()
@@ -352,8 +352,8 @@ export default createCommand({
 								.setCustomId(`predict;lol;${d.id}`)
 								.setStyle("green")
 
-							if (d.stage.toLowerCase().includes("showmatch")) continue
-							if (d.teams[0].name !== "TBD" && d.teams[1].name !== "TBD") await client.rest.channels.createMessage(e.channel1, {
+							if(d.stage.toLowerCase().includes("showmatch")) continue
+							if(d.teams[0].name !== "TBD" && d.teams[1].name !== "TBD") await client.rest.channels.createMessage(e.channel1, {
 								embeds: [embed],
 								components: [
 									{

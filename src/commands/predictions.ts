@@ -66,17 +66,17 @@ export default createCommand({
     "predictions valorant 5"
   ],
   async run({ ctx, locale }) {
-    if (ctx.args[0] === "valorant") {
-      if (!ctx.db.user.valorant_predictions.length) {
+    if(ctx.args[0] === "valorant") {
+      if(!ctx.db.user.valorant_predictions.length) {
         ctx.reply("commands.predictions.no_predictions")
         return
       }
       let preds = ctx.db.user.valorant_predictions.reverse()
       let page = !ctx.args[1] ? 1 : Number(ctx.args[1])
       let pages = Math.ceil(ctx.db.user.valorant_predictions.length / 5)
-      if (page === 1) preds = preds.slice(0, 5)
+      if(page === 1) preds = preds.slice(0, 5)
       else preds = preds.slice(page * 5 - 5, page * 5)
-      if (!preds.length) {
+      if(!preds.length) {
         ctx.reply("commands.predictions.no_pages")
         return
       }
@@ -96,15 +96,15 @@ export default createCommand({
             p2: pages
           })
         })
-      for (const prediction of preds) {
+      for(const prediction of preds) {
         let status: string
-        if (prediction.status === "correct") {
+        if(prediction.status === "correct") {
           status = "\nStatus: <:success:1300882212190945292>"
         }
-        else if (prediction.status === "wrong") {
+        else if(prediction.status === "wrong") {
           status = "\nStatus: <:error:1300882259078938685>"
         }
-        else if (prediction.status === "pending") {
+        else if(prediction.status === "pending") {
           status = "\nStatus: <a:carregando:809221866434199634>"
         }
         else status = ""
@@ -122,8 +122,8 @@ export default createCommand({
         .setEmoji("▶")
         .setCustomId(`predictions;${ctx.interaction.user.id};${page + 1 > pages ? pages : page + 1};next;valorant`)
         .setStyle("gray")
-      if (page <= 1) previous.setDisabled()
-      if (page >= pages) next.setDisabled()
+      if(page <= 1) previous.setDisabled()
+      if(page >= pages) next.setDisabled()
       ctx.reply(embed.build({
         components: [
           {
@@ -134,16 +134,16 @@ export default createCommand({
       }))
     }
     else {
-      if (!ctx.db.user.lol_predictions.length) {
+      if(!ctx.db.user.lol_predictions.length) {
         ctx.reply("commands.predictions.no_predictions")
         return
       }
       let preds = ctx.db.user.lol_predictions.reverse()
       let page = !ctx.args[1] ? 1 : Number(ctx.args[1])
       let pages = Math.ceil(ctx.db.user.lol_predictions.length / 5)
-      if (page === 1) preds = preds.slice(0, 5)
+      if(page === 1) preds = preds.slice(0, 5)
       else preds = preds.slice(page * 5 - 5, page * 5)
-      if (!preds.length) {
+      if(!preds.length) {
         ctx.reply("commands.predictions.no_pages")
         return
       }
@@ -163,15 +163,15 @@ export default createCommand({
             p2: pages
           })
         })
-      for (const prediction of preds) {
+      for(const prediction of preds) {
         let status: string
-        if (prediction.status === "correct") {
+        if(prediction.status === "correct") {
           status = "\nStatus: <:success:1300882212190945292>"
         }
-        else if (prediction.status === "wrong") {
+        else if(prediction.status === "wrong") {
           status = "\nStatus: <:error:1300882259078938685>"
         }
-        else if (prediction.status === "pending") {
+        else if(prediction.status === "pending") {
           status = "\nStatus: <a:carregando:809221866434199634>"
         }
         else status = ""
@@ -189,8 +189,8 @@ export default createCommand({
         .setEmoji("▶")
         .setCustomId(`predictions;${ctx.interaction.user.id};${page + 1 > pages ? pages : page + 1};next;lol`)
         .setStyle("gray")
-      if (page <= 1) previous.setDisabled()
-      if (page >= pages) next.setDisabled()
+      if(page <= 1) previous.setDisabled()
+      if(page >= pages) next.setDisabled()
       ctx.reply(embed.build({
         components: [
           {
@@ -202,9 +202,9 @@ export default createCommand({
     }
   },
   async createInteraction({ ctx, locale }) {
-    if (ctx.args[4] === "valorant") {
+    if(ctx.args[4] === "valorant") {
       await (ctx.interaction as ComponentInteraction).deferUpdate()
-      if (!ctx.db.user.valorant_predictions.length) {
+      if(!ctx.db.user.valorant_predictions.length) {
         ctx.reply("commands.predictions.no_predictions")
         return
       }
@@ -212,7 +212,7 @@ export default createCommand({
       let page = Number(ctx.args[2])
       let pages = Math.ceil(ctx.db.user.valorant_predictions.length / 5)
       preds = preds.slice(page * 5 - 5, page * 5)
-      if (!preds.length) {
+      if(!preds.length) {
         ctx.reply("commands.predictions.no_pages")
         return
       }
@@ -232,15 +232,15 @@ export default createCommand({
             p2: pages
           })
         })
-      for (const prediction of preds) {
+      for(const prediction of preds) {
         let status: string
-        if (prediction.status === "correct") {
+        if(prediction.status === "correct") {
           status = "\nStatus: <:success:1300882212190945292>"
         }
-        else if (prediction.status === "wrong") {
+        else if(prediction.status === "wrong") {
           status = "\nStatus: <:error:1300882259078938685>"
         }
-        else if (prediction.status === "pending") {
+        else if(prediction.status === "pending") {
           status = "\nStatus: <a:carregando:809221866434199634>"
         }
         else status = ""
@@ -258,8 +258,8 @@ export default createCommand({
         .setEmoji("▶")
         .setStyle("gray")
         .setCustomId(`${ctx.args[0]};${ctx.args[1]};${page + 1};next;valorant`)
-      if (page <= 1) previous.setDisabled()
-      if (page >= pages) next.setDisabled()
+      if(page <= 1) previous.setDisabled()
+      if(page >= pages) next.setDisabled()
       ctx.edit(embed.build({
         components: [
           {
@@ -271,7 +271,7 @@ export default createCommand({
     }
     else {
       await (ctx.interaction as ComponentInteraction).deferUpdate()
-      if (!ctx.db.user.lol_predictions.length) {
+      if(!ctx.db.user.lol_predictions.length) {
         ctx.reply("commands.predictions.no_predictions")
         return
       }
@@ -279,7 +279,7 @@ export default createCommand({
       let page = Number(ctx.args[2])
       let pages = Math.ceil(ctx.db.user.lol_predictions.length / 5)
       preds = preds.slice(page * 5 - 5, page * 5)
-      if (!preds.length) {
+      if(!preds.length) {
         ctx.reply("commands.predictions.no_pages")
         return
       }
@@ -299,19 +299,19 @@ export default createCommand({
             p2: pages
           })
         })
-      for (const prediction of preds) {
+      for(const prediction of preds) {
         let status: string
-        if (prediction.status === "correct") {
+        if(prediction.status === "correct") {
           status = "\nStatus: <:success:1300882212190945292>"
         }
-        else if (prediction.status === "wrong") {
+        else if(prediction.status === "wrong") {
           status = "\nStatus: <:error:1300882259078938685>"
         }
-        else if (prediction.status === "pending") {
+        else if(prediction.status === "pending") {
           status = "\nStatus: <a:carregando:809221866434199634>"
         }
         else status = ""
-        if (prediction) embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name}`, locale("commands.predictions.embed.field", {
+        if(prediction) embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name}`, locale("commands.predictions.embed.field", {
           score1: prediction.teams[0].score,
           score2: prediction.teams[1].score,
           link: `https://www.loltv.gg/match/${prediction.match}`
@@ -325,8 +325,8 @@ export default createCommand({
         .setEmoji("▶")
         .setStyle("gray")
         .setCustomId(`${ctx.args[0]};${ctx.args[1]};${page + 1};next;lol`)
-      if (page <= 1) previous.setDisabled()
-      if (page >= pages) next.setDisabled()
+      if(page <= 1) previous.setDisabled()
+      if(page >= pages) next.setDisabled()
       ctx.edit(embed.build({
         components: [
           {

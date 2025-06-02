@@ -32,7 +32,7 @@ export default createCommand({
   botPermissions: ["EMBED_LINKS"],
   async run({ ctx, locale }) {
     const player = await service.getPlayerById(ctx.args[0])
-    if (player.user === "") {
+    if(player.user === "") {
       ctx.reply("commands.player.player_not_found")
       return
     }
@@ -51,7 +51,7 @@ export default createCommand({
     const res = await service.getAllPlayers()
     const players = res.sort((a, b) => a.name.localeCompare(b.name))
       .filter(e => {
-        if (e.name.toLowerCase().includes((i.data.options.getOptions()[0].value.toString()).toLowerCase())) return e
+        if(e.name.toLowerCase().includes((i.data.options.getOptions()[0].value.toString()).toLowerCase())) return e
       })
       .slice(0, 25)
     i.result(players.map(p => ({ name: `${p.name} (${p.teamTag})`, value: p.id })))

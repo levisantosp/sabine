@@ -33,19 +33,19 @@ export default createCommand({
   ephemeral: true,
   async run({ ctx, locale }) {
     const key = await Key.findById(ctx.args[0]) as KeySchemaInterface
-    if (!key) {
+    if(!key) {
       ctx.reply("commands.activatekey.invalid_key")
       return
     }
-    if ((key.type === "BOOSTER" && key.active) || key.activeIn.includes(ctx.guild.id)) {
+    if((key.type === "BOOSTER" && key.active) || key.activeIn.includes(ctx.guild.id)) {
       ctx.reply("commands.activatekey.key_already_activated")
       return
     }
-    if (key.type === "PREMIUM" && key.activeIn.length >= 2) {
+    if(key.type === "PREMIUM" && key.activeIn.length >= 2) {
       ctx.reply("commands.activatekey.limit_reached")
       return
     }
-    if (ctx.db.guild.key) {
+    if(ctx.db.guild.key) {
       const button = new ButtonBuilder()
         .setStyle("red")
         .setLabel(locale("commands.activatekey.button"))
@@ -69,15 +69,15 @@ export default createCommand({
   async createInteraction({ ctx }) {
     await ctx.interaction.defer(64)
     const key = await Key.findById(ctx.args[3]) as KeySchemaInterface
-    if (!key) {
+    if(!key) {
       ctx.reply("commands.activatekey.invalid_key")
       return
     }
-    if ((key.type === "BOOSTER" && key.active) || key.activeIn.includes(ctx.guild.id)) {
+    if((key.type === "BOOSTER" && key.active) || key.activeIn.includes(ctx.guild.id)) {
       ctx.reply("commands.activatekey.key_already_activated")
       return
     }
-    if (key.type === "PREMIUM" && key.activeIn.length >= 2) {
+    if(key.type === "PREMIUM" && key.activeIn.length >= 2) {
       ctx.reply("commands.activatekey.limit_reached")
       return
     }

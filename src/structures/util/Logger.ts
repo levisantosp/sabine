@@ -20,15 +20,15 @@ export default class Logger {
       "Missing Permissions",
       "AbortError: This operation was aborted"
     ]
-    if (ignoredErrors.some(e => error.toString().includes(e))) return
-    if (typeof error === "string") {
+    if(ignoredErrors.some(e => error.toString().includes(e))) return
+    if(typeof error === "string") {
       const embed = new EmbedBuilder()
         .setTitle("An error has occurred")
         .setDesc(`Shard ID: \`${shardId}\`\n\`\`\`js\n${error}\`\`\``)
       const channel = await this.client.rest.channels.get(process.env.ERROR_LOG) as TextChannel
       const webhooks = await channel.getWebhooks()
       let webhook = webhooks.filter(w => w.name === `${this.client.user.username} Logger`)[0]
-      if (!webhook) webhook = await channel.createWebhook({ name: `${this.client.user.username} Logger` })
+      if(!webhook) webhook = await channel.createWebhook({ name: `${this.client.user.username} Logger` })
       webhook.execute({
         embeds: [embed],
         avatarURL: this.client.user.avatarURL()
@@ -42,7 +42,7 @@ export default class Logger {
       const channel = await this.client.rest.channels.get(process.env.ERROR_LOG) as TextChannel
       const webhooks = await channel.getWebhooks()
       let webhook = webhooks.filter(w => w.name === `${this.client.user.username} Logger`)[0]
-      if (!webhook) webhook = await channel.createWebhook({ name: `${this.client.user.username} Logger` })
+      if(!webhook) webhook = await channel.createWebhook({ name: `${this.client.user.username} Logger` })
       webhook.execute({
         embeds: [embed],
         avatarURL: this.client.user.avatarURL()

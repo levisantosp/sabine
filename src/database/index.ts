@@ -45,14 +45,14 @@ export class User extends UserSchema {
       const upperCaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
       const lowerCaseLetters = "abcdefghijklmnopqrstuvwxyz"
       const digits = "0123456789"
-      for (const char of pattern) {
-        if (char === "@") {
+      for(const char of pattern) {
+        if(char === "@") {
           keyId += upperCaseLetters.charAt(Math.floor(Math.random() * upperCaseLetters.length))
         }
-        else if (char === "#") {
+        else if(char === "#") {
           keyId += digits.charAt(Math.floor(Math.random() * digits.length))
         }
-        else if (char === "&") {
+        else if(char === "&") {
           keyId += lowerCaseLetters.charAt(Math.floor(Math.random() * lowerCaseLetters.length))
         }
         else {
@@ -92,7 +92,7 @@ export class User extends UserSchema {
       )
     const webhooks = await channel.getWebhooks()
     let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
-    if (!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
+    if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
     webhook.execute({
       avatarURL: client.user.avatarURL(),
       embeds: [embed]
@@ -115,7 +115,7 @@ export class User extends UserSchema {
       )
     const webhooks = await channel.getWebhooks()
     let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
-    if (!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
+    if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
     webhook.execute({
       avatarURL: client.user.avatarURL(),
       embeds: [embed]
@@ -123,7 +123,7 @@ export class User extends UserSchema {
     return this as UserSchemaInterface
   }
   public async add_prediction(game: "valorant" | "lol", prediction: UserSchemaPrediction) {
-    if (game === "valorant") {
+    if(game === "valorant") {
       this.valorant_predictions.push(prediction)
       await this.save()
       const channel = client.getChannel(process.env.USERS_LOG) as TextChannel
@@ -139,14 +139,14 @@ export class User extends UserSchema {
         )
       const webhooks = await channel.getWebhooks()
       let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
-      if (!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
+      if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
       webhook.execute({
         avatarURL: client.user.avatarURL(),
         embeds: [embed]
       })
       return this as UserSchemaInterface
     }
-    if (game === "lol") {
+    if(game === "lol") {
       this.lol_predictions.push(prediction)
       await this.save()
       const channel = client.getChannel(process.env.USERS_LOG) as TextChannel
@@ -162,7 +162,7 @@ export class User extends UserSchema {
         )
       const webhooks = await channel.getWebhooks()
       let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
-      if (!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
+      if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
       webhook.execute({
         avatarURL: client.user.avatarURL(),
         embeds: [embed]
@@ -171,7 +171,7 @@ export class User extends UserSchema {
     }
   }
   public async add_correct_prediction(game: "valorant" | "lol", predictionId: string) {
-    if (game === "valorant") {
+    if(game === "valorant") {
       let index = this.valorant_predictions.findIndex(p => p.match === predictionId)
       this.valorant_predictions[index].status = "correct"
       await this.updateOne({
@@ -191,7 +191,7 @@ export class User extends UserSchema {
         )
       const webhooks = await channel.getWebhooks()
       let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
-      if (!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
+      if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
       webhook.execute({
         avatarURL: client.user.avatarURL(),
         embeds: [embed]
@@ -217,7 +217,7 @@ export class User extends UserSchema {
         )
       const webhooks = await channel.getWebhooks()
       let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
-      if (!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
+      if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
       webhook.execute({
         avatarURL: client.user.avatarURL(),
         embeds: [embed]
@@ -226,7 +226,7 @@ export class User extends UserSchema {
     return this as UserSchemaInterface
   }
   public async add_wrong_prediction(game: "valorant" | "lol", predictionId: string) {
-    if (game === "valorant") {
+    if(game === "valorant") {
       let index = this.valorant_predictions.findIndex(p => p.match === predictionId)
       this.valorant_predictions[index].status = "wrong"
       await this.updateOne({
@@ -246,7 +246,7 @@ export class User extends UserSchema {
         )
       const webhooks = await channel.getWebhooks()
       let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
-      if (!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
+      if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
       webhook.execute({
         avatarURL: client.user.avatarURL(),
         embeds: [embed]
@@ -272,7 +272,7 @@ export class User extends UserSchema {
         )
       const webhooks = await channel.getWebhooks()
       let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
-      if (!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
+      if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
       webhook.execute({
         avatarURL: client.user.avatarURL(),
         embeds: [embed]

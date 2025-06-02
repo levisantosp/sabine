@@ -14,13 +14,13 @@ export default class Service {
     this.__auth = auth
   }
   public async getEvents(game: "valorant" | "lol") {
-    if (game === "valorant") {
+    if(game === "valorant") {
       return await ValorantEvents.get(this.__auth)
     }
     else return await LOLEvents.get(this.__auth)
   }
   public async getMatches(game: "valorant" | "lol") {
-    if (game === "valorant") {
+    if(game === "valorant") {
       return await ValorantMatches.get(this.__auth)
     }
     else return await LOLMatches.get(this.__auth)
@@ -38,7 +38,7 @@ export default class Service {
     return await ValorantTeams.getById(this.__auth, id)
   }
   public async getResults(game: "valorant" | "lol") {
-    if (game === "valorant") {
+    if(game === "valorant") {
       return await ValorantResults.get(this.__auth)
     }
     else return await LOLResults.get(this.__auth)

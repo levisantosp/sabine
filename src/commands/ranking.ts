@@ -65,7 +65,7 @@ export default createCommand({
   ],
   isThinking: true,
   async run({ ctx, locale, client }) {
-    if (ctx.args[0] === "local") {
+    if(ctx.args[0] === "local") {
       let users = (await User.find({
         correct_predictions: {
           $gt: 0
@@ -73,12 +73,12 @@ export default createCommand({
       }) as UserSchemaInterface[]).filter(user => ctx.guild.members.get(user.id)).sort((a, b) => b.correct_predictions - a.correct_predictions)
       let array = users
       let page = Number(ctx.args[1])
-      if (!page || page === 1 || isNaN(page)) {
+      if(!page || page === 1 || isNaN(page)) {
         users = users.slice(0, 10)
         page = 1
       }
       else users = users.slice(page * 10 - 10, page * 10)
-      if (!users.length) {
+      if(!users.length) {
         ctx.reply("commands.ranking.no_users")
         return
       }
@@ -93,14 +93,14 @@ export default createCommand({
         .setThumb((await client.rest.users.get(array[0].id!))?.avatarURL()!)
 
       let pos = 0
-      if (!isNaN(page) && page > 1) pos = page * 10 - 10
-      for (const user of users) {
+      if(!isNaN(page) && page > 1) pos = page * 10 - 10
+      for(const user of users) {
         pos++
         const u = client.users.get(user.id)
         let field = `${pos} - ${!u ? "*unknown*" : u.username}`
-        if (pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
-        if (pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
-        if (pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
+        if(pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
+        if(pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
+        if(pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
         embed.addField(field, locale("commands.ranking.field", {
           t: user.correct_predictions
         }))
@@ -118,8 +118,8 @@ export default createCommand({
         .setEmoji("▶")
         .setCustomId(`ranking;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;local`)
         .setStyle("gray")
-      if (page <= 1) previous.setDisabled()
-      if (page >= Math.ceil(array.length / 10)) next.setDisabled()
+      if(page <= 1) previous.setDisabled()
+      if(page >= Math.ceil(array.length / 10)) next.setDisabled()
       ctx.reply(embed.build({
         components: [
           {
@@ -137,12 +137,12 @@ export default createCommand({
       }) as UserSchemaInterface[]).sort((a, b) => b.correct_predictions - a.correct_predictions)
       let array = users
       let page = Number(ctx.args[1])
-      if (!page || page === 1 || isNaN(page)) {
+      if(!page || page === 1 || isNaN(page)) {
         users = users.slice(0, 10)
         page = 1
       }
       else users = users.slice(page * 10 - 10, page * 10)
-      if (!users.length) {
+      if(!users.length) {
         ctx.reply("commands.ranking.no_users")
         return
       }
@@ -157,14 +157,14 @@ export default createCommand({
         .setThumb((await client.rest.users.get(array[0].id!))?.avatarURL())
 
       let pos = 0
-      if (!isNaN(page) && page > 1) pos = page * 10 - 10
-      for (const user of users) {
+      if(!isNaN(page) && page > 1) pos = page * 10 - 10
+      for(const user of users) {
         pos++
         const u = client.users.get(user.id)
         let field = `${pos} - ${!u ? "*unknown*" : u.username}`
-        if (pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
-        if (pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
-        if (pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
+        if(pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
+        if(pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
+        if(pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
         embed.addField(field, locale("commands.ranking.field", {
           t: user.correct_predictions
         }))
@@ -182,8 +182,8 @@ export default createCommand({
         .setEmoji("▶")
         .setCustomId(`ranking;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next`)
         .setStyle("gray")
-      if (page <= 1) previous.setDisabled()
-      if (page >= Math.ceil(array.length / 10)) next.setDisabled()
+      if(page <= 1) previous.setDisabled()
+      if(page >= Math.ceil(array.length / 10)) next.setDisabled()
       ctx.reply(embed.build({
         components: [
           {
@@ -196,7 +196,7 @@ export default createCommand({
   },
   async createInteraction({ ctx, locale, client }) {
     await (ctx.interaction as ComponentInteraction).deferUpdate()
-    if (ctx.args[4] === "local") {
+    if(ctx.args[4] === "local") {
       let users = (await User.find({
         correct_predictions: {
           $gt: 0
@@ -206,7 +206,7 @@ export default createCommand({
       let page = Number(ctx.args[2])
       let pages = Math.ceil(array.length / 10)
       users = users.slice(page * 10 - 10, page * 10)
-      if (!users.length) {
+      if(!users.length) {
         ctx.reply("commands.ranking.no_users")
         return
       }
@@ -221,14 +221,14 @@ export default createCommand({
         .setThumb((await client.rest.users.get(array[0].id!))?.avatarURL()!)
 
       let pos = 0
-      if (!isNaN(page) && page > 1) pos = page * 10 - 10
-      for (const user of users) {
+      if(!isNaN(page) && page > 1) pos = page * 10 - 10
+      for(const user of users) {
         pos++
         const u = client.users.get(user.id)
         let field = `${pos} - ${!u ? "*unknown*" : u.username}`
-        if (pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
-        if (pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
-        if (pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
+        if(pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
+        if(pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
+        if(pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
         embed.addField(field, locale("commands.ranking.field", {
           t: user.correct_predictions
         }))
@@ -246,8 +246,8 @@ export default createCommand({
         .setEmoji("▶")
         .setCustomId(`ranking;${ctx.interaction.user.id};${page + 1};next;local`)
         .setStyle("gray")
-      if (page <= 1) previous.setDisabled()
-      if (page >= pages) next.setDisabled()
+      if(page <= 1) previous.setDisabled()
+      if(page >= pages) next.setDisabled()
       ctx.edit(embed.build({
         components: [
           {
@@ -267,7 +267,7 @@ export default createCommand({
       let page = Number(ctx.args[2])
       let pages = Math.ceil(array.length / 10)
       users = users.slice(page * 10 - 10, page * 10)
-      if (!users.length) {
+      if(!users.length) {
         ctx.reply("commands.ranking.no_users")
         return
       }
@@ -282,14 +282,14 @@ export default createCommand({
         .setThumb((await client.rest.users.get(array[0].id!))?.avatarURL()!)
 
       let pos = 0
-      if (!isNaN(page) && page > 1) pos = page * 10 - 10
-      for (const user of users) {
+      if(!isNaN(page) && page > 1) pos = page * 10 - 10
+      for(const user of users) {
         pos++
         const u = client.users.get(user.id)
         let field = `${pos} - ${!u ? "*unknown*" : u.username}`
-        if (pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
-        if (pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
-        if (pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
+        if(pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
+        if(pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
+        if(pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
         embed.addField(field, locale("commands.ranking.field", {
           t: user.correct_predictions
         }))
@@ -307,8 +307,8 @@ export default createCommand({
         .setEmoji("▶")
         .setCustomId(`ranking;${ctx.interaction.user.id};${page + 1};next`)
         .setStyle("gray")
-      if (page <= 1) previous.setDisabled()
-      if (page >= pages) next.setDisabled()
+      if(page <= 1) previous.setDisabled()
+      if(page >= pages) next.setDisabled()
       ctx.edit(embed.build({
         components: [
           {

@@ -11,7 +11,7 @@ import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
 import App from "../structures/client/App.js"
 const service = new Service(process.env.AUTH)
 
-const delete_guild = async (client: App) => {
+const delete_guild = async(client: App) => {
   const guilds = await Guild.find()
   for(const guild of guilds) {
     if(!client.guilds.get(guild.id)) {
@@ -19,7 +19,7 @@ const delete_guild = async (client: App) => {
     }
   }
 }
-const send_valorant_matches = async (client: App) => {
+const send_valorant_matches = async(client: App) => {
   const res = await service.getMatches("valorant")
   if(!res || !res.length) return
   const guilds = await Guild.find({
@@ -106,7 +106,7 @@ const send_valorant_matches = async (client: App) => {
     await guild.save()
   }
 }
-const send_valorant_TBD_matches = async (client: App) => {
+const send_valorant_TBD_matches = async(client: App) => {
   const res = await service.getMatches("valorant")
   if(!res || !res.length) return
   const guilds = await Guild.find({
@@ -157,7 +157,7 @@ const send_valorant_TBD_matches = async (client: App) => {
     }
   }
 }
-const send_lol_matches = async (client: App) => {
+const send_lol_matches = async(client: App) => {
   const res = await service.getMatches("lol")
   const res2 = await service.getResults("lol")
 
@@ -248,7 +248,7 @@ const send_lol_matches = async (client: App) => {
     await guild.save()
   }
 }
-const send_lol_tbd_matches = async (client: App) => {
+const send_lol_tbd_matches = async(client: App) => {
   const res = await service.getMatches("lol")
   if(!res || !res.length) return
   const guilds = await Guild.find({
@@ -299,13 +299,13 @@ const send_lol_tbd_matches = async (client: App) => {
     }
   }
 }
-const run_in_batches = async (client: App, tasks: any[], batch_size: number) => {
+const run_in_batches = async(client: App, tasks: any[], batch_size: number) => {
   for(let i = 0;i < tasks.length;i += batch_size) {
     const batch = tasks.slice(i, i + batch_size)
     await Promise.all(batch.map(task => task(client).catch((e: Error) => new Logger(client).error(e))))
   }
 }
-const run_tasks = async (client: App) => {
+const run_tasks = async(client: App) => {
   const tasks = [
     delete_guild,
     send_valorant_matches,
@@ -314,7 +314,7 @@ const run_tasks = async (client: App) => {
     send_lol_tbd_matches
   ]
   await run_in_batches(client, tasks, 2)
-  setTimeout(async () => await run_tasks(client), process.env.INTERVAL ?? 5 * 60 * 1000)
+  setTimeout(async() => await run_tasks(client), process.env.INTERVAL ?? 5 * 60 * 1000)
 }
 
 export default createListener({

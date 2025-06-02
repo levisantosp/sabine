@@ -33,7 +33,7 @@ export default class ButtonBuilder {
     return this
   }
   public setEmoji(emoji: string) {
-    if (isNaN(Number(emoji))) this.emoji = {
+    if(isNaN(Number(emoji))) this.emoji = {
       name: emoji
     }
     else this.emoji = {
@@ -54,7 +54,7 @@ export default class ButtonBuilder {
     return this
   }
   public build(content?: string | InteractionContent) {
-    if (typeof content === "string") {
+    if(typeof content === "string") {
       return {
         content: content ?? "",
         components: [
