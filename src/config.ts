@@ -104,3 +104,38 @@ export const valorant_agents = [
     role: "INITIATOR"
   }
 ] as const
+
+export const valorant_weapons = [
+  // sidearms
+  "Classic",
+  "Shorty",
+  "Frenzy",
+  "Ghost",
+  "Sheriff",
+
+  // smg
+  "Stinger",
+  "Spectre",
+
+  // shotgun
+  "Bucky",
+  "Judge",
+
+  // rifle
+  "Bulldog",
+  "Guardian",
+  "Phantom",
+  "Vandal",
+
+  // sniper
+  "Marshal",
+  "Operator",
+  "Outlaw",
+
+  // heavy
+  "Ares",
+  "Odin",
+
+  // melee
+  "Melee"
+] as const

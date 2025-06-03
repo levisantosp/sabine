@@ -352,14 +352,5 @@ export default createListener({
     })
     await client.application.bulkEditGlobalCommands(commands)
     await run_tasks(client)
-    // setInterval(async() => {
-    //   await send_news(client).catch(e => new Logger(client).error(e));
-    //   await delete_guild(client).catch(e => new Logger(client).error(e));
-    //   await send_live_feed_matches(client).catch(e => new Logger(client).error(e));
-    //   await send_matches(client).catch(e => new Logger(client).error(e));
-    //   await send_results(client).catch(e => new Logger(client).error(e));
-    //   await send_TBD_matches(client).catch(e => new Logger(client).error(e));
-    //   await delete_live_feed_matches().catch(e => new Logger(client).error(e));
-    // }, process.env.INTERVAL ?? 20000);
   }
 })
