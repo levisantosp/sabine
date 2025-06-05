@@ -125,6 +125,7 @@ export const commands = {
     buy_premium: "Buy the premium!"
   }
 }
+
 export const helper = {
   palpitate: "Predict",
   stats: "Stats",
@@ -153,6 +154,7 @@ export const helper = {
   live_now: "LIVE NOW",
   streams: "Streams"
 }
+
 export const permissions = {
   CREATE_INSTANT_INVITE: "Create Instant Invite",
   KICK_MEMBERS: "Kick Members",

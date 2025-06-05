@@ -339,6 +339,7 @@ export default createListener({
         }
       ])
     }
+    
     const commands: CreateApplicationCommandOptions[] = []
     client.commands.forEach(cmd => {
       commands.push({
@@ -350,7 +351,8 @@ export default createListener({
         type: 1
       })
     })
+
     await client.application.bulkEditGlobalCommands(commands)
-    await run_tasks(client)
+    // await run_tasks(client)
   }
 })
