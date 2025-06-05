@@ -33,7 +33,6 @@ export type Team = {
   name: string
   tag: string
   roster: TeamPlayer[]
-  score?: number
   side: "DEFENSE" | "ATTACK"
 }
 
@@ -86,8 +85,14 @@ export default class ValorantMatch {
     this.teams = options.teams
     this.ctx = options.ctx
     this.locale = options.locale
-    this.teams[0].score = 0
-    this.teams[1].score = 1
+  }
+
+  /**
+   * wait before continue
+   * @returns 
+   */
+  public async wait(t: number) {
+    return await new Promise(r => setTimeout(r, t))
   }
 
   /**
@@ -95,20 +100,6 @@ export default class ValorantMatch {
    */
   public set_content(content: string) {
     this.content = content
-  }
-
-  /**
-   * start a match
-   */
-  public async start_match() {
-    if(this.started) {
-      return await this.start_round()
-    }
-    else {
-      this.started = true
-
-      return
-    }
   }
 
   /**
@@ -165,8 +156,8 @@ export default class ValorantMatch {
 
     const x = this.calc_player_ovr(player1)
     const y = this.calc_player_ovr(player2)
-    const diff = (x - y) / (x + y)
-    const prob = 0.5 + (diff * 0.4)
+    const diff = (x - y) / 100
+    const prob = 1 / (1 + Math.exp(-diff * 3))
     const randola = Math.random()
 
     if(randola < prob) {
@@ -240,99 +231,87 @@ export default class ValorantMatch {
   /**
    * start the first step of the round (before plant)
    */
-  private async before_plant(duels: number) {
+  private async first_step(duels: number) {
     const kills: KillEvent[] = []
 
-    if(!duels) {
-      return this.after_plant()
+    for(let i = 0;i < duels;i++) {
+      const {
+        winner,
+        loser
+      } = this.start_player_duel()
+      const players = [...this.teams[0].roster, ...this.teams[1].roster]
+
+      var __winner_index = players.findIndex(p => p.id === winner) < 5 ? 0 : 1
+      var __loser_index = players.findIndex(p => p.id === loser) < 5 ? 0 : 1
+
+      const __winner = players.find(p => p.id === winner)!
+      const __loser = players.find(p => p.id === loser)!
+
+      kills.push({
+        killer: __winner,
+        killer_index: __winner_index,
+        victim: __loser,
+        victim_index: __loser_index,
+        weapon: "Vandal"
+      })
+    }
+
+    for(const kill of kills) {
+      const content = locales(this.locale, `${this.teams[kill.killer_index].tag} ${kill.killer.name} killed ${this.teams[kill.victim_index].tag} ${kill.victim.name} with a Vandal`)
+      this.content += `- ${content}\n`
+
+      const embed = new EmbedBuilder()
+        .setTitle(`${this.teams[0].name} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.teams[1].name}`)
+        .setDesc(this.content)
+      await this.ctx.edit(embed.build())
+
+      await this.wait(1000)
+    }
+
+    const team1_alive = this.teams[0].roster.filter(p => p.alive).length > 0
+    const team2_alive = this.teams[1].roster.filter(p => p.alive).length > 0
+
+    if(!team1_alive || !team2_alive) {
+      var winning_team = team1_alive ? 0 : 1
+
+      this.rounds_played.push({
+        winning_team: winning_team,
+        win_type: "ELIMINATION",
+        kills
+      })
+
+      const content = locales(this.locale, `- **${this.teams[1].name} wins the round by eliminating the entire opposing team**`)
+
+      this.content += `${content}\n`
+
+      const embed = new EmbedBuilder()
+      .setTitle(`${this.teams[0].name} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.teams[1].name}`)
+      .setDesc(this.content)
+
+      this.content = ""
+
+      await this.ctx.edit(embed.build())
+      await this.wait(5000)
+      await this.start_round()
     }
     else {
-      for(let i = 0; i < duels; i++) {
-        const {
-          winner,
-          loser
-        } = this.start_player_duel()
-        const players = [...this.teams[0].roster, ...this.teams[1].roster]
-
-        var __winner_index = players.findIndex(p => p.id === winner) < 5 ? 0 : 1
-        var __loser_index = players.findIndex(p => p.id === loser) < 5 ? 0 : 1
-
-        const __winner = players.find(p => p.id === winner)!
-        const __loser = players.find(p => p.id === loser)!
-
-        kills.push({
-          killer: __winner,
-          killer_index: __winner_index,
-          victim: __loser,
-          victim_index: __loser_index,
-          weapon: "Vandal"
-        })
-      }
-
-      for(const kill of kills) {
-        const content = locales(this.locale, `${this.teams[kill.killer_index].tag} ${kill.killer.name} matou ${this.teams[kill.victim_index].tag} ${kill.victim.name} com uma Vandal`)
-        this.content += `- ${content}\n`
-
-        const embed = new EmbedBuilder()
-        .setTitle(`${this.teams[0].name} ${this.teams[0].score} <:versus:1349105624180330516> ${this.teams[1].score} ${this.teams[1].name}`)
-        .setDesc(this.content)
-        await this.ctx.edit(embed.build())
-
-        await new Promise(r => setTimeout(r, 1000))
-      }
-
-      if(!this.teams[0].roster.length || !this.teams[1].roster.length) {
-        if(!this.teams[0].roster.length) {
-          this.rounds_played.push({
-            winning_team: 1,
-            win_type: "ELIMINATION",
-            kills
-          })
-
-          const content = locales(this.locale, `${this.teams[1].name} vence o round`)
-
-          this.content += `${content}\n`
-
-          const embed = new EmbedBuilder()
-          .setTitle(`${this.teams[0].name} ${this.teams[0].score} <:versus:1349105624180330516> ${this.teams[1].score} ${this.teams[1].name}`)
-          .setDesc(this.content)
-
-          this.content = ""
-
-          await this.ctx.edit(embed.build())
-        }
-        else {
-          this.rounds_played.push({
-            winning_team: 0,
-            win_type: "ELIMINATION",
-            kills
-          })
-
-          const content = locales(this.locale, `${this.teams[0].name} vence o round`)
-
-          this.content += `${content}\n`
-
-          const embed = new EmbedBuilder()
-          .setTitle(`${this.teams[0].name} ${this.teams[0].score} <:versus:1349105624180330516> ${this.teams[1].score} ${this.teams[1].name}`)
-          .setDesc(this.content)
-
-          this.content = ""
-          
-          await this.ctx.edit(embed.build())
-        }
-      }
-      else {
+      var bomb_planted = Math.random() < 0.8
+      if(bomb_planted) {
         const bomb = ["A", "B"][Math.floor(Math.random() * 2)]
 
-        const content = locales(this.locale, `- Spike plantada no bomb site ${bomb}`)
+        const content = locales(this.locale, `- *Spike planted at bomb site ${bomb}*`)
         this.content += `${content}\n`
-        
+
         const embed = new EmbedBuilder()
-        .setTitle(`${this.teams[0].name} ${this.teams[0].score} <:versus:1349105624180330516> ${this.teams[1].score} ${this.teams[1].name}`)
+        .setTitle(`${this.teams[0].name} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.teams[1].name}`)
         .setDesc(this.content)
         await this.ctx.edit(embed.build())
 
-        return await this.after_plant()
+        await this.wait(5000)
+        return await this.second_step(true)
+      }
+      else {
+        await this.second_step()
       }
     }
   }
@@ -340,25 +319,37 @@ export default class ValorantMatch {
   /**
    * start the second step (after plant)
    */
-  public async after_plant() {
+  public async second_step(bomb_planted?: boolean) {
     const kills: KillEvent[] = []
 
-    var win_types: RoundResult["win_type"][] = ["BOMB", "DEFUSE", "TIME", "ELIMINATION"]
-    var win_type = win_types[Math.floor(Math.random() * win_types.length)]
-
-    const round: RoundResult = {
-      bomb_planted: true,
-      kills,
-      win_type,
-      winning_team: (win_type === "BOMB") || (win_type === "TIME") ? this.teams.findIndex(t => t.side === "ATTACK") : this.teams.findIndex(t => t.side === "DEFENSE")
+    var attack_index = this.teams.findIndex(t => t.side === "ATTACK")
+    var defense_index = this.teams.findIndex(t => t.side === "DEFENSE")
+    var attack_ovr = this.calc_team_ovr(attack_index, true)
+    var defense_ovr = this.calc_team_ovr(defense_index, true)
+    var total_ovr = attack_ovr + defense_ovr
+    var win_types_weights = {
+      BOMB: 0.4 * attack_ovr / total_ovr,
+      DEFUSE: 0.4 * defense_ovr / total_ovr,
+      TIME: 0.2 * defense_ovr / total_ovr,
+      ELIMINATION: 0.3 * Math.max(attack_ovr, defense_ovr) / total_ovr
     }
+
+    var win_types: RoundResult["win_type"][] = []
+    for(const [type, weight] of Object.entries(win_types_weights)) {
+      if(bomb_planted && type === "TIME") continue
+      if(!bomb_planted && ["BOMB", "DEFUSE"].includes(type)) continue
+
+      for(let i = 0; i < weight * 100; i++) {
+        win_types.push(type as RoundResult["win_type"])
+      }
+    }
+
+    var win_type = win_types[Math.floor(Math.random() * win_types.length)]
 
     if(
       win_type === "BOMB"
       ||
       win_type === "DEFUSE"
-      ||
-      win_type === "TIME"
     ) {
       var duels = Math.floor(
         Math.random()
@@ -409,56 +400,96 @@ export default class ValorantMatch {
           weapon: "Vandal"
         })
 
-        // if(
-        //   !this.teams[0].roster.filter(p => p.alive).length
-        //   &&
-        //   !this.teams[1].roster.filter(p => p.alive).length
-        // ) return
-
         var team1 = this.teams[0]
         var team2 = this.teams[1]
 
-        console.log(team1.roster.filter(p => p.alive).length, team2.roster.filter(p => p.alive).length)
+        // console.log(team1.roster.filter(p => p.alive).length, team2.roster.filter(p => p.alive).length)
       }
 
       if(win_type === "DEFUSE") {
+        var winning_team = this.teams.findIndex(t => t.side === "DEFENSE")
+        const round: RoundResult = {
+          bomb_planted,
+          kills,
+          win_type,
+          winning_team
+        }
+
         var index = this.teams.findIndex(t => t.side === "DEFENSE")
-        this.teams[index].score! += 1
         this.rounds_played.push(round)
 
-        const content = locales(this.locale, `- ${this.teams[index].name} vence o round`)
+        const content = locales(this.locale, `- *Spike defused*\n- **${this.teams[index].name}** wins the round`)
 
         this.content += `${content}\n`
 
         const embed = new EmbedBuilder()
-        .setTitle(`${this.teams[0].name} ${this.teams[0].score} <:versus:1349105624180330516> ${this.teams[1].score} ${this.teams[1].name}`)
+        .setTitle(`${this.teams[0].name} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.teams[1].name}`)
         .setDesc(this.content)
         await this.ctx.edit(embed.build())
+
+        this.content = ""
+
+  
+
+        await this.wait(5000)
+        await this.start_round()
       }
       else {
         var index = this.teams.findIndex(t => t.side === "ATTACK")
-        this.teams[index].score! += 1
+        const round: RoundResult = {
+          bomb_planted,
+          kills,
+          win_type,
+          winning_team: index
+        }
         this.rounds_played.push(round)
 
-        const content = locales(this.locale, `- ${this.teams[index].name} vence o round`)
+        const content = locales(this.locale, `- Spike detonated\n - **${this.teams[index].name}** wins the round`)
 
         this.content += `${content}\n`
 
         const embed = new EmbedBuilder()
-        .setTitle(`${this.teams[0].name} ${this.teams[0].score} <:versus:1349105624180330516> ${this.teams[1].score} ${this.teams[1].name}`)
+        .setTitle(`${this.teams[0].name} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.teams[1].name}`)
         .setDesc(this.content)
         await this.ctx.edit(embed.build())
+
+        this.content = ""
+
+  
+
+        await this.wait(5000)
+        await this.start_round()
       }
     }
+    else if(win_type === "TIME") {
+      var index = this.teams.findIndex(t => t.side === "DEFENSE")
+      const round: RoundResult = {
+        bomb_planted,
+        kills,
+        win_type,
+        winning_team: index
+      }
+      this.rounds_played.push(round)
+
+      const content = locales(this.locale, `- Spike was not planted on time\n - **${this.teams[index].name}** wins the round`)
+
+      this.content += `${content}\n`
+
+      const embed = new EmbedBuilder()
+      .setTitle(`${this.teams[0].name} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.teams[1].name}`)
+      .setDesc(this.content)
+      await this.ctx.edit(embed.build())
+
+      this.content = ""
+
+      await this.wait(5000)
+      await this.start_round()
+    }
     else {
-      for(
-        let i = 0;
-        i < Math.min(
-          this.teams[0].roster.filter(p => p.alive).length,
-          this.teams[1].roster.filter(p => p.alive).length
-        );
-        i++
-      ) {
+      while(
+        this.teams[0].roster.some(p => p.alive) &&
+        this.teams[1].roster.some(p => p.alive)
+       ) {
         const {
           winner,
           loser
@@ -483,50 +514,50 @@ export default class ValorantMatch {
           weapon: "Vandal"
         })
 
-        // if(
-        //   !this.teams[0].roster.filter(p => p.alive).length
-        //   &&
-        //   !this.teams[1].roster.filter(p => p.alive).length
-        // ) return
-
-        var index = this.teams.findIndex(t => t.side === "ATTACK")
-        this.teams[index].score! += 1
-        this.rounds_played.push(round)
-        const content = locales(this.locale, `${this.teams[index].name} venceu o round`)
-
-        this.content += `${content}\n`
-
         const embed = new EmbedBuilder()
-        .setTitle(`${this.teams[0].name} ${this.teams[0].score} <:versus:1349105624180330516> ${this.teams[1].score} ${this.teams[1].name}`)
+        .setTitle(`${this.teams[0].name} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.teams[1].name}`)
         .setDesc(this.content)
         await this.ctx.edit(embed.build())
 
         var team1 = this.teams[0]
         var team2 = this.teams[1]
 
-        console.log(team1.roster.filter(p => p.alive).length, team2.roster.filter(p => p.alive).length)
+        // console.log(team1.roster.filter(p => p.alive).length, team2.roster.filter(p => p.alive).length)
       }
     }
 
     for(const kill of kills) {
-      const content = locales(this.locale, `${this.teams[kill.killer_index].tag} ${kill.killer.name} matou ${this.teams[kill.victim_index].tag} ${kill.victim.name} com uma Vandal`)
+      const content = locales(this.locale, `${this.teams[kill.killer_index].tag} ${kill.killer.name} killed ${this.teams[kill.victim_index].tag} ${kill.victim.name} with a Vandal`)
       this.content += `- ${content}\n`
 
+      const embed = new EmbedBuilder()
+      .setTitle(`${this.teams[0].name} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.teams[1].name}`)
+      .setDesc(this.content)
+      await this.ctx.edit(embed.build())
+
+      await this.wait(1000)
+    }
+
+    var winning_team = this.teams[0].roster.filter(p => p.alive).length ? 0 : 1
+    const round: RoundResult = {
+      bomb_planted,
+      kills,
+      win_type,
+      winning_team
+    }
+
+    this.rounds_played.push(round)
+
+    const content = locales(this.locale, `- **${this.teams[winning_team].name}** won the round by eliminating the opposing team`)
+
+    this.content += `${content}\n`
     const embed = new EmbedBuilder()
-    .setTitle(`${this.teams[0].name} ${this.teams[0].score} <:versus:1349105624180330516> ${this.teams[1].score} ${this.teams[1].name}`)
+    .setTitle(`${this.teams[0].name} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.teams[1].name}`)
     .setDesc(this.content)
     await this.ctx.edit(embed.build())
 
-      await new Promise(r => setTimeout(r, 1000))
-    }
-
-    for(const team of this.teams)
-      for(const p of team.roster)
-        p.alive = true
-
-
     this.content = ""
-    await new Promise(r => setTimeout(r, 5000))
+    await this.wait(5000)
     await this.start_round()
   }
 
@@ -534,18 +565,85 @@ export default class ValorantMatch {
    * starts a round
    */
   public async start_round() {
+    if(this.rounds_played.length === 12) await this.switch_sides()
+
+    const score1 = this.rounds_played.filter(r => r.winning_team === 0).length
+    const score2 = this.rounds_played.filter(r => r.winning_team === 1).length
+
+    if(score1 >= 13 || score2 >= 13) return await this.finish()
+
+    for(const t of this.teams)
+      for(const p of t.roster)
+        p.alive = true
+
     const duels = Math.floor(Math.random() * 6)
     const round_number = this.rounds_played.length + 1
 
-    const content = locales(this.locale, `- Round ${round_number} iniciado`)
+    const content = locales(this.locale, `*Round ${round_number} started*`)
 
     this.content += `${content}\n`
 
     const embed = new EmbedBuilder()
-    .setTitle(`${this.teams[0].name} ${this.teams[0].score} <:versus:1349105624180330516> ${this.teams[1].score} ${this.teams[1].name}`)
+    .setTitle(`${this.teams[0].name} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.teams[1].name}`)
     .setDesc(this.content)
     await this.ctx.edit(embed.build())
 
-    return await this.before_plant(duels)
+    await this.wait(5000)
+    return await this.first_step(duels)
+  }
+
+  /**
+   * calculate team ovr
+   */
+  private calc_team_ovr(i: number, only_alive_players?: boolean) {
+    if(only_alive_players) {
+      const total = this.teams[i].roster.filter(p => p.alive).reduce((sum, p) => sum + this.calc_player_ovr(p), 0)
+
+      return total / 5
+    }
+    else {
+      const total = this.teams[i].roster.reduce((sum, p) => sum + this.calc_player_ovr(p), 0)
+
+      return total / 5
+    }
+  }
+
+  /**
+   * switch sides
+   */
+  public async switch_sides() {
+    for(const t of this.teams)
+      if(t.side === "ATTACK") t.side = "DEFENSE"
+      else t.side = "ATTACK"
+
+    const content = locales(this.locale, `*Switch sides*`)
+
+    this.content += `${content}\n`
+
+    const embed = new EmbedBuilder()
+    .setTitle(`${this.teams[0].name} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.teams[1].name}`)
+    .setDesc(this.content)
+
+    await this.ctx.edit(embed.build())
+
+    this.content = ""
+    await this.wait(5000)
+  }
+
+  /**
+   * finish the match
+   */
+  private async finish() {
+    this.finished = true
+
+    const score1 = this.rounds_played.filter(r => r.winning_team === 0).length
+    const score2 = this.rounds_played.filter(r => r.winning_team === 1).length
+
+    if(score1 >= 13) {
+      await this.ctx.reply(`${this.teams[0].user} won the match`)
+    }
+    else if(score2 >= 13) {
+      await this.ctx.reply(`${this.teams[1].user} won the match`)
+    }
   }
 }
