@@ -33,7 +33,7 @@ export const commands = {
     footer: "[] = required argument | <> = optional argument",
     bot_permissions: "My permissions",
     title: "My commands",
-    description: "For more information about a particular command, use `{arg}`.\nNeed help? Log in to the support server by clicking the button below!",
+    description: "You can see my commands here: {website}\nFor more information about a particular command, use `{arg}`.\nNeed help? Join to the support server by clicking the button below!",
     field: "Commands ({q})",
     community: "Community and Support",
     privacy: "Terms of Service and Privacy"
@@ -123,6 +123,12 @@ export const commands = {
     news_enabled: "<:success:1300882212190945292> Live feed feature enabled to channel {ch}",
     news_disabled: "<:success:1300882212190945292> Live feed feature disabled successfully!",
     buy_premium: "Buy the premium!"
+  },
+  claim: {
+    claimed: `
+      **{player}** joined your roster for free
+      Price: {price}
+    `.trim()
   }
 }
 

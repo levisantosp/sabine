@@ -33,7 +33,7 @@ export const commands = {
     footer: "[] = argumento obrigatório | <> = argumento opcional",
     bot_permissions: "Minhas permissões",
     title: "Meus comandos",
-    description: "Para mais informações a respeito de determinado comando, use `{arg}`.\nPrecisando de ajuda? Entre no servidor de suporte clicando no botão abaixo!",
+    description: "Você pode ver meus comandos aqui: {website}\nPara mais informações a respeito de determinado comando, use `{arg}`.\nPrecisando de ajuda? Entre no servidor de suporte clicando no botão abaixo!",
     field: "Comandos ({q})",
     community: "Comunidade e Suporte",
     privacy: "Termos de Serviço e Privacidade"
