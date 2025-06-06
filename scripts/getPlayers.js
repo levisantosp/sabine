@@ -2,7 +2,7 @@ import fs from "fs"
 
 export default function() {
   const lines = fs.readFileSync("data.csv").toString().split("\n")
-  const headers = lines.shift().split(";")
+  const headers = lines.shift().split(",")
   const data = []
   for(let i = 0; i < lines.length; i++) {
     const obj = {}
