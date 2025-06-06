@@ -24,6 +24,7 @@ export type Command = {
   name: string
   nameLocalizations?: Partial<Record<Locale, string>>
   description: string
+  category: "valorant" | "admin" | "esports" | "misc" | "premium" | "valorant"
   descriptionLocalizations?: Partial<Record<Locale, string>>
   options?: ApplicationCommandOptions[]
   syntax?: string
