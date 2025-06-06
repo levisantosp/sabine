@@ -427,20 +427,21 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
 
     const commands: any[] = []
 
-    for(const file of readdirSync(path.resolve(__dirname,"./commands"))) {
-      const command = (await import(`./commands/${file}`)).default.default ?? (await import(`./commands/${file}`)).default
-      
-      commands.push({
-        name: command.name,
-        nameLocalizations: command.nameLocalizations,
-        description: command.description,
-        descriptionLocalizations: command.descriptionLocalizations,
-        syntax: command.syntax,
-        syntaxes: command.syntaxes,
-        examples: command.examples,
-        permissions: command.permissions,
-        botPermissions: command.botPermissions
-      })
+    for(const folder of readdirSync(path.resolve(__dirname, `./commands`))) {
+      for(const file of readdirSync(path.resolve(__dirname, `./commands/${folder}`))) {
+        const command = (await import(`./commands/${folder}/${file}`)).default.default ?? (await import(`./commands/${folder}/${file}`)).default
+        commands.push({
+          name: command.name,
+          nameLocalizations: command.nameLocalizations,
+          description: command.description,
+          descriptionLocalizations: command.descriptionLocalizations,
+          syntax: command.syntax,
+          syntaxes: command.syntaxes,
+          examples: command.examples,
+          permissions: command.permissions,
+          botPermissions: command.botPermissions
+        })
+      }
     }
 
   fastify.get("/commands", async() => {

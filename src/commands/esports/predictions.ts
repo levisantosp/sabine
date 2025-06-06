@@ -1,10 +1,11 @@
 import { ComponentInteraction } from "oceanic.js"
-import createCommand from "../structures/command/createCommand.js"
-import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
-import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
+import createCommand from "../../structures/command/createCommand.js"
+import EmbedBuilder from "../../structures/builders/EmbedBuilder.js"
+import ButtonBuilder from "../../structures/builders/ButtonBuilder.js"
 
 export default createCommand({
   name: "predictions",
+  category: "esports",
   nameLocalizations: {
     "pt-BR": "palpites"
   },

@@ -1,11 +1,15 @@
-import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
-import createCommand from "../structures/command/createCommand.js"
+import ButtonBuilder from "../../structures/builders/ButtonBuilder.js"
+import createCommand from "../../structures/command/createCommand.js"
 
 export default createCommand({
-  name: "live",
-  description: "Manage lvie feed feature",
+  name: "news",
+  category: "admin",
+  nameLocalizations: {
+    "pt-BR": "noticias"
+  },
+  description: "Manage news feature",
   descriptionLocalizations: {
-    "pt-BR": "Gerencie a funcionalidade de transmissão ao vivo"
+    "pt-BR": "Gerencie a funcionalidade de notícias"
   },
   options: [
     {
@@ -14,17 +18,17 @@ export default createCommand({
       nameLocalizations: {
         "pt-BR": "habilitar"
       },
-      description: "Enable live feed feature",
+      description: "Enable news feature",
       descriptionLocalizations: {
-        "pt-BR": "Habilita a funcionalidade de transmissão aivo"
+        "pt-BR": "Habilitar"
       },
       options: [
         {
           type: 1,
           name: "valorant",
-          description: "Enable VALORANT live feed feature",
+          description: "Enable VALORANT news feature",
           descriptionLocalizations: {
-            "pt-BR": "Habilita a funcionalidade de transmissão ao vivo de VALORANT"
+            "pt-BR": "Habilita a funcionalidade de notícias de VALORANT"
           },
           options: [
             {
@@ -44,9 +48,9 @@ export default createCommand({
         {
           type: 1,
           name: "lol",
-          description: "Enable League of Legends live feed feature",
+          description: "Enable League of Legends news feature",
           descriptionLocalizations: {
-            "pt-BR": "Habilita a funcionalidade de transmissão ao vivo de League of Legends"
+            "pt-BR": "Habilita a funcionalidade de notícias de League of Legends"
           },
           options: [
             {
@@ -71,25 +75,25 @@ export default createCommand({
       nameLocalizations: {
         "pt-BR": "desabilitar"
       },
-      description: "Disable live feed feature",
+      description: "Disable news feature",
       descriptionLocalizations: {
-        "pt-BR": "Desabilitar a funcionalidade de transmissão ao vivo"
+        "pt-BR": "Desabilitar a funcionalidade de notícias"
       },
       options: [
         {
           type: 1,
           name: "valorant",
-          description: "Disable VALORANT live feed feature",
+          description: "Disable VALORANT news feature",
           descriptionLocalizations: {
-            "pt-BR": "Desabilita a funcionalidade de transmissão ao vivo de VALORANT"
+            "pt-BR": "Desabilita a funcionalidade de notícias de VALORANT"
           }
         },
         {
           type: 1,
           name: "lol",
-          description: "Disable League of Legends live feed feature",
+          description: "Disable League of Legends news feature",
           descriptionLocalizations: {
-            "pt-BR": "Desabilita a funcionalidade de transmissão ao vivo de League of Legends"
+            "pt-BR": "Desabilita a funcionalidade de notícias de League of Legends"
           }
         }
       ]
@@ -116,17 +120,17 @@ export default createCommand({
       const games = {
         valorant: async() => {
           let channel = ctx.guild.channels.get(ctx.args[2])!
-          if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
-          ctx.db.guild.valorant_livefeed_channel = channel.id
+          if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.news.invalid_channel")
+          ctx.db.guild.valorant_news_channel = ctx.args[2]
           await ctx.db.guild.save()
-          await ctx.reply("commands.live.live_enabled", { ch: channel.mention })
+          await ctx.reply("commands.news.news_enabled", { ch: channel.mention })
         },
         lol: async() => {
           let channel = ctx.guild.channels.get(ctx.args[2])!
-          if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
-          ctx.db.guild.lol_livefeed_channel = channel.id
+          if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.news.invalid_channel")
+          ctx.db.guild.lol_news_channel = channel.id
           await ctx.db.guild.save()
-          await ctx.reply("commands.live.live_enabled", { ch: channel.mention })
+          await ctx.reply("commands.news.news_enabled", { ch: channel.mention })
         }
       }
       await games[ctx.args[1] as "valorant" | "lol"]()
@@ -134,20 +138,16 @@ export default createCommand({
     else {
       const games = {
         valorant: async() => {
-          let channel = ctx.guild.channels.get(ctx.args[2])!
-          if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
-          ctx.db.guild.updateOne({
-            $unset: { valorant_livefeed_channel: "" }
+          await ctx.db.guild.updateOne({
+            $unset: { valorant_news_channel: "" }
           })
-          await ctx.reply("commands.live.live_disabled")
+          await ctx.reply("commands.news.news_disabled")
         },
         lol: async() => {
-          let channel = ctx.guild.channels.get(ctx.args[2])!
-          if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
-          ctx.db.guild.updateOne({
-            $unset: { lol_livefeed_channel: "" }
+          await ctx.db.guild.updateOne({
+            $unset: { lol_news_channel: "" }
           })
-          await ctx.reply("commands.live.live_disabled")
+          await ctx.reply("commands.news.news_disabled")
         }
       }
       await games[ctx.args[1] as "valorant" | "lol"]()

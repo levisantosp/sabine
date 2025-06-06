@@ -1,16 +1,17 @@
 import { CommandInteraction, ComponentInteraction } from "oceanic.js"
-import { MatchesData } from "../../types/index.js"
-import Service from "../api/index.js"
-import { Guild, GuildSchemaInterface } from "../database/index.js"
-import locales from "../locales/index.js"
-import createCommand from "../structures/command/createCommand.js"
-import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
-import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
-import { emojis } from "../structures/util/emojis.js"
+import { MatchesData } from "../../../types/index.js"
+import Service from "../../api/index.js"
+import { Guild, GuildSchemaInterface } from "../../database/index.js"
+import locales from "../../locales/index.js"
+import createCommand from "../../structures/command/createCommand.js"
+import EmbedBuilder from "../../structures/builders/EmbedBuilder.js"
+import ButtonBuilder from "../../structures/builders/ButtonBuilder.js"
+import { emojis } from "../../structures/util/emojis.js"
 const service = new Service(process.env.AUTH)
 
 export default createCommand({
 	name: "admin",
+	category: "admin",
 	description: "See the dashboard and change the bot language",
 	descriptionLocalizations: {
 		"pt-BR": "Veja o painel de controle e mude o idioma do bot"

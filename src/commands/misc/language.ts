@@ -1,7 +1,8 @@
-import createCommand from "../structures/command/createCommand.js"
+import createCommand from "../../structures/command/createCommand.js"
 
 export default createCommand({
   name: "language",
+  category: "misc",
   nameLocalizations: {
     "pt-BR": "idioma"
   },

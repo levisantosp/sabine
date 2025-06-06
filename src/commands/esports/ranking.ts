@@ -1,11 +1,12 @@
 import { ComponentInteraction } from "oceanic.js"
-import { User, UserSchemaInterface } from "../database/index.js"
-import createCommand from "../structures/command/createCommand.js"
-import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
-import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
+import { User, UserSchemaInterface } from "../../database/index.js"
+import createCommand from "../../structures/command/createCommand.js"
+import EmbedBuilder from "../../structures/builders/EmbedBuilder.js"
+import ButtonBuilder from "../../structures/builders/ButtonBuilder.js"
 
 export default createCommand({
   name: "ranking",
+  category: "esports",
   description: "Ranking of users with most correct predictions",
   descriptionLocalizations: {
     "pt-BR": "Tabela de usuários com mais palpites corretos"

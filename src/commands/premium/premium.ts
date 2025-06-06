@@ -1,10 +1,11 @@
-import { Key, KeySchemaInterface } from "../database/index.js"
-import createCommand from "../structures/command/createCommand.js"
-import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
-import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
+import { Key, KeySchemaInterface } from "../../database/index.js"
+import createCommand from "../../structures/command/createCommand.js"
+import ButtonBuilder from "../../structures/builders/ButtonBuilder.js"
+import EmbedBuilder from "../../structures/builders/EmbedBuilder.js"
 
 export default createCommand({
   name: "premium",
+  category: "premium",
   description: "Shows your premium's informations",
   descriptionLocalizations: {
     "pt-BR": "Mostra as informações do seu premium"
