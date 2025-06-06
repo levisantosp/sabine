@@ -77,7 +77,6 @@ export default class ValorantMatch {
   public teams: Team[] = []
   public finished: boolean = false
   private ctx: CommandContext
-  private started: boolean = false
   private content: string = ""
   private locale: string
 
@@ -98,14 +97,14 @@ export default class ValorantMatch {
   /**
    * set match content
    */
-  public set_content(content: string) {
+  public setContent(content: string) {
     this.content = content
   }
 
   /**
    * calculate the player's overral
    */
-  private calc_player_ovr(player: TeamPlayer) {
+  private calcPlayerOvr(player: TeamPlayer) {
     const KD = (player.stats.KD / 1) * 20
     const ACS = (player.stats.ACS / 300) * 30
     const ADR = (player.stats.ADR / 200) * 20
@@ -119,14 +118,14 @@ export default class ValorantMatch {
   /**
    * determine which player will win the duel
    */
-  private start_player_duel() {
+  private startPlayerDuel() {
     const roles: TeamPlayer["role"][] = Array.from(
       new Set(this.teams.flatMap(t => t.roster.filter(p => p.alive).map(p => p.role === "FLEX" ? p.agent.role : p.role)))
     )
     const weights = [5, 15, 30, 50]
 
-    const pick1 = this.choose_player(roles, weights)
-    const pick2 = this.choose_player(roles, weights)
+    const pick1 = this.choosePlayer(roles, weights)
+    const pick2 = this.choosePlayer(roles, weights)
 
     const roster1 = this.teams[0].roster
       .filter(p => p.alive)
@@ -154,8 +153,8 @@ export default class ValorantMatch {
       player2 = roster[Math.floor(Math.random() * roster.length)]
     }
 
-    const x = this.calc_player_ovr(player1)
-    const y = this.calc_player_ovr(player2)
+    const x = this.calcPlayerOvr(player1)
+    const y = this.calcPlayerOvr(player2)
     const diff = (x - y) / 100
     const prob = 1 / (1 + Math.exp(-diff * 3))
     const randola = Math.random()
@@ -212,7 +211,7 @@ export default class ValorantMatch {
   /**
    * select a player by role
    */
-  private choose_player(array: string[], weights: number[]) {
+  private choosePlayer(array: string[], weights: number[]) {
     const total_weight = weights.reduce((acc, w) => acc + w, 0)
     const r = Math.random() * total_weight
 
@@ -231,14 +230,14 @@ export default class ValorantMatch {
   /**
    * start the first step of the round (before plant)
    */
-  private async first_step(duels: number) {
+  private async firstStep(duels: number) {
     const kills: KillEvent[] = []
 
     for(let i = 0;i < duels;i++) {
       const {
         winner,
         loser
-      } = this.start_player_duel()
+      } = this.startPlayerDuel()
       const players = [...this.teams[0].roster, ...this.teams[1].roster]
 
       var __winner_index = players.findIndex(p => p.id === winner) < 5 ? 0 : 1
@@ -308,10 +307,10 @@ export default class ValorantMatch {
         await this.ctx.edit(embed.build())
 
         await this.wait(5000)
-        return await this.second_step(true)
+        return await this.secondStep(true)
       }
       else {
-        await this.second_step()
+        await this.secondStep()
       }
     }
   }
@@ -319,13 +318,13 @@ export default class ValorantMatch {
   /**
    * start the second step (after plant)
    */
-  public async second_step(bomb_planted?: boolean) {
+  public async secondStep(bomb_planted?: boolean) {
     const kills: KillEvent[] = []
 
     var attack_index = this.teams.findIndex(t => t.side === "ATTACK")
     var defense_index = this.teams.findIndex(t => t.side === "DEFENSE")
-    var attack_ovr = this.calc_team_ovr(attack_index, true)
-    var defense_ovr = this.calc_team_ovr(defense_index, true)
+    var attack_ovr = this.calcTeamOvr(attack_index, true)
+    var defense_ovr = this.calcTeamOvr(defense_index, true)
     var total_ovr = attack_ovr + defense_ovr
     var win_types_weights = {
       BOMB: 0.4 * attack_ovr / total_ovr,
@@ -379,7 +378,7 @@ export default class ValorantMatch {
         const {
           winner,
           loser
-        } = this.start_player_duel()
+        } = this.startPlayerDuel()
 
         const allPlayers = [
           ...this.teams[0].roster,
@@ -495,7 +494,7 @@ export default class ValorantMatch {
         const {
           winner,
           loser
-        } = this.start_player_duel()
+        } = this.startPlayerDuel()
 
         const allPlayers = [
           ...this.teams[0].roster,
@@ -566,8 +565,8 @@ export default class ValorantMatch {
   /**
    * starts a round
    */
-  public async start_round() {
-    if(this.rounds_played.length === 12) await this.switch_sides()
+  public async startRound() {
+    if(this.rounds_played.length === 12) await this.switchSides()
 
     const score1 = this.rounds_played.filter(r => r.winning_team === 0).length
     const score2 = this.rounds_played.filter(r => r.winning_team === 1).length
@@ -594,21 +593,21 @@ export default class ValorantMatch {
     await this.ctx.edit(embed.build())
 
     await this.wait(5000)
-    await this.first_step(duels)
+    await this.firstStep(duels)
     return false
   }
 
   /**
    * calculate team ovr
    */
-  private calc_team_ovr(i: number, only_alive_players?: boolean) {
+  private calcTeamOvr(i: number, only_alive_players?: boolean) {
     if(only_alive_players) {
-      const total = this.teams[i].roster.filter(p => p.alive).reduce((sum, p) => sum + this.calc_player_ovr(p), 0)
+      const total = this.teams[i].roster.filter(p => p.alive).reduce((sum, p) => sum + this.calcPlayerOvr(p), 0)
 
       return total / 5
     }
     else {
-      const total = this.teams[i].roster.reduce((sum, p) => sum + this.calc_player_ovr(p), 0)
+      const total = this.teams[i].roster.reduce((sum, p) => sum + this.calcPlayerOvr(p), 0)
 
       return total / 5
     }
@@ -617,7 +616,7 @@ export default class ValorantMatch {
   /**
    * switch sides
    */
-  public async switch_sides() {
+  public async switchSides() {
     for(const t of this.teams)
       if(t.side === "ATTACK") t.side = "DEFENSE"
       else t.side = "ATTACK"
