@@ -6,7 +6,7 @@ export default function() {
   const data = []
   for(let i = 0; i < lines.length; i++) {
     const obj = {}
-    const values = lines[i].split(";")
+    const values = lines[i].split(",")
     for(let i = 0; i < values.length; i++) {
       var value = values[i]
       if(!isNaN(value)) {
