@@ -292,7 +292,7 @@ export default class ValorantMatch {
 
       await this.ctx.edit(embed.build())
       await this.wait(5000)
-      await this.start_round()
+      return
     }
     else {
       var bomb_planted = Math.random() < 0.8
@@ -432,7 +432,8 @@ export default class ValorantMatch {
   
 
         await this.wait(5000)
-        await this.start_round()
+
+        return
       }
       else {
         var index = this.teams.findIndex(t => t.side === "ATTACK")
@@ -458,7 +459,8 @@ export default class ValorantMatch {
   
 
         await this.wait(5000)
-        await this.start_round()
+
+        return
       }
     }
     else if(win_type === "TIME") {
@@ -483,7 +485,7 @@ export default class ValorantMatch {
       this.content = ""
 
       await this.wait(5000)
-      await this.start_round()
+      return
     }
     else {
       while(
@@ -558,7 +560,7 @@ export default class ValorantMatch {
 
     this.content = ""
     await this.wait(5000)
-    await this.start_round()
+    return
   }
 
   /**
@@ -570,7 +572,10 @@ export default class ValorantMatch {
     const score1 = this.rounds_played.filter(r => r.winning_team === 0).length
     const score2 = this.rounds_played.filter(r => r.winning_team === 1).length
 
-    if(score1 >= 13 || score2 >= 13) return await this.finish()
+    if(score1 >= 13 || score2 >= 13) {
+      await this.finish()
+      return true
+    }
 
     for(const t of this.teams)
       for(const p of t.roster)
@@ -589,7 +594,8 @@ export default class ValorantMatch {
     await this.ctx.edit(embed.build())
 
     await this.wait(5000)
-    return await this.first_step(duels)
+    await this.first_step(duels)
+    return false
   }
 
   /**
