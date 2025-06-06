@@ -1,2 +1,2 @@
-id;name;collection;team;country;role;KD;ACS;ADR;FK;FD;KAST
-1;aspas;base;MIBR;br;duelist;1.38;250;170.73;17.46;11.34;73.48
+id,name,collection,team,country,role,KD,ACS,ADR,FK,FD,KAST
+1,aspas,base,MIBR,br,duelist,1.38,250,170.73,17.46,11.34,73.48
