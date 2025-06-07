@@ -17,6 +17,7 @@ type Player = {
   KAST: number
   ovr?: number
   price?: number
+  img: string
 }
 const calcPlayerOvr = (player: Player) => {
   const KD = (player.KD / 1) * 20
@@ -96,6 +97,7 @@ export default createCommand({
         }
       )
     )
+    .setImage(player.img)
     ctx.reply(embed.build())
   }
 })

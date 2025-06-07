@@ -1,4 +1,4 @@
-id,name,collection,team,country,role,KD,ACS,ADR,FK,FD,KAST
+id,name,collection,team,country,role,KD,ACS,ADR,FK,FD,KAST,img
 1,valyn,BASE,g2,us,CONTROLLER,1.09,207.65,136.11,9.27,8.03,72.87
 2,jawgemo,BASE,g2,kh,DUELIST,1.06,223.22,146.56,13.35,13.59,68.69
 3,trent,BASE,g2,us,INITIATOR,1.15,217.67,150.48,8.34,7.76,73.39
