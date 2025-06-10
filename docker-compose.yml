@@ -12,4 +12,3 @@ services:
       - /etc/timezone:/etc/timezone:ro
     ports:
       - "${PORT}:${PORT}"
-    network_mode: host
