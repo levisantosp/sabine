@@ -1,6 +1,7 @@
 import getPlayers from "../../simulator/valorant/players/getPlayers.js"
 import EmbedBuilder from "../../structures/builders/EmbedBuilder.js"
 import createCommand from "../../structures/command/createCommand.js"
+import calcPlayerPrice from "../../structures/util/calcPlayerPrice.js"
 
 type Player = {
   id: number
@@ -9,28 +10,21 @@ type Player = {
   team: string
   country: string
   role: string
-  KD: number
+  aim: number
+  HS: number
+  movement: number
+  aggression: number
   ACS: number
-  ADR: number
-  FK: number
-  FD: number
-  KAST: number
+  gamesense: number
   ovr?: number
   price?: number
-  img: string
 }
 const calcPlayerOvr = (player: Player) => {
-  const KD = (player.KD / 1) * 20
-  const ACS = (player.ACS / 300) * 30
-  const ADR = (player.ADR / 200) * 20
-  const FK = (player.FK / 20) * 10
-  const FD = (player.FD / 20) * 5
-  const KAST = (player.KAST / 100) * 15
-  return KD + ACS + ADR + FK + FD + KAST
+  return (player.aim + player.HS + player.movement + player.aggression + player.ACS + player.gamesense) / 4.5
 }
 const getRandomPlayerByOvr = (players: Player[]) => {
   let tier = {
-    s: [] as Player[], // ovr 95-100 (0.1%)
+    s: [] as Player[], // ovr 95+ (0.1%)
     a: [] as Player[], // ovr 90-94 (0.9%)
     b: [] as Player[], // ovr 80-89 (4%)
     c: [] as Player[], // ovr 70-79 (25%)
@@ -69,7 +63,7 @@ const getRandomPlayerByOvr = (players: Player[]) => {
 
 export default createCommand({
   name: "claim",
-  category: "valorant",
+  category: "simulator",
   nameLocalizations: {
     "pt-BR": "obter"
   },
@@ -78,16 +72,21 @@ export default createCommand({
     "pt-BR": "Obtenha um jogador aleatório"
   },
   async run({ ctx, locale }) {
-    const players = getPlayers() as Player[]
+    if(ctx.db.user.claim_time > Date.now()) {
+      return await ctx.reply("commands.claim.has_been_claimed", { t: `<t:${((ctx.db.user.claim_time) / 1000).toFixed(0)}:R>` })
+    }
+    const players = getPlayers()
     let player = getRandomPlayerByOvr(players)
     let ovr = calcPlayerOvr(player)
-    let price = parseInt((ovr * 1500).toString())
+    let price = calcPlayerPrice(player)
     player = {
       ...player,
       ovr: parseInt(ovr.toString()),
       price
     }
+    await ctx.db.user.addPlayerToRoster(player.id.toString())
     const embed = new EmbedBuilder()
+    .setTitle(player.name)
     .setDesc(
       locale(
         "commands.claim.claimed",
@@ -97,7 +96,7 @@ export default createCommand({
         }
       )
     )
-    .setImage(player.img)
-    ctx.reply(embed.build())
+    .setImage(`${process.env.CDN_URL}/cards/${player.id}.png`)
+    await ctx.reply(embed.build())
   }
 })
