@@ -12,6 +12,7 @@ import { TextChannel } from "oceanic.js"
 import { readdirSync } from "fs"
 import path from "path"
 import { fileURLToPath } from "url"
+import getPlayers from "./simulator/valorant/players/getPlayers.js"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -424,28 +425,28 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
       }
     }
   })
-
-    const commands: any[] = []
-
-    for(const folder of readdirSync(path.resolve(__dirname, `./commands`))) {
-      for(const file of readdirSync(path.resolve(__dirname, `./commands/${folder}`))) {
-        const command = (await import(`./commands/${folder}/${file}`)).default.default ?? (await import(`./commands/${folder}/${file}`)).default
-        commands.push({
-          name: command.name,
-          nameLocalizations: command.nameLocalizations,
-          description: command.description,
-          descriptionLocalizations: command.descriptionLocalizations,
-          syntax: command.syntax,
-          syntaxes: command.syntaxes,
-          examples: command.examples,
-          permissions: command.permissions,
-          botPermissions: command.botPermissions
-        })
-      }
+  const commands: any[] = []
+  for(const folder of readdirSync(path.resolve(__dirname, `./commands`))) {
+    for(const file of readdirSync(path.resolve(__dirname, `./commands/${folder}`))) {
+      const command = (await import(`./commands/${folder}/${file}`)).default.default ?? (await import(`./commands/${folder}/${file}`)).default
+      commands.push({
+        name: command.name,
+        nameLocalizations: command.nameLocalizations,
+        description: command.description,
+        descriptionLocalizations: command.descriptionLocalizations,
+        syntax: command.syntax,
+        syntaxes: command.syntaxes,
+        examples: command.examples,
+        permissions: command.permissions,
+        botPermissions: command.botPermissions
+      })
     }
-
-  fastify.get("/commands", async() => {
+  }
+  fastify.get("/commands", () => {
     return commands
+  })
+  fastify.get("/players", () => {
+    return getPlayers()
   })
 }
 const server = fastify()
