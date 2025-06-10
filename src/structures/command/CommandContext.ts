@@ -7,7 +7,6 @@ import {
   InteractionContent,
   ModalSubmitInteraction,
 } from "oceanic.js"
-
 import App from "../client/App.js"
 import locales, { Args } from "../../locales/index.js"
 import { GuildSchemaInterface, UserSchemaInterface } from "../../database/index.js"
