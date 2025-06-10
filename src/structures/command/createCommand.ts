@@ -1,4 +1,4 @@
-import { ApplicationCommandOptions, AutocompleteInteraction, Constants, Locale } from "oceanic.js"
+import { ApplicationCommandOptions, AutocompleteInteraction, ComponentInteraction, Constants, Locale, ModalSubmitInteraction } from "oceanic.js"
 import App from "../client/App.js"
 import CommandContext from "./CommandContext.js"
 import { Args } from "../../locales/index.js"
@@ -19,6 +19,13 @@ type CreateComponentInteractionOptions = {
   ctx: CommandContext
   client: App
   locale: (content: string, args?: Args) => string
+  i: ComponentInteraction
+}
+type CreateModalSubmitInteractionOptions = {
+  ctx: CommandContext
+  client: App
+  locale: (content: string, args?: Args) => string
+  i: ModalSubmitInteraction
 }
 export type Command = {
   name: string
@@ -37,8 +44,9 @@ export type Command = {
   ephemeral?: boolean
   isThinking?: boolean
   run: (options: CommandOptions) => Promise<any>
-  createAutocompleteInteraction?: (options: CreateAutocompleteInteractionOptions) => Promise<void>
-  createInteraction?: (options: CreateComponentInteractionOptions) => Promise<void>
+  createAutocompleteInteraction?: (options: CreateAutocompleteInteractionOptions) => Promise<any>
+  createInteraction?: (options: CreateComponentInteractionOptions) => Promise<any>
+  createModalSubmitInteraction?: (options: CreateModalSubmitInteractionOptions) => Promise<any>
 }
 export default function (
   command: Command

@@ -33,7 +33,7 @@ export const commands = {
     footer: "[] = required argument | <> = optional argument",
     bot_permissions: "My permissions",
     title: "My commands",
-    description: "You can see my commands here: {website}\nFor more information about a particular command, use `{arg}`.\nNeed help? Join to the support server by clicking the button below!",
+    description: "You can see my commands here: {website}\nFor more information about a particular command, use `{arg}`.\nNeed help? Join our support server by clicking the button below!",
     field: "Commands ({q})",
     community: "Community and Support",
     privacy: "Terms of Service and Privacy"
@@ -127,11 +127,55 @@ export const commands = {
   claim: {
     claimed: `
       **{player}** joined your roster for free
-      Price: {price}
-    `.trim()
+      Market value: {price}
+    `.trim(),
+    has_been_claimed: "You have already used this command recently. Try again {t}"
+  },
+  roster: {
+    embed: {
+      title: "Your roster",
+      desc: "Team name: **{name}**\nRoster value: `{value}`\nRoster overral: `{ovr}`",
+      field: {
+        name1: "Active Players ({total})",
+        name2: "Reserve Players ({total})"
+      }
+    },
+    generate_file: "Generate full roster .txt file",
+    change_team: "Change team name or tag",
+    modal: {
+      title: "Insert the new name and tag",
+      team_name: "New name",
+      team_tag: "New tag"
+    },
+    team_info_changed: "You changed the name of your team to **{name}** and the tag to **{tag}** successfully"
+  },
+  promote: {
+    player_not_found: "<:error:1300882259078938685> Player not found!",
+    player_promoted: "<:success:1300882212190945292> You promoted **{p}** successfully!",
+    select_player: "Select a player to replace"
+  },
+  remove: {
+    player_not_found: "<:error:1300882259078938685> Player not found!",
+    player_removed: "<:success:1300882212190945292> You removed **{p}** successfully!"
+  },
+  sell: {
+    player_not_found: "<:error:1300882259078938685> Player not found!",
+    sold: "<:success:1300882212190945292> You sold **{p}** for **{price}** coins successfully"
+  },
+  coins: {
+    res: "You have **{c}** coins"
+  },
+  match: {
+    started: "### Match started"
   }
 }
-
+export const simulator = {
+  sides: {
+    name: "Sides",
+    value: "Attack: {attack}\nDefense: {defense}"
+  },
+  round_started: "*Round {n} started*"
+}
 export const helper = {
   palpitate: "Predict",
   stats: "Stats",

@@ -134,10 +134,10 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
         const pred = user.valorant_predictions.find(p => p.match === data.id)
         if(!pred) continue
         if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
-          await user.add_correct_prediction("valorant", data.id)
+          await user.addCorrectPrediction("valorant", data.id)
         }
         else {
-          await user.add_wrong_prediction("valorant", data.id)
+          await user.addWrongPrediction("valorant", data.id)
         }
       }
     }
@@ -417,10 +417,10 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
         const pred = user.lol_predictions.find(p => p.match === data.id)
         if(!pred) continue
         if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
-          await user.add_correct_prediction("lol", data.id)
+          await user.addCorrectPrediction("lol", data.id)
         }
         else {
-          await user.add_wrong_prediction("lol", data.id)
+          await user.addWrongPrediction("lol", data.id)
         }
       }
     }

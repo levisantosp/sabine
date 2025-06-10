@@ -194,8 +194,7 @@ export default createListener({
       const locale = (content: string, args?: Args) => {
         return locales(user.lang ?? guild.lang, content, args)
       }
-      command.createInteraction({ client, ctx, locale })
-        .catch(e => new Logger(client).error(e))
+      await command.createInteraction({ client, ctx, locale, i })
     }
     else if(i.isModalSubmitInteraction()) {
       const args = i.data.customID.split(";")
@@ -212,7 +211,7 @@ export default createListener({
             }
             const res = await service.getMatches("valorant")
             const data = res.find(d => d.id === args[2])!
-            await user.add_prediction("valorant", {
+            await user.addPrediction("valorant", {
               match: data.id!,
               teams: [
                 {
@@ -245,7 +244,7 @@ export default createListener({
             }
             const res = await service.getMatches("lol")
             const data = res.find(d => d.id?.toString() === args[2])!
-            await user.add_prediction("lol", {
+            await user.addPrediction("lol", {
               match: data.id!,
               teams: [
                 {
@@ -271,6 +270,29 @@ export default createListener({
           }
         }
         games[args[1] as "valorant" | "lol"]().catch(e => new Logger(client).error(e))
+      }
+      else {
+        const command = client.commands.get(args[0])
+        if(!command) return
+        if(!command.createModalSubmitInteraction) return
+        if(!i.guild) return
+        const user = await User.findById(i.user.id) as UserSchemaInterface
+        const guild = (await Guild.findById(i.guildID) ?? new Guild({ _id: i.guildID })) as GuildSchemaInterface
+        const locale = (content: string, args?: Args) => {
+          return locales(user.lang ?? guild.lang, content, args)
+        }
+        const ctx = new CommandContext({
+          args,
+          client,
+          guild: i.guild,
+          interaction: i,
+          locale: user.lang ?? guild.lang,
+          db: {
+            user,
+            guild
+          }
+        })
+        await command.createModalSubmitInteraction({ ctx, client, locale, i })
       }
     }
   }

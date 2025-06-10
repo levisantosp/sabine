@@ -51,6 +51,10 @@ const UserSchema = mongoose.model("users", new mongoose.Schema(
     team: {
       name: String,
       tag: String
+    },
+    matches: {
+      type: Array,
+      default: []
     }
   }
 ))
@@ -144,7 +148,7 @@ export class User extends UserSchema {
     })
     return this as UserSchemaInterface
   }
-  public async add_prediction(game: "valorant" | "lol", prediction: UserSchemaPrediction) {
+  public async addPrediction(game: "valorant" | "lol", prediction: UserSchemaPrediction) {
     if(game === "valorant") {
       this.valorant_predictions.push(prediction)
       await this.save()
@@ -192,7 +196,7 @@ export class User extends UserSchema {
       return this as UserSchemaInterface
     }
   }
-  public async add_correct_prediction(game: "valorant" | "lol", predictionId: string) {
+  public async addCorrectPrediction(game: "valorant" | "lol", predictionId: string) {
     if(game === "valorant") {
       let index = this.valorant_predictions.findIndex(p => p.match === predictionId)
       this.valorant_predictions[index].status = "correct"
@@ -247,7 +251,7 @@ export class User extends UserSchema {
     }
     return this as UserSchemaInterface
   }
-  public async add_wrong_prediction(game: "valorant" | "lol", predictionId: string) {
+  public async addWrongPrediction(game: "valorant" | "lol", predictionId: string) {
     if(game === "valorant") {
       let index = this.valorant_predictions.findIndex(p => p.match === predictionId)
       this.valorant_predictions[index].status = "wrong"
@@ -302,7 +306,7 @@ export class User extends UserSchema {
     }
     return this as UserSchemaInterface
   }
-  public async add_player_to_roster(player: string, method: "CLAIM_COMMAND" | "COMMAND" = "CLAIM_COMMAND") {
+  public async addPlayerToRoster(player: string, method: "CLAIM_COMMAND" | "COMMAND" = "CLAIM_COMMAND") {
     this.roster?.reserve.push(player)
     if(method === "CLAIM_COMMAND") {
       this.claim_time = Date.now() + 600000
@@ -316,6 +320,30 @@ export class User extends UserSchema {
       {
         name: `CLAIM_PLAYER_BY_${method}`,
         value: player
+      }
+    )
+    const channel = client.getChannel(process.env.USERS_LOG) as TextChannel
+    const webhooks = await channel.getWebhooks()
+    let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
+    if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
+    await webhook.execute({
+      avatarURL: client.user.avatarURL(),
+      embeds: [embed]
+    })
+    return this as UserSchemaInterface
+  }
+  public async sellPlayer(id: string, price: number, i: number) {
+    this.roster!.reserve.splice(i, 1)
+    this.coins += price
+    await this.save()
+    const user = client.users.get(this.id)!
+    const embed = new EmbedBuilder()
+    .setTitle("New register")
+    .setDesc(`User: ${user.mention}`)
+    .setFields(
+      {
+        name: `SELL_PLAYER`,
+        value: id
       }
     )
     const channel = client.getChannel(process.env.USERS_LOG) as TextChannel
@@ -442,6 +470,13 @@ type UserSchemaTeam = {
   name?: string
   tag?: string
 }
+type UserSchemaMatchTeam = {
+  user: string
+  score: number
+}
+type UserSchemaMatch = {
+  teams: UserSchemaMatchTeam[]
+}
 type TBDMatch = {
   id: string
   channel: string
@@ -489,7 +524,8 @@ export interface UserSchemaInterface extends User {
   plan?: UserSchemaPremium
   roster: UserSchemaRoster
   coins: number
-  team?: UserSchemaTeam
+  team: UserSchemaTeam
+  matches: UserSchemaMatch[]
 }
 type BlacklistUser = {
   id: string

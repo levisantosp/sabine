@@ -345,6 +345,6 @@ export default createListener({
       })
     })
     await client.application.bulkEditGlobalCommands(commands)
-    // await run_tasks(client)
+    await run_tasks(client)
   }
 })
