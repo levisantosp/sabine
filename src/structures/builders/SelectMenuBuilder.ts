@@ -1,10 +1,10 @@
 import { Constants, InteractionContent, NullablePartialEmoji, SelectOption, StringSelectMenu } from "oceanic.js"
 
 export default class SelectMenuBuilder {
-  public type: number = Constants.ComponentTypes.STRING_SELECT;
+  public type: number = Constants.ComponentTypes.STRING_SELECT
   public customID?: string
   public placeholder?: string
-  public options: SelectOption[] = [];
+  public options: SelectOption[] = []
   public minValues?: number
   public maxValues?: number
   public disabled?: boolean
