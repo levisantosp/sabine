@@ -11,7 +11,7 @@ import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
 import App from "../structures/client/App.js"
 const service = new Service(process.env.AUTH)
 
-const delete_guild = async(client: App) => {
+const deleteGuild = async(client: App) => {
   const guilds = await Guild.find()
   for(const guild of guilds) {
     if(!client.guilds.get(guild.id)) {
@@ -19,7 +19,7 @@ const delete_guild = async(client: App) => {
     }
   }
 }
-const send_valorant_matches = async(client: App) => {
+const sendValorantMatches = async(client: App) => {
   const res = await service.getMatches("valorant")
   if(!res || !res.length) return
   const guilds = await Guild.find({
@@ -106,7 +106,7 @@ const send_valorant_matches = async(client: App) => {
     await guild.save()
   }
 }
-const send_valorant_TBD_matches = async(client: App) => {
+const sendValorantTBDMatches = async(client: App) => {
   const res = await service.getMatches("valorant")
   if(!res || !res.length) return
   const guilds = await Guild.find({
@@ -157,7 +157,7 @@ const send_valorant_TBD_matches = async(client: App) => {
     }
   }
 }
-const send_lol_matches = async(client: App) => {
+const sendLolMatches = async(client: App) => {
   const res = await service.getMatches("lol")
   const res2 = await service.getResults("lol")
 
@@ -248,7 +248,7 @@ const send_lol_matches = async(client: App) => {
     await guild.save()
   }
 }
-const send_lol_tbd_matches = async(client: App) => {
+const sendLolTBDMatches = async(client: App) => {
   const res = await service.getMatches("lol")
   if(!res || !res.length) return
   const guilds = await Guild.find({
@@ -307,11 +307,11 @@ const run_in_batches = async(client: App, tasks: any[], batch_size: number) => {
 }
 const run_tasks = async(client: App) => {
   const tasks = [
-    delete_guild,
-    send_valorant_matches,
-    send_valorant_TBD_matches,
-    send_lol_matches,
-    send_lol_tbd_matches
+    deleteGuild,
+    sendValorantMatches,
+    sendValorantTBDMatches,
+    sendLolMatches,
+    sendLolTBDMatches
   ]
   await run_in_batches(client, tasks, 2)
   setTimeout(async() => await run_tasks(client), process.env.INTERVAL ?? 5 * 60 * 1000)
@@ -322,13 +322,7 @@ export default createListener({
   async run(client) {
     Logger.send(`${client.user.tag} online!`)
     if(client.user.id !== "1235576817683922954") {
-      client.editStatus("dnd", [
-        {
-          name: "status",
-          state: "Join support server! Link on about me",
-          type: 4
-        }
-      ])
+      client.editStatus("dnd")
     }
     else {
       client.editStatus("online", [
@@ -339,7 +333,6 @@ export default createListener({
         }
       ])
     }
-    
     const commands: CreateApplicationCommandOptions[] = []
     client.commands.forEach(cmd => {
       commands.push({
@@ -351,7 +344,6 @@ export default createListener({
         type: 1
       })
     })
-
     await client.application.bulkEditGlobalCommands(commands)
     // await run_tasks(client)
   }
