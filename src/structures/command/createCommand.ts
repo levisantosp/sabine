@@ -24,7 +24,7 @@ export type Command = {
   name: string
   nameLocalizations?: Partial<Record<Locale, string>>
   description: string
-  category: "valorant" | "admin" | "esports" | "misc" | "premium" | "valorant"
+  category: "simulator" | "admin" | "esports" | "misc" | "premium"
   descriptionLocalizations?: Partial<Record<Locale, string>>
   options?: ApplicationCommandOptions[]
   syntax?: string
@@ -36,7 +36,7 @@ export type Command = {
   onlyDev?: boolean
   ephemeral?: boolean
   isThinking?: boolean
-  run: (options: CommandOptions) => Promise<void>
+  run: (options: CommandOptions) => Promise<any>
   createAutocompleteInteraction?: (options: CreateAutocompleteInteractionOptions) => Promise<void>
   createInteraction?: (options: CreateComponentInteractionOptions) => Promise<void>
 }
