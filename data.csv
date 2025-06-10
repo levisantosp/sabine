@@ -1,5 +1,5 @@
 id,name,collection,team,country,role,aim,HS,movement,aggression,ACS,gamesense
-1,valyn,BASE,g2,us,CONTROLLER,67.78,40.2,61.6,44.35,76.33,70.5
+1,valyn,BASE,g2,us,CONTROLLER,67.78,40.2,61.6,44.35,76.33,85.5
 2,jawgemo,BASE,g2,kh,DUELIST,80.08,55.2,67.2,33.9,73,79.2
 3,trent,BASE,g2,us,INITIATOR,80.08,55.2,67.2,33.9,73.0,79.2
 4,JonahP,BASE,g2,ca,FLEX,72.84,51.6,67.2,34.5,69.23,81.6
@@ -8,7 +8,7 @@ id,name,collection,team,country,role,aim,HS,movement,aggression,ACS,gamesense
 7,xenom,BASE,mibr,br,CONTROLLER,80.16,58.8,67.2,37.95,69.27,65.3
 8,cortezia,BASE,mibr,br,SENTINEL,80.44,59.6,65.6,33.15,73.4,71.9
 9,Verno,BASE,mibr,us,INITIATOR,81.48,49.2,73.6,31.2,71.53,82.5
-10,aspas,BASE,mibr,us,DUELIST,92.46,53.4,68.0,52.5,84.4,63.6
+10,aspas,BASE,mibr,us,DUELIST,92.46,43.4,88.0,52.5,84.4,63.6
 11,mitch,BASE,cloud9,us,INITIATOR,66.42,39.8,68.0,32.35,66.8,81.0
 12,Xeppaa,BASE,cloud9,us,FLEX,72.28,45.2,64.0,30.7,70.63,80.4
 13,v1c,BASE,cloud9,us,CONTROLLER,70.48,53.2,60.0,33.05,73.73,83.4
