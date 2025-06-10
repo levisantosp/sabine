@@ -29,11 +29,33 @@ const UserSchema = mongoose.model("users", new mongoose.Schema(
       default: []
     },
     warned: Boolean,
-    plan: Object
+    plan: Object,
+    roster: {
+      active: {
+        type: Array,
+        default: []
+      },
+      reserve: {
+        type: Array,
+        default: []
+      }
+    },
+    coins: {
+      type: Number,
+      default: 0
+    },
+    claim_time: {
+      type: Number,
+      default: 0
+    },
+    team: {
+      name: String,
+      tag: String
+    }
   }
 ))
 export class User extends UserSchema {
-  public async get(id: string | undefined | null) {
+  public static async get(id: string) {
     return await UserSchema.findById(id) as UserSchemaInterface
   }
   public async addPremium(by: "ADD_PREMIUM_BY_COMMAND" | "BUY_PREMIUM") {
@@ -93,7 +115,7 @@ export class User extends UserSchema {
     const webhooks = await channel.getWebhooks()
     let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
     if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
-    webhook.execute({
+    await webhook.execute({
       avatarURL: client.user.avatarURL(),
       embeds: [embed]
     })
@@ -116,7 +138,7 @@ export class User extends UserSchema {
     const webhooks = await channel.getWebhooks()
     let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
     if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
-    webhook.execute({
+    await webhook.execute({
       avatarURL: client.user.avatarURL(),
       embeds: [embed]
     })
@@ -140,7 +162,7 @@ export class User extends UserSchema {
       const webhooks = await channel.getWebhooks()
       let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
       if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
-      webhook.execute({
+      await webhook.execute({
         avatarURL: client.user.avatarURL(),
         embeds: [embed]
       })
@@ -163,7 +185,7 @@ export class User extends UserSchema {
       const webhooks = await channel.getWebhooks()
       let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
       if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
-      webhook.execute({
+      await webhook.execute({
         avatarURL: client.user.avatarURL(),
         embeds: [embed]
       })
@@ -192,7 +214,7 @@ export class User extends UserSchema {
       const webhooks = await channel.getWebhooks()
       let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
       if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
-      webhook.execute({
+      await webhook.execute({
         avatarURL: client.user.avatarURL(),
         embeds: [embed]
       })
@@ -218,7 +240,7 @@ export class User extends UserSchema {
       const webhooks = await channel.getWebhooks()
       let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
       if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
-      webhook.execute({
+      await webhook.execute({
         avatarURL: client.user.avatarURL(),
         embeds: [embed]
       })
@@ -247,7 +269,7 @@ export class User extends UserSchema {
       const webhooks = await channel.getWebhooks()
       let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
       if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
-      webhook.execute({
+      await webhook.execute({
         avatarURL: client.user.avatarURL(),
         embeds: [embed]
       })
@@ -273,11 +295,37 @@ export class User extends UserSchema {
       const webhooks = await channel.getWebhooks()
       let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
       if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
-      webhook.execute({
+      await webhook.execute({
         avatarURL: client.user.avatarURL(),
         embeds: [embed]
       })
     }
+    return this as UserSchemaInterface
+  }
+  public async add_player_to_roster(player: string, method: "CLAIM_COMMAND" | "COMMAND" = "CLAIM_COMMAND") {
+    this.roster?.reserve.push(player)
+    if(method === "CLAIM_COMMAND") {
+      this.claim_time = Date.now() + 600000
+    }
+    await this.save()
+    const user = client.users.get(this.id)!
+    const embed = new EmbedBuilder()
+    .setTitle("New register")
+    .setDesc(`User: ${user.mention}`)
+    .setFields(
+      {
+        name: `CLAIM_PLAYER_BY_${method}`,
+        value: player
+      }
+    )
+    const channel = client.getChannel(process.env.USERS_LOG) as TextChannel
+    const webhooks = await channel.getWebhooks()
+    let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
+    if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
+    await webhook.execute({
+      avatarURL: client.user.avatarURL(),
+      embeds: [embed]
+    })
     return this as UserSchemaInterface
   }
 }
@@ -386,6 +434,14 @@ type UserSchemaPremium = {
   type: "PREMIUM",
   expiresAt: number
 }
+type UserSchemaRoster = {
+  active: string[]
+  reserve: string[]
+}
+type UserSchemaTeam = {
+  name?: string
+  tag?: string
+}
 type TBDMatch = {
   id: string
   channel: string
@@ -431,6 +487,9 @@ export interface UserSchemaInterface extends User {
   plans: UserSchemaPremium[]
   warned?: boolean
   plan?: UserSchemaPremium
+  roster: UserSchemaRoster
+  coins: number
+  team?: UserSchemaTeam
 }
 type BlacklistUser = {
   id: string
