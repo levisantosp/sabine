@@ -1,6 +1,21 @@
 import fs from "fs"
 
-export default function() {
+type Player = {
+  id: number
+  name: string
+  collection: string
+  team: string
+  country: string
+  role: string
+  aim: number
+  HS: number
+  movement: number
+  aggression: number
+  ACS: number
+  gamesense: number
+}
+
+export default function<T extends Player[]>() {
   const lines = fs.readFileSync("data.csv").toString().split("\n")
   const headers = lines.shift()!.split(",")
   const data = []
@@ -16,5 +31,5 @@ export default function() {
     }
     data.push(obj)
   }
-  return data
+  return data as T
 }
