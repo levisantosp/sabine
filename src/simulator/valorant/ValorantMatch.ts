@@ -662,6 +662,14 @@ export default class ValorantMatch {
     if(!this.teams.length) {
       this.setTeams()
     }
+    if(this.rounds_played.length === 12) {
+      await this.switchSides()
+      for(const t of this.teams) {
+        for(let i = 0; i < t.roster.length; i++) {
+          t.roster[i].credits = 800
+        }
+      }
+    }
     for(const t of this.teams) {
       for(const p of t.roster) {
         let weapon = this.buyWeapon(p.credits, p.role, "ECO")
@@ -672,19 +680,10 @@ export default class ValorantMatch {
           weapon = this.buyWeapon(p.credits, p.role, "ECO")
         }
         else {
-          console.log(p.name, weapon.name, p.credits)
           weapon = this.buyWeapon(p.credits, p.role, "NORMAL")
         }
         p.weapon = weapon.name
         p.credits -= weapon.price
-      }
-    }
-    if(this.rounds_played.length === 12) {
-      await this.switchSides()
-      for(const t of this.teams) {
-        for(let i = 0; i < t.roster.length; i++) {
-          t.roster[i].credits = 800
-        }
       }
     }
     const score1 = this.rounds_played.filter(r => r.winning_team === 0).length
