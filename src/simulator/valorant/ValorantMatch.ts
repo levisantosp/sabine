@@ -132,17 +132,15 @@ export default class ValorantMatch {
   }
   private startPlayerDuel() {
     const roles: TeamPlayer["role"][] = ["CONTROLLER", "DUELIST", "FLEX", "INITIATOR", "SENTINEL"]
-    const weights = [5, 15, 30, 50]
+    const weights = [5, 15, 30, 50, 10]
     const pick1 = this.choosePlayer(roles, weights)
     const pick2 = this.choosePlayer(roles, weights)
-    const roster1 = this.teams[0].roster.filter(p => p.alive && p.role === pick1)
-    let player1 = roster1[Math.floor(Math.random() * roster1.length)]
+    let player1 = this.teams[0].roster.filter(p => p.alive && p.role === pick1)[0]
     if(!player1) {
       let roster = this.teams[0].roster.filter(p => p.alive)
       player1 = roster[Math.floor(Math.random() * roster.length)]
     }
-    const roster2 = this.teams[1].roster.filter(p => p.alive && p.role === pick2)
-    let player2 = roster2[Math.floor(Math.random() * roster2.length)]
+    let player2 = this.teams[1].roster.filter(p => p.alive && p.role === pick2)[0]
     if(!player2) {
       let roster = this.teams[1].roster.filter(p => p.alive)
       player2 = roster[Math.floor(Math.random() * roster.length)]
@@ -177,7 +175,9 @@ export default class ValorantMatch {
       }
       return {
         winner: player1.id,
-        loser: player2.id
+        loser: player2.id,
+        winner_index: 0,
+        loser_index: 1
       }
     }
     else {
@@ -185,7 +185,9 @@ export default class ValorantMatch {
       this.teams[0].roster[index].alive = false
       return {
         winner: player2.id,
-        loser: player1.id
+        loser: player1.id,
+        winner_index: 1,
+        loser_index: 0
       }
     }
   }
@@ -203,21 +205,21 @@ export default class ValorantMatch {
   }
   private async firstStep(duels: number) {
     const kills: KillEvent[] = []
-    for(let i = 0;i < duels;i++) {
+    for(let i = 0; i < duels; i++) {
       const {
         winner,
-        loser
+        loser,
+        winner_index,
+        loser_index
       } = this.startPlayerDuel()
       const players = [...this.teams[0].roster, ...this.teams[1].roster]
-      let __winner_index = players.findIndex(p => p.id === winner) < 5 ? 0 : 1
-      let __loser_index = players.findIndex(p => p.id === loser) < 5 ? 0 : 1
       const __winner = players.find(p => p.id === winner)!
       const __loser = players.find(p => p.id === loser)!
       kills.push({
         killer: __winner,
-        killer_index: __winner_index,
+        killer_index: winner_index,
         victim: __loser,
-        victim_index: __loser_index,
+        victim_index: loser_index,
         weapon: __winner.weapon!
       })
     }
@@ -361,21 +363,21 @@ export default class ValorantMatch {
       ) {
         const {
           winner,
-          loser
+          loser,
+          winner_index,
+          loser_index
         } = this.startPlayerDuel()
         const allPlayers = [
           ...this.teams[0].roster,
           ...this.teams[1].roster
         ]
-        const __winner_index = allPlayers.findIndex(p => p.id === winner) < 5 ? 0 : 1
-        const __loser_index = allPlayers.findIndex(p => p.id === loser) < 5 ? 0 : 1
         const __winner = allPlayers.find(p => p.id === winner)!
         const __loser = allPlayers.find(p => p.id === loser)!
         kills.push({
           killer: __winner,
-          killer_index: __winner_index,
+          killer_index: winner_index,
           victim: __loser,
-          victim_index: __loser_index,
+          victim_index: loser_index,
           weapon: __winner.weapon!
         })
       }
@@ -544,21 +546,21 @@ export default class ValorantMatch {
        ) {
         const {
           winner,
-          loser
+          loser,
+          winner_index,
+          loser_index
         } = this.startPlayerDuel()
         const allPlayers = [
           ...this.teams[0].roster,
           ...this.teams[1].roster
         ]
-        const __winner_index = allPlayers.findIndex(p => p.id === winner) < 5 ? 0 : 1
-        const __loser_index = allPlayers.findIndex(p => p.id === loser) < 5 ? 0 : 1
         const __winner = allPlayers.find(p => p.id === winner)!
         const __loser = allPlayers.find(p => p.id === loser)!
         kills.push({
           killer: __winner,
-          killer_index: __winner_index,
+          killer_index: winner_index,
           victim: __loser,
-          victim_index: __loser_index,
+          victim_index: loser_index,
           weapon: __winner.weapon!
         })
         const embed = new EmbedBuilder()
@@ -806,15 +808,19 @@ export default class ValorantMatch {
     this.finished = true
     const score1 = this.rounds_played.filter(r => r.winning_team === 0).length
     const score2 = this.rounds_played.filter(r => r.winning_team === 1).length
+    const user1 = await User.get(this.teams[0].user.id)
+    const user2 = await User.get(this.teams[1].user.id)
     if(score1 >= 13) {
+      user1.wins += 1
+      user2.defeats += 1
       await this.ctx.reply("simulator.winner", { user: `<@${this.teams[0].user.id}>` })
     }
     else if(score2 >= 13) {
+      user1.defeats += 1
+      user2.wins += 1
       await this.ctx.reply("simulator.winner", { user: `<@${this.teams[1].user.id}>` })
     }
-    const user1 = await User.get(this.teams[0].user.id)
-    const user2 = await User.get(this.teams[1].user.id)
-    user1.matches.push({
+    user1.career.push({
       teams: [
         {
           user: this.teams[0].user.id,
@@ -826,7 +832,7 @@ export default class ValorantMatch {
         }
       ]
     })
-    user2.matches.push({
+    user2.career.push({
       teams: [
         {
           user: this.teams[1].user.id,
