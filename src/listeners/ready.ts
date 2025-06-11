@@ -299,13 +299,13 @@ const sendLolTBDMatches = async(client: App) => {
     }
   }
 }
-const run_in_batches = async(client: App, tasks: any[], batch_size: number) => {
+const runInBatches = async(client: App, tasks: any[], batch_size: number) => {
   for(let i = 0;i < tasks.length;i += batch_size) {
     const batch = tasks.slice(i, i + batch_size)
     await Promise.all(batch.map(task => task(client).catch((e: Error) => new Logger(client).error(e))))
   }
 }
-const run_tasks = async(client: App) => {
+const runTasks = async(client: App) => {
   const tasks = [
     deleteGuild,
     sendValorantMatches,
@@ -313,8 +313,8 @@ const run_tasks = async(client: App) => {
     sendLolMatches,
     sendLolTBDMatches
   ]
-  await run_in_batches(client, tasks, 2)
-  setTimeout(async() => await run_tasks(client), process.env.INTERVAL ?? 5 * 60 * 1000)
+  await runInBatches(client, tasks, 2)
+  setTimeout(async() => await runTasks(client), process.env.INTERVAL ?? 5 * 60 * 1000)
 }
 
 export default createListener({
@@ -345,6 +345,6 @@ export default createListener({
       })
     })
     await client.application.bulkEditGlobalCommands(commands)
-    await run_tasks(client)
+    await runTasks(client)
   }
 })
