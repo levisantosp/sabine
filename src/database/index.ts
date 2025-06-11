@@ -52,9 +52,17 @@ const UserSchema = mongoose.model("users", new mongoose.Schema(
       name: String,
       tag: String
     },
-    matches: {
+    career: {
       type: Array,
       default: []
+    },
+    wins: {
+      type: Number,
+      default: 0
+    },
+    defeats: {
+      type: Number,
+      default: 0
     }
   }
 ))
@@ -470,12 +478,12 @@ type UserSchemaTeam = {
   name?: string
   tag?: string
 }
-type UserSchemaMatchTeam = {
+type UserSchemaCareerTeam = {
   user: string
   score: number
 }
-type UserSchemaMatch = {
-  teams: UserSchemaMatchTeam[]
+type UserSchemaCareer = {
+  teams: UserSchemaCareerTeam[]
 }
 type TBDMatch = {
   id: string
@@ -525,7 +533,9 @@ export interface UserSchemaInterface extends User {
   roster: UserSchemaRoster
   coins: number
   team: UserSchemaTeam
-  matches: UserSchemaMatch[]
+  career: UserSchemaCareer[]
+  wins: number
+  defeats: number
 }
 type BlacklistUser = {
   id: string
