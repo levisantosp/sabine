@@ -36,6 +36,8 @@ export type Team = {
   user: TeamUser
   roster: string[]
   side?: "DEFENSE" | "ATTACK"
+  name: string
+  tag: string
 }
 type KillEvent = {
   killer: Pick<TeamPlayer, "id" | "name">
@@ -65,6 +67,8 @@ type PrivateTeam = {
   roster: TeamPlayer[]
   side?: "DEFENSE" | "ATTACK"
   lost_round_streak: number
+  name: string
+  tag: string
 }
 
 export default class ValorantMatch {
@@ -113,7 +117,9 @@ export default class ValorantMatch {
         user: t.user,
         side,
         roster,
-        lost_round_streak: 0
+        lost_round_streak: 0,
+        name: t.name,
+        tag: t.tag
       })
       roster = []
     }
@@ -216,10 +222,19 @@ export default class ValorantMatch {
       })
     }
     for(const kill of kills) {
-      const content = locales(this.locale, `<@${this.__teams[kill.killer_index].user.id}>'s player ${kill.killer.name} killed <@${this.__teams[kill.victim_index].user.id}> ${kill.victim.name} with ${kill.weapon}`)
+      const content = locales(
+        this.locale, "simulator.kill",
+        {
+          t1: this.teams[kill.killer_index].tag,
+          p1: kill.killer.name,
+          t2: this.teams[kill.victim_index].tag,
+          p2: kill.victim.name,
+          w: kill.weapon
+        }
+      )
       this.content += `- ${content}\n`
       const embed = new EmbedBuilder()
-        .setTitle(`${this.ctx.interaction.user.username} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.__teams[1].user.name}`)
+        .setTitle(`${this.teams[0].name} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.teams[1].name}`)
         .setDesc(this.content)
         .setField(
           locales(this.locale, "simulator.sides.name"),
@@ -240,10 +255,15 @@ export default class ValorantMatch {
         win_type: "ELIMINATION",
         kills
       })
-      const content = locales(this.locale, `- **<@${this.teams[1].user.id}> wins the round by eliminating the entire opposing team**`)
+      const content = locales(
+        this.locale, "simulator.won_by_elimination",
+        {
+          t: this.teams[winning_team].name
+        }
+      )
       this.content += `${content}\n`
       const embed = new EmbedBuilder()
-      .setTitle(`${this.ctx.interaction.user.username} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.__teams[1].user.name}`)
+      .setTitle(`${this.teams[0].name} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.teams[1].name}`)
       .setDesc(this.content)
       .setField(
         locales(this.locale, "simulator.sides.name"),
@@ -261,10 +281,16 @@ export default class ValorantMatch {
       let bomb_planted = Math.random() < 0.8
       if(bomb_planted) {
         const bomb = ["A", "B"][Math.floor(Math.random() * 2)]
-        const content = locales(this.locale, `- *Spike planted at bomb site ${bomb}*`)
+        const content = locales(
+          this.locale,
+          "simulator.spike_planted",
+          {
+            bomb
+          }
+        )
         this.content += `${content}\n`
         const embed = new EmbedBuilder()
-          .setTitle(`${this.ctx.interaction.user.username} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.__teams[1].user.name}`)
+          .setTitle(`${this.teams[0].name} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.teams[1].name}`)
           .setDesc(this.content)
           .setField(
             locales(this.locale, "simulator.sides.name"),
@@ -379,14 +405,20 @@ export default class ValorantMatch {
           player.credits += credits + bonus
         }
         for(const player of this.teams[i].roster) {
-          let credits = 1900
+          let credits = 800
           let bonus = 100 * this.teams[i].lost_round_streak
           player.credits += credits + bonus
         }
-        const content = locales(this.locale, `- *Spike defused*\n- **<@${this.teams[index].user.id}>** wins the round`)
+        const content = locales(
+          this.locale,
+          "simulator.spike_defused",
+          {
+            team: this.teams[index].name
+          }
+        )
         this.content += `${content}\n`
         const embed = new EmbedBuilder()
-          .setTitle(`${this.ctx.interaction.user.username} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.__teams[1].user.name}`)
+          .setTitle(`${this.teams[0].name} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.teams[1].name}`)
           .setDesc(this.content)
           .setField(
             locales(this.locale, "simulator.sides.name"),
@@ -425,14 +457,20 @@ export default class ValorantMatch {
           player.credits += credits + bonus
         }
         for(const player of this.teams[i].roster) {
-          let credits = 1900
+          let credits = 800
           let bonus = 100 * this.teams[i].lost_round_streak
           player.credits += credits + bonus
         }
-        const content = locales(this.locale, `- Spike detonated\n - **<@${this.teams[index].user.id}>** wins the round`)
+        const content = locales(
+          this.locale,
+          "simulator.spike_detonated",
+          {
+            team: this.teams[index].name
+          }
+        )
         this.content += `${content}\n`
         const embed = new EmbedBuilder()
-          .setTitle(`${this.ctx.interaction.user.username} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.__teams[1].user.name}`)
+          .setTitle(`${this.teams[0].name} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.teams[1].name}`)
           .setDesc(this.content)
           .setField(
             locales(this.locale, "simulator.sides.name"),
@@ -472,14 +510,20 @@ export default class ValorantMatch {
         player.credits += credits + bonus
       }
       for(const player of this.teams[i].roster) {
-        let credits = 1900
+        let credits = 800
         let bonus = 100 * this.teams[i].lost_round_streak
         player.credits += credits + bonus
       }
-      const content = locales(this.locale, `- Spike was not planted on time\n - **<@${this.teams[index].user.id}>** wins the round`)
+      const content = locales(
+        this.locale,
+        "simulator.spike_not_planted",
+        {
+          team: this.teams[index].name
+        }
+      )
       this.content += `${content}\n`
       const embed = new EmbedBuilder()
-      .setTitle(`${this.ctx.interaction.user.username} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.__teams[1].user.name}`)
+      .setTitle(`${this.teams[0].name} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.teams[1].name}`)
       .setDesc(this.content)
       .setField(
         locales(this.locale, "simulator.sides.name"),
@@ -518,7 +562,7 @@ export default class ValorantMatch {
           weapon: __winner.weapon!
         })
         const embed = new EmbedBuilder()
-          .setTitle(`${this.ctx.interaction.user.username} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.__teams[1].user.name}`)
+          .setTitle(`${this.teams[0].name} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.teams[1].name}`)
           .setDesc(this.content)
           .setField(
             locales(this.locale, "simulator.sides.name"),
@@ -531,10 +575,19 @@ export default class ValorantMatch {
       }
     }
     for(const kill of kills) {
-      const content = locales(this.locale, `<@${this.__teams[kill.killer_index].user.id}>'s player ${kill.killer.name} killed <@${this.__teams[kill.victim_index].user.id}> ${kill.victim.name} with ${kill.weapon}`)
+      const content = locales(
+        this.locale, "simulator.kill",
+        {
+          t1: this.teams[kill.killer_index].tag,
+          p1: kill.killer.name,
+          t2: this.teams[kill.victim_index].tag,
+          p2: kill.victim.name,
+          w: kill.weapon
+        }
+      )
       this.content += `- ${content}\n`
       const embed = new EmbedBuilder()
-      .setTitle(`${this.ctx.interaction.user.username} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.__teams[1].user.name}`)
+      .setTitle(`${this.teams[0].name} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.teams[1].name}`)
       .setDesc(this.content)
       .setField(
         locales(this.locale, "simulator.sides.name"),
@@ -574,10 +627,16 @@ export default class ValorantMatch {
       let bonus = 100 * this.teams[winning_team].lost_round_streak
       player.credits += credits + bonus
     }
-    const content = locales(this.locale, `- **<@${this.teams[winning_team].user.id}> won the round by eliminating the opposing team**`)
+    const content = locales(
+      this.locale,
+      "simulator.won_by_elimination",
+      {
+        t: this.teams[winning_team].name
+      }
+    )
     this.content += `${content}\n`
     const embed = new EmbedBuilder()
-    .setTitle(`${this.ctx.interaction.user.username} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.__teams[1].user.name}`)
+    .setTitle(`${this.teams[0].name} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.teams[1].name}`)
     .setDesc(this.content)
     .setField(
       locales(this.locale, "simulator.sides.name"),
@@ -604,22 +663,30 @@ export default class ValorantMatch {
       this.setTeams()
     }
     for(const t of this.teams) {
-      const fullBuy = this.shouldBuy(t)
-      const eco = this.shouldEco(t)
       for(const p of t.roster) {
-        let weapon
-        if(fullBuy) {
+        let weapon = this.buyWeapon(p.credits, p.role, "ECO")
+        if(this.shouldBuy(t)) {
           weapon = this.buyWeapon(p.credits, p.role, "FULL")
         }
-        else if(eco) {
+        else if(this.shouldEco(t)) {
           weapon = this.buyWeapon(p.credits, p.role, "ECO")
         }
-        else weapon = this.buyWeapon(p.credits, p.role, "NORMAL")
+        else {
+          console.log(p.name, weapon.name, p.credits)
+          weapon = this.buyWeapon(p.credits, p.role, "NORMAL")
+        }
         p.weapon = weapon.name
         p.credits -= weapon.price
       }
     }
-    if(this.rounds_played.length === 12) await this.switchSides()
+    if(this.rounds_played.length === 12) {
+      await this.switchSides()
+      for(const t of this.teams) {
+        for(let i = 0; i < t.roster.length; i++) {
+          t.roster[i].credits = 800
+        }
+      }
+    }
     const score1 = this.rounds_played.filter(r => r.winning_team === 0).length
     const score2 = this.rounds_played.filter(r => r.winning_team === 1).length
     if(score1 >= 13 || score2 >= 13) {
@@ -634,7 +701,7 @@ export default class ValorantMatch {
     const content = locales(this.locale, "simulator.round_started", { n: round_number })
     this.content += `${content}\n`
     const embed = new EmbedBuilder()
-    .setTitle(`${this.ctx.interaction.user.username} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.__teams[1].user.name}`)
+    .setTitle(`${this.teams[0].name} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.teams[1].name}`)
     .setDesc(this.content)
     .setField(
       locales(this.locale, "simulator.sides.name"),
@@ -686,7 +753,7 @@ export default class ValorantMatch {
         minCredits: 0
       }
     ]
-    if(buy_type === "FULL") {
+    if(buy_type === "FULL" && credits >= 950) {
       tiers = tiers.filter(w => w.minCredits >= 950)
     }
     if(buy_type === "ECO") {
@@ -724,17 +791,13 @@ export default class ValorantMatch {
     }
   }
   public async switchSides() {
-    for(const t of this.teams) {
+    for(const t of this.teams)
       if(t.side === "ATTACK") t.side = "DEFENSE"
       else t.side = "ATTACK"
-      for(const p of t.roster) {
-        p.credits = 800
-      }
-    }
-    const content = locales(this.locale, `*Switch sides*`)
+    const content = locales(this.locale, "simulator.switch_sides")
     this.content += `${content}\n`
     const embed = new EmbedBuilder()
-    .setTitle(`${this.ctx.interaction.user.username} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.__teams[1].user.name}`)
+    .setTitle(`${this.teams[0].name} ${this.rounds_played.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds_played.filter(r => r.winning_team === 1).length} ${this.teams[1].name}`)
     .setDesc(this.content)
     await this.ctx.edit(embed.build())
     this.content = ""
@@ -745,10 +808,10 @@ export default class ValorantMatch {
     const score1 = this.rounds_played.filter(r => r.winning_team === 0).length
     const score2 = this.rounds_played.filter(r => r.winning_team === 1).length
     if(score1 >= 13) {
-      await this.ctx.reply(`<@${this.teams[0].user.id}> won the match`)
+      await this.ctx.reply("simulator.winner", { user: `<@${this.teams[0].user.id}>` })
     }
     else if(score2 >= 13) {
-      await this.ctx.reply(`<@${this.teams[1].user.id}> won the match`)
+      await this.ctx.reply("simulator.winner", { user: `<@${this.teams[1].user.id}>` })
     }
     const user1 = await User.get(this.teams[0].user.id)
     const user2 = await User.get(this.teams[1].user.id)

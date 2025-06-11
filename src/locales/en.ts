@@ -165,17 +165,27 @@ export const commands = {
   coins: {
     res: "You have **{c}** coins"
   },
-  match: {
-    started: "### Match started"
+  duel: {
+    started: "### Match started",
+    already_in_match: "You already started a match. Wait until it finishes and try again.",
+    needed_team_name: "You need to set your team name before play."
   }
-}
+} as const
 export const simulator = {
   sides: {
     name: "Sides",
     value: "Attack: {attack}\nDefense: {defense}"
   },
-  round_started: "*Round {n} started*"
-}
+  round_started: "*Round {n} started*",
+  winner: "{user} won the match!",
+  switch_sides: "Switch sides",
+  won_by_elimination: "- **{t} won the round by eliminating the entire opposing team**",
+  kill: "{t1} {p1} killed {t2} {p2} with a {w}",
+  spike_not_planted: "- The spike was not planted on time\n- **{team}** won the round",
+  spike_detonated: "- Spike detonated\n- **{team}** won the round",
+  spike_defused: "- Spike defused\n- **{team}** won the round",
+  spike_planted: "- *Spike planted at bomb site {bomb}*"
+} as const
 export const helper = {
   palpitate: "Predict",
   stats: "Stats",
@@ -203,8 +213,7 @@ export const helper = {
   source: "View full article",
   live_now: "LIVE NOW",
   streams: "Streams"
-}
-
+} as const
 export const permissions = {
   CREATE_INSTANT_INVITE: "Create Instant Invite",
   KICK_MEMBERS: "Kick Members",
@@ -246,4 +255,4 @@ export const permissions = {
   SEND_MESSAGES_IN_THREADS: "Send Messages In Threads",
   START_EMBEDDED_ACTIVITIES: "Start Activities",
   MODERATE_MEMBERS: "Timeout Members"
-}
+} as const
