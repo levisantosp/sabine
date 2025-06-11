@@ -39,3 +39,8 @@ id,name,collection,team,country,role,aim,HS,movement,aggression,ACS,gamesense
 38,bang,BASE,sentinels,us,CONTROLLER,85.8,66.0,66.4,37.9,70.5,77.4
 39,Zellsis,BASE,sentinels,us,SENTINEL,65.42,39.8,67.2,36.1,30.71,83.4
 40,zekken,BASE,sentinels,us,DUELIST,78.38,45.4,65.6,51.5,82.7,84.0
+41,Boostio,BASE,100t,us,SENTINEL,72.98,53.2,62.4,47.15,73.47,63.0
+42,zander,BASE,100t,ca,CONTROLLER,68.36,48.4,68.0,33.85,69.6,82.8
+43,Cryo,BASE,100t,us,DUELIST,74.12,46.8,67.2,50.35,78.6,72.6
+44,eeiu,BASE,100t,ca,INITIATOR,73.6,56.0,69.6,30.9,71.1,83.6
+45,Asuna,BASE,100t,us,FLEX,69.18,42.2,61.6,46.2,78.07,76.5
