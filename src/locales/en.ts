@@ -6,25 +6,25 @@ export const commands = {
       footer: "Page {p1}/{p2}",
       desc: "Correct predictions: `{correct}`\nWrong predictions: `{wrong}`\nTotal predictions: `{t}`"
     },
-    no_predictions: "<:error:1300882259078938685> You do not have predictions.",
-    no_pages: "<:error:1300882259078938685> Nothing to show in this page."
+    no_predictions: "You do not have predictions.",
+    no_pages: "Nothing to show in this page."
   },
   player: {
     insert_player: "<:warn:869393116854108191> Provide the name of a player.",
-    player_not_found: "<:error:1300882259078938685> No players have been found with that name.",
+    player_not_found: "No players have been found with that name.",
     embed: {
       desc: "Name: `{name}`\nCurrent team: {team}\nPast teams: {pt}\nLast match: {lt}"
     }
   },
   team: {
     insert_team: "<:warn:869393116854108191> Provide the name of a team.",
-    team_not_found: "<:error:1300882259078938685> No teams have been found with that name.",
+    team_not_found: "No teams have been found with that name.",
     embed: {
       desc: "Players: {p}\nStaff: {s}\nLast match: {lt}\nNext match: {n}"
     }
   },
   help: {
-    command_not_found: "<:error:1300882259078938685> Command not found.",
+    command_not_found: "Command not found.",
     name: "Name",
     aliases: "Aliases",
     examples: "Examples",
@@ -43,31 +43,31 @@ export const commands = {
     footer: "Your position: #{pos}",
     title: "Users with the most correct predictions",
     field: "`{t}` correct predictions",
-    no_users: "<:error:1300882259078938685> No users to show in this page."
+    no_users: "No users to show in this page."
   },
   admin: {
-    tournament_has_been_added: "<:error:1300882259078938685> This tournament already has been added.",
-    tournament_added: "<:success:1300882212190945292> The tournament **{t}** has been added successfully!",
+    tournament_has_been_added: "This tournament already has been added.",
+    tournament_added: "The tournament **{t}** has been added successfully!",
     channels_must_be_different: "<:warn:869393116854108191> The matches channel and results channel cannot be the same. It is recommended that the matches channel be a separate channel where there will be no member interaction.",
-    tournament_removed: "<:success:1300882212190945292> The tournament **{t}** has been removed successfully!",
+    tournament_removed: "The tournament **{t}** has been removed successfully!",
     dashboard: "Dashboard",
     event_channels: "Matches will be announced in {ch1}\nResults will be announced in {ch2}",
     desc: "- Language: `{lang}` (change by using: </admin language:{id}>)\n- Limit of tournaments: `{limit}`\n- VALORANT news channel: {vlr_news}\n- VALORANT live feed channel: {vlr_live}\n- League of Legends news channel: {lol_news}\n- League of legends live feed channel: {lol_live}",
-    invalid_channel: "<:error:1300882259078938685> Invalid channel type. Consider select a TEXT channel.",
-    limit_reached: "<:error:1300882259078938685> This server has reached the maximum limit of tournaments that can be added. If you want to add this tournaments, consider removing one using {cmd}",
-    channel_being_used: "<:error:1300882259078938685> The channel {ch} is already being used to send the results of a tournament. Consider using another channel for this.\nCheck the channels that are already in use by using {cmd}",
-    resend_time: "<:error:1300882259078938685> This feature has already been used recently on this server. Try again {t}.",
+    invalid_channel: "Invalid channel type. Consider select a TEXT channel.",
+    limit_reached: "This server has reached the maximum limit of tournaments that can be added. If you want to add this tournaments, consider removing one using {cmd}",
+    channel_being_used: "The channel {ch} is already being used to send the results of a tournament. Consider using another channel for this.\nCheck the channels that are already in use by using {cmd}",
+    resend_time: "This feature has already been used recently on this server. Try again {t}.",
     resending: "<a:carregando:809221866434199634> Resending matches... Please, wait.",
     resend: "Resend {game} matches",
     confirm: "<:warn:869393116854108191> You are about to FORCE the submission of matches on this server!\n<:warn:869393116854108191> It is worth remembering that this action is **IRREVERSIBLE** and can only be done **ONCE a hour**! If you still want to add more tournaments, add them before using this feature. Do you want to continue?",
     continue: "Continue",
     remove_all: "Remove all",
-    removed_all_tournaments: "<:success:1300882212190945292> All tournaments have been removed successfully!",
-    resent: "<:success:1300882212190945292> Matches resent successfully!",
-    invalid_channel2: "<:error:1300882259078938685> Invalid channel type. Consider select a TEXT or ANNOUNCEMENT channel.",
-    news_enabled: "<:success:1300882212190945292> News feature enabled to channel {ch}",
-    news_disabled: "<:success:1300882212190945292> News feature disabled successfully!",
-    no_premium: "<:error:1300882259078938685> This server does not have any premium keys.",
+    removed_all_tournaments: "All tournaments have been removed successfully!",
+    resent: "Matches resent successfully!",
+    invalid_channel2: "Invalid channel type. Consider select a TEXT or ANNOUNCEMENT channel.",
+    news_enabled: "News feature enabled to channel {ch}",
+    news_disabled: "News feature disabled successfully!",
+    no_premium: "This server does not have any premium keys.",
     premium: "This server has the {key} key activated.",
     lol_esports_coverage: "League of Legends e-sports coverage",
     vlr_esports_coverage: "VALORANT e-sports coverage",
@@ -84,7 +84,7 @@ export const commands = {
     invite: "Invite me!"
   },
   premium: {
-    you_dont_have_premium: "<:error:1300882259078938685> You do not have an active plan. Buy one in [support server](https://discord.com/invite/FaqYcpA84r)!",
+    you_dont_have_premium: "You do not have an active plan. Buy one in [support server](https://discord.com/invite/FaqYcpA84r)!",
     embed: {
       description: "Thank you for supporting the bot by subscribing to the premium.\nYour plan expires {expiresAt}",
       field: {
@@ -94,34 +94,34 @@ export const commands = {
     button: {
       label: "View activation keys"
     },
-    you_dont_have_keys: "<:error:1300882259078938685> You do not have any activation key."
+    you_dont_have_keys: "You do not have any activation key."
   },
   activatekey: {
-    key_activated: "<:success:1300882212190945292> Your key has been activated successfully! Enjoy the benefits!",
-    invalid_key: "<:error:1300882259078938685> Invalid key!",
+    key_activated: "Your key has been activated successfully! Enjoy the benefits!",
+    invalid_key: "Invalid key!",
     button: "Continue",
     would_like_to_continue: "<:warn:869393116854108191> This server has a {key} key activated. Would you like to continue?",
-    key_already_activated: "<:error:1300882259078938685> This key is already activated!",
-    limit_reached: "<:error:1300882259078938685> This key is already activated in 2 servers."
+    key_already_activated: "This key is already activated!",
+    limit_reached: "This key is already activated in 2 servers."
   },
   tournament: {
-    tournament_added: "<:success:1300882212190945292> The tournament **{t}** has been added successfully!",
+    tournament_added: "The tournament **{t}** has been added successfully!",
     channels_must_be_different: "<:warn:869393116854108191> The matches channel and results channel cannot be the same. It is recommended that the matches channel be a separate channel where there will be no member interaction.",
-    tournament_removed: "<:success:1300882212190945292> The tournament **{t}** has been removed successfully!",
+    tournament_removed: "The tournament **{t}** has been removed successfully!",
     remove_all: "Remove all",
-    invalid_channel: "<:error:1300882259078938685> Invalid channel type. Consider select a TEXT channel.",
-    limit_reached: "<:error:1300882259078938685> This server has reached the maximum limit of tournaments that can be added. If you want to add this tournaments, consider removing one using {cmd}"
+    invalid_channel: "Invalid channel type. Consider select a TEXT channel.",
+    limit_reached: "This server has reached the maximum limit of tournaments that can be added. If you want to add this tournaments, consider removing one using {cmd}"
   },
   news: {
-    invalid_channel: "<:error:1300882259078938685> Invalid channel type. Consider select a TEXT or ANNOUNCEMENT channel.",
-    news_enabled: "<:success:1300882212190945292> News feature enabled to channel {ch}",
-    news_disabled: "<:success:1300882212190945292> News feature disabled successfully!",
+    invalid_channel: "Invalid channel type. Consider select a TEXT or ANNOUNCEMENT channel.",
+    news_enabled: "News feature enabled to channel {ch}",
+    news_disabled: "News feature disabled successfully!",
     buy_premium: "Buy the premium!"
   },
   live: {
-    invalid_channel: "<:error:1300882259078938685> Invalid channel type. Consider select a TEXT channel.",
-    news_enabled: "<:success:1300882212190945292> Live feed feature enabled to channel {ch}",
-    news_disabled: "<:success:1300882212190945292> Live feed feature disabled successfully!",
+    invalid_channel: "Invalid channel type. Consider select a TEXT channel.",
+    news_enabled: "Live feed feature enabled to channel {ch}",
+    news_disabled: "Live feed feature disabled successfully!",
     buy_premium: "Buy the premium!"
   },
   claim: {
@@ -150,17 +150,17 @@ export const commands = {
     team_info_changed: "You changed the name of your team to **{name}** and the tag to **{tag}** successfully"
   },
   promote: {
-    player_not_found: "<:error:1300882259078938685> Player not found!",
-    player_promoted: "<:success:1300882212190945292> You promoted **{p}** successfully!",
+    player_not_found: "Player not found!",
+    player_promoted: "You promoted **{p}** successfully!",
     select_player: "Select a player to replace"
   },
   remove: {
-    player_not_found: "<:error:1300882259078938685> Player not found!",
-    player_removed: "<:success:1300882212190945292> You removed **{p}** successfully!"
+    player_not_found: "Player not found!",
+    player_removed: "You removed **{p}** successfully!"
   },
   sell: {
-    player_not_found: "<:error:1300882259078938685> Player not found!",
-    sold: "<:success:1300882212190945292> You sold **{p}** for **{price}** coins successfully"
+    player_not_found: "Player not found!",
+    sold: "You sold **{p}** for **{price}** coins successfully"
   },
   coins: {
     res: "You have **{c}** coins"
@@ -168,7 +168,19 @@ export const commands = {
   duel: {
     started: "### Match started",
     already_in_match: "You already started a match. Wait until it finishes and try again.",
-    needed_team_name: "You need to set your team name before play."
+    needed_team_name: "You need to set your team name before play.",
+    team_not_completed_1: "Your team is not completed.",
+    team_not_completed_2: "Your opponent's team is not completed.",
+    needed_team_name_2: "Your opponent needs to set team name before play.",
+    already_in_match_2: "Your opponent is already in match."
+  },
+  career: {
+    no_pages: "Nothing to show in this page.",
+    embed: {
+      author: "Your matches history",
+      desc: "Wins: `{wins}`\nDefeats: `{defeats}`\nMatches played: `{total}`",
+      footer: "Page {page}/{pages}"
+    }
   }
 } as const
 export const simulator = {
@@ -192,22 +204,22 @@ export const helper = {
   prediction_modal: {
     title: "Your prediction for the match"
   },
-  palpitate_response: "<:success:1300882212190945292> You predicted {t1} `{s1}-{s2}` {t2}",
-  replied: "<:error:1300882259078938685> You have already predicted this match.",
-  started: "<:error:1300882259078938685> This match has already started or finished.",
+  palpitate_response: "You predicted {t1} `{s1}-{s2}` {t2}",
+  replied: "You have already predicted this match.",
+  started: "This match has already started or finished.",
   permissions: {
-    user: "<:error:1300882259078938685> You\"re weak. You lack the following permissions to use this command: {permissions}",
-    bot: "<:error:1300882259078938685> I lack the following permissions for this command to work properly: {permissins}"
+    user: "You\"re weak. You lack the following permissions to use this command: {permissions}",
+    bot: "I lack the following permissions for this command to work properly: {permissins}"
   },
   error: "An unexpected error has occurred...\n`{e}`",
   privacy: "Before you start to use the bot, you must accept the [Terms of Service and Privacy](https://levispires.github.io/sabine-terms/)",
-  verified: "<:success:1300882212190945292> Make your prediction by clicking the button below.",
+  verified: "Make your prediction by clicking the button below.",
   pickem: {
     label: "Pick'em",
     res: "Join the PICK\'EM for a chance to win a <:booster:1272968894239215636> **Discord Nitro** or a <:nitro:1272968817496297542> **Discord Nitro Basic** by joining our official server!\nhttps://discord.gg/g5nmc376yh"
   },
-  banned: "<:error:1300882259078938685> **You are banned and can not use the bot.\n<:warn:869393116854108191> If you think this is a mistake, contact us in our Discord server!**\n**When:** {when}\n**Ends at:** {ends}\n**Reason:** `{reason}`",
-  interaction_failed: "<:error:1300882259078938685> It was not possible to run this action... If the problem persists, report it to the team in my [support server](https://discord.gg/g5nmc376yh).",
+  banned: "**You are banned and can not use the bot.\n<:warn:869393116854108191> If you think this is a mistake, contact us in our Discord server!**\n**When:** {when}\n**Ends at:** {ends}\n**Reason:** `{reason}`",
+  interaction_failed: "It was not possible to run this action... If the problem persists, report it to the team in my [support server](https://discord.gg/g5nmc376yh).",
   premium_feature: "<:warn:869393116854108191> Oops, looks like you have found a premium feature. Unlock it by buying the premium on our support server!",
   live_feed_value: "Current map: `{map}`\nMap score: `{score}`",
   source: "View full article",
