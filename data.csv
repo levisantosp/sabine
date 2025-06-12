@@ -23,7 +23,7 @@ id,name,collection,team,country,role,aim,HS,movement,aggression,ACS,gamesense
 22,tex,BASE,leviatan,de,SENTINEL,80.1,61.0,54.0,41.7,74.47,63.0
 23,Okeanos,BASE,leviatan,vn,FLEX,69.42,53.8,56.8,50.85,79.2,63.0
 24,Sato,BASE,leviatan,br,DUELIST,88.4,64.0,64.0,50.55,72.2,52.4
-25,C0M,BASE,leviatan,us,INITIATOR,60.44,45.6,38.8,28.35,56.6,73.2
+25,C0M,BASE,leviatan,us,INITIATOR,60.44,45.6,48.8,28.35,56.6,73.2
 26,heat,BASE,furia,br,SENTINEL,79.26,61.4,61.0,42.25,68.2,63.6
 27,Palla,BASE,furia,br,DUELIST,74.12,54.8,57.6,50.85,71.67,56.9
 28,Urango,BASE,furia,br,FLEX,64.32,52.8,60.0,29.5,67.33,67.5
@@ -59,3 +59,9 @@ id,name,collection,team,country,role,aim,HS,movement,aggression,ACS,gamesense
 58,pANcada,BASE,loud,br,CONTROLLER,85.68,61.2,80.4,29.45,68.93,78.9
 59,cauanzin,BASE,loud,br,INITIATOR,75.74,48.6,64.8,35.95,65.23,70.1
 60,lukxo,BASE,loud,br,SENTINEL,88.36,60.4,74.0,37.25,71.27,67.7
+61,Boaster,BASE,fnatic,gb,CONTROLLER,61.36,42.4,68.0,27.35,59.6,88.3
+62,crashies,BASE,fnatic,us,INITIATOR,69.26,51.4,68.8,27.55,66.93,78.0
+63,kaajak,BASE,fnatic,pl,DUELIST,84.14,72.6,66.4,48.55,75.17,63.0
+64,Chronicle,BASE,fnatic,ru,FLEX,74.32,48.8,69.6,37.9,72.87,81.0
+65,Alfajer,BASE,fnatic,tr,SENTINEL,85.28,59.2,66.4,44.05,79.67,66.9
+66,Leo,BASE,fnatic,se,INITIATOR,76.85,45.0,72.8,32.3,76.83,75.8
