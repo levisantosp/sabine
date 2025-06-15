@@ -36,7 +36,7 @@ export default createCommand({
     if(!player || i === -1) {
       return ctx.reply("commands.sell.player_not_found")
     }
-    const price = parseInt((calcPlayerPrice(player) * 0.2).toString())
+    const price = parseInt(calcPlayerPrice(player, true).toString())
     await ctx.db.user.sellPlayer(player.id.toString(), price, i)
     await ctx.reply("commands.sell.sold", { p: player.name, price: price.toLocaleString("en-US") })
   },
