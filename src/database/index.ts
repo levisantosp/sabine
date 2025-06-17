@@ -467,6 +467,7 @@ type UserSchemaPrediction = {
   teams: UserSchemaPredictionTeam[]
   status?: "pending" | "correct" | "wrong"
   bet?: bigint
+  odd?: number
 }
 type UserSchemaPremium = {
   type: "PREMIUM",

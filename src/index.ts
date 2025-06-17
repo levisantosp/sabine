@@ -164,7 +164,13 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
               odd = calcOdd(oddB)
             }
             user.coins += BigInt(Number(pred.bet) * odd)
-            await user.save()
+            user.valorant_predictions[i].odd = odd
+            await user.updateOne({
+              $set: {
+                valorant_predictions: user.valorant_predictions,
+                coins: user.coins
+              }
+            })
           }
         }
       }

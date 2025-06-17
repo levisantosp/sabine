@@ -99,6 +99,7 @@ export default createCommand({
         })
       for(const prediction of preds) {
         let status: string
+        let odd = ""
         if(prediction.status === "correct") {
           status = "\nStatus: <:success:1300882212190945292>"
         }
@@ -109,11 +110,14 @@ export default createCommand({
           status = "\nStatus: <a:carregando:809221866434199634>"
         }
         else status = ""
+        if(prediction.odd) {
+          odd += `\nOdd: \`${prediction.odd}x\``
+        }
         embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name}`, locale("commands.predictions.embed.field", {
           score1: prediction.teams[0].score,
           score2: prediction.teams[1].score,
           link: `https://www.vlr.gg/${prediction.match}`
-        }) + status)
+        }) + status + odd)
       }
       const previous = new ButtonBuilder()
         .setEmoji("◀️")
@@ -166,6 +170,7 @@ export default createCommand({
         })
       for(const prediction of preds) {
         let status: string
+        let odd = ""
         if(prediction.status === "correct") {
           status = "\nStatus: <:success:1300882212190945292>"
         }
@@ -176,11 +181,14 @@ export default createCommand({
           status = "\nStatus: <a:carregando:809221866434199634>"
         }
         else status = ""
+        if(prediction.odd) {
+          odd += `\nOdd: \`${prediction.odd}x\``
+        }
         embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name}`, locale("commands.predictions.embed.field", {
           score1: prediction.teams[0].score,
           score2: prediction.teams[1].score,
           link: `https://loltv.gg/match/${prediction.match}`
-        }) + status)
+        }) + status + odd)
       }
       const previous = new ButtonBuilder()
         .setEmoji("◀️")
@@ -235,6 +243,7 @@ export default createCommand({
         })
       for(const prediction of preds) {
         let status: string
+        let odd = ""
         if(prediction.status === "correct") {
           status = "\nStatus: <:success:1300882212190945292>"
         }
@@ -245,11 +254,14 @@ export default createCommand({
           status = "\nStatus: <a:carregando:809221866434199634>"
         }
         else status = ""
+        if(prediction.odd) {
+          odd += `\nOdd: \`${prediction.odd}x\``
+        }
         embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name}`, locale("commands.predictions.embed.field", {
           score1: prediction.teams[0].score,
           score2: prediction.teams[1].score,
           link: `https://www.vlr.gg/${prediction.match}`
-        }) + status)
+        }) + status + odd)
       }
       const previous = new ButtonBuilder()
         .setEmoji("◀️")
@@ -302,6 +314,7 @@ export default createCommand({
         })
       for(const prediction of preds) {
         let status: string
+        let odd = ""
         if(prediction.status === "correct") {
           status = "\nStatus: <:success:1300882212190945292>"
         }
@@ -312,11 +325,14 @@ export default createCommand({
           status = "\nStatus: <a:carregando:809221866434199634>"
         }
         else status = ""
+        if(prediction.odd) {
+          odd += `\nOdd: \`${prediction.odd}x\``
+        }
         if(prediction) embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name}`, locale("commands.predictions.embed.field", {
           score1: prediction.teams[0].score,
           score2: prediction.teams[1].score,
           link: `https://www.loltv.gg/match/${prediction.match}`
-        }) + status)
+        }) + status + odd)
       }
       const previous = new ButtonBuilder()
         .setEmoji("◀️")
