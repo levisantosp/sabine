@@ -24,7 +24,7 @@ export type TeamPlayer = {
   id: string
   name: string
   stats: PlayerStats
-  role: "INITIATOR" | "CONTROLLER" | "DUELIST" | "SENTINEL" | "FLEX"
+  role: "initiator" | "controller" | "duelist" | "sentinel" | "flex"
   agent?: typeof valorant_agents[number]
   shield_type?: number
   alive: boolean
@@ -131,7 +131,7 @@ export default class ValorantMatch {
     this.content = content
   }
   private startPlayerDuel() {
-    const roles: TeamPlayer["role"][] = ["CONTROLLER", "DUELIST", "FLEX", "INITIATOR", "SENTINEL"]
+    const roles: TeamPlayer["role"][] = ["controller", "duelist", "flex", "initiator", "sentinel"]
     const weights = [5, 15, 30, 50, 10]
     const pick1 = this.choosePlayer(roles, weights)
     const pick2 = this.choosePlayer(roles, weights)
@@ -735,7 +735,7 @@ export default class ValorantMatch {
     const diff = (advantage1 - advantage2) / 100
     return 1 / (1 + Math.exp(-diff * 5))
   }
-  private buyWeapon(credits: number, role: "INITIATOR" | "CONTROLLER" | "DUELIST" | "SENTINEL" | "FLEX", buy_type: "ECO" | "FULL" | "NORMAL") {
+  private buyWeapon(credits: number, role: "initiator" | "controller" | "duelist" | "sentinel" | "flex", buy_type: "ECO" | "FULL" | "NORMAL") {
     let tiers = [
       {
         weapons: ["Vandal", "Phantom", "Operator", "Odin", "Guardian", "Bulldog"],
@@ -766,11 +766,11 @@ export default class ValorantMatch {
         const maxPrice = Math.max(...weapons.map(w => w.price))
         const bestW = weapons.filter(w => w.price <= maxPrice)
         const preferences: Record<string, typeof valorant_weapons[number]["name"][]> = {
-          DUELIST: ["Vandal", "Phantom", "Operator", "Outlaw", "Marshal", "Sheriff"],
-          CONTROLLER: ["Phantom", "Vandal", "Guardian", "Ghost", "Classic", "Sheriff"],
-          INITIATOR: ["Phantom", "Vandal", "Guardian", "Bulldog", "Judge", "Bucky", "Ghost", "Sheriff"],
-          FLEX: ["Vandal", "Phantom", "Guardian", "Bulldog", "Judge", "Bucky", "Ghost", "Sheriff"],
-          SENTINEL: ["Vandal", "Phantom", "Guardian", "Ghost", "Sheriff"]
+          duelist: ["Vandal", "Phantom", "Operator", "Outlaw", "Marshal", "Sheriff"],
+          controller: ["Phantom", "Vandal", "Guardian", "Ghost", "Classic", "Sheriff"],
+          initiator: ["Phantom", "Vandal", "Guardian", "Bulldog", "Judge", "Bucky", "Ghost", "Sheriff"],
+          flex: ["Vandal", "Phantom", "Guardian", "Bulldog", "Judge", "Bucky", "Ghost", "Sheriff"],
+          sentinel: ["Vandal", "Phantom", "Guardian", "Ghost", "Sheriff"]
         }
         const preferred = bestW.filter(w => preferences[role].includes(w.name))
         if(preferred.length) {

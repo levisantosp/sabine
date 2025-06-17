@@ -41,8 +41,8 @@ const UserSchema = mongoose.model("users", new mongoose.Schema(
       }
     },
     coins: {
-      type: Number,
-      default: 0
+      type: BigInt,
+      default: 0n
     },
     claim_time: {
       type: Number,
@@ -94,7 +94,7 @@ export class User extends UserSchema {
         }
       }
     }
-    while (keys.some(key => key.id === keyId))
+    while(keys.some(key => key.id === keyId))
     let expiresAt = !this.plans.at(-1) ? Date.now() + 2592000000 : Date.now() + ((this.plans.length + 1) * 2592000000)
     await new Key(
       {
@@ -340,7 +340,7 @@ export class User extends UserSchema {
     })
     return this as UserSchemaInterface
   }
-  public async sellPlayer(id: string, price: number, i: number) {
+  public async sellPlayer(id: string, price: bigint, i: number) {
     this.roster!.reserve.splice(i, 1)
     this.coins += price
     await this.save()
@@ -459,12 +459,14 @@ type GuildSchemaEvent = {
 }
 type UserSchemaPredictionTeam = {
   name: string
-  score: string
+  score: string,
+  winner: boolean
 }
 type UserSchemaPrediction = {
   match: string | number
   teams: UserSchemaPredictionTeam[]
   status?: "pending" | "correct" | "wrong"
+  bet?: bigint
 }
 type UserSchemaPremium = {
   type: "PREMIUM",
@@ -531,7 +533,7 @@ export interface UserSchemaInterface extends User {
   warned?: boolean
   plan?: UserSchemaPremium
   roster: UserSchemaRoster
-  coins: number
+  coins: bigint
   team: UserSchemaTeam
   career: UserSchemaCareer[]
   wins: number

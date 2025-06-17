@@ -10,14 +10,14 @@ export const commands = {
     no_pages: "Nothing to show in this page."
   },
   player: {
-    insert_player: "<:warn:869393116854108191> Provide the name of a player.",
+    insert_player: "Provide the name of a player.",
     player_not_found: "No players have been found with that name.",
     embed: {
       desc: "Name: `{name}`\nCurrent team: {team}\nPast teams: {pt}\nLast match: {lt}"
     }
   },
   team: {
-    insert_team: "<:warn:869393116854108191> Provide the name of a team.",
+    insert_team: "Provide the name of a team.",
     team_not_found: "No teams have been found with that name.",
     embed: {
       desc: "Players: {p}\nStaff: {s}\nLast match: {lt}\nNext match: {n}"
@@ -48,7 +48,7 @@ export const commands = {
   admin: {
     tournament_has_been_added: "This tournament already has been added.",
     tournament_added: "The tournament **{t}** has been added successfully!",
-    channels_must_be_different: "<:warn:869393116854108191> The matches channel and results channel cannot be the same. It is recommended that the matches channel be a separate channel where there will be no member interaction.",
+    channels_must_be_different: "The matches channel and results channel cannot be the same. It is recommended that the matches channel be a separate channel where there will be no member interaction.",
     tournament_removed: "The tournament **{t}** has been removed successfully!",
     dashboard: "Dashboard",
     event_channels: "Matches will be announced in {ch1}\nResults will be announced in {ch2}",
@@ -59,7 +59,7 @@ export const commands = {
     resend_time: "This feature has already been used recently on this server. Try again {t}.",
     resending: "<a:carregando:809221866434199634> Resending matches... Please, wait.",
     resend: "Resend {game} matches",
-    confirm: "<:warn:869393116854108191> You are about to FORCE the submission of matches on this server!\n<:warn:869393116854108191> It is worth remembering that this action is **IRREVERSIBLE** and can only be done **ONCE a hour**! If you still want to add more tournaments, add them before using this feature. Do you want to continue?",
+    confirm: "You are about to FORCE the submission of matches on this server!\nIt is worth remembering that this action is **IRREVERSIBLE** and can only be done **ONCE a hour**! If you still want to add more tournaments, add them before using this feature. Do you want to continue?",
     continue: "Continue",
     remove_all: "Remove all",
     removed_all_tournaments: "All tournaments have been removed successfully!",
@@ -100,13 +100,13 @@ export const commands = {
     key_activated: "Your key has been activated successfully! Enjoy the benefits!",
     invalid_key: "Invalid key!",
     button: "Continue",
-    would_like_to_continue: "<:warn:869393116854108191> This server has a {key} key activated. Would you like to continue?",
+    would_like_to_continue: "This server has a {key} key activated. Would you like to continue?",
     key_already_activated: "This key is already activated!",
     limit_reached: "This key is already activated in 2 servers."
   },
   tournament: {
     tournament_added: "The tournament **{t}** has been added successfully!",
-    channels_must_be_different: "<:warn:869393116854108191> The matches channel and results channel cannot be the same. It is recommended that the matches channel be a separate channel where there will be no member interaction.",
+    channels_must_be_different: "The matches channel and results channel cannot be the same. It is recommended that the matches channel be a separate channel where there will be no member interaction.",
     tournament_removed: "The tournament **{t}** has been removed successfully!",
     remove_all: "Remove all",
     invalid_channel: "Invalid channel type. Consider select a TEXT channel.",
@@ -127,7 +127,7 @@ export const commands = {
   claim: {
     claimed: `
       **{player}** joined your roster for free
-      Market value: {price}
+      Market value: \`{price}\`
     `.trim(),
     has_been_claimed: "You have already used this command recently. Try again {t}"
   },
@@ -147,7 +147,7 @@ export const commands = {
       team_name: "New name",
       team_tag: "New tag"
     },
-    team_info_changed: "You changed the name of your team to **{name}** and the tag to **{tag}** successfully"
+    team_info_changed: "You changed the name of your team to **{name}** and the tag to **{tag}** successfully!"
   },
   promote: {
     player_not_found: "Player not found!",
@@ -218,13 +218,25 @@ export const helper = {
     label: "Pick'em",
     res: "Join the PICK\'EM for a chance to win a <:booster:1272968894239215636> **Discord Nitro** or a <:nitro:1272968817496297542> **Discord Nitro Basic** by joining our official server!\nhttps://discord.gg/g5nmc376yh"
   },
-  banned: "**You are banned and can not use the bot.\n<:warn:869393116854108191> If you think this is a mistake, contact us in our Discord server!**\n**When:** {when}\n**Ends at:** {ends}\n**Reason:** `{reason}`",
+  banned: "**You are banned and can not use the bot.\nIf you think this is a mistake, contact us in our Discord server!**\n**When:** {when}\n**Ends at:** {ends}\n**Reason:** `{reason}`",
   interaction_failed: "It was not possible to run this action... If the problem persists, report it to the team in my [support server](https://discord.gg/g5nmc376yh).",
-  premium_feature: "<:warn:869393116854108191> Oops, looks like you have found a premium feature. Unlock it by buying the premium on our support server!",
+  premium_feature: "Oops, looks like you have found a premium feature. Unlock it by buying the premium on our support server!",
   live_feed_value: "Current map: `{map}`\nMap score: `{score}`",
   source: "View full article",
   live_now: "LIVE NOW",
-  streams: "Streams"
+  streams: "Streams",
+  bet: "Bet",
+  prediction_needed: "You must to make a prediction before bet",
+  bet_modal: {
+    title: "Betting for {teams}",
+    label: "Insert the amount you want to bet"
+  },
+  coins_needed: "You need to have at least 500 coins to make a bet",
+  invalid_coins: "Insert a valid value",
+  too_much: "You do not have enough coins",
+  bet_res: "You bet **{coins}** coins on **{team}**\n" +
+           "The current odd is \`{odd}x\`. The value can change as users make bets.",
+  min_value: "The minimum bet is 500 coins"
 } as const
 export const permissions = {
   CREATE_INSTANT_INVITE: "Create Instant Invite",

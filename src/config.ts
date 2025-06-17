@@ -1,107 +1,107 @@
 export const valorant_agents = [
   {
     name: "Brimstone",
-    role: "CONTROLLER"
+    role: "controller"
   },
   {
     name: "Omen",
-    role: "CONTROLLER"
+    role: "controller"
   },
   {
     name: "Viper",
-    role: "CONTROLLER"
+    role: "controller"
   },
   {
     name: "Raze",
-    role: "DUELIST"
+    role: "duelist"
   },
   {
     name: "Cypher",
-    role: "SENTINEL"
+    role: "sentinel"
   },
   {
     name: "Sage",
-    role: "SENTINEL"
+    role: "sentinel"
   },
   {
     name: "Sova",
-    role: "INITIATOR"
+    role: "initiator"
   },
   {
     name: "Phoenix",
-    role: "DUELIST"
+    role: "duelist"
   },
   {
     name: "Jett",
-    role: "DUELIST"
+    role: "duelist"
   },
   {
     name: "Breach",
-    role: "INITIATOR"
+    role: "initiator"
   },
   {
     name: "Reyna",
-    role: "DUELIST"
+    role: "duelist"
   },
   {
     name: "Killjoy",
-    role: "SENTINEL"
+    role: "sentinel"
   },
   {
     name: "Skye",
-    role: "INITIATOR"
+    role: "initiator"
   },
   {
     name: "Yoru",
-    role: "DUELIST"
+    role: "duelist"
   },
   {
     name: "Astra",
-    role: "CONTROLLER"
+    role: "controller"
   },
   {
     name: "KAY/O",
-    role: "INITIATOR"
+    role: "initiator"
   },
   {
     name: "Chamber",
-    role: "SENTINEL"
+    role: "sentinel"
   },
   {
     name: "Neon",
-    role: "DUELIST"
+    role: "duelist"
   },
   {
     name: "Fade",
-    role: "INITIATOR"
+    role: "initiator"
   },
   {
     name: "Harbor",
-    role: "CONTROLLER"
+    role: "controller"
   },
   {
     name: "Gekko",
-    role: "INITIATOR"
+    role: "initiator"
   },
   {
     name: "Deadlock",
-    role: "SENTINEL"
+    role: "sentinel"
   },
   {
     name: "Iso",
-    role: "DUELIST"
+    role: "duelist"
   },
   {
     name: "Clove",
-    role: "CONTROLLER"
+    role: "controller"
   },
   {
     name: "Vyse",
-    role: "SENTINEL"
+    role: "sentinel"
   },
   {
     name: "Tejo",
-    role: "INITIATOR"
+    role: "initiator"
   }
 ] as const
 export const valorant_weapons = [

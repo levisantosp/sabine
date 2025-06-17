@@ -83,7 +83,12 @@ const sendValorantMatches = async(client: App) => {
                 {
                   type: 1,
                   components: [
-                    button, urlButton,
+                    button,
+                    new ButtonBuilder()
+                      .setLabel(locales(guild.lang, "helper.bet"))
+                      .setCustomId(`bet;${d.id}`)
+                      .setStyle("gray"),
+                    urlButton,
                     new ButtonBuilder()
                       .setLabel(locales(guild.lang, "helper.pickem.label"))
                       .setStyle("blue")
@@ -141,6 +146,10 @@ const sendValorantTBDMatches = async(client: App) => {
                   .setLabel(locales(guild.lang, "helper.palpitate"))
                   .setCustomId(`predict;valorant;${match.id}`)
                   .setStyle("green"),
+                new ButtonBuilder()
+                  .setLabel(locales(guild.lang, "helper.bet"))
+                  .setCustomId(`bet;${data.id}`)
+                  .setStyle("gray"),
                 new ButtonBuilder()
                   .setLabel(locales(guild.lang, "helper.stats"))
                   .setStyle("link")
@@ -227,6 +236,10 @@ const sendLolMatches = async(client: App) => {
                   components: [
                     button,
                     new ButtonBuilder()
+                      .setLabel(locales(guild.lang, "helper.bet"))
+                      .setCustomId(`bet;${d.id}`)
+                      .setStyle("gray"),
+                    new ButtonBuilder()
                       .setLabel(locales(guild.lang, "helper.pickem.label"))
                       .setStyle("blue")
                       .setCustomId("pickem")
@@ -286,7 +299,11 @@ const sendLolTBDMatches = async(client: App) => {
                 new ButtonBuilder()
                   .setLabel(locales(guild.lang, "helper.stats"))
                   .setStyle("link")
-                  .setURL(`https://loltv.gg/match/${data.id}`)
+                  .setURL(`https://loltv.gg/match/${data.id}`),
+                new ButtonBuilder()
+                  .setLabel(locales(guild.lang, "helper.bet"))
+                  .setCustomId(`bet;${data.id}`)
+                  .setStyle("gray")
               ]
             }
           ]
@@ -345,6 +362,6 @@ export default createListener({
       })
     })
     await client.application.bulkEditGlobalCommands(commands)
-    // await runTasks(client)
+    await runTasks(client)
   }
 })

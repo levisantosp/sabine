@@ -13,6 +13,7 @@ import { readdirSync } from "fs"
 import path from "path"
 import { fileURLToPath } from "url"
 import getPlayers from "./simulator/valorant/players/getPlayers.js"
+import calcOdd from "./structures/util/calcOdd.js"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -138,6 +139,33 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
         }
         else {
           await user.addWrongPrediction("valorant", data.id)
+        }
+        if(pred.bet) {
+          const winnerIndex = data.teams.findIndex(t => t.winner)
+          const i = user.valorant_predictions.findIndex(p => p.match === data.id)
+          if(user.valorant_predictions[i].teams[winnerIndex].winner) {
+            let oddA = 0
+            let oddB = 0
+            for(const u of users) {
+              let index = u.valorant_predictions.findIndex(p => p.match === data.id)
+              if(!u.valorant_predictions[index]) continue
+              if(u.valorant_predictions[index].teams[0].winner && u.valorant_predictions[index].bet) {
+                oddA += 1
+              }
+              else if(u.valorant_predictions[index].teams[1].winner && u.valorant_predictions[index].bet) {
+                oddB += 1
+              }
+            }
+            let odd: number
+            if(user.valorant_predictions[i].teams[0].winner) {
+              odd = calcOdd(oddA)
+            }
+            else {
+              odd = calcOdd(oddB)
+            }
+            user.coins += BigInt(Number(pred.bet) * odd)
+            await user.save()
+          }
         }
       }
     }
@@ -339,7 +367,8 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
           teams: Type.Array(
             Type.Object({
               name: Type.String(),
-              score: Type.String()
+              score: Type.String(),
+              winner: Type.Boolean()
             })
           ),
           tournament: Type.Object({
@@ -421,6 +450,33 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
         }
         else {
           await user.addWrongPrediction("lol", data.id)
+        }
+        if(pred.bet) {
+          const winnerIndex = data.teams.findIndex(t => t.winner)
+          const i = user.valorant_predictions.findIndex(p => p.match === data.id)
+          if(user.valorant_predictions[i].teams[winnerIndex].winner) {
+            let oddA = 0
+            let oddB = 0
+            for(const u of users) {
+              let index = u.valorant_predictions.findIndex(p => p.match === data.id)
+              if(!u.valorant_predictions[index]) continue
+              if(u.valorant_predictions[index].teams[0].winner && u.valorant_predictions[index].bet) {
+                oddA += 1
+              }
+              else if(u.valorant_predictions[index].teams[1].winner && u.valorant_predictions[index].bet) {
+                oddB += 1
+              }
+            }
+            let odd: number
+            if(user.valorant_predictions[i].teams[0].winner) {
+              odd = calcOdd(oddA)
+            }
+            else {
+              odd = calcOdd(oddB)
+            }
+            user.coins += BigInt(Number(pred.bet) * odd)
+            await user.save()
+          }
         }
       }
     }
