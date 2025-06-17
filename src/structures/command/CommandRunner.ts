@@ -88,6 +88,7 @@ export default class CommandRunner {
     }
     command.run({ ctx, client, locale, id: interaction.data.id })
       .then(async() => {
+        if(process.env.DEVS.includes(interaction.user.id)) return
         const cmd = (ctx.interaction as CommandInteraction).data.options.getSubCommand() ? `${command.name} ${(ctx.interaction as CommandInteraction).data.options.getSubCommand()?.join(" ")}` : command.name
         const embed = new EmbedBuilder()
           .setAuthor({
@@ -100,7 +101,6 @@ export default class CommandRunner {
           .addField("Owner", `\`${ctx.guild.owner?.username}\` (\`${ctx.guild.ownerID}\`)`)
           .addField("Command author", `\`${ctx.interaction.user.username}\``)
           .setThumb(ctx.guild.iconURL()!)
-
         const channel = await client.rest.channels.get(process.env.COMMAND_LOG!) as TextChannel
         const webhooks = await channel.getWebhooks()
         let webhook = webhooks.find(w => w.name === `${client.user.username} Logger`)
