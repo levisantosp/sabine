@@ -86,7 +86,7 @@ const sendValorantMatches = async(client: App) => {
                     button,
                     new ButtonBuilder()
                       .setLabel(locales(guild.lang, "helper.bet"))
-                      .setCustomId(`bet;${d.id}`)
+                      .setCustomId(`bet;valorant;${d.id}`)
                       .setStyle("gray"),
                     urlButton,
                     new ButtonBuilder()
@@ -148,7 +148,7 @@ const sendValorantTBDMatches = async(client: App) => {
                   .setStyle("green"),
                 new ButtonBuilder()
                   .setLabel(locales(guild.lang, "helper.bet"))
-                  .setCustomId(`bet;${data.id}`)
+                  .setCustomId(`bet;valorant;${data.id}`)
                   .setStyle("gray"),
                 new ButtonBuilder()
                   .setLabel(locales(guild.lang, "helper.stats"))
@@ -237,7 +237,7 @@ const sendLolMatches = async(client: App) => {
                     button,
                     new ButtonBuilder()
                       .setLabel(locales(guild.lang, "helper.bet"))
-                      .setCustomId(`bet;${d.id}`)
+                      .setCustomId(`bet;lol;${d.id}`)
                       .setStyle("gray"),
                     new ButtonBuilder()
                       .setLabel(locales(guild.lang, "helper.pickem.label"))
@@ -297,12 +297,8 @@ const sendLolTBDMatches = async(client: App) => {
                   .setCustomId(`predict;lol;${match.id}`)
                   .setStyle("green"),
                 new ButtonBuilder()
-                  .setLabel(locales(guild.lang, "helper.stats"))
-                  .setStyle("link")
-                  .setURL(`https://loltv.gg/match/${data.id}`),
-                new ButtonBuilder()
                   .setLabel(locales(guild.lang, "helper.bet"))
-                  .setCustomId(`bet;${data.id}`)
+                  .setCustomId(`bet;lol;${data.id}`)
                   .setStyle("gray")
               ]
             }

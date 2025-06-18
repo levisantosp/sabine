@@ -222,7 +222,44 @@ export default createListener({
             })
           },
           lol: async() => {
-
+            const matches = await service.getMatches("lol")
+            const data = matches.find(m => m.id === args[2])
+            let index = user.lol_predictions.findIndex(p => p.match === args[2])
+            if(!data || data.status === "LIVE") {
+              return await i.createMessage({
+                content: locales(user.lang ?? guild.lang, "helper.started"),
+                flags: 64
+              })
+            }
+            if(index === -1) return await i.createMessage({
+              content: locales(user.lang ?? guild.lang, "helper.prediction_needed"),
+              flags: 64
+            })
+            await i.createModal({
+              customID: `betting;valorant;${args[2]}`,
+              title: locales(
+                user.lang ?? guild.lang, "helper.bet_modal.title",
+                { 
+                  teams: `${user.lol_predictions[index].teams[0].name} vs ${user.lol_predictions[index].teams[1].name}`
+                }
+              ),
+              components: [
+                {
+                  type: 1,
+                  components: [
+                    {
+                      type: 4,
+                      customID: "response-1",
+                      label: locales(user.lang ?? guild.lang, "helper.bet_modal.label"),
+                      style: 1,
+                      minLength: 3,
+                      required: true,
+                      placeholder: "Ex.: " + (Math.floor(Math.random() * (1000 - 500 + 1)) + 500).toString()
+                    }
+                  ]
+                }
+              ]
+            })
           }
         }
         await options[args[1] as keyof typeof options]()
@@ -384,7 +421,7 @@ export default createListener({
             else {
               odd = calcOdd(oddB)
             }
-            user.valorant_predictions[index].bet = value
+            user.valorant_predictions[index].bet = value + BigInt(user.valorant_predictions[index].bet ?? 0)
             await user.updateOne({
               $set: { valorant_predictions: user.valorant_predictions },
               $inc: { coins: -value }
@@ -436,7 +473,7 @@ export default createListener({
             else {
               odd = calcOdd(oddB)
             }
-            user.lol_predictions[index].bet = value
+            user.lol_predictions[index].bet = value + BigInt(user.lol_predictions[index].bet ?? 0)
             await user.updateOne({
               $set: { lol_predictions: user.lol_predictions },
               $inc: { coins: -value }
