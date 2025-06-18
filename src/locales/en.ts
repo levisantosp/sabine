@@ -183,6 +183,11 @@ export const commands = {
       desc: "Wins: `{wins}`\nDefeats: `{defeats}`\nMatches played: `{total}`",
       footer: "Page {page}/{pages}"
     }
+  },
+  daily: {
+    has_been_claimed: "You have already collected your daily reward. Try again {t}",
+    res: "You received **{coins}** coins today!",
+    bonus: "You received **{bonus}** bonus coins for being a premium user"
   }
 } as const
 export const simulator = {
