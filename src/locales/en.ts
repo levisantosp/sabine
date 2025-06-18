@@ -172,7 +172,9 @@ export const commands = {
     team_not_completed_1: "Your team is not completed.",
     team_not_completed_2: "Your opponent's team is not completed.",
     needed_team_name_2: "Your opponent needs to set team name before play.",
-    already_in_match_2: "Your opponent is already in match."
+    already_in_match_2: "Your opponent is already in match.",
+    request: "{opponent} {author} wants to duel against you. You gonna accept or chicken out? 🐔",
+    button: "Accept"
   },
   career: {
     no_pages: "Nothing to show in this page.",

@@ -27,8 +27,8 @@ const getRandomPlayerByOvr = (players: Player[]) => {
     s: [] as Player[], // ovr 95+ (0.1%)
     a: [] as Player[], // ovr 90-94 (0.9%)
     b: [] as Player[], // ovr 80-89 (4%)
-    c: [] as Player[], // ovr 70-79 (25%)
-    d: [] as Player[] // ovr 60-69 (70%)
+    c: [] as Player[], // ovr 70-79 (70%)
+    d: [] as Player[] // ovr 59-69 (25%)
   }
   for(const p of players) {
     const ovr = calcPlayerOvr(p)
@@ -36,7 +36,7 @@ const getRandomPlayerByOvr = (players: Player[]) => {
     else if(ovr >= 90) tier.a.push(p)
     else if(ovr >= 80) tier.b.push(p)
     else if(ovr >= 70) tier.c.push(p)
-    else if(ovr >= 60) tier.d.push(p)
+    else if(ovr >= 59) tier.d.push(p)
   }
   let random = Math.random() * 100
   if(random < 0.1) {
@@ -52,12 +52,12 @@ const getRandomPlayerByOvr = (players: Player[]) => {
     return tier.b[random]
   }
   else if(random < 30) {
-    random = Math.floor(Math.random() * tier.c.length)
-    return tier.c[random]
-  }
-  else {
     random = Math.floor(Math.random() * tier.d.length)
     return tier.d[random]
+  }
+  else {
+    random = Math.floor(Math.random() * tier.c.length)
+    return tier.c[random]
   }
 }
 

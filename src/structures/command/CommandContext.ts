@@ -88,7 +88,8 @@ export default class CommandContext {
             if(this.interaction.acknowledged) return await this.interaction.editOriginal(
               {
                 content: locales(this.locale, content, options),
-                files: options.files as File[]
+                files: options.files as File[],
+                components: []
               }
             ).catch(e => new Logger(this.client).error(e))
             else return await this.interaction.createMessage({
@@ -99,7 +100,8 @@ export default class CommandContext {
           else {
             if(this.interaction.acknowledged) return await this.interaction.editOriginal(
               {
-                content: locales(this.locale, content, options)
+                content: locales(this.locale, content, options),
+                components: []
               }
             ).catch(e => new Logger(this.client).error(e))
             else return await this.interaction.createMessage({
@@ -110,14 +112,25 @@ export default class CommandContext {
         }
         case "object": {
           if(options?.files) {
-            if(this.interaction.acknowledged) return await this.interaction.editOriginal(Object.assign(content, { files: options.files as File[] }))
+            if(this.interaction.acknowledged) return await this.interaction.editOriginal(
+              Object.assign(
+                content,
+                {
+                  files: options.files as File[],
+                  components: []
+                }
+              )
+            )
             else return await this.interaction.createMessage({
               content: locales(this.locale, "helper.interaction_failed"),
               flags: 64
             }).catch(e => new Logger(this.client).error(e))
           }
           else {
-            if(this.interaction.acknowledged) return await this.interaction.editOriginal(content)
+            if(this.interaction.acknowledged) return await this.interaction.editOriginal({
+              ...content,
+              components: []
+            })
             else return await this.interaction.createMessage({
               content: locales(this.locale, "helper.interaction_failed"),
               flags: 64
@@ -164,7 +177,11 @@ export default class CommandContext {
             }).catch(e => new Logger(this.client).error(e))
           }
           else {
-            if(this.interaction.acknowledged) return await this.interaction.editOriginal(content)
+            if(this.interaction.acknowledged) return await this.interaction.editOriginal({
+              ...content,
+              components: !content.components ? [] : content.components,
+              content: !content.content ? "" : content.content
+            })
             else return await this.interaction.createMessage({
               content: locales(this.locale, "helper.interaction_failed"),
               flags: 64

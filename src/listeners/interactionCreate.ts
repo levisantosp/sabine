@@ -174,10 +174,10 @@ export default createListener({
         return
       }
       if(args[0] === "bet") {
-        const user = await User.findById(i.user.id) as UserSchemaInterface
+        const user = await User.findById(i.user.id) as UserSchemaInterface | null
         const guild = await Guild.findById(i.guildID) as GuildSchemaInterface
-        if(user.coins < 500) return await i.createMessage({
-          content: locales(user.lang ?? guild.lang, "helper.coins_needed"),
+        if(!user || user.coins < 500) return await i.createMessage({
+          content: locales(user?.lang ?? guild.lang, "helper.coins_needed"),
           flags: 64
         })
         const options = {
