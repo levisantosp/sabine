@@ -12,7 +12,7 @@ export default createCommand({
   },
   botPermissions: ["EMBED_LINKS"],
   async run({ ctx, locale }) {
-    if(!ctx.db.user.plan) {
+    if(!ctx.db.user.plan || ctx.db.user.plan.type !== "PREMIUM") {
       ctx.reply("commands.premium.you_dont_have_premium")
       return
     }
@@ -25,7 +25,7 @@ export default createCommand({
       .setDesc(locale(
         "commands.premium.embed.description",
         {
-          expiresAt: `<t:${(ctx.db.user.plan.expiresAt / 1000).toFixed(0)}:R>`
+          expiresAt: `<t:${(ctx.db.user.plan.expiresAt! / 1000).toFixed(0)}:R>`
         }
       ))
     ctx.reply(button.build(embed.build()))
