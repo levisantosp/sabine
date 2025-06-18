@@ -188,6 +188,15 @@ export const commands = {
     has_been_claimed: "You have already collected your daily reward. Try again {t}",
     res: "You received **{coins}** coins today!",
     bonus: "You received **{bonus}** bonus coins for being a premium user"
+  },
+  sign: {
+    player_not_found: "Player not found!",
+    embed: {
+      desc: "Sign this player for **{price}** coins"
+    },
+    buy: "Sign",
+    coins_needed: "You do not have enough coins to make this purchase",
+    signed: "You signed **{player}** for **{price}** coins succesfully!"
   }
 } as const
 export const simulator = {

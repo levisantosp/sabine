@@ -182,6 +182,20 @@ export const commands = {
       desc: "Vitórias: `{wins}`\nDerrotas: `{defeats}`\nPartidas jogadas: `{total}`",
       footer: "Página {page}/{pages}"
     }
+  },
+  daily: {
+    has_been_claimed: "Você já coletou sua recompensa diária. Tente novamente {t}",
+    res: "Você recebeu **{coins}** coins hoje!",
+    bonus: "Você recebeu **{bonus}** coins de bônus por ser um usuário premium"
+  },
+  sign: {
+    player_not_found: "Jogador não encontrado!",
+    embed: {
+      desc: "Contrate este jogador por **{price}** coins"
+    },
+    buy: "Contratar",
+    coins_needed: "Você não tem coins suficientes para realizar esta compra",
+    signed: "Você contratou **{player}** por **{price}** coins com sucesso!"
   }
 } as const
 export const simulator = {
