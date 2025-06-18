@@ -474,8 +474,8 @@ type UserSchemaPrediction = {
   odd?: number
 }
 type UserSchemaPremium = {
-  type: "PREMIUM" | "BOOSTER"
-  expiresAt?: number
+  type: "PREMIUM"
+  expiresAt: number
 }
 type UserSchemaRoster = {
   active: string[]
