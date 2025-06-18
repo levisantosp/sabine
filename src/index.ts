@@ -163,7 +163,11 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
             else {
               odd = calcOdd(oddB)
             }
-            user.coins += BigInt(Number(pred.bet) * odd)
+            let bonus = 0
+            if(user.plan) {
+              bonus = Number(pred.bet) / 2
+            }
+            user.coins += BigInt(Number(pred.bet) * odd) + BigInt(bonus)
             user.valorant_predictions[i].odd = odd
             await user.updateOne({
               $set: {
@@ -459,29 +463,39 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
         }
         if(pred.bet) {
           const winnerIndex = data.teams.findIndex(t => t.winner)
-          const i = user.valorant_predictions.findIndex(p => p.match === data.id)
-          if(user.valorant_predictions[i].teams[winnerIndex].winner) {
+          const i = user.lol_predictions.findIndex(p => p.match === data.id)
+          if(user.lol_predictions[i].teams[winnerIndex].winner) {
             let oddA = 0
             let oddB = 0
             for(const u of users) {
-              let index = u.valorant_predictions.findIndex(p => p.match === data.id)
-              if(!u.valorant_predictions[index]) continue
-              if(u.valorant_predictions[index].teams[0].winner && u.valorant_predictions[index].bet) {
+              let index = u.lol_predictions.findIndex(p => p.match === data.id)
+              if(!u.lol_predictions[index]) continue
+              if(u.lol_predictions[index].teams[0].winner && u.lol_predictions[index].bet) {
                 oddA += 1
               }
-              else if(u.valorant_predictions[index].teams[1].winner && u.valorant_predictions[index].bet) {
+              else if(u.lol_predictions[index].teams[1].winner && u.lol_predictions[index].bet) {
                 oddB += 1
               }
             }
             let odd: number
-            if(user.valorant_predictions[i].teams[0].winner) {
+            if(user.lol_predictions[i].teams[0].winner) {
               odd = calcOdd(oddA)
             }
             else {
               odd = calcOdd(oddB)
             }
-            user.coins += BigInt(Number(pred.bet) * odd)
-            await user.save()
+            let bonus = 0
+            if(user.plan) {
+              bonus = Number(pred.bet) / 2
+            }
+            user.coins += BigInt(Number(pred.bet) * odd) + BigInt(bonus)
+            user.lol_predictions[i].odd = odd
+            await user.updateOne({
+              $set: {
+                lol_predictions: user.lol_predictions,
+                coins: user.coins
+              }
+            })
           }
         }
       }
