@@ -63,6 +63,10 @@ const UserSchema = mongoose.model("users", new mongoose.Schema(
     defeats: {
       type: Number,
       default: 0
+    },
+    daily_time: {
+      type: Number,
+      default: 0
     }
   }
 ))
@@ -470,8 +474,8 @@ type UserSchemaPrediction = {
   odd?: number
 }
 type UserSchemaPremium = {
-  type: "PREMIUM",
-  expiresAt: number
+  type: "PREMIUM" | "BOOSTER"
+  expiresAt?: number
 }
 type UserSchemaRoster = {
   active: string[]
@@ -539,6 +543,8 @@ export interface UserSchemaInterface extends User {
   career: UserSchemaCareer[]
   wins: number
   defeats: number
+  daily_time: number
+  claim_time: number
 }
 type BlacklistUser = {
   id: string
