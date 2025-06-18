@@ -25,7 +25,7 @@ export default createCommand({
       .setDesc(locale(
         "commands.premium.embed.description",
         {
-          expiresAt: `<t:${(ctx.db.user.plan.expiresAt! / 1000).toFixed(0)}:R>`
+          expiresAt: `<t:${(ctx.db.user.plan.expiresAt / 1000).toFixed(0)}:R>`
         }
       ))
     ctx.reply(button.build(embed.build()))
