@@ -247,6 +247,11 @@ id,name,collection,team,country,role,aim,HS,movement,aggression,ACS,gamesense
 246,GuhRVN,base,los,br,controller,69.12,52.8,69.6,23.55,55.07,72.5
 247,shion,base,sccp,br,initiator,60.98,44.2,66.4,28.8,50.13,73.4
 248,liazzi,base,sccp,br,flex,69.38,44.20,64.80,41.10,51.40,61.70
-249,sw,base,sccp,br,controller,74.40,52.00,64.80,32.85,56.10,61.30
+249,sw,base,sccp,br,controller,64.40,52.00,64.80,32.85,56.10,61.30
 250,tkzin,base,sccp,br,duelist,67.90,59.00,60.00,56.55,58.50,43.60
 251,pollo,base,sccp,br,sentinel,74.46,49.40,64.80,43.75,70.93,67.50
+252,Loss,base,furia,br,duelist,53.90,59.00,50.00,54.05,53.83,51.50
+253,skz,base,furia,br,flex,51.28,59.20,56.40,28.00,55.63,66.40
+254,above,base,furia,br,controller,50.72,68.80,57.20,28.30,47.07,59.20
+255,swag,base,furia,br,sentinel,52.70,51.00,55.60,30.05,54.97,55.90
+256,desire,base,furia,br,initiator,49.38,66.20,45.60,34.95,48.80,58.50
