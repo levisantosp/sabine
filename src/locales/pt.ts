@@ -173,7 +173,9 @@ export const commands = {
     team_not_completed_1: "Seu time não está completo.",
     team_not_completed_2: "O time do seu oponente não está completo.",
     needed_team_name_2: "Seu oponente precisa definir o nome da equipe antes de jogar.",
-    already_in_match_2: "Seu oponente já está em partida."
+    already_in_match_2: "Seu oponente já está em partida.",
+    request: "{opponent} {author} quer duelar contra você. Vai aceitar ou vai amarelar? 🐔",
+    button: "Aceitar"
   },
   career: {
     no_pages: "Nada pra mostrar aqui.",
