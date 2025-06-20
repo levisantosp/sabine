@@ -277,10 +277,10 @@ id,name,collection,team,country,role,aim,HS,movement,aggression,ACS,gamesense
 276,Lime,base,mouz,gb,flex,49.60,60.00,47.20,47.30,46.67,56.00
 277,Fizzy,base,mouz,pt,sentinel,55.92,49.80,48.80,39.85,44.40,47.20
 278,Obnoks,base,mouz,de,controller,56.17,53.00,45.60,35.85,43.27,52.60
-279,Sayonara,base,vit,md,flex,76.32,64.80,57.20,48.30,66.10,47.10
-280,Foxie,base,vit,gb,flex,56.02,56.60,44.80,29.40,53.63,60.80
-281,logaN,base,vit,fr,sentinel,53.94,51.60,50.40,31.35,48.33,52.70
-282,lux9,base,vit,fr,duelist,52.86,54.00,48.40,60.30,48.97,49.40
+279,Sayonara,base,vitality,md,flex,76.32,64.80,57.20,48.30,66.10,47.10
+280,Foxie,base,vitality,gb,flex,56.02,56.60,44.80,29.40,53.63,60.80
+281,logaN,base,vitality,fr,sentinel,53.94,51.60,50.40,31.35,48.33,52.70
+282,lux9,base,vitality,fr,duelist,52.86,54.00,48.40,60.30,48.97,49.40
 283,f4ngeer,base,kc,ru,duelist,55.92,58.80,41.60,58.65,49.03,49.40
 284,Yohpa,base,kc,fr,initiator,51.48,61.20,47.20,30.30,48.80,51.20
 285,Sevire,base,kc,nl,flex,44.90,50.00,42.40,44.70,44.23,55.70
