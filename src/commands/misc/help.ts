@@ -66,7 +66,7 @@ export default createCommand({
         .setThumb(client.user.avatarURL())
         .setDesc(locale("commands.help.description", {
           arg: `/help [command]`,
-          website: "https://sabine.cloud/commands"
+          website: "https://sabinebot.xyz/commands"
         }))
       const button = new ButtonBuilder()
         .setLabel(locale("commands.help.community"))
