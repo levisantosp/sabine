@@ -75,7 +75,7 @@ export default createCommand({
       const privacyButton = new ButtonBuilder()
         .setLabel(locale("commands.help.privacy"))
         .setStyle("link")
-        .setURL("https://sabine.cloud/privacy")
+        .setURL("https://sabinebot.xyz/privacy")
       ctx.reply(embed.build(
         {
           components: [
