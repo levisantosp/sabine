@@ -19,18 +19,17 @@ export default class App extends Oceanic.Client {
     Logger.warn("Connecting to database...")
     await mongoose.connect(process.env.MONGO_URI!)
     Logger.send("Database connected!")
-
     for(const file of readdirSync(path.resolve(__dirname, "../../listeners"))) {
       const listener = (await import(`../../listeners/${file}`)).default
       if(listener.name === "ready") this.once("ready", () => listener.run(this).catch((e: Error) => new Logger(this).error(e)))
       else this.on(listener.name, (...args) => listener.run(this, ...args).catch((e: Error) => new Logger(this).error(e)))
     }
-
-    for(const file of readdirSync(path.resolve(__dirname, "../../commands"))) {
-      const command = (await import(`../../commands/${file}`)).default.default ?? (await import(`../../commands/${file}`)).default
-      this.commands.set(command.name, command)
+    for(const folder of readdirSync(path.resolve(__dirname, "../../commands"))) {
+      for(const file of readdirSync(path.resolve(__dirname, `../../commands/${folder}`))) {
+        const command = (await import(`../../commands/${folder}/${file}`)).default.default ?? (await import(`../../commands/${folder}/${file}`)).default
+        this.commands.set(command.name, command)
+      }
     }
-
     await this.connect()
   }
 }

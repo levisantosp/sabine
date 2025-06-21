@@ -1,11 +1,12 @@
-import Service from "../api/index.js"
-import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
-import createCommand from "../structures/command/createCommand.js"
-import Logger from "../structures/util/Logger.js"
+import Service from "../../api/index.js"
+import EmbedBuilder from "../../structures/builders/EmbedBuilder.js"
+import createCommand from "../../structures/command/createCommand.js"
+import Logger from "../../structures/util/Logger.js"
 const service = new Service(process.env.AUTH)
 
 export default createCommand({
   name: "player",
+  category: "esports",
   description: "Shows a player info",
   descriptionLocalizations: {
     "pt-BR": "Mostra as informações de um jogador"

@@ -1,7 +1,8 @@
-import createCommand from "../structures/command/createCommand.js"
+import createCommand from "../../structures/command/createCommand.js"
 
 export default createCommand({
   name: "ping",
+  category: "misc",
   description: "Shows the bot latency",
   descriptionLocalizations: {
     "pt-BR": "Mostra a latência do bot"

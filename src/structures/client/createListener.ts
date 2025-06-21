@@ -3,7 +3,7 @@ import App from "./App.js"
 
 type Listener<T extends keyof ClientEvents> = {
   name: T
-  run: (client: App, ...args: ClientEvents[T]) => Promise<void>
+  run: (client: App, ...args: ClientEvents[T]) => Promise<any>
 }
 export default function<T extends keyof ClientEvents>(
   listener: Listener<T>

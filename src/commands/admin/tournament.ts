@@ -1,11 +1,12 @@
-import createCommand from "../structures/command/createCommand.js"
-import Service from "../api/index.js"
-import Logger from "../structures/util/Logger.js"
-import { Guild, GuildSchemaInterface } from "../database/index.js"
+import createCommand from "../../structures/command/createCommand.js"
+import Service from "../../api/index.js"
+import Logger from "../../structures/util/Logger.js"
+import { Guild, GuildSchemaInterface } from "../../database/index.js"
 const service = new Service(process.env.AUTH)
 
 export default createCommand({
   name: "tournament",
+  category: "admin",
   nameLocalizations: {
     "pt-BR": "torneio"
   },

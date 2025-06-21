@@ -11,7 +11,7 @@ import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
 import App from "../structures/client/App.js"
 const service = new Service(process.env.AUTH)
 
-const delete_guild = async(client: App) => {
+const deleteGuild = async(client: App) => {
   const guilds = await Guild.find()
   for(const guild of guilds) {
     if(!client.guilds.get(guild.id)) {
@@ -19,7 +19,7 @@ const delete_guild = async(client: App) => {
     }
   }
 }
-const send_valorant_matches = async(client: App) => {
+const sendValorantMatches = async(client: App) => {
   const res = await service.getMatches("valorant")
   if(!res || !res.length) return
   const guilds = await Guild.find({
@@ -83,7 +83,12 @@ const send_valorant_matches = async(client: App) => {
                 {
                   type: 1,
                   components: [
-                    button, urlButton,
+                    button,
+                    new ButtonBuilder()
+                      .setLabel(locales(guild.lang, "helper.bet"))
+                      .setCustomId(`bet;valorant;${d.id}`)
+                      .setStyle("gray"),
+                    urlButton,
                     new ButtonBuilder()
                       .setLabel(locales(guild.lang, "helper.pickem.label"))
                       .setStyle("blue")
@@ -106,7 +111,7 @@ const send_valorant_matches = async(client: App) => {
     await guild.save()
   }
 }
-const send_valorant_TBD_matches = async(client: App) => {
+const sendValorantTBDMatches = async(client: App) => {
   const res = await service.getMatches("valorant")
   if(!res || !res.length) return
   const guilds = await Guild.find({
@@ -142,6 +147,10 @@ const send_valorant_TBD_matches = async(client: App) => {
                   .setCustomId(`predict;valorant;${match.id}`)
                   .setStyle("green"),
                 new ButtonBuilder()
+                  .setLabel(locales(guild.lang, "helper.bet"))
+                  .setCustomId(`bet;valorant;${data.id}`)
+                  .setStyle("gray"),
+                new ButtonBuilder()
                   .setLabel(locales(guild.lang, "helper.stats"))
                   .setStyle("link")
                   .setURL(`https://vlr.gg/${data.id}`)
@@ -157,7 +166,7 @@ const send_valorant_TBD_matches = async(client: App) => {
     }
   }
 }
-const send_lol_matches = async(client: App) => {
+const sendLolMatches = async(client: App) => {
   const res = await service.getMatches("lol")
   const res2 = await service.getResults("lol")
 
@@ -227,6 +236,10 @@ const send_lol_matches = async(client: App) => {
                   components: [
                     button,
                     new ButtonBuilder()
+                      .setLabel(locales(guild.lang, "helper.bet"))
+                      .setCustomId(`bet;lol;${d.id}`)
+                      .setStyle("gray"),
+                    new ButtonBuilder()
                       .setLabel(locales(guild.lang, "helper.pickem.label"))
                       .setStyle("blue")
                       .setCustomId("pickem")
@@ -248,7 +261,7 @@ const send_lol_matches = async(client: App) => {
     await guild.save()
   }
 }
-const send_lol_tbd_matches = async(client: App) => {
+const sendLolTBDMatches = async(client: App) => {
   const res = await service.getMatches("lol")
   if(!res || !res.length) return
   const guilds = await Guild.find({
@@ -284,9 +297,9 @@ const send_lol_tbd_matches = async(client: App) => {
                   .setCustomId(`predict;lol;${match.id}`)
                   .setStyle("green"),
                 new ButtonBuilder()
-                  .setLabel(locales(guild.lang, "helper.stats"))
-                  .setStyle("link")
-                  .setURL(`https://loltv.gg/match/${data.id}`)
+                  .setLabel(locales(guild.lang, "helper.bet"))
+                  .setCustomId(`bet;lol;${data.id}`)
+                  .setStyle("gray")
               ]
             }
           ]
@@ -299,22 +312,22 @@ const send_lol_tbd_matches = async(client: App) => {
     }
   }
 }
-const run_in_batches = async(client: App, tasks: any[], batch_size: number) => {
+const runInBatches = async(client: App, tasks: any[], batch_size: number) => {
   for(let i = 0;i < tasks.length;i += batch_size) {
     const batch = tasks.slice(i, i + batch_size)
     await Promise.all(batch.map(task => task(client).catch((e: Error) => new Logger(client).error(e))))
   }
 }
-const run_tasks = async(client: App) => {
+const runTasks = async(client: App) => {
   const tasks = [
-    delete_guild,
-    send_valorant_matches,
-    send_valorant_TBD_matches,
-    send_lol_matches,
-    send_lol_tbd_matches
+    deleteGuild,
+    sendValorantMatches,
+    sendValorantTBDMatches,
+    sendLolMatches,
+    sendLolTBDMatches
   ]
-  await run_in_batches(client, tasks, 2)
-  setTimeout(async() => await run_tasks(client), process.env.INTERVAL ?? 5 * 60 * 1000)
+  await runInBatches(client, tasks, 2)
+  setTimeout(async() => await runTasks(client), process.env.INTERVAL ?? 5 * 60 * 1000)
 }
 
 export default createListener({
@@ -322,13 +335,7 @@ export default createListener({
   async run(client) {
     Logger.send(`${client.user.tag} online!`)
     if(client.user.id !== "1235576817683922954") {
-      client.editStatus("dnd", [
-        {
-          name: "status",
-          state: "Join support server! Link on about me",
-          type: 4
-        }
-      ])
+      client.editStatus("dnd")
     }
     else {
       client.editStatus("online", [
@@ -351,15 +358,6 @@ export default createListener({
       })
     })
     await client.application.bulkEditGlobalCommands(commands)
-    await run_tasks(client)
-    // setInterval(async() => {
-    //   await send_news(client).catch(e => new Logger(client).error(e));
-    //   await delete_guild(client).catch(e => new Logger(client).error(e));
-    //   await send_live_feed_matches(client).catch(e => new Logger(client).error(e));
-    //   await send_matches(client).catch(e => new Logger(client).error(e));
-    //   await send_results(client).catch(e => new Logger(client).error(e));
-    //   await send_TBD_matches(client).catch(e => new Logger(client).error(e));
-    //   await delete_live_feed_matches().catch(e => new Logger(client).error(e));
-    // }, process.env.INTERVAL ?? 20000);
+    await runTasks(client)
   }
 })

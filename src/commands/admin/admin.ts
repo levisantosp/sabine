@@ -1,16 +1,17 @@
 import { CommandInteraction, ComponentInteraction } from "oceanic.js"
-import { MatchesData } from "../../types/index.js"
-import Service from "../api/index.js"
-import { Guild, GuildSchemaInterface } from "../database/index.js"
-import locales from "../locales/index.js"
-import createCommand from "../structures/command/createCommand.js"
-import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
-import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
-import { emojis } from "../structures/util/emojis.js"
+import { MatchesData } from "../../../types/index.js"
+import Service from "../../api/index.js"
+import { Guild, GuildSchemaInterface } from "../../database/index.js"
+import locales from "../../locales/index.js"
+import createCommand from "../../structures/command/createCommand.js"
+import EmbedBuilder from "../../structures/builders/EmbedBuilder.js"
+import ButtonBuilder from "../../structures/builders/ButtonBuilder.js"
+import { emojis } from "../../structures/util/emojis.js"
 const service = new Service(process.env.AUTH)
 
 export default createCommand({
 	name: "admin",
+	category: "admin",
 	description: "See the dashboard and change the bot language",
 	descriptionLocalizations: {
 		"pt-BR": "Veja o painel de controle e mude o idioma do bot"
@@ -257,12 +258,12 @@ export default createCommand({
 								})
 
 							const button = new ButtonBuilder()
-								.setLabel(locale("helper.palpitate"))
+								.setLabel(locales(guild.lang, "helper.palpitate"))
 								.setCustomId(`predict;valorant;${d.id}`)
 								.setStyle("green")
 
 							const urlButton = new ButtonBuilder()
-								.setLabel(locale("helper.stats"))
+								.setLabel(locales(guild.lang, "helper.stats"))
 								.setStyle("link")
 								.setURL(`https://vlr.gg/${d.id}`)
 
@@ -273,7 +274,12 @@ export default createCommand({
 									{
 										type: 1,
 										components: [
-											button, urlButton,
+											button,
+											new ButtonBuilder()
+												.setLabel(locales(guild.lang, "helper.bet"))
+												.setCustomId(`bet;valorant;${d.id}`)
+												.setStyle("gray"),
+											urlButton,
 											new ButtonBuilder()
 												.setLabel(locales(guild.lang, "helper.pickem.label"))
 												.setStyle("blue")
@@ -360,6 +366,10 @@ export default createCommand({
 										type: 1,
 										components: [
 											button,
+											new ButtonBuilder()
+												.setLabel(locales(guild.lang, "helper.bet"))
+												.setCustomId(`bet;lol;${d.id}`)
+												.setStyle("gray"),
 											new ButtonBuilder()
 												.setLabel(locales(guild.lang, "helper.pickem.label"))
 												.setStyle("blue")

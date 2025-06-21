@@ -29,11 +29,49 @@ const UserSchema = mongoose.model("users", new mongoose.Schema(
       default: []
     },
     warned: Boolean,
-    plan: Object
+    plan: Object,
+    roster: {
+      active: {
+        type: Array,
+        default: []
+      },
+      reserve: {
+        type: Array,
+        default: []
+      }
+    },
+    coins: {
+      type: BigInt,
+      default: 0n
+    },
+    claim_time: {
+      type: Number,
+      default: 0
+    },
+    team: {
+      name: String,
+      tag: String
+    },
+    career: {
+      type: Array,
+      default: []
+    },
+    wins: {
+      type: Number,
+      default: 0
+    },
+    defeats: {
+      type: Number,
+      default: 0
+    },
+    daily_time: {
+      type: Number,
+      default: 0
+    }
   }
 ))
 export class User extends UserSchema {
-  public async get(id: string | undefined | null) {
+  public static async get(id: string) {
     return await UserSchema.findById(id) as UserSchemaInterface
   }
   public async addPremium(by: "ADD_PREMIUM_BY_COMMAND" | "BUY_PREMIUM") {
@@ -60,7 +98,7 @@ export class User extends UserSchema {
         }
       }
     }
-    while (keys.some(key => key.id === keyId))
+    while(keys.some(key => key.id === keyId))
     let expiresAt = !this.plans.at(-1) ? Date.now() + 2592000000 : Date.now() + ((this.plans.length + 1) * 2592000000)
     await new Key(
       {
@@ -93,7 +131,7 @@ export class User extends UserSchema {
     const webhooks = await channel.getWebhooks()
     let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
     if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
-    webhook.execute({
+    await webhook.execute({
       avatarURL: client.user.avatarURL(),
       embeds: [embed]
     })
@@ -116,13 +154,13 @@ export class User extends UserSchema {
     const webhooks = await channel.getWebhooks()
     let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
     if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
-    webhook.execute({
+    await webhook.execute({
       avatarURL: client.user.avatarURL(),
       embeds: [embed]
     })
     return this as UserSchemaInterface
   }
-  public async add_prediction(game: "valorant" | "lol", prediction: UserSchemaPrediction) {
+  public async addPrediction(game: "valorant" | "lol", prediction: UserSchemaPrediction) {
     if(game === "valorant") {
       this.valorant_predictions.push(prediction)
       await this.save()
@@ -140,7 +178,7 @@ export class User extends UserSchema {
       const webhooks = await channel.getWebhooks()
       let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
       if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
-      webhook.execute({
+      await webhook.execute({
         avatarURL: client.user.avatarURL(),
         embeds: [embed]
       })
@@ -163,14 +201,14 @@ export class User extends UserSchema {
       const webhooks = await channel.getWebhooks()
       let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
       if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
-      webhook.execute({
+      await webhook.execute({
         avatarURL: client.user.avatarURL(),
         embeds: [embed]
       })
       return this as UserSchemaInterface
     }
   }
-  public async add_correct_prediction(game: "valorant" | "lol", predictionId: string) {
+  public async addCorrectPrediction(game: "valorant" | "lol", predictionId: string) {
     if(game === "valorant") {
       let index = this.valorant_predictions.findIndex(p => p.match === predictionId)
       this.valorant_predictions[index].status = "correct"
@@ -192,7 +230,7 @@ export class User extends UserSchema {
       const webhooks = await channel.getWebhooks()
       let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
       if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
-      webhook.execute({
+      await webhook.execute({
         avatarURL: client.user.avatarURL(),
         embeds: [embed]
       })
@@ -218,14 +256,14 @@ export class User extends UserSchema {
       const webhooks = await channel.getWebhooks()
       let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
       if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
-      webhook.execute({
+      await webhook.execute({
         avatarURL: client.user.avatarURL(),
         embeds: [embed]
       })
     }
     return this as UserSchemaInterface
   }
-  public async add_wrong_prediction(game: "valorant" | "lol", predictionId: string) {
+  public async addWrongPrediction(game: "valorant" | "lol", predictionId: string) {
     if(game === "valorant") {
       let index = this.valorant_predictions.findIndex(p => p.match === predictionId)
       this.valorant_predictions[index].status = "wrong"
@@ -247,7 +285,7 @@ export class User extends UserSchema {
       const webhooks = await channel.getWebhooks()
       let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
       if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
-      webhook.execute({
+      await webhook.execute({
         avatarURL: client.user.avatarURL(),
         embeds: [embed]
       })
@@ -273,11 +311,61 @@ export class User extends UserSchema {
       const webhooks = await channel.getWebhooks()
       let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
       if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
-      webhook.execute({
+      await webhook.execute({
         avatarURL: client.user.avatarURL(),
         embeds: [embed]
       })
     }
+    return this as UserSchemaInterface
+  }
+  public async addPlayerToRoster(player: string, method: "CLAIM_COMMAND" | "COMMAND" = "CLAIM_COMMAND") {
+    this.roster?.reserve.push(player)
+    if(method === "CLAIM_COMMAND") {
+      this.claim_time = Date.now() + 600000
+    }
+    await this.save()
+    const user = client.users.get(this.id)!
+    const embed = new EmbedBuilder()
+    .setTitle("New register")
+    .setDesc(`User: ${user.mention}`)
+    .setFields(
+      {
+        name: `CLAIM_PLAYER_BY_${method}`,
+        value: player
+      }
+    )
+    const channel = client.getChannel(process.env.USERS_LOG) as TextChannel
+    const webhooks = await channel.getWebhooks()
+    let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
+    if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
+    await webhook.execute({
+      avatarURL: client.user.avatarURL(),
+      embeds: [embed]
+    })
+    return this as UserSchemaInterface
+  }
+  public async sellPlayer(id: string, price: bigint, i: number) {
+    this.roster!.reserve.splice(i, 1)
+    this.coins += price
+    await this.save()
+    const user = client.users.get(this.id)!
+    const embed = new EmbedBuilder()
+    .setTitle("New register")
+    .setDesc(`User: ${user.mention}`)
+    .setFields(
+      {
+        name: `SELL_PLAYER`,
+        value: id
+      }
+    )
+    const channel = client.getChannel(process.env.USERS_LOG) as TextChannel
+    const webhooks = await channel.getWebhooks()
+    let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
+    if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
+    await webhook.execute({
+      avatarURL: client.user.avatarURL(),
+      embeds: [embed]
+    })
     return this as UserSchemaInterface
   }
 }
@@ -375,16 +463,34 @@ type GuildSchemaEvent = {
 }
 type UserSchemaPredictionTeam = {
   name: string
-  score: string
+  score: string,
+  winner: boolean
 }
 type UserSchemaPrediction = {
   match: string | number
   teams: UserSchemaPredictionTeam[]
   status?: "pending" | "correct" | "wrong"
+  bet?: bigint
+  odd?: number
 }
 type UserSchemaPremium = {
-  type: "PREMIUM",
+  type: "PREMIUM"
   expiresAt: number
+}
+type UserSchemaRoster = {
+  active: string[]
+  reserve: string[]
+}
+type UserSchemaTeam = {
+  name?: string
+  tag?: string
+}
+type UserSchemaCareerTeam = {
+  user: string
+  score: number
+}
+type UserSchemaCareer = {
+  teams: UserSchemaCareerTeam[]
 }
 type TBDMatch = {
   id: string
@@ -431,6 +537,14 @@ export interface UserSchemaInterface extends User {
   plans: UserSchemaPremium[]
   warned?: boolean
   plan?: UserSchemaPremium
+  roster: UserSchemaRoster
+  coins: bigint
+  team: UserSchemaTeam
+  career: UserSchemaCareer[]
+  wins: number
+  defeats: number
+  daily_time: number
+  claim_time: number
 }
 type BlacklistUser = {
   id: string

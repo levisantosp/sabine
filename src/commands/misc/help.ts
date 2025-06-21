@@ -1,13 +1,14 @@
 import translate from "@iamtraction/google-translate"
-import createCommand from "../structures/command/createCommand.js"
-import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
-import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
-import Logger from "../structures/util/Logger.js"
+import createCommand from "../../structures/command/createCommand.js"
+import EmbedBuilder from "../../structures/builders/EmbedBuilder.js"
+import ButtonBuilder from "../../structures/builders/ButtonBuilder.js"
+import Logger from "../../structures/util/Logger.js"
 import { createRequire } from "module"
 const require = createRequire(import.meta.url)
 
 export default createCommand({
   name: "help",
+  category: "misc",
   nameLocalizations: {
     "pt-BR": "ajuda"
   },
@@ -61,30 +62,12 @@ export default createCommand({
       ctx.reply(embed.build())
     }
     else {
-      const commands = Array.from(client.commands).map(cmd => {
-        if(!cmd[1].onlyDev) {
-          if(cmd[1].options) {
-            let options = cmd[1].options.map(op => {
-              if(op.type === 1) return `\`/${cmd[0]} ${op.name}\``
-              else if(op.type === 2) return op.options?.map(op2 => `\`/${cmd[0]} ${op.name} ${op2.name}\``).join("\n")
-              else return `\`/${cmd[0]}\``
-            })
-            return options.join("\n")
-          }
-          else return `\`/${cmd[0]}\``
-        }
-      })
       const embed = new EmbedBuilder()
-        .setTitle(locale("commands.help.title"))
         .setThumb(client.user.avatarURL())
         .setDesc(locale("commands.help.description", {
-          arg: `/help [command]`
+          arg: `/help [command]`,
+          website: "https://sabinebot.xyz/commands"
         }))
-        .setField(locale("commands.help.field", {
-          q: commands.length + commands.reduce((count, str) => {
-            return count + (str?.match(/\n/g) ?? []).length
-          }, 0)
-        }), commands.join("\n"))
       const button = new ButtonBuilder()
         .setLabel(locale("commands.help.community"))
         .setStyle("link")
@@ -92,7 +75,7 @@ export default createCommand({
       const privacyButton = new ButtonBuilder()
         .setLabel(locale("commands.help.privacy"))
         .setStyle("link")
-        .setURL("https://levispires.github.io/sabine-terms/")
+        .setURL("https://sabinebot.xyz/privacy")
       ctx.reply(embed.build(
         {
           components: [

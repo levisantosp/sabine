@@ -8,10 +8,12 @@ import { emojis } from "./structures/util/emojis.js"
 import EmbedBuilder from "./structures/builders/EmbedBuilder.js"
 import ButtonBuilder from "./structures/builders/ButtonBuilder.js"
 import locales from "./locales/index.js"
-import { TextChannel, URLButton } from "oceanic.js"
+import { TextChannel } from "oceanic.js"
 import { readdirSync } from "fs"
 import path from "path"
 import { fileURLToPath } from "url"
+import getPlayers from "./simulator/valorant/players/getPlayers.js"
+import calcOdd from "./structures/util/calcOdd.js"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -133,10 +135,47 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
         const pred = user.valorant_predictions.find(p => p.match === data.id)
         if(!pred) continue
         if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
-          await user.add_correct_prediction("valorant", data.id)
+          await user.addCorrectPrediction("valorant", data.id)
         }
         else {
-          await user.add_wrong_prediction("valorant", data.id)
+          await user.addWrongPrediction("valorant", data.id)
+        }
+        if(pred.bet) {
+          const winnerIndex = data.teams.findIndex(t => t.winner)
+          const i = user.valorant_predictions.findIndex(p => p.match === data.id)
+          if(user.valorant_predictions[i].teams[winnerIndex].winner) {
+            let oddA = 0
+            let oddB = 0
+            for(const u of users) {
+              let index = u.valorant_predictions.findIndex(p => p.match === data.id)
+              if(!u.valorant_predictions[index]) continue
+              if(u.valorant_predictions[index].teams[0].winner && u.valorant_predictions[index].bet) {
+                oddA += 1
+              }
+              else if(u.valorant_predictions[index].teams[1].winner && u.valorant_predictions[index].bet) {
+                oddB += 1
+              }
+            }
+            let odd: number
+            if(user.valorant_predictions[i].teams[0].winner) {
+              odd = calcOdd(oddA)
+            }
+            else {
+              odd = calcOdd(oddB)
+            }
+            let bonus = 0
+            if(user.plan) {
+              bonus = Number(pred.bet) / 2
+            }
+            user.coins += BigInt(Number(pred.bet) * odd) + BigInt(bonus)
+            user.valorant_predictions[i].odd = odd
+            await user.updateOne({
+              $set: {
+                valorant_predictions: user.valorant_predictions,
+                coins: user.coins
+              }
+            })
+          }
         }
       }
     }
@@ -338,7 +377,8 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
           teams: Type.Array(
             Type.Object({
               name: Type.String(),
-              score: Type.String()
+              score: Type.String(),
+              winner: Type.Boolean()
             })
           ),
           tournament: Type.Object({
@@ -416,20 +456,55 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
         const pred = user.lol_predictions.find(p => p.match === data.id)
         if(!pred) continue
         if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
-          await user.add_correct_prediction("lol", data.id)
+          await user.addCorrectPrediction("lol", data.id)
         }
         else {
-          await user.add_wrong_prediction("lol", data.id)
+          await user.addWrongPrediction("lol", data.id)
+        }
+        if(pred.bet) {
+          const winnerIndex = data.teams.findIndex(t => t.winner)
+          const i = user.lol_predictions.findIndex(p => p.match === data.id)
+          if(user.lol_predictions[i].teams[winnerIndex].winner) {
+            let oddA = 0
+            let oddB = 0
+            for(const u of users) {
+              let index = u.lol_predictions.findIndex(p => p.match === data.id)
+              if(!u.lol_predictions[index]) continue
+              if(u.lol_predictions[index].teams[0].winner && u.lol_predictions[index].bet) {
+                oddA += 1
+              }
+              else if(u.lol_predictions[index].teams[1].winner && u.lol_predictions[index].bet) {
+                oddB += 1
+              }
+            }
+            let odd: number
+            if(user.lol_predictions[i].teams[0].winner) {
+              odd = calcOdd(oddA)
+            }
+            else {
+              odd = calcOdd(oddB)
+            }
+            let bonus = 0
+            if(user.plan) {
+              bonus = Number(pred.bet) / 2
+            }
+            user.coins += BigInt(Number(pred.bet) * odd) + BigInt(bonus)
+            user.lol_predictions[i].odd = odd
+            await user.updateOne({
+              $set: {
+                lol_predictions: user.lol_predictions,
+                coins: user.coins
+              }
+            })
+          }
         }
       }
     }
   })
-
-    const commands: any[] = []
-
-    for(const file of readdirSync(path.resolve(__dirname,"./commands"))) {
-      const command = (await import(`./commands/${file}`)).default.default ?? (await import(`./commands/${file}`)).default
-      
+  const commands: any[] = []
+  for(const folder of readdirSync(path.resolve(__dirname, `./commands`))) {
+    for(const file of readdirSync(path.resolve(__dirname, `./commands/${folder}`))) {
+      const command = (await import(`./commands/${folder}/${file}`)).default.default ?? (await import(`./commands/${folder}/${file}`)).default
       commands.push({
         name: command.name,
         nameLocalizations: command.nameLocalizations,
@@ -442,9 +517,12 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
         botPermissions: command.botPermissions
       })
     }
-
-  fastify.get("/commands", async() => {
+  }
+  fastify.get("/commands", () => {
     return commands
+  })
+  fastify.get("/players", () => {
+    return getPlayers()
   })
 }
 const server = fastify()
