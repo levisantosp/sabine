@@ -22,7 +22,10 @@ type Player = {
 const calcPlayerOvr = (player: Player) => {
   return (player.aim + player.HS + player.movement + player.aggression + player.ACS + player.gamesense) / 4.5
 }
-const getRandomPlayerByOvr = (players: Player[]) => {
+
+const players = getPlayers()
+
+const tier = (() => {
   let tier = {
     s: [] as Player[], // ovr 95+ (0.1%)
     a: [] as Player[], // ovr 90-94 (0.9%)
@@ -30,14 +33,18 @@ const getRandomPlayerByOvr = (players: Player[]) => {
     c: [] as Player[], // ovr 70-79 (25%)
     d: [] as Player[] // ovr 59-69 (70%)
   }
-  for(const p of players) {
+  for (const p of players) {
     const ovr = calcPlayerOvr(p)
-    if(ovr >= 95) tier.s.push(p)
-    else if(ovr >= 90) tier.a.push(p)
-    else if(ovr >= 80) tier.b.push(p)
-    else if(ovr >= 70) tier.c.push(p)
-    else if(ovr >= 59) tier.d.push(p)
+    if (ovr >= 95) tier.s.push(p)
+    else if (ovr >= 90) tier.a.push(p)
+    else if (ovr >= 80) tier.b.push(p)
+    else if (ovr >= 70) tier.c.push(p)
+    else if (ovr >= 59) tier.d.push(p)
   }
+  return tier
+})()
+
+const getRandomPlayerByOvr = (players: Player[]) => {
   let random = Math.random() * 100
   if(random < 0.1) {
     random = Math.floor(Math.random() * tier.s.length)
@@ -75,7 +82,6 @@ export default createCommand({
     if(ctx.db.user.claim_time > Date.now()) {
       return await ctx.reply("commands.claim.has_been_claimed", { t: `<t:${((ctx.db.user.claim_time) / 1000).toFixed(0)}:R>` })
     }
-    const players = getPlayers()
     let player = getRandomPlayerByOvr(players)
     let ovr = calcPlayerOvr(player)
     let price = calcPlayerPrice(player)
