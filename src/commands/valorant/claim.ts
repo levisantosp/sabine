@@ -33,13 +33,13 @@ const tier = (() => {
     c: [] as Player[], // ovr 70-79 (25%)
     d: [] as Player[] // ovr 59-69 (70%)
   }
-  for (const p of players) {
+  for(const p of players) {
     const ovr = calcPlayerOvr(p)
-    if (ovr >= 95) tier.s.push(p)
-    else if (ovr >= 90) tier.a.push(p)
-    else if (ovr >= 80) tier.b.push(p)
-    else if (ovr >= 70) tier.c.push(p)
-    else if (ovr >= 59) tier.d.push(p)
+    if(ovr >= 95) tier.s.push(p)
+    else if(ovr >= 90) tier.a.push(p)
+    else if(ovr >= 80) tier.b.push(p)
+    else if(ovr >= 70) tier.c.push(p)
+    else if(ovr >= 59) tier.d.push(p)
   }
   return tier
 })()
