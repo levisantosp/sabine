@@ -48,16 +48,30 @@ export default createListener({
         const games = {
           valorant: async() => {
             if(user.valorant_predictions.find(p => p.match === args[2])) {
-              return await i.createMessage({
+              await i.createMessage({
                 content: locales(user.lang ?? guild.lang, "helper.replied"),
+                flags: 64
+              })
+              return await i.createFollowup({
+                content: "## I'm now also a Valorant simulator with card system and duels between players!" + "\n" +
+                  "- Use </claim:1386105251349921804> to get a random player and build your </roster:1386105251848913025>!" + "\n" +
+                  "- You can see all commands by using </help:1350464775141855233>" + "\n" +
+                  "- More information about this update in our support and community server: https://discord.com/invite/FaqYcpA84r",
                 flags: 64
               })
             }
             const res = await service.getMatches("valorant")
             const data = res.find(d => d.id === args[2])
             if(data?.status === "LIVE" || !data) {
-              return await i.createMessage({
+              await i.createMessage({
                 content: locales(user.lang ?? guild.lang, "helper.started"),
+                flags: 64
+              })
+              return await i.createFollowup({
+                content: "## I'm now also a Valorant simulator with card system and duels between players!" + "\n" +
+                  "- Use </claim:1386105251349921804> to get a random player and build your </roster:1386105251848913025>!" + "\n" +
+                  "- You can see all commands by using </help:1350464775141855233>" + "\n" +
+                  "- More information about this update in our support and community server: https://discord.com/invite/FaqYcpA84r",
                 flags: 64
               })
             }
@@ -100,8 +114,15 @@ export default createListener({
           },
           lol: async() => {
             if(user.lol_predictions.find(p => p.match.toString() === args[2])) {
-              return await i.createMessage({
+              await i.createMessage({
                 content: locales(user.lang ?? guild.lang, "helper.replied"),
+                flags: 64
+              })
+              return await i.createFollowup({
+                content: "## I'm now also a Valorant simulator with card system and duels between players!" + "\n" +
+                  "- Use </claim:1386105251349921804> to get a random player and build your </roster:1386105251848913025>!" + "\n" +
+                  "- You can see all commands by using </help:1350464775141855233>" + "\n" +
+                  "- More information about this update in our support and community server: https://discord.com/invite/FaqYcpA84r",
                 flags: 64
               })
             }
@@ -109,8 +130,15 @@ export default createListener({
             const data = res.find(d => d.id?.toString() === args[2])
 
             if(!data || data.status !== "not_started") {
-              return await i.createMessage({
+              await i.createMessage({
                 content: locales(user.lang ?? guild.lang, "helper.started"),
+                flags: 64
+              })
+              return await i.createFollowup({
+                content: "## I'm now also a Valorant simulator with card system and duels between players!" + "\n" +
+                  "- Use </claim:1386105251349921804> to get a random player and build your </roster:1386105251848913025>!" + "\n" +
+                  "- You can see all commands by using </help:1350464775141855233>" + "\n" +
+                  "- More information about this update in our support and community server: https://discord.com/invite/FaqYcpA84r",
                 flags: 64
               })
             }
@@ -152,8 +180,7 @@ export default createListener({
             })
           }
         }
-        games[args[1] as "valorant" | "lol"]().catch(e => new Logger(client).error(e))
-        return
+        return await games[args[1] as "valorant" | "lol"]().catch(e => new Logger(client).error(e))
       }
       if(args[0] === "stream") {
         const res = await service.getLiveMatches()
@@ -377,6 +404,13 @@ export default createListener({
           }
         }
         await games[args[1] as "valorant" | "lol"]().catch(e => new Logger(client).error(e))
+        await i.createFollowup({
+          content: "## I'm now also a Valorant simulator with card system and duels between players!" + "\n" +
+                   "- Use </claim:1386105251349921804> to get a random player and build your </roster:1386105251848913025>!" + "\n" +
+                   "- You can see all commands by using </help:1350464775141855233>" + "\n" +
+                   "- More information about this update in our support and community server: https://discord.com/invite/FaqYcpA84r",
+          flags: 64
+        })
       }
       else if(args[0] === "betting") {
         const user = await User.findById(i.user.id) as UserSchemaInterface
@@ -494,6 +528,13 @@ export default createListener({
           }
         }
         await games[args[1] as keyof typeof games]()
+        await i.createFollowup({
+          content: "## I'm now also a Valorant simulator with card system and duels between players!" + "\n" +
+                   "- Use </claim:1386105251349921804> to get a random player and build your </roster:1386105251848913025>!" + "\n" +
+                   "- You can see all commands by using </help:1350464775141855233>" + "\n" +
+                   "- More information about this update in our support and community server: https://discord.com/invite/FaqYcpA84r",
+          flags: 64
+        })
       }
       else {
         const command = client.commands.get(args[0])
