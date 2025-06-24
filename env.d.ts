@@ -15,7 +15,6 @@ declare global {
       CDN_URL: string
       DEVS: string[]
       HOST: string
-      PACKAGE_PATH: string
     }
   }
 }

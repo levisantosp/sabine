@@ -8,7 +8,7 @@ import { readFileSync } from "fs"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const pkgFile = path.resolve(__dirname, process.env.PACKAGE_PATH)
+const pkgFile = path.resolve(__dirname, "../../../package.json")
 const pkg = JSON.parse(readFileSync(pkgFile, "utf-8"))
 
 export default createCommand({
