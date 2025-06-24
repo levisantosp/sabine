@@ -1,7 +1,6 @@
 import Service from "../../api/index.ts"
 import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
 import createCommand from "../../structures/command/createCommand.ts"
-import Logger from "../../structures/util/Logger.ts"
 const service = new Service(process.env.AUTH)
 
 export default createCommand({
