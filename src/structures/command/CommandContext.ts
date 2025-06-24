@@ -1,33 +1,26 @@
-import {
-  CommandInteraction,
-  ComponentInteraction,
-  EditInteractionContent,
-  File,
-  Guild,
-  InteractionContent,
-  ModalSubmitInteraction,
-} from "oceanic.js"
-import App from "../client/App.js"
-import locales, { Args } from "../../locales/index.js"
-import { GuildSchemaInterface, UserSchemaInterface } from "../../database/index.js"
-import Logger from "../util/Logger.js"
+import * as Oceanic from "oceanic.js"
+import App from "../client/App.ts"
+import locales from "../../locales/index.ts"
+import type { Args } from "../../locales/index.ts"
+import Logger from "../util/Logger.ts"
+import type { guilds, users } from "@prisma/client"
 
 type Database = {
-  guild: GuildSchemaInterface
-  user: UserSchemaInterface
+  guild: guilds
+  user: users
 }
 type CommandContextOptions = {
   client: App
-  guild: Guild
-  interaction: CommandInteraction | ComponentInteraction | ModalSubmitInteraction
+  guild: Oceanic.Guild | null
+  interaction: Oceanic.CommandInteraction | Oceanic.ComponentInteraction | Oceanic.ModalSubmitInteraction
   locale: string
   db: Database
   args: string[]
 }
 export default class CommandContext {
   public client: App
-  public guild: Guild
-  public interaction: CommandInteraction | ComponentInteraction | ModalSubmitInteraction
+  public guild: Oceanic.Guild | null
+  public interaction: Oceanic.CommandInteraction | Oceanic.ComponentInteraction | Oceanic.ModalSubmitInteraction
   public locale: string
   public db: Database
   public args: string[]
@@ -39,14 +32,14 @@ export default class CommandContext {
     this.db = options.db
     this.args = options.args
   }
-  public async reply(content: string | InteractionContent, options?: Args) {
-    switch (typeof content) {
+  public async reply(content: string | Oceanic.InteractionContent, options?: Args) {
+    switch(typeof content) {
       case "string": {
         if(options?.files) {
           if(this.interaction.acknowledged) return await this.interaction.createFollowup(
             {
               content: locales(this.locale, content, options),
-              files: options.files as File[]
+              files: options.files as Oceanic.File[]
             }
           ).catch(e => new Logger(this.client).error(e))
           else return await this.interaction.createMessage(
@@ -70,8 +63,8 @@ export default class CommandContext {
       }
       case "object": {
         if(options?.files) {
-          if(this.interaction.acknowledged) return await this.interaction.createFollowup(Object.assign(content, { files: options.files as File[] })).catch(e => new Logger(this.client).error(e))
-          else return await this.interaction.createMessage(Object.assign(content, { files: options.files as File[] })).catch(e => new Logger(this.client).error(e))
+          if(this.interaction.acknowledged) return await this.interaction.createFollowup(Object.assign(content, { files: options.files as Oceanic.File[] })).catch(e => new Logger(this.client).error(e))
+          else return await this.interaction.createMessage(Object.assign(content, { files: options.files as Oceanic.File[] })).catch(e => new Logger(this.client).error(e))
         }
         else {
           if(this.interaction.acknowledged) return await this.interaction.createFollowup(content).catch(e => new Logger(this.client).error(e))
@@ -80,15 +73,15 @@ export default class CommandContext {
       }
     }
   }
-  public async edit(content: string | EditInteractionContent, options?: Args) {
-    if(this.interaction instanceof CommandInteraction) {
-      switch (typeof content) {
+  public async edit(content: string | Oceanic.EditInteractionContent, options?: Args) {
+    if(this.interaction instanceof Oceanic.CommandInteraction) {
+      switch(typeof content) {
         case "string": {
           if(options?.files) {
             if(this.interaction.acknowledged) return await this.interaction.editOriginal(
               {
                 content: locales(this.locale, content, options),
-                files: options.files as File[],
+                files: options.files as Oceanic.File[],
                 components: []
               }
             ).catch(e => new Logger(this.client).error(e))
@@ -116,7 +109,7 @@ export default class CommandContext {
               Object.assign(
                 content,
                 {
-                  files: options.files as File[],
+                  files: options.files as Oceanic.File[],
                   components: []
                 }
               )
@@ -139,14 +132,14 @@ export default class CommandContext {
         }
       }
     }
-    else if(this.interaction instanceof ComponentInteraction) {
-      switch (typeof content) {
+    else if(this.interaction instanceof Oceanic.ComponentInteraction) {
+      switch(typeof content) {
         case "string": {
           if(options?.files) {
             if(this.interaction.acknowledged) return await this.interaction.editOriginal(
               {
                 content: locales(this.locale, content, options),
-                files: options.files as File[],
+                files: options.files as Oceanic.File[],
                 components: []
               }
             ).catch(e => new Logger(this.client).error(e))
@@ -170,7 +163,7 @@ export default class CommandContext {
         }
         case "object": {
           if(options?.files) {
-            if(this.interaction.acknowledged) return await this.interaction.editOriginal(Object.assign(content, { files: options.files as File[] })).catch(e => new Logger(this.client).error(e))
+            if(this.interaction.acknowledged) return await this.interaction.editOriginal(Object.assign(content, { files: options.files as Oceanic.File[] })).catch(e => new Logger(this.client).error(e))
             else return await this.interaction.createMessage({
               content: locales(this.locale, "helper.interaction_failed"),
               flags: 64

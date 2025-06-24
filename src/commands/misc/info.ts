@@ -1,10 +1,11 @@
 import ms from "humanize-duration"
-import createCommand from "../../structures/command/createCommand.js"
-import EmbedBuilder from "../../structures/builders/EmbedBuilder.js"
-import ButtonBuilder from "../../structures/builders/ButtonBuilder.js"
+import createCommand from "../../structures/command/createCommand.ts"
+import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
+import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
 import { fileURLToPath } from "url"
 import path from "path"
 import { readFileSync } from "fs"
+
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const pkgFile = path.resolve(__dirname, "../../../package.json")
@@ -17,7 +18,8 @@ export default createCommand({
   descriptionLocalizations: {
     "pt-BR": "Mostra as informações do bot"
   },
-  async run({ ctx, client, locale }) {
+  userInstall: true,
+  async run({ ctx, client, t }) {
     const creator = client.users.get("441932495693414410")!
     const embed = new EmbedBuilder()
       .setAuthor({
@@ -25,7 +27,7 @@ export default createCommand({
         iconURL: client.user.avatarURL()
       })
       .setThumb(creator.avatarURL())
-      .setTitle(locale("commands.info.embed.title"))
+      .setTitle(t("commands.info.embed.title"))
       .setFields(
         {
           name: "Patch",
@@ -33,28 +35,28 @@ export default createCommand({
           inline: true
         },
         {
-          name: locale("commands.info.lib"),
+          name: t("commands.info.lib"),
           value: "[oceanic.js](https://oceanic.ws/)",
           inline: true
         },
         {
-          name: locale("commands.info.creator"),
+          name: t("commands.info.creator"),
           value: creator.tag,
           inline: true
         },
         {
-          name: locale("commands.info.guilds"),
+          name: t("commands.info.guilds"),
           value: client.guilds.size.toString(),
           inline: true
         },
         {
-          name: locale("commands.info.users"),
+          name: t("commands.info.users"),
           value: client.users.filter(user => !user.bot).length.toString(),
           inline: true
         },
         {
           name: "Client",
-          value: `Shards: \`${client.shards.size}\`\nShard ID: \`${ctx.guild.shard.id}\`\nShard Uptime: \`${ms(client.uptime, { language: ctx.db.user.lang ?? ctx.db.guild.lang, round: true })}\`\nClient Uptime: \`${ms(Date.now() - client._uptime, { language: ctx.db.user.lang ?? ctx.db.guild.lang, round: true })}\``,
+          value: `Shards: \`${client.shards.size}\`\nShard Uptime: \`${ms(client.uptime, { language: ctx.db.user.lang ?? ctx.db.guild.lang, round: true })}\`\nClient Uptime: \`${ms(Date.now() - client._uptime, { language: ctx.db.user.lang ?? ctx.db.guild.lang, round: true })}\``,
           inline: true
         }
       )
@@ -65,11 +67,11 @@ export default createCommand({
             type: 1,
             components: [
               new ButtonBuilder()
-                .setLabel(locale("commands.help.community"))
+                .setLabel(t("commands.help.community"))
                 .setStyle("link")
                 .setURL("https://discord.gg/g5nmc376yh"),
               new ButtonBuilder()
-                .setLabel(locale("commands.info.invite"))
+                .setLabel(t("commands.info.invite"))
                 .setStyle("link")
                 .setURL("https://discord.com/oauth2/authorize?client_id=1235576817683922954&scope=bot&permissions=388096")
             ]

@@ -1,4 +1,4 @@
-import { EventsData } from "../../../../types/index.js"
+import type { EventsData } from "../../../types.ts"
 
 export default class EventsService {
   public static async get(auth: string) {

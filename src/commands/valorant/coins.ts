@@ -1,4 +1,4 @@
-import createCommand from "../../structures/command/createCommand.js"
+import createCommand from "../../structures/command/createCommand.ts"
 
 export default createCommand({
   name: "coins",
@@ -7,6 +7,7 @@ export default createCommand({
     "pt-BR": "Veja seus coins"
   },
   category: "simulator",
+  userInstall: true,
   async run({ ctx }) {
     await ctx.reply("commands.coins.res", { c: ctx.db.user.coins.toLocaleString("en-US") })
   }

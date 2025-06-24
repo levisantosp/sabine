@@ -1,9 +1,9 @@
-import getPlayer from "../../simulator/valorant/players/getPlayer.js"
-import ButtonBuilder from "../../structures/builders/ButtonBuilder.js"
-import EmbedBuilder from "../../structures/builders/EmbedBuilder.js"
-import createCommand from "../../structures/command/createCommand.js"
-import calcPlayerOvr from "../../structures/util/calcPlayerOvr.js"
-import calcPlayerPrice from "../../structures/util/calcPlayerPrice.js"
+import getPlayer from "../../simulator/valorant/players/getPlayer.ts"
+import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
+import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
+import createCommand from "../../structures/command/createCommand.ts"
+import calcPlayerOvr from "../../structures/util/calcPlayerOvr.ts"
+import calcPlayerPrice from "../../structures/util/calcPlayerPrice.ts"
 
 type Player = {
   id: number
@@ -32,9 +32,10 @@ export default createCommand({
   descriptionLocalizations: {
     "pt-BR": "Veja seu elenco"
   },
-  async run({ ctx, locale }) {
-    const active_players = ctx.db.user.roster.active
-    const reserve_players = ctx.db.user.roster.reserve
+  userInstall: true,
+  async run({ ctx, t }) {
+    const active_players = ctx.db.user.roster!.active
+    const reserve_players = ctx.db.user.roster!.reserve
     let value = 0
     let ovr = 0
     for(const p of active_players) {
@@ -52,13 +53,13 @@ export default createCommand({
       value += calcPlayerPrice(player, true)
     }
     const embed = new EmbedBuilder()
-    .setTitle(locale("commands.roster.embed.title"))
-    .setDesc(locale(
+    .setTitle(t("commands.roster.embed.title"))
+    .setDesc(t(
       "commands.roster.embed.desc",
       {
         value: parseInt(value.toString()).toLocaleString("en-US"),
         ovr: (ovr / (active_players.length + reserve_players.length)).toFixed(0),
-        name: ctx.db.user.team.name ? `${ctx.db.user.team.name} (${ctx.db.user.team.tag})` : "`undefined`"
+        name: ctx.db.user.team?.name ? `${ctx.db.user.team.name} (${ctx.db.user.team.tag})` : "`undefined`"
       }
     ))
     .setThumb(ctx.interaction.user.avatarURL())
@@ -80,7 +81,7 @@ export default createCommand({
     if(reserve_players.length > 10) {
       reserve_content += `- +${reserve_players.length - 10}...`
     }
-    embed.addField(locale(
+    embed.addField(t(
       "commands.roster.embed.field.name1",
       {
         total: active_players.length
@@ -88,7 +89,7 @@ export default createCommand({
     ), active_content, true)
     embed.setFields(
       {
-        name: locale(
+        name: t(
           "commands.roster.embed.field.name1",
           {
             total: active_players.length
@@ -98,7 +99,7 @@ export default createCommand({
         inline: true
       },
       {
-        name: locale(
+        name: t(
           "commands.roster.embed.field.name2",
           {
             total: reserve_players.length
@@ -109,11 +110,11 @@ export default createCommand({
       }
     )
     const button = new ButtonBuilder()
-    .setLabel(locale("commands.roster.generate_file"))
+    .setLabel(t("commands.roster.generate_file"))
     .setCustomId(`roster;${ctx.interaction.user.id};file`)
     .setStyle("blue")
     const button2 = new ButtonBuilder()
-    .setLabel(locale("commands.roster.change_team"))
+    .setLabel(t("commands.roster.change_team"))
     .setCustomId(`roster;${ctx.interaction.user.id};team`)
     .setStyle("green")
     await ctx.reply(embed.build({
@@ -125,12 +126,12 @@ export default createCommand({
       ]
     }))
   },
-  async createInteraction({ ctx, i, locale }) {
+  async createInteraction({ ctx, i, t }) {
     if(ctx.args[2] === "file") {
       await ctx.interaction.defer(64)
       let players = ""
-      const active_players = ctx.db.user.roster.active
-      const reserve_players = ctx.db.user.roster.reserve
+      const active_players = ctx.db.user.roster!.active
+      const reserve_players = ctx.db.user.roster!.reserve
       for(const p of active_players) {
         if(!active_players.length) break
         const player = getPlayer(Number(p))
@@ -158,7 +159,7 @@ export default createCommand({
     else {
       await i.createModal({
         customID: `roster;${i.user.id};modal`,
-        title: locale("commands.roster.modal.title"),
+        title: t("commands.roster.modal.title"),
         components: [
           {
             type: 1,
@@ -166,7 +167,7 @@ export default createCommand({
               {
                 type: 4,
                 customID: `roster;${i.user.id};modal;response-1`,
-                label: locale("commands.roster.modal.team_name"),
+                label: t("commands.roster.modal.team_name"),
                 style: 1,
                 minLength: 2,
                 maxLength: 20,
@@ -180,7 +181,7 @@ export default createCommand({
               {
                 type: 4,
                 customID: `roster;${i.user.id};modal;response-2`,
-                label: locale("commands.roster.modal.team_tag"),
+                label: t("commands.roster.modal.team_tag"),
                 style: 1,
                 minLength: 2,
                 maxLength: 4,
@@ -192,14 +193,21 @@ export default createCommand({
       })
     }
   },
-  async createModalSubmitInteraction({ ctx, i }) {
+  async createModalSubmitInteraction({ ctx, i, client }) {
     await i.defer(64)
     const responses = i.data.components.getComponents()
     ctx.db.user.team = {
       name: responses[0].value,
       tag: responses[1].value
     }
-    await ctx.db.user.save()
+    await client.prisma.users.update({
+      where: {
+        id: ctx.db.user.id
+      },
+      data: {
+        roster: ctx.db.user.roster
+      }
+    })
     await ctx.reply("commands.roster.team_info_changed", {
       name: responses[0].value,
       tag: responses[1].value

@@ -14,6 +14,7 @@ declare global {
       PORT: number
       CDN_URL: string
       DEVS: string[]
+      HOST: string
     }
   }
 }

@@ -1,4 +1,4 @@
-import { ResultsData } from "../../../../types"
+import type { ResultsData } from "../../../types.ts"
 
 export default class ResultsService {
   public static async get(auth: string) {

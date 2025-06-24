@@ -1,4 +1,4 @@
-import { TeamData, TeamsData } from "../../../../types/index.js"
+import type { TeamData, TeamsData } from "../../../types.ts"
 
 export default class TeamsService {
   public static async get(auth: string) {

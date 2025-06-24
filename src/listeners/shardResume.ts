@@ -1,6 +1,6 @@
-import { TextChannel } from "oceanic.js"
-import createListener from "../structures/client/createListener.js"
-import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
+import type { TextChannel } from "oceanic.js"
+import createListener from "../structures/client/createListener.ts"
+import EmbedBuilder from "../structures/builders/EmbedBuilder.ts"
 
 export default createListener({
   name: "shardReady",

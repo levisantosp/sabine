@@ -1,11 +1,11 @@
 import { ApplicationCommandOptionTypes } from "oceanic.js"
-import createCommand from "../../structures/command/createCommand.js"
-import EmbedBuilder from "../../structures/builders/EmbedBuilder.js"
-import getPlayer from "../../simulator/valorant/players/getPlayer.js"
-import calcPlayerPrice from "../../structures/util/calcPlayerPrice.js"
-import ButtonBuilder from "../../structures/builders/ButtonBuilder.js"
-import getPlayers from "../../simulator/valorant/players/getPlayers.js"
-import calcPlayerOvr from "../../structures/util/calcPlayerOvr.js"
+import createCommand from "../../structures/command/createCommand.ts"
+import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
+import getPlayer from "../../simulator/valorant/players/getPlayer.ts"
+import calcPlayerPrice from "../../structures/util/calcPlayerPrice.ts"
+import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
+import getPlayers from "../../simulator/valorant/players/getPlayers.ts"
+import calcPlayerOvr from "../../structures/util/calcPlayerOvr.ts"
 
 export default createCommand({
   name: "sign",
@@ -32,13 +32,14 @@ export default createCommand({
       required: true
     }
   ],
-  async run({ ctx, locale }) {
+  userInstall: true,
+  async run({ ctx, t }) {
     const player = getPlayer(Number(ctx.args[0]))
     if(!player) return await ctx.reply("commands.sign.player_not_found")
     const price = calcPlayerPrice(player)
     const embed = new EmbedBuilder()
     .setTitle(player.name)
-    .setDesc(locale(
+    .setDesc(t(
       "commands.sign.embed.desc",
       {
         price: price.toLocaleString("en-US")
@@ -47,7 +48,7 @@ export default createCommand({
     .setImage(`${process.env.CDN_URL}/cards/${player.id}.png`)
     const button = new ButtonBuilder()
     .setStyle("green")
-    .setLabel(locale("commands.sign.buy"))
+    .setLabel(t("commands.sign.buy"))
     .setCustomId(`sign;${ctx.interaction.user.id};${player.id}`)
     await ctx.reply(embed.build(button.build()))
   },
@@ -70,7 +71,7 @@ export default createCommand({
       .map(p => ({ name: p.name, value: p.id.toString() }))
     )
   },
-  async createInteraction({ ctx, i }) {
+  async createInteraction({ ctx, i, client }) {
     await i.defer(64)
     const player = getPlayer(Number(ctx.args[2]))
     if(!player) return
@@ -78,8 +79,15 @@ export default createCommand({
     const ovr = parseInt(calcPlayerOvr(player).toString())
     if(price > ctx.db.user.coins) return ctx.reply("commands.sign.coins_needed")
     ctx.db.user.coins -= BigInt(price)
-    ctx.db.user.roster.reserve.push(player.id.toString())
-    await ctx.db.user.save()
+    ctx.db.user.roster!.reserve.push(player.id.toString())
+    await client.prisma.users.update({
+      where: {
+        id: ctx.db.user.id
+      },
+      data: {
+        roster: ctx.db.user.roster
+      }
+    })
     await ctx.reply("commands.sign.signed", {
       player: `${player.name} (${ovr})`,
       price: price.toLocaleString("en-US")

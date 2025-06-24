@@ -1,4 +1,4 @@
-import getPlayers from "./getPlayers.js"
+import getPlayers from "./getPlayers.ts"
 
 export default function(playerID: number) {
   return getPlayers().find(p => p.id === playerID)

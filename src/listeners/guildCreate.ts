@@ -1,12 +1,14 @@
-import { TextChannel } from "oceanic.js"
-import { Blacklist, BlacklistSchemaInterface } from "../database/index.js"
-import createListener from "../structures/client/createListener.js"
-import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
+import type { TextChannel } from "oceanic.js"
+import createListener from "../structures/client/createListener.ts"
+import EmbedBuilder from "../structures/builders/EmbedBuilder.ts"
+import { PrismaClient } from "@prisma/client"
+
+const prisma = new PrismaClient()
 
 export default createListener({
   name: "guildCreate",
   async run(client, guild) {
-    const blacklist = await Blacklist.findById("blacklist") as BlacklistSchemaInterface
+    const blacklist = (await prisma.blacklists.findFirst())!
     const ban = blacklist.guilds.find(g => g.id === guild.id)
     if(ban) return await guild.leave()
     const embed = new EmbedBuilder()

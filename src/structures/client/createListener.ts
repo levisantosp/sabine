@@ -1,5 +1,5 @@
-import { ClientEvents } from "oceanic.js"
-import App from "./App.js"
+import type { ClientEvents } from "oceanic.js"
+import App from "./App.ts"
 
 type Listener<T extends keyof ClientEvents> = {
   name: T

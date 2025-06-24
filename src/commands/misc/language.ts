@@ -1,4 +1,4 @@
-import createCommand from "../../structures/command/createCommand.js"
+import createCommand from "../../structures/command/createCommand.ts"
 
 export default createCommand({
   name: "language",
@@ -39,18 +39,31 @@ export default createCommand({
     "language en-US",
     "language pt-BR"
   ],
-  async run({ ctx }) {
+  userInstall: true,
+  async run({ ctx, client }) {
     switch (ctx.args[0]) {
       case "pt": {
-        ctx.db.user.lang = "pt"
-        await ctx.db.user.save()
-        ctx.reply("Agora eu irei interagir em português com você!")
+        await client.prisma.users.update({
+          where: {
+            id: ctx.interaction.user.id
+          },
+          data: {
+            lang: "pt"
+          }
+        })
+        await ctx.reply("Agora eu irei interagir em português com você!")
       }
-        break
+      break
       case "en": {
-        ctx.db.user.lang = "en"
-        await ctx.db.user.save()
-        ctx.reply("Now I will interact in english with you!")
+        await client.prisma.users.update({
+          where: {
+            id: ctx.interaction.user.id
+          },
+          data: {
+            lang: "en"
+          }
+        })
+        await ctx.reply("Now I will interact in english with you!")
       }
     }
   }

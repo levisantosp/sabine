@@ -1,10 +1,10 @@
-import { Constants, InteractionContent, NullablePartialEmoji, SelectOption, StringSelectMenu } from "oceanic.js"
+import * as Oceanic from "oceanic.js"
 
 export default class SelectMenuBuilder {
-  public type: number = Constants.ComponentTypes.STRING_SELECT
+  public type: number = Oceanic.Constants.ComponentTypes.STRING_SELECT
   public customID?: string
   public placeholder?: string
-  public options: SelectOption[] = []
+  public options: Oceanic.SelectOption[] = []
   public minValues?: number
   public maxValues?: number
   public disabled?: boolean
@@ -16,19 +16,19 @@ export default class SelectMenuBuilder {
     this.placeholder = text
     return this
   }
-  public addOption(label: string, value: string, description?: string, emoji?: NullablePartialEmoji) {
+  public addOption(label: string, value: string, description?: string, emoji?: Oceanic.NullablePartialEmoji) {
     this.options.push({ label, value, description, emoji })
     return this
   }
-  public addOptions(...options: SelectOption[]) {
+  public addOptions(...options: Oceanic.SelectOption[]) {
     this.options.push(...options)
     return this
   }
-  public setOption(label: string, value: string, description?: string, emoji?: NullablePartialEmoji) {
+  public setOption(label: string, value: string, description?: string, emoji?: Oceanic.NullablePartialEmoji) {
     this.options = [{ label, value, description, emoji }]
     return this
   }
-  public setOptions(...options: SelectOption[]) {
+  public setOptions(...options: Oceanic.SelectOption[]) {
     this.options = options
     return this
   }
@@ -44,8 +44,8 @@ export default class SelectMenuBuilder {
     this.disabled = disabled
     return this
   }
-  public build(content?: string | InteractionContent) {
-    const menu: StringSelectMenu = {
+  public build(content?: string | Oceanic.InteractionContent) {
+    const menu: Oceanic.StringSelectMenu = {
       type: this.type,
       customID: this.customID!,
       placeholder: this.placeholder,

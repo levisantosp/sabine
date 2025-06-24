@@ -1,4 +1,4 @@
-import { MatchesData } from "../../../../types/index.js"
+import type { MatchesData } from "../../../types.ts"
 
 export default class MatchesService {
   public static async get(auth: string) {

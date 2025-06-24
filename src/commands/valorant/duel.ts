@@ -1,9 +1,9 @@
 import { ApplicationCommandOptionTypes } from "oceanic.js"
-import ValorantMatch from "../../simulator/valorant/ValorantMatch.js"
-import EmbedBuilder from "../../structures/builders/EmbedBuilder.js"
-import createCommand from "../../structures/command/createCommand.js"
-import { User } from "../../database/index.js"
-import ButtonBuilder from "../../structures/builders/ButtonBuilder.js"
+import ValorantMatch from "../../simulator/valorant/ValorantMatch.ts"
+import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
+import createCommand from "../../structures/command/createCommand.ts"
+import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
+import { SabineUser } from "../../database/index.ts"
 
 const users: {[key: string]: boolean} = {}
 
@@ -31,19 +31,20 @@ export default createCommand({
       required: true
     }
   ],
-  async run({ ctx, client, locale }) {
-    const user = await User.get(ctx.args[0])
-    if(!ctx.db.user.team.name || !ctx.db.user.team.tag) {
-      return ctx.reply("commands.duel.needed_team_name")
+  userInstall: true,
+  async run({ ctx, t }) {
+    const user = await new SabineUser(ctx.db.user.id).get()
+    if(!ctx.db.user.team?.name || !ctx.db.user.team.tag) {
+      return await ctx.reply("commands.duel.needed_team_name")
     }
-    if(ctx.db.user.roster.active.length < 5) {
-      return ctx.reply("commands.duel.team_not_completed_1")
+    if(!ctx.db.user.roster || ctx.db.user.roster.active.length < 5) {
+      return await  ctx.reply("commands.duel.team_not_completed_1")
     }
-    if(!user || user.roster.active.length < 5) {
-      return ctx.reply("commands.duel.team_not_completed_2")
+    if(!user || !user.roster || user.roster.active.length < 5) {
+      return await ctx.reply("commands.duel.team_not_completed_2")
     }
-    if(!user.team.name || !user.team.tag) {
-      return ctx.reply("commands.duel.needed_team_name_2")
+    if(!user.team?.name || !user.team.tag) {
+      return await ctx.reply("commands.duel.needed_team_name_2")
     }
     if(users[ctx.interaction.user.id]) {
       return ctx.reply("commands.duel.already_in_match")
@@ -53,33 +54,33 @@ export default createCommand({
     }
     const button = new ButtonBuilder()
     .setStyle("green")
-    .setLabel(locale("commands.duel.button"))
+    .setLabel(t("commands.duel.button"))
     .setCustomId(`duel;${ctx.args[0]};${ctx.interaction.user.id}`)
-    await ctx.reply(button.build(locale("commands.duel.request", {
+    await ctx.reply(button.build(t("commands.duel.request", {
       author: ctx.interaction.user.mention,
       opponent: `<@${ctx.args[0]}>`
     })))
   },
-  async createInteraction({ ctx, client, locale, i }) {
+  async createInteraction({ ctx, client, t, i }) {
     await i.deferUpdate()
-    const user = await User.get(ctx.args[2])
-    if(!ctx.db.user.team.name || !ctx.db.user.team.tag) {
-      return ctx.reply("commands.duel.needed_team_name")
+    const user = await new SabineUser(ctx.args[2]).get()
+    if(!ctx.db.user.team?.name || !ctx.db.user.team.tag) {
+      return await ctx.reply("commands.duel.needed_team_name")
     }
-    if(ctx.db.user.roster.active.length < 5) {
-      return ctx.reply("commands.duel.team_not_completed_1")
+    if(!ctx.db.user.roster || ctx.db.user.roster.active.length < 5) {
+      return await  ctx.reply("commands.duel.team_not_completed_1")
     }
-    if(!user || user.roster.active.length < 5) {
-      return ctx.reply("commands.duel.team_not_completed_2")
+    if(!user || !user.roster || user.roster.active.length < 5) {
+      return await ctx.reply("commands.duel.team_not_completed_2")
     }
-    if(!user.team.name || !user.team.tag) {
-      return ctx.reply("commands.duel.needed_team_name_2")
+    if(!user.team?.name || !user.team.tag) {
+      return await ctx.reply("commands.duel.needed_team_name_2")
     }
     if(users[ctx.interaction.user.id]) {
-      return ctx.reply("commands.duel.already_in_match")
+      return await ctx.reply("commands.duel.already_in_match")
     }
     if(users[user.id]) {
-      return ctx.reply("commands.already_in_match_2")
+      return await ctx.reply("commands.already_in_match_2")
     }
     const match = new ValorantMatch({
       __teams: [
@@ -98,7 +99,7 @@ export default createCommand({
             name: ctx.interaction.user.username,
             id: ctx.db.user.id
           },
-          name: ctx.db.user.team.name!,
+          name: ctx.db.user.team.name,
           tag: ctx.db.user.team.tag!
         }
       ],
@@ -107,7 +108,7 @@ export default createCommand({
     })
     const embed = new EmbedBuilder()
     .setTitle(`${match.__teams[0].name} 0 <:versus:1349105624180330516> 0 ${match.__teams[1].name}`)
-    .setDesc(locale("commands.duel.started"))
+    .setDesc(t("commands.duel.started"))
     match.setContent(embed.description + "\n")
     await ctx.edit(embed.build())
     try {

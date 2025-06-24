@@ -1,9 +1,9 @@
-import { Constants, SelectOption } from "oceanic.js"
-import { User } from "../../database/index.js"
-import getPlayer from "../../simulator/valorant/players/getPlayer.js"
-import SelectMenuBuilder from "../../structures/builders/SelectMenuBuilder.js"
-import createCommand from "../../structures/command/createCommand.js"
-import calcPlayerOvr from "../../structures/util/calcPlayerOvr.js"
+import type { SelectOption } from "oceanic.js"
+import getPlayer from "../../simulator/valorant/players/getPlayer.ts"
+import SelectMenuBuilder from "../../structures/builders/SelectMenuBuilder.ts"
+import createCommand from "../../structures/command/createCommand.ts"
+import calcPlayerOvr from "../../structures/util/calcPlayerOvr.ts"
+import { SabineUser } from "../../database/index.ts"
 
 export default createCommand({
   name: "promote",
@@ -30,18 +30,26 @@ export default createCommand({
       autocomplete: true
     }
   ],
-  async run({ ctx, locale }) {
+  userInstall: true,
+  async run({ ctx, t, client }) {
     const p = getPlayer(Number(ctx.args[0]))
     if(!p) {
       return ctx.reply("commands.promote.player_not_found")
     }
     const options: SelectOption[] = []
-    const players = ctx.db.user.roster.active
+    const players = ctx.db.user.roster!.active
     if(players.length < 5) {
-      let i = ctx.db.user.roster.reserve.findIndex(pl => pl === p.id.toString())
-      ctx.db.user.roster.active.push(p.id.toString())
-      ctx.db.user.roster.reserve.splice(i, 1)
-      await ctx.db.user.save()
+      let i = ctx.db.user.roster!.reserve.findIndex(pl => pl === p.id.toString())
+      ctx.db.user.roster!.active.push(p.id.toString())
+      ctx.db.user.roster!.reserve.splice(i, 1)
+      await client.prisma.users.update({
+        where: {
+          id: ctx.db.user.id
+        },
+        data: {
+          roster: ctx.db.user.roster
+        }
+      })
       return await ctx.reply("commands.promote.player_promoted", { p: p.name })
     }
     for(const p_id of players) {
@@ -57,12 +65,12 @@ export default createCommand({
     const menu = new SelectMenuBuilder()
     .setCustomId(`promote;${ctx.interaction.user.id};${ctx.args[0]}`)
     .setOptions(...options)
-    await ctx.reply(menu.build(locale("commands.promote.select_player")))
+    await ctx.reply(menu.build(t("commands.promote.select_player")))
   },
   async createAutocompleteInteraction({ i }) {
-    const user = await User.get(i.user.id)
+    const user = (await new SabineUser(i.user.id).get())!
     const players: Array<{ name: string, ovr: number, id: string }> = []
-    for(const p_id of user.roster.reserve) {
+    for(const p_id of user.roster!.reserve) {
       const p = getPlayer(Number(p_id))
       if(!p) break
       const ovr = parseInt(calcPlayerOvr(p).toString())
@@ -80,19 +88,26 @@ export default createCommand({
       .map(p => ({ name: p.name, value: p.id }))
     )
   },
-  async createInteraction({ ctx, i, locale }) {
+  async createInteraction({ ctx, i, t, client }) {
     if(i.data.componentType === 3) {
       const id = i.data.values.getStrings()[0]
-      let index = ctx.db.user.roster.active.findIndex(p => p === id)
-      ctx.db.user.roster.active.splice(index, 1)
-      ctx.db.user.roster.reserve.push(id)
-      index = ctx.db.user.roster.reserve.findIndex(p => p === ctx.args[2])
-      ctx.db.user.roster.reserve.splice(index, 1)
-      ctx.db.user.roster.active.push(ctx.args[2])
-      await ctx.db.user.save()
+      let index = ctx.db.user.roster!.active.findIndex(p => p === id)
+      ctx.db.user.roster!.active.splice(index, 1)
+      ctx.db.user.roster!.reserve.push(id)
+      index = ctx.db.user.roster!.reserve.findIndex(p => p === ctx.args[2])
+      ctx.db.user.roster!.reserve.splice(index, 1)
+      ctx.db.user.roster!.active.push(ctx.args[2])
+      await client.prisma.users.update({
+        where: {
+          id: ctx.db.user.id
+        },
+        data: {
+          roster: ctx.db.user.roster
+        }
+      })
       const p = getPlayer(Number(ctx.args[2]))!
       await i.editParent({
-        content: locale("commands.promote.player_promoted", { p: p.name }),
+        content: t("commands.promote.player_promoted", { p: p.name }),
         components: []
       })
     }
