@@ -7,7 +7,7 @@ import { emojis } from "../../../structures/util/emojis.ts"
 import EmbedBuilder from "../../../structures/builders/EmbedBuilder.ts"
 import locales from "../../../locales/index.ts"
 import ButtonBuilder from "../../../structures/builders/ButtonBuilder.ts"
-import { ResultsData } from "../../../types.ts"
+import { type ResultsData } from "../../../types.ts"
 import calcOdd from "../../../structures/util/calcOdd.ts"
 
 export default async function(
