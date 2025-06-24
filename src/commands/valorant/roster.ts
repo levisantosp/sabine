@@ -59,7 +59,7 @@ export default createCommand({
       {
         value: parseInt(value.toString()).toLocaleString("en-US"),
         ovr: (ovr / (active_players.length + reserve_players.length)).toFixed(0),
-        name: ctx.db.user.team!.name ? `${ctx.db.user.team!.name} (${ctx.db.user.team!.tag})` : "`undefined`"
+        name: ctx.db.user.team?.name ? `${ctx.db.user.team!.name} (${ctx.db.user.team!.tag})` : "`undefined`"
       }
     ))
     .setThumb(ctx.interaction.user.avatarURL())
