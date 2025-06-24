@@ -1,9 +1,9 @@
-import { valorant_agents, valorant_weapons } from "../../config.js"
-import CommandContext from "../../structures/command/CommandContext.js"
-import locales from "../../locales/index.js"
-import EmbedBuilder from "../../structures/builders/EmbedBuilder.js"
-import getPlayer from "./players/getPlayer.js"
-import { User } from "../../database/index.js"
+import { valorant_agents, valorant_weapons } from "../../config.ts"
+import locales from "../../locales/index.ts"
+import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
+import getPlayer from "./players/getPlayer.ts"
+import { User } from "../../database/index.ts"
+import ComponentInteractionContext from "../../structures/interactions/ComponentInteractionContext.ts"
 
 const calcPlayerOvr = (player: TeamPlayer) => {
   return (player.stats.aim + player.stats.HS + player.stats.movement + player.stats.aggression + player.stats.ACS + player.stats.gamesense) / 4.5
@@ -55,7 +55,7 @@ type RoundResult = {
 }
 type MatchOptions = {
   __teams: Team[]
-  ctx: CommandContext
+  ctx: ComponentInteractionContext
   locale: string
 }
 type TeamUser = {
@@ -77,7 +77,7 @@ export default class ValorantMatch {
   public __teams: Team[] = []
   private teams: PrivateTeam[] = []
   public finished: boolean = false
-  private ctx: CommandContext
+  private ctx: ComponentInteractionContext
   private content: string = ""
   private locale: string
   public constructor(options: MatchOptions) {

@@ -1,7 +1,7 @@
-import createCommand from "../../structures/command/createCommand.js"
-import Service from "../../api/index.js"
-import Logger from "../../structures/util/Logger.js"
-import { Guild, GuildSchemaInterface } from "../../database/index.js"
+import createCommand from "../../structures/command/createCommand.ts"
+import Service from "../../api/index.ts"
+import Logger from "../../structures/util/Logger.ts"
+import { Guild, type GuildSchemaInterface } from "../../database/index.ts"
 const service = new Service(process.env.AUTH)
 
 export default createCommand({
@@ -196,10 +196,11 @@ export default createCommand({
     "tournament remove valorant VCT Americas",
     "tournament remove lol Worlds"
   ],
-  async run({ ctx, id, locale }) {
+  async run({ ctx, id, t }) {
     if(ctx.args[0] === "add") {
       const games = {
         valorant: async() => {
+          if(!ctx.guild) return
           if((ctx.db.guild.lol_events.length + ctx.db.guild.valorant_events.length) >= ctx.db.guild.tournamentsLength) return ctx.reply("commands.tournament.limit_reached", { cmd: `</tournament remove valorant:${id}>` })
           if(ctx.args[3] === ctx.args[4]) return ctx.reply("commands.tournament.channels_must_be_different")
           if(ctx.guild.channels.get(ctx.args[3])?.type !== 0 || ctx.guild.channels.get(ctx.args[4])?.type !== 0) return ctx.reply("commands.tournament.invalid_channel")
@@ -214,6 +215,7 @@ export default createCommand({
           })
         },
         lol: async() => {
+          if(!ctx.guild) return
           if((ctx.db.guild.lol_events.length + ctx.db.guild.valorant_events.length) >= ctx.db.guild.tournamentsLength) return ctx.reply("commands.tournament.limit_reached", { cmd: `</tournament remove lol:${id}>` })
           if(ctx.args[3] === ctx.args[4]) return ctx.reply("commands.tournament.channels_must_be_different")
           if(ctx.guild.channels.get(ctx.args[3])?.type !== 0 || ctx.guild.channels.get(ctx.args[4])?.type !== 0) return ctx.reply("commands.tournament.invalid_channel")
@@ -233,7 +235,7 @@ export default createCommand({
     else {
       const games = {
         valorant: async() => {
-          if(ctx.args[2] === locale("commands.tournament.remove_all")) {
+          if(ctx.args[2] === t("commands.tournament.remove_all")) {
             ctx.db.guild.valorant_events = []
             await ctx.db.guild.save()
             return ctx.reply("commands.tournament.tournament_removed")
@@ -245,7 +247,7 @@ export default createCommand({
           })
         },
         lol: async() => {
-          if(ctx.args[2] === locale("commands.tournament.remove_all")) {
+          if(ctx.args[2] === t("commands.tournament.remove_all")) {
             ctx.db.guild.lol_events = []
             await ctx.db.guild.save()
             return ctx.reply("commands.tournament.tournament_removed")
@@ -260,7 +262,8 @@ export default createCommand({
       await games[ctx.args[1] as "valorant" | "lol"]()
     }
   },
-  async createAutocompleteInteraction({ i, client, locale, args }) {
+  async createAutocompleteInteraction({ i, client, t, args }) {
+    console.log(args)
     if(!args) return
     if(args[1] === "valorant") {
       const res = await service.getEvents("valorant")
@@ -272,8 +275,7 @@ export default createCommand({
         .slice(0, 25)
       const actions = {
         add: async() => {
-          i.result(events.map(e => ({ name: e, value: e })))
-            .catch(e => new Logger(client).error(e))
+          await i.result(events.map(e => ({ name: e, value: e })))
         },
         remove: async() => {
           const guild = await Guild.findById(i.guildID) as GuildSchemaInterface
@@ -281,12 +283,11 @@ export default createCommand({
             .filter(e => {
               if(e.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e
             })
-          events.unshift(locale("commands.tournament.remove_all"))
-          i.result(events.map(e => ({ name: e, value: e })))
-            .catch(e => new Logger(client).error(e))
+          events.unshift(t("commands.tournament.remove_all"))
+          await i.result(events.map(e => ({ name: e, value: e })))
         }
       }
-      actions[args[0] as "add" | "remove"]().catch(e => new Logger(client).error(e))
+      await actions[args[0] as "add" | "remove"]()
     }
     else {
       const res = await service.getEvents("lol")
@@ -297,8 +298,7 @@ export default createCommand({
         .slice(0, 25)
       const actions = {
         add: async() => {
-          i.result(events.map(e => ({ name: e, value: e })))
-            .catch(e => new Logger(client).error(e))
+          await i.result(events.map(e => ({ name: e, value: e })))
         },
         remove: async() => {
           const guild = await Guild.findById(i.guildID) as GuildSchemaInterface
@@ -306,12 +306,11 @@ export default createCommand({
             .filter(e => {
               if(e.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e
             })
-          events.unshift(locale("commands.tournament.remove_all"))
-          i.result(events.map(e => ({ name: e, value: e })))
-            .catch(e => new Logger(client).error(e))
+          events.unshift(t("commands.tournament.remove_all"))
+          await i.result(events.map(e => ({ name: e, value: e })))
         }
       }
-      actions[args[0] as "add" | "remove"]().catch(e => new Logger(client).error(e))
+      await actions[args[0] as "add" | "remove"]()
     }
   }
 })

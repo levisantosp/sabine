@@ -1,7 +1,7 @@
-import Service from "../../api/index.js"
-import EmbedBuilder from "../../structures/builders/EmbedBuilder.js"
-import createCommand from "../../structures/command/createCommand.js"
-import Logger from "../../structures/util/Logger.js"
+import Service from "../../api/index.ts"
+import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
+import createCommand from "../../structures/command/createCommand.ts"
+import Logger from "../../structures/util/Logger.ts"
 const service = new Service(process.env.AUTH)
 
 export default createCommand({
@@ -31,8 +31,8 @@ export default createCommand({
     "team NRG ESPORTS"
   ],
   botPermissions: ["EMBED_LINKS"],
-  isThinking: true,
-  async run({ ctx, locale }) {
+  userInstall: true,
+  async run({ ctx, t }) {
     const team = await service.getTeamById(ctx.args[0])
     if(team.name === "") {
       ctx.reply("commands.team.team_not_found")
@@ -41,7 +41,7 @@ export default createCommand({
     const embed = new EmbedBuilder()
       .setTitle(`${team.name} (${team.tag})`)
       .setThumb(team.logo)
-      .setDesc(locale("commands.team.embed.desc", {
+      .setDesc(t("commands.team.embed.desc", {
         p: team.roster.players.map(p => `[${p.user}](${p.url})`).join(", "),
         s: team.roster.staffs.map(s => `[${s.user}](${s.url})`).join(", "),
         lt: `[${team.lastResults[0].teams[0].score}-${team.lastResults[0].teams[1].score} vs ${team.lastResults[0].teams[1].name}](${team.lastResults[0].url})`,
@@ -51,12 +51,12 @@ export default createCommand({
   },
   async createAutocompleteInteraction({ i, client }) {
     const res = await service.getAllTeams()
-    const teams = res.sort((a, b) => a.name.localeCompare(b.name))
+    const teams = res
       .filter(e => {
         if(e.name.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e
       })
+      .sort((a, b) => a.name.localeCompare(b.name))
       .slice(0, 25)
-    i.result(teams.map(t => ({ name: `${t.name} (${t.country})`, value: t.id })))
-      .catch((e) => new Logger(client).error(e))
+    await i.result(teams.map(t => ({ name: `${t.name} (${t.country})`, value: t.id })))
   }
 })

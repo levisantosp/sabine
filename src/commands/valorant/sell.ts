@@ -1,9 +1,9 @@
-import { User } from "../../database/index.js"
-import getPlayer from "../../simulator/valorant/players/getPlayer.js"
-import createCommand from "../../structures/command/createCommand.js"
-import calcPlayerOvr from "../../structures/util/calcPlayerOvr.js"
-import calcPlayerPrice from "../../structures/util/calcPlayerPrice.js"
-import Logger from "../../structures/util/Logger.js"
+import { User } from "../../database/index.ts"
+import getPlayer from "../../simulator/valorant/players/getPlayer.ts"
+import createCommand from "../../structures/command/createCommand.ts"
+import calcPlayerOvr from "../../structures/util/calcPlayerOvr.ts"
+import calcPlayerPrice from "../../structures/util/calcPlayerPrice.ts"
+import Logger from "../../structures/util/Logger.ts"
 
 export default createCommand({
   name: "sell",
@@ -30,6 +30,7 @@ export default createCommand({
       required: true
     }
   ],
+  userInstall: true,
   async run({ ctx }) {
     const player = getPlayer(Number(ctx.args[0]))
     let i = ctx.db.user.roster.reserve.findIndex(p => p === ctx.args[0])

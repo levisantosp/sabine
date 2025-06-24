@@ -1,12 +1,12 @@
-import ValorantEvents from "./services/valorant/EventsService.js"
-import ValorantMatches from "./services/valorant/MatchesService.js"
-import ValorantPlayers from "./services/valorant/PlayersService.js"
-import ValorantTeams from "./services/valorant/TeamsService.js"
-import ValorantResults from "./services/valorant/ResultsService.js"
-import LOLEvents from "./services/lol/EventsService.js"
-import LOLMatches from "./services/lol/MatchesService.js"
-import LOLResults from "./services/lol/ResultsService.js"
-import LiveMatchesService from "./services/lol/LiveMatchesService.js"
+import ValorantEvents from "./services/valorant/EventsService.ts"
+import ValorantMatches from "./services/valorant/MatchesService.ts"
+import ValorantPlayers from "./services/valorant/PlayersService.ts"
+import ValorantTeams from "./services/valorant/TeamsService.ts"
+import ValorantResults from "./services/valorant/ResultsService.ts"
+import LOLEvents from "./services/lol/EventsService.ts"
+import LOLMatches from "./services/lol/MatchesService.ts"
+import LOLResults from "./services/lol/ResultsService.ts"
+import LiveMatchesService from "./services/lol/LiveMatchesService.ts"
 
 export default class Service {
   private __auth: string

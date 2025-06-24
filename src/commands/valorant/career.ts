@@ -1,7 +1,7 @@
-import { ApplicationCommandOptionTypes, ComponentInteraction } from "oceanic.js"
-import createCommand from "../../structures/command/createCommand.js"
-import EmbedBuilder from "../../structures/builders/EmbedBuilder.js"
-import ButtonBuilder from "../../structures/builders/ButtonBuilder.js"
+import { ApplicationCommandOptionTypes, type ComponentInteraction } from "oceanic.js"
+import createCommand from "../../structures/command/createCommand.ts"
+import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
+import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
 
 export default createCommand({
   name: "career",
@@ -26,7 +26,8 @@ export default createCommand({
       }
     }
   ],
-  async run({ ctx, locale }) {
+  userInstall: true,
+  async run({ ctx, t }) {
     let career = ctx.db.user.career.reverse()
     let page = Number(ctx.args[0] ?? "1")
     let pages = Math.ceil(career.length / 5)
@@ -39,7 +40,7 @@ export default createCommand({
     if(!career.length) {
       return await ctx.reply("commands.career.no_pages")
     }
-    let content = locale(
+    let content = t(
       "commands.career.embed.desc",
       {
         wins: ctx.db.user.wins,
@@ -49,11 +50,11 @@ export default createCommand({
     ) + "\n\n"
     const embed = new EmbedBuilder()
     .setAuthor({
-      name: locale("commands.career.embed.author"),
+      name: t("commands.career.embed.author"),
       iconURL: ctx.interaction.user.avatarURL()
     })
     .setFooter({
-      text: locale("commands.career.embed.footer", {
+      text: t("commands.career.embed.footer", {
         page: page < 1 ? 1 : page,
         pages
       })
@@ -85,7 +86,7 @@ export default createCommand({
       ]
     }))
   },
-  async createInteraction({ ctx, locale }) {
+  async createInteraction({ ctx, t }) {
     await (ctx.interaction as ComponentInteraction).deferUpdate()
     let career = ctx.db.user.career.reverse()
     let page = Number(ctx.args[2])
@@ -99,7 +100,7 @@ export default createCommand({
     if(!career.length) {
       return await ctx.reply("commands.career.no_pages")
     }
-    let content = locale(
+    let content = t(
       "commands.career.embed.desc",
       {
         wins: ctx.db.user.wins,
@@ -109,11 +110,11 @@ export default createCommand({
     ) + "\n\n"
     const embed = new EmbedBuilder()
     .setAuthor({
-      name: locale("commands.career.embed.author"),
+      name: t("commands.career.embed.author"),
       iconURL: ctx.interaction.user.avatarURL()
     })
     .setFooter({
-      text: locale("commands.career.embed.footer", {
+      text: t("commands.career.embed.footer", {
         page: page < 1 ? 1 : page,
         pages
       })

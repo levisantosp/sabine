@@ -1,6 +1,6 @@
-import { User } from "../../database/index.js"
-import getPlayer from "../../simulator/valorant/players/getPlayer.js"
-import createCommand from "../../structures/command/createCommand.js"
+import { User } from "../../database/index.ts"
+import getPlayer from "../../simulator/valorant/players/getPlayer.ts"
+import createCommand from "../../structures/command/createCommand.ts"
 
 const calc_player_ovr = (player: Player) => {
   return (player.aim + player.HS + player.movement + player.aggression + player.ACS + player.gamesense) / 4.5
@@ -46,6 +46,7 @@ export default createCommand({
       required: true
     }
   ],
+  userInstall: true,
   async run({ ctx }) {
     const p = getPlayer(Number(ctx.args[0]))
     if(!ctx.db.user.roster.active.includes(ctx.args[0]) || !p) {

@@ -1,4 +1,4 @@
-import { Player } from "./calcPlayerOvr.js"
+import type { Player } from "./calcPlayerOvr.ts"
 
 export default function(player: Player, devalue?: boolean) {
   if(devalue) {

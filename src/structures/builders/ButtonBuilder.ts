@@ -1,24 +1,24 @@
-import { Constants, InteractionContent, NullablePartialEmoji, URLButton } from "oceanic.js"
+import * as Oceanic from "oceanic.js"
 
 export default class ButtonBuilder {
   public type: number = 2;
   public style!: 1 | 2 | 3 | 4 | 5
   public label?: string
   public customID!: string
-  public emoji?: NullablePartialEmoji
+  public emoji?: Oceanic.NullablePartialEmoji
   public url!: string
   public disabled?: boolean
   public setStyle(style: "blue" | "gray" | "green" | "red" | "link") {
     switch (style.toLowerCase()) {
-      case "blue": this.style = Constants.ButtonStyles.PRIMARY
+      case "blue": this.style = Oceanic.Constants.ButtonStyles.PRIMARY
         break
-      case "gray": this.style = Constants.ButtonStyles.SECONDARY
+      case "gray": this.style = Oceanic.Constants.ButtonStyles.SECONDARY
         break
-      case "green": this.style = Constants.ButtonStyles.SUCCESS
+      case "green": this.style = Oceanic.Constants.ButtonStyles.SUCCESS
         break
-      case "red": this.style = Constants.ButtonStyles.DANGER
+      case "red": this.style = Oceanic.Constants.ButtonStyles.DANGER
         break
-      case "link": this.style = Constants.ButtonStyles.LINK
+      case "link": this.style = Oceanic.Constants.ButtonStyles.LINK
         break
       default: throw new Error("Invalid style! Please, choose: \"BLUE\", \"GRAY\", \"GREEN\", \"RED\", \"LINK\"")
     }
@@ -43,7 +43,7 @@ export default class ButtonBuilder {
   }
   public setURL(url: string) {
     this.url = url
-    return this as unknown as URLButton
+    return this as unknown as Oceanic.URLButton
   }
   public setDisabled() {
     this.disabled = true
@@ -53,7 +53,7 @@ export default class ButtonBuilder {
     this.disabled = false
     return this
   }
-  public build(content?: string | InteractionContent) {
+  public build(content?: string | Oceanic.InteractionContent) {
     if(typeof content === "string") {
       return {
         content: content ?? "",

@@ -1,16 +1,16 @@
-import { EmbedAuthorOptions, EmbedField, EmbedFooterOptions, EmbedImageOptions, InteractionContent } from "oceanic.js"
+import * as Oceanic from "oceanic.js"
 
 export default class EmbedBuilder {
-  public author?: EmbedAuthorOptions
+  public author?: Oceanic.EmbedAuthorOptions
   public title?: string
   public description?: string
-  public fields?: EmbedField[] = [];
-  public image?: EmbedImageOptions
-  public thumbnail?: EmbedImageOptions
+  public fields?: Oceanic.EmbedField[] = [];
+  public image?: Oceanic.EmbedImageOptions
+  public thumbnail?: Oceanic.EmbedImageOptions
   public timestamp?: string
-  public footer?: EmbedFooterOptions
+  public footer?: Oceanic.EmbedFooterOptions
   public color?: number = 10086557
-  public setAuthor(options: EmbedAuthorOptions) {
+  public setAuthor(options: Oceanic.EmbedAuthorOptions) {
     this.author = options
     return this
   }
@@ -26,7 +26,7 @@ export default class EmbedBuilder {
     this.fields?.push({ name, value, inline })
     return this
   }
-  public addFields(fields: EmbedField[]) {
+  public addFields(fields: Oceanic.EmbedField[]) {
     fields.forEach(field => {
       this.fields?.push({
         name: field.name,
@@ -44,7 +44,7 @@ export default class EmbedBuilder {
     ]
     return this
   }
-  public setFields(...fields: EmbedField[]) {
+  public setFields(...fields: Oceanic.EmbedField[]) {
     this.fields = fields
     return this
   }
@@ -60,15 +60,16 @@ export default class EmbedBuilder {
     this.timestamp = timestamp.toISOString()
     return this
   }
-  public setFooter(footer: EmbedFooterOptions) {
+  public setFooter(footer: Oceanic.EmbedFooterOptions) {
     this.footer = footer
     return this
   }
-  public build(content?: string | InteractionContent) {
-    if(typeof content === "string") {
+  public build(content?: string | Oceanic.InteractionContent) {
+    if(typeof content === "string" || !content) {
       return {
         content: content ?? "",
-        embeds: [this]
+        embeds: [this],
+        components: []
       }
     }
     else {

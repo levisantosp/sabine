@@ -1,11 +1,11 @@
-import { CommandInteraction, TextChannel } from "oceanic.js"
-import App from "../client/App.js"
-import CommandContext from "./CommandContext.js"
-import { Blacklist, BlacklistSchemaInterface, Guild, GuildSchemaInterface, User, UserSchemaInterface } from "../../database/index.js"
-import locales, { Args } from "../../locales/index.js"
-import ButtonBuilder from "../builders/ButtonBuilder.js"
-import EmbedBuilder from "../builders/EmbedBuilder.js"
-import Logger from "../util/Logger.js"
+import type { CommandInteraction, TextChannel } from "oceanic.js"
+import App from "../client/App.ts"
+import CommandContext from "./CommandContext.ts"
+import { Blacklist, type BlacklistSchemaInterface, Guild, type GuildSchemaInterface, User, type UserSchemaInterface } from "../../database/index.ts"
+import locales, { type Args } from "../../locales/index.ts"
+import ButtonBuilder from "../builders/ButtonBuilder.ts"
+import EmbedBuilder from "../builders/EmbedBuilder.ts"
+import Logger from "../util/Logger.ts"
 
 export default class CommandRunner {
   public async run(
@@ -13,13 +13,12 @@ export default class CommandRunner {
   ) {
     const command = client.commands.get(interaction.data.name)
     if(!command) return
-    if(!interaction.guildID || !interaction.member || !interaction.guild) return
     const guild = (await Guild.findById(interaction.guildID) ?? new Guild({ _id: interaction.guildID })) as GuildSchemaInterface
     const user = (await User.findById(interaction.user.id) ?? new User({ _id: interaction.user.id })) as UserSchemaInterface
     const blacklist = await Blacklist.findById("blacklist") as BlacklistSchemaInterface
     const ban = blacklist.users.find(user => user.id === interaction.user.id)
     if(blacklist.guilds.find(guild => guild.id === interaction.guildID)) {
-      return await interaction.guild.leave()
+      return await interaction.guild?.leave()
     }
     if(ban) {
       return interaction.createMessage({
@@ -57,7 +56,7 @@ export default class CommandRunner {
         guild
       }
     })
-    const { permissions } = await import(`../../locales/${ctx.locale}.js`)
+    const { permissions } = await import(`../../locales/${ctx.locale}.ts`)
     if(command.permissions) {
       let perms: string[] = []
       for(let perm of command.permissions) {
@@ -80,13 +79,13 @@ export default class CommandRunner {
     if(command.ephemeral) {
       await interaction.defer(64)
     }
-    else if(command.isThinking) {
+    else {
       await interaction.defer()
     }
-    const locale = (content: string, args?: Args) => {
+    const t = (content: string, args?: Args) => {
       return locales(user.lang ?? guild.lang, content, args)
     }
-    command.run({ ctx, client, locale, id: interaction.data.id })
+    command.run({ ctx, client, t, id: interaction.data.id })
       .then(async() => {
         if(process.env.DEVS.includes(interaction.user.id)) return
         const cmd = (ctx.interaction as CommandInteraction).data.options.getSubCommand() ? `${command.name} ${(ctx.interaction as CommandInteraction).data.options.getSubCommand()?.join(" ")}` : command.name
@@ -96,11 +95,11 @@ export default class CommandRunner {
             iconURL: ctx.interaction.user.avatarURL()
           })
           .setTitle("New slash command executed")
-          .setDesc(`The command \`${cmd}\` has been executed in \`${ctx.guild.name}\``)
-          .addField("Server ID", `\`${ctx.guild.id}\``)
-          .addField("Owner", `\`${ctx.guild.owner?.username}\` (\`${ctx.guild.ownerID}\`)`)
+          .setDesc(`The command \`${cmd}\` has been executed in \`${ctx.guild?.name}\``)
+          .addField("Server ID", `\`${ctx.guild?.id}\``)
+          .addField("Owner", `\`${ctx.guild?.owner?.username}\` (\`${ctx.guild?.ownerID}\`)`)
           .addField("Command author", `\`${ctx.interaction.user.username}\``)
-          .setThumb(ctx.guild.iconURL()!)
+          .setThumb(ctx.guild?.iconURL()!)
         const channel = await client.rest.channels.get(process.env.COMMAND_LOG!) as TextChannel
         const webhooks = await channel.getWebhooks()
         let webhook = webhooks.find(w => w.name === `${client.user.username} Logger`)

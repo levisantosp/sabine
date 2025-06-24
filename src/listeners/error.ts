@@ -1,5 +1,5 @@
-import createListener from "../structures/client/createListener.js"
-import Logger from "../structures/util/Logger.js"
+import createListener from "../structures/client/createListener.ts"
+import Logger from "../structures/util/Logger.ts"
 
 export default createListener({
   name: "error",

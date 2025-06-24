@@ -1,4 +1,4 @@
-import createCommand from "../../structures/command/createCommand.js"
+import createCommand from "../../structures/command/createCommand.ts"
 
 export default createCommand({
   name: "language",
@@ -39,6 +39,7 @@ export default createCommand({
     "language en-US",
     "language pt-BR"
   ],
+  userInstall: true,
   async run({ ctx }) {
     switch (ctx.args[0]) {
       case "pt": {

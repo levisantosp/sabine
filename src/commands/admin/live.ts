@@ -1,5 +1,5 @@
-import ButtonBuilder from "../../structures/builders/ButtonBuilder.js"
-import createCommand from "../../structures/command/createCommand.js"
+import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
+import createCommand from "../../structures/command/createCommand.ts"
 
 export default createCommand({
   name: "live",
@@ -96,15 +96,15 @@ export default createCommand({
       ]
     }
   ],
-  async run({ ctx, locale }) {
+  async run({ ctx, t }) {
     if(ctx.args[0] === "enable") {
       if(!ctx.db.guild.partner && !["PREMIUM"].some(k => k === ctx.db.guild.key?.type)) {
         const button = new ButtonBuilder()
-          .setLabel(locale("commands.news.buy_premium"))
+          .setLabel(t("commands.news.buy_premium"))
           .setStyle("link")
           .setURL("https://discord.com/invite/FaqYcpA84r")
         await ctx.reply({
-          content: locale("helper.premium_feature"),
+          content: t("helper.premium_feature"),
           components: [
             {
               type: 1,
@@ -116,6 +116,7 @@ export default createCommand({
       }
       const games = {
         valorant: async() => {
+          if(!ctx.guild) return
           let channel = ctx.guild.channels.get(ctx.args[2])!
           if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
           ctx.db.guild.valorant_livefeed_channel = channel.id
@@ -123,6 +124,7 @@ export default createCommand({
           await ctx.reply("commands.live.live_enabled", { ch: channel.mention })
         },
         lol: async() => {
+          if(!ctx.guild) return
           let channel = ctx.guild.channels.get(ctx.args[2])!
           if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
           ctx.db.guild.lol_livefeed_channel = channel.id
@@ -135,6 +137,7 @@ export default createCommand({
     else {
       const games = {
         valorant: async() => {
+          if(!ctx.guild) return
           let channel = ctx.guild.channels.get(ctx.args[2])!
           if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
           ctx.db.guild.updateOne({
@@ -143,6 +146,7 @@ export default createCommand({
           await ctx.reply("commands.live.live_disabled")
         },
         lol: async() => {
+          if(!ctx.guild) return
           let channel = ctx.guild.channels.get(ctx.args[2])!
           if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
           ctx.db.guild.updateOne({

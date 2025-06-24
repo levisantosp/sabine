@@ -1,6 +1,6 @@
-import { Key, KeySchemaInterface } from "../../database/index.js"
-import ButtonBuilder from "../../structures/builders/ButtonBuilder.js"
-import createCommand from "../../structures/command/createCommand.js"
+import { Key, type KeySchemaInterface } from "../../database/index.ts"
+import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
+import createCommand from "../../structures/command/createCommand.ts"
 
 export default createCommand({
   name: "activatekey",
@@ -32,7 +32,8 @@ export default createCommand({
   ],
   permissions: ["ADMINISTRATOR"],
   ephemeral: true,
-  async run({ ctx, locale }) {
+  async run({ ctx, t }) {
+    if(!ctx.guild) return
     const key = await Key.findById(ctx.args[0]) as KeySchemaInterface
     if(!key) {
       ctx.reply("commands.activatekey.invalid_key")
@@ -49,9 +50,9 @@ export default createCommand({
     if(ctx.db.guild.key) {
       const button = new ButtonBuilder()
         .setStyle("red")
-        .setLabel(locale("commands.activatekey.button"))
+        .setLabel(t("commands.activatekey.button"))
         .setCustomId(`activatekey;${ctx.interaction.user.id};${key.type};${ctx.args[0]}`)
-      ctx.reply(button.build(locale("commands.activatekey.would_like_to_continue", { key: ctx.db.guild.key.type })))
+      ctx.reply(button.build(t("commands.activatekey.would_like_to_continue", { key: ctx.db.guild.key.type })))
     }
     else {
       ctx.db.guild.key = {
@@ -68,6 +69,7 @@ export default createCommand({
     }
   },
   async createInteraction({ ctx }) {
+    if(!ctx.guild) return
     await ctx.interaction.defer(64)
     const key = await Key.findById(ctx.args[3]) as KeySchemaInterface
     if(!key) {

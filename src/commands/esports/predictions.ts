@@ -1,7 +1,7 @@
-import { ComponentInteraction } from "oceanic.js"
-import createCommand from "../../structures/command/createCommand.js"
-import EmbedBuilder from "../../structures/builders/EmbedBuilder.js"
-import ButtonBuilder from "../../structures/builders/ButtonBuilder.js"
+import type { ComponentInteraction } from "oceanic.js"
+import createCommand from "../../structures/command/createCommand.ts"
+import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
+import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
 
 export default createCommand({
   name: "predictions",
@@ -66,7 +66,8 @@ export default createCommand({
     "predictions lol 2",
     "predictions valorant 5"
   ],
-  async run({ ctx, locale }) {
+  userInstall: true,
+  async run({ ctx, t }) {
     if(ctx.args[0] === "valorant") {
       if(!ctx.db.user.valorant_predictions.length) {
         ctx.reply("commands.predictions.no_predictions")
@@ -83,16 +84,16 @@ export default createCommand({
       }
       const embed = new EmbedBuilder()
         .setAuthor({
-          name: locale("commands.predictions.embed.author"),
+          name: t("commands.predictions.embed.author"),
           iconURL: ctx.interaction.user.avatarURL()
         })
-        .setDesc(locale("commands.predictions.embed.desc", {
+        .setDesc(t("commands.predictions.embed.desc", {
           correct: ctx.db.user.correct_predictions,
           wrong: ctx.db.user.wrong_predictions,
           t: ctx.db.user.valorant_predictions.length
         }))
         .setFooter({
-          text: locale("commands.predictions.embed.footer", {
+          text: t("commands.predictions.embed.footer", {
             p1: isNaN(page) ? 1 : page,
             p2: pages
           })
@@ -113,7 +114,7 @@ export default createCommand({
         if(prediction.odd) {
           odd += `\nOdd: \`${prediction.odd}x\``
         }
-        embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name}`, locale("commands.predictions.embed.field", {
+        embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name}`, t("commands.predictions.embed.field", {
           score1: prediction.teams[0].score,
           score2: prediction.teams[1].score,
           link: `https://www.vlr.gg/${prediction.match}`
@@ -154,16 +155,16 @@ export default createCommand({
       }
       const embed = new EmbedBuilder()
         .setAuthor({
-          name: locale("commands.predictions.embed.author"),
+          name: t("commands.predictions.embed.author"),
           iconURL: ctx.interaction.user.avatarURL()
         })
-        .setDesc(locale("commands.predictions.embed.desc", {
+        .setDesc(t("commands.predictions.embed.desc", {
           correct: ctx.db.user.correct_predictions,
           wrong: ctx.db.user.wrong_predictions,
           t: ctx.db.user.lol_predictions.length
         }))
         .setFooter({
-          text: locale("commands.predictions.embed.footer", {
+          text: t("commands.predictions.embed.footer", {
             p1: isNaN(page) ? 1 : page,
             p2: pages
           })
@@ -184,7 +185,7 @@ export default createCommand({
         if(prediction.odd) {
           odd += `\nOdd: \`${prediction.odd}x\``
         }
-        embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name}`, locale("commands.predictions.embed.field", {
+        embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name}`, t("commands.predictions.embed.field", {
           score1: prediction.teams[0].score,
           score2: prediction.teams[1].score,
           link: `https://loltv.gg/match/${prediction.match}`
@@ -210,7 +211,7 @@ export default createCommand({
       }))
     }
   },
-  async createInteraction({ ctx, locale }) {
+  async createInteraction({ ctx, t }) {
     if(ctx.args[4] === "valorant") {
       await (ctx.interaction as ComponentInteraction).deferUpdate()
       if(!ctx.db.user.valorant_predictions.length) {
@@ -227,16 +228,16 @@ export default createCommand({
       }
       const embed = new EmbedBuilder()
         .setAuthor({
-          name: locale("commands.predictions.embed.author"),
+          name: t("commands.predictions.embed.author"),
           iconURL: ctx.interaction.user.avatarURL()
         })
-        .setDesc(locale("commands.predictions.embed.desc", {
+        .setDesc(t("commands.predictions.embed.desc", {
           correct: ctx.db.user.correct_predictions,
           wrong: ctx.db.user.wrong_predictions,
           t: ctx.db.user.valorant_predictions.length
         }))
         .setFooter({
-          text: locale("commands.predictions.embed.footer", {
+          text: t("commands.predictions.embed.footer", {
             p1: isNaN(page) ? 1 : page,
             p2: pages
           })
@@ -257,7 +258,7 @@ export default createCommand({
         if(prediction.odd) {
           odd += `\nOdd: \`${prediction.odd}x\``
         }
-        embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name}`, locale("commands.predictions.embed.field", {
+        embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name}`, t("commands.predictions.embed.field", {
           score1: prediction.teams[0].score,
           score2: prediction.teams[1].score,
           link: `https://www.vlr.gg/${prediction.match}`
@@ -298,16 +299,16 @@ export default createCommand({
       }
       const embed = new EmbedBuilder()
         .setAuthor({
-          name: locale("commands.predictions.embed.author"),
+          name: t("commands.predictions.embed.author"),
           iconURL: ctx.interaction.user.avatarURL()
         })
-        .setDesc(locale("commands.predictions.embed.desc", {
+        .setDesc(t("commands.predictions.embed.desc", {
           correct: ctx.db.user.correct_predictions,
           wrong: ctx.db.user.wrong_predictions,
           t: ctx.db.user.lol_predictions.length
         }))
         .setFooter({
-          text: locale("commands.predictions.embed.footer", {
+          text: t("commands.predictions.embed.footer", {
             p1: isNaN(page) ? 1 : page,
             p2: pages
           })
@@ -328,7 +329,7 @@ export default createCommand({
         if(prediction.odd) {
           odd += `\nOdd: \`${prediction.odd}x\``
         }
-        if(prediction) embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name}`, locale("commands.predictions.embed.field", {
+        if(prediction) embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name}`, t("commands.predictions.embed.field", {
           score1: prediction.teams[0].score,
           score2: prediction.teams[1].score,
           link: `https://www.loltv.gg/match/${prediction.match}`

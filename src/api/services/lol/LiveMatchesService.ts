@@ -1,4 +1,4 @@
-import { LiveFeed } from "../../../../types"
+import type { LiveFeed } from "../../../types.ts"
 
 export default class LiveMatchesService {
   public static async get(auth: string) {
@@ -7,7 +7,6 @@ export default class LiveMatchesService {
         authorization: auth
       }
     })).json()
-
     return data as LiveFeed[]
   }
 }

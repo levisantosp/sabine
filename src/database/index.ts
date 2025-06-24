@@ -1,8 +1,8 @@
 import mongoose from "mongoose"
-import { TextChannel } from "oceanic.js"
-import { LiveFeed } from "../../types/index.js"
-import { client } from "../index.js"
-import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
+import * as Oceanic from "oceanic.js"
+import type { LiveFeed } from "../types.ts"
+import EmbedBuilder from "../structures/builders/EmbedBuilder.ts"
+import { client } from "../structures/client/App.ts"
 
 const UserSchema = mongoose.model("users", new mongoose.Schema(
   {
@@ -117,7 +117,7 @@ export class User extends UserSchema {
     })
     this.warned = false
     await this.save()
-    const channel = client.getChannel(process.env.USERS_LOG) as TextChannel
+    const channel = client.getChannel(process.env.USERS_LOG) as Oceanic.TextChannel
     const user = client.users.get(this.id)
     const embed = new EmbedBuilder()
       .setTitle("New register")
@@ -140,7 +140,7 @@ export class User extends UserSchema {
   public async removePremium(by: "REMOVE_PREMIUM_BY_AUTO" | "REMOVE_PREMIUM_BY_COMMAND") {
     this.plans.shift()
     await this.save()
-    const channel = client.getChannel(process.env.USERS_LOG) as TextChannel
+    const channel = client.getChannel(process.env.USERS_LOG) as Oceanic.TextChannel
     const user = client.users.get(this.id)
     const embed = new EmbedBuilder()
       .setTitle("New register")
@@ -164,7 +164,7 @@ export class User extends UserSchema {
     if(game === "valorant") {
       this.valorant_predictions.push(prediction)
       await this.save()
-      const channel = client.getChannel(process.env.USERS_LOG) as TextChannel
+      const channel = client.getChannel(process.env.USERS_LOG) as Oceanic.TextChannel
       const user = client.users.get(this.id)
       const embed = new EmbedBuilder()
         .setTitle("New register")
@@ -187,7 +187,7 @@ export class User extends UserSchema {
     if(game === "lol") {
       this.lol_predictions.push(prediction)
       await this.save()
-      const channel = client.getChannel(process.env.USERS_LOG) as TextChannel
+      const channel = client.getChannel(process.env.USERS_LOG) as Oceanic.TextChannel
       const user = client.users.get(this.id)
       const embed = new EmbedBuilder()
         .setTitle("New register")
@@ -216,7 +216,7 @@ export class User extends UserSchema {
         $inc: { correct_predictions: 1 },
         $set: { valorant_predictions: this.valorant_predictions }
       })
-      const channel = client.getChannel(process.env.USERS_LOG) as TextChannel
+      const channel = client.getChannel(process.env.USERS_LOG) as Oceanic.TextChannel
       const user = client.users.get(this.id)
       const embed = new EmbedBuilder()
         .setTitle("New register")
@@ -242,7 +242,7 @@ export class User extends UserSchema {
         $inc: { correct_predictions: 1 },
         $set: { lol_predictions: this.lol_predictions }
       })
-      const channel = client.getChannel(process.env.USERS_LOG) as TextChannel
+      const channel = client.getChannel(process.env.USERS_LOG) as Oceanic.TextChannel
       const user = client.users.get(this.id)
       const embed = new EmbedBuilder()
         .setTitle("New register")
@@ -271,7 +271,7 @@ export class User extends UserSchema {
         $inc: { wrong_predictions: 1 },
         $set: { valorant_predictions: this.valorant_predictions }
       })
-      const channel = client.getChannel(process.env.USERS_LOG) as TextChannel
+      const channel = client.getChannel(process.env.USERS_LOG) as Oceanic.TextChannel
       const user = client.users.get(this.id)
       const embed = new EmbedBuilder()
         .setTitle("New register")
@@ -297,7 +297,7 @@ export class User extends UserSchema {
         $inc: { wrong_predictions: 1 },
         $set: { lol_predictions: this.lol_predictions }
       })
-      const channel = client.getChannel(process.env.USERS_LOG) as TextChannel
+      const channel = client.getChannel(process.env.USERS_LOG) as Oceanic.TextChannel
       const user = client.users.get(this.id)
       const embed = new EmbedBuilder()
         .setTitle("New register")
@@ -334,7 +334,7 @@ export class User extends UserSchema {
         value: player
       }
     )
-    const channel = client.getChannel(process.env.USERS_LOG) as TextChannel
+    const channel = client.getChannel(process.env.USERS_LOG) as Oceanic.TextChannel
     const webhooks = await channel.getWebhooks()
     let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
     if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
@@ -358,7 +358,7 @@ export class User extends UserSchema {
         value: id
       }
     )
-    const channel = client.getChannel(process.env.USERS_LOG) as TextChannel
+    const channel = client.getChannel(process.env.USERS_LOG) as Oceanic.TextChannel
     const webhooks = await channel.getWebhooks()
     let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
     if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })

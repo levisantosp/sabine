@@ -1,12 +1,12 @@
-import { CommandInteraction, ComponentInteraction } from "oceanic.js"
-import { MatchesData } from "../../../types/index.js"
-import Service from "../../api/index.js"
-import { Guild, GuildSchemaInterface } from "../../database/index.js"
-import locales from "../../locales/index.js"
-import createCommand from "../../structures/command/createCommand.js"
-import EmbedBuilder from "../../structures/builders/EmbedBuilder.js"
-import ButtonBuilder from "../../structures/builders/ButtonBuilder.js"
-import { emojis } from "../../structures/util/emojis.js"
+import type { CommandInteraction, ComponentInteraction } from "oceanic.js"
+import type { MatchesData } from "../../types.ts"
+import Service from "../../api/index.ts"
+import { Guild, type GuildSchemaInterface } from "../../database/index.ts"
+import locales from "../../locales/index.ts"
+import createCommand from "../../structures/command/createCommand.ts"
+import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
+import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
+import { emojis } from "../../structures/util/emojis.ts"
 const service = new Service(process.env.AUTH)
 
 export default createCommand({
@@ -80,11 +80,11 @@ export default createCommand({
 		"admin language pt-BR",
 		"admin language en-US"
 	],
-	async run({ ctx, locale, id }) {
+	async run({ ctx, t, id }) {
 		if(ctx.args[0] === "dashboard") {
 			const embed = new EmbedBuilder()
-				.setTitle(locale("commands.admin.dashboard"))
-				.setDesc(locale("commands.admin.desc", {
+				.setTitle(t("commands.admin.dashboard"))
+				.setDesc(t("commands.admin.desc", {
 					lang: ctx.db.guild.lang.replace("en", "English").replace("pt", "Português"),
 					limit: ctx.db.guild.tournamentsLength === Infinity ? "`Infinity`" : `${ctx.db.guild.lol_events.length + ctx.db.guild.valorant_events.length}/${ctx.db.guild.tournamentsLength}`,
 					id,
@@ -100,11 +100,11 @@ export default createCommand({
 						components: [
 							new ButtonBuilder()
 								.setStyle("blue")
-								.setLabel(locale("commands.admin.vlr_esports_coverage"))
+								.setLabel(t("commands.admin.vlr_esports_coverage"))
 								.setCustomId(`admin;${ctx.interaction.user.id};vlr`),
 							new ButtonBuilder()
 								.setStyle("blue")
-								.setLabel(locale("commands.admin.lol_esports_coverage"))
+								.setLabel(t("commands.admin.lol_esports_coverage"))
 								.setCustomId(`admin;${ctx.interaction.user.id};lol`)
 						]
 					},
@@ -112,11 +112,11 @@ export default createCommand({
 						type: 1,
 						components: [
 							new ButtonBuilder()
-								.setLabel(locale("commands.admin.resend", { game: "VALORANT" }))
+								.setLabel(t("commands.admin.resend", { game: "VALORANT" }))
 								.setStyle("red")
 								.setCustomId(`admin;${ctx.interaction.user.id};resend;vlr`),
 							new ButtonBuilder()
-								.setLabel(locale("commands.admin.resend", { game: "League of Legends" }))
+								.setLabel(t("commands.admin.resend", { game: "League of Legends" }))
 								.setStyle("red")
 								.setCustomId(`admin;${ctx.interaction.user.id};resend;lol`)
 						]
@@ -146,20 +146,20 @@ export default createCommand({
 			}
 			const embed = new EmbedBuilder()
 				.setTitle("Premium")
-				.setDesc(locale("commands.admin.premium", {
+				.setDesc(t("commands.admin.premium", {
 					key: ctx.db.guild.key.type,
 					expiresAt: `<t:${(ctx.db.guild.key.expiresAt! / 1000).toFixed(0)}:R>`
 				}))
 			ctx.reply(embed.build())
 		}
 	},
-	async createInteraction({ ctx, locale, client }) {
+	async createInteraction({ ctx, t }) {
 		if(ctx.args[2] === "vlr") {
 			await ctx.interaction.defer(64)
 			const embed = new EmbedBuilder()
-				.setDesc(locale("commands.admin.tournaments", { game: "VALORANT" }))
+				.setDesc(t("commands.admin.tournaments", { game: "VALORANT" }))
 			for(const event of ctx.db.guild.valorant_events) {
-				embed.addField(event.name, locale("commands.admin.event_channels", {
+				embed.addField(event.name, t("commands.admin.event_channels", {
 					ch1: `<#${event.channel1}>`,
 					ch2: `<#${event.channel2}>`
 				}), true)
@@ -169,9 +169,9 @@ export default createCommand({
 		else if(ctx.args[2] === "lol") {
 			await ctx.interaction.defer(64)
 			const embed = new EmbedBuilder()
-				.setDesc(locale("commands.admin.tournaments", { game: "League of Legends" }))
+				.setDesc(t("commands.admin.tournaments", { game: "League of Legends" }))
 			for(const event of ctx.db.guild.lol_events) {
-				embed.addField(event.name, locale("commands.admin.event_channels", {
+				embed.addField(event.name, t("commands.admin.event_channels", {
 					ch1: `<#${event.channel1}>`,
 					ch2: `<#${event.channel2}>`
 				}), true)
@@ -186,10 +186,10 @@ export default createCommand({
 				return
 			}
 			const button = new ButtonBuilder()
-				.setLabel(locale("commands.admin.continue"))
+				.setLabel(t("commands.admin.continue"))
 				.setStyle("red")
 				.setCustomId(`admin;${ctx.interaction.user.id};continue;vlr`)
-			ctx.reply(button.build(locale("commands.admin.confirm")))
+			ctx.reply(button.build(t("commands.admin.confirm")))
 		}
 		else if(ctx.args[2] === "resend" && ctx.args[3] === "lol") {
 			await ctx.interaction.defer(64)
@@ -199,10 +199,10 @@ export default createCommand({
 				return
 			}
 			const button = new ButtonBuilder()
-				.setLabel(locale("commands.admin.continue"))
+				.setLabel(t("commands.admin.continue"))
 				.setStyle("red")
 				.setCustomId(`admin;${ctx.interaction.user.id};continue;lol`)
-			ctx.reply(button.build(locale("commands.admin.confirm")))
+			ctx.reply(button.build(t("commands.admin.confirm")))
 		}
 		else if(ctx.args[2] === "continue" && ctx.args[3] === "vlr") {
 			await (ctx.interaction as ComponentInteraction).deferUpdate()
@@ -226,12 +226,12 @@ export default createCommand({
 			}
 			else data = res.filter(d => guild.valorant_events.some(e => e.name === d.tournament.name))
 			for(const e of guild.valorant_events) {
-				if(!client.getChannel(e.channel1)) continue
+				if(!ctx.client.getChannel(e.channel1)) continue
 				try {
-					let messages = await client.rest.channels.getMessages(e.channel1, { limit: 100 })
-					let messagesIds = messages.filter(m => m.author.id === client.user.id).map(m => m.id)
+					let messages = await ctx.client.rest.channels.getMessages(e.channel1, { limit: 100 })
+					let messagesIds = messages.filter(m => m.author.id === ctx.client.user.id).map(m => m.id)
 					if(messagesIds.length) {
-						client.rest.channels.deleteMessages(e.channel1, messagesIds).catch(() => { })
+						ctx.client.rest.channels.deleteMessages(e.channel1, messagesIds).catch(() => { })
 					}
 				}
 				catch { }
@@ -268,7 +268,7 @@ export default createCommand({
 								.setURL(`https://vlr.gg/${d.id}`)
 
 							if(d.stage.toLowerCase().includes("showmatch")) continue
-							if(d.teams[0].name !== "TBD" && d.teams[1].name !== "TBD") await client.rest.channels.createMessage(e.channel1, {
+							if(d.teams[0].name !== "TBD" && d.teams[1].name !== "TBD") await ctx.client.rest.channels.createMessage(e.channel1, {
 								embeds: [embed],
 								components: [
 									{
@@ -323,12 +323,12 @@ export default createCommand({
 			}
 			else data = res.filter(d => guild.lol_events.some(e => e.name === d.tournament.name))
 			for(const e of guild.lol_events) {
-				if(!client.getChannel(e.channel1)) continue
+				if(!ctx.client.getChannel(e.channel1)) continue
 				try {
-					let messages = await client.rest.channels.getMessages(e.channel1, { limit: 100 })
-					let messagesIds = messages.filter(m => m.author.id === client.user.id).map(m => m.id)
+					let messages = await ctx.client.rest.channels.getMessages(e.channel1, { limit: 100 })
+					let messagesIds = messages.filter(m => m.author.id === ctx.client.user.id).map(m => m.id)
 					if(messagesIds.length) {
-						client.rest.channels.deleteMessages(e.channel1, messagesIds).catch(() => { })
+						ctx.client.rest.channels.deleteMessages(e.channel1, messagesIds).catch(() => { })
 					}
 				}
 				catch { }
@@ -354,12 +354,12 @@ export default createCommand({
 									text: d.stage
 								})
 							const button = new ButtonBuilder()
-								.setLabel(locale("helper.palpitate"))
+								.setLabel(t("helper.palpitate"))
 								.setCustomId(`predict;lol;${d.id}`)
 								.setStyle("green")
 
 							if(d.stage.toLowerCase().includes("showmatch")) continue
-							if(d.teams[0].name !== "TBD" && d.teams[1].name !== "TBD") await client.rest.channels.createMessage(e.channel1, {
+							if(d.teams[0].name !== "TBD" && d.teams[1].name !== "TBD") await ctx.client.rest.channels.createMessage(e.channel1, {
 								embeds: [embed],
 								components: [
 									{

@@ -1,42 +1,23 @@
-import "dotenv/config"
-import App from "./structures/client/App.js"
-import { FastifyPluginAsyncTypebox, Type } from "@fastify/type-provider-typebox"
+import { client } from "./structures/client/App.ts"
+import { type FastifyPluginAsyncTypebox, Type } from "@fastify/type-provider-typebox"
 import fastify from "fastify"
-import { Guild, GuildSchemaInterface, User, UserSchemaInterface } from "./database/index.js"
-import { ResultsData } from "../types/index.js"
-import { emojis } from "./structures/util/emojis.js"
-import EmbedBuilder from "./structures/builders/EmbedBuilder.js"
-import ButtonBuilder from "./structures/builders/ButtonBuilder.js"
-import locales from "./locales/index.js"
+import { Guild, type GuildSchemaInterface, User, type UserSchemaInterface } from "./database/index.ts"
+import type { ResultsData } from "./types.ts"
+import { emojis } from "./structures/util/emojis.ts"
+import EmbedBuilder from "./structures/builders/EmbedBuilder.ts"
+import ButtonBuilder from "./structures/builders/ButtonBuilder.ts"
+import locales from "./locales/index.ts"
 import { TextChannel } from "oceanic.js"
 import { readdirSync } from "fs"
 import path from "path"
 import { fileURLToPath } from "url"
-import getPlayers from "./simulator/valorant/players/getPlayers.js"
-import calcOdd from "./structures/util/calcOdd.js"
+import getPlayers from "./simulator/valorant/players/getPlayers.ts"
+import calcOdd from "./structures/util/calcOdd.ts"
+import { server } from "./server/index.ts"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-
-export const client = new App({
-  auth: "Bot " + process.env.BOT_TOKEN,
-  gateway: {
-    intents: ["ALL"],
-    autoReconnect: true,
-    maxShards: "auto"
-  },
-  allowedMentions: {
-    everyone: false,
-    users: true,
-    repliedUser: true,
-    roles: false
-  },
-  defaultImageFormat: "png",
-  defaultImageSize: 2048
-})
-
-client.start()
-
+await client.connect()
 const routes: FastifyPluginAsyncTypebox = async(fastify) => {
   fastify.post("/webhooks/results/valorant", {
     schema: {
@@ -525,6 +506,8 @@ const routes: FastifyPluginAsyncTypebox = async(fastify) => {
     return getPlayers()
   })
 }
-const server = fastify()
-server.register(routes)
-server.listen({ host: "0.0.0.0", port: process.env.PORT ?? 3001 })
+
+server.listen({
+  host: process.env.HOST,
+  port: process.env.PORT ?? 3001
+})

@@ -1,14 +1,14 @@
-import { CreateApplicationCommandOptions, TextChannel } from "oceanic.js"
-import { Guild, GuildSchemaInterface } from "../database/index.js"
-import Service from "../api/index.js"
-import locales from "../locales/index.js"
-import { MatchesData } from "../../types/index.js"
-import createListener from "../structures/client/createListener.js"
-import Logger from "../structures/util/Logger.js"
-import { emojis } from "../structures/util/emojis.js"
-import EmbedBuilder from "../structures/builders/EmbedBuilder.js"
-import ButtonBuilder from "../structures/builders/ButtonBuilder.js"
-import App from "../structures/client/App.js"
+import type { CreateApplicationCommandOptions, TextChannel } from "oceanic.js"
+import { Guild, type GuildSchemaInterface } from "../database/index.ts"
+import Service from "../api/index.ts"
+import locales from "../locales/index.ts"
+import type { MatchesData } from "../types.ts"
+import createListener from "../structures/client/createListener.ts"
+import Logger from "../structures/util/Logger.ts"
+import { emojis } from "../structures/util/emojis.ts"
+import EmbedBuilder from "../structures/builders/EmbedBuilder.ts"
+import ButtonBuilder from "../structures/builders/ButtonBuilder.ts"
+import App from "../structures/client/App.ts"
 const service = new Service(process.env.AUTH)
 
 const deleteGuild = async(client: App) => {
@@ -346,18 +346,6 @@ export default createListener({
         }
       ])
     }
-    const commands: CreateApplicationCommandOptions[] = []
-    client.commands.forEach(cmd => {
-      commands.push({
-        name: cmd.name,
-        nameLocalizations: cmd.nameLocalizations,
-        description: cmd.description,
-        descriptionLocalizations: cmd.descriptionLocalizations,
-        options: cmd.options,
-        type: 1
-      })
-    })
-    await client.application.bulkEditGlobalCommands(commands)
-    await runTasks(client)
+    // await runTasks(client)
   }
 })

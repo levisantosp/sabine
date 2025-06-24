@@ -2,8 +2,8 @@ import * as Oceanic from "oceanic.js"
 import { readdirSync } from "fs"
 import mongoose from "mongoose"
 import path from "path"
-import { Command } from "../command/createCommand.js"
-import Logger from "../util/Logger.js"
+import type { Command } from "../command/createCommand.ts"
+import Logger from "../util/Logger.ts"
 import { fileURLToPath } from "url"
 
 const __filename = fileURLToPath(import.meta.url)
@@ -15,10 +15,11 @@ export default class App extends Oceanic.Client {
   public constructor(options?: Oceanic.ClientOptions) {
     super(options)
   }
-  public async start() {
+  public override async connect() {
+    const start = Date.now()
     Logger.warn("Connecting to database...")
     await mongoose.connect(process.env.MONGO_URI!)
-    Logger.send("Database connected!")
+    Logger.send(`Database connected in ${((Date.now() - start) / 1000).toFixed(1)}s!`)
     for(const file of readdirSync(path.resolve(__dirname, "../../listeners"))) {
       const listener = (await import(`../../listeners/${file}`)).default
       if(listener.name === "ready") this.once("ready", () => listener.run(this).catch((e: Error) => new Logger(this).error(e)))
@@ -30,6 +31,53 @@ export default class App extends Oceanic.Client {
         this.commands.set(command.name, command)
       }
     }
-    await this.connect()
+    await super.connect()
+    await this.restMode()
+    await this.bulkEditGlobalCommands()
+  }
+  private async bulkEditGlobalCommands() {
+    const commands: Oceanic.CreateApplicationCommandOptions[] = []
+    this.commands.forEach(cmd => {
+      const integrationTypes = [
+        Oceanic.ApplicationIntegrationTypes.GUILD_INSTALL
+      ]
+      const contexts = [
+        Oceanic.InteractionContextTypes.GUILD
+      ]
+      if(cmd.userInstall) {
+        integrationTypes.push(Oceanic.ApplicationIntegrationTypes.USER_INSTALL)
+        contexts.push(
+          Oceanic.InteractionContextTypes.BOT_DM,
+          Oceanic.InteractionContextTypes.PRIVATE_CHANNEL
+        )
+      }
+      commands.push({
+        name: cmd.name,
+        nameLocalizations: cmd.nameLocalizations,
+        description: cmd.description,
+        descriptionLocalizations: cmd.descriptionLocalizations,
+        options: cmd.options,
+        type: 1,
+        integrationTypes,
+        contexts
+      })
+    })
+    await this.application.bulkEditGlobalCommands(commands)
   }
 }
+export const client = new App({
+  auth: "Bot " + process.env.BOT_TOKEN,
+  gateway: {
+    intents: ["ALL"],
+    autoReconnect: true,
+    maxShards: "auto"
+  },
+  allowedMentions: {
+    everyone: false,
+    users: true,
+    repliedUser: true,
+    roles: false
+  },
+  defaultImageFormat: "png",
+  defaultImageSize: 2048
+})

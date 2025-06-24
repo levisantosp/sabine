@@ -1,48 +1,49 @@
-import { ApplicationCommandOptions, AutocompleteInteraction, ComponentInteraction, Constants, Locale, ModalSubmitInteraction } from "oceanic.js"
-import App from "../client/App.js"
-import CommandContext from "./CommandContext.js"
-import { Args } from "../../locales/index.js"
+import * as Oceanic from "oceanic.js"
+import App from "../client/App.ts"
+import CommandContext from "./CommandContext.ts"
+import type { Args } from "../../locales/index.ts"
+import ComponentInteractionContext from "../interactions/ComponentInteractionContext.ts"
 
 type CommandOptions = {
   ctx: CommandContext
   client: App
-  locale: (content: string, args?: Args) => string
+  t: (content: string, args?: Args) => string
   id: string
 }
 type CreateAutocompleteInteractionOptions = {
-  i: AutocompleteInteraction
-  locale: (content: string, args?: Args) => string
+  i: Oceanic.AutocompleteInteraction
+  t: (content: string, args?: Args) => string
   client: App
   args?: string[]
 }
 type CreateComponentInteractionOptions = {
-  ctx: CommandContext
+  ctx: ComponentInteractionContext
+  t: (content: string, args?: Args) => string
+  i: Oceanic.ComponentInteraction
   client: App
-  locale: (content: string, args?: Args) => string
-  i: ComponentInteraction
 }
 type CreateModalSubmitInteractionOptions = {
   ctx: CommandContext
   client: App
-  locale: (content: string, args?: Args) => string
-  i: ModalSubmitInteraction
+  t: (content: string, args?: Args) => string
+  i: Oceanic.ModalSubmitInteraction
 }
 export type Command = {
   name: string
-  nameLocalizations?: Partial<Record<Locale, string>>
+  nameLocalizations?: Partial<Record<Oceanic.Locale, string>>
   description: string
   category: "simulator" | "admin" | "esports" | "misc" | "premium"
-  descriptionLocalizations?: Partial<Record<Locale, string>>
-  options?: ApplicationCommandOptions[]
+  descriptionLocalizations?: Partial<Record<Oceanic.Locale, string>>
+  options?: Oceanic.ApplicationCommandOptions[]
   syntax?: string
   syntaxes?: string[]
   examples?: string[]
   client?: App
-  permissions?: Constants.PermissionName[]
-  botPermissions?: Constants.PermissionName[]
+  permissions?: Oceanic.Constants.PermissionName[]
+  botPermissions?: Oceanic.Constants.PermissionName[]
   onlyDev?: boolean
   ephemeral?: boolean
-  isThinking?: boolean
+  userInstall?: boolean
   run: (options: CommandOptions) => Promise<any>
   createAutocompleteInteraction?: (options: CreateAutocompleteInteractionOptions) => Promise<any>
   createInteraction?: (options: CreateComponentInteractionOptions) => Promise<any>

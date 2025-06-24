@@ -1,7 +1,7 @@
-import getPlayers from "../../simulator/valorant/players/getPlayers.js"
-import EmbedBuilder from "../../structures/builders/EmbedBuilder.js"
-import createCommand from "../../structures/command/createCommand.js"
-import calcPlayerPrice from "../../structures/util/calcPlayerPrice.js"
+import getPlayers from "../../simulator/valorant/players/getPlayers.ts"
+import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
+import createCommand from "../../structures/command/createCommand.ts"
+import calcPlayerPrice from "../../structures/util/calcPlayerPrice.ts"
 
 type Player = {
   id: number
@@ -71,7 +71,8 @@ export default createCommand({
   descriptionLocalizations: {
     "pt-BR": "Obtenha um jogador aleatório"
   },
-  async run({ ctx, locale }) {
+  userInstall: true,
+  async run({ ctx, t }) {
     if(ctx.db.user.claim_time > Date.now()) {
       return await ctx.reply("commands.claim.has_been_claimed", { t: `<t:${((ctx.db.user.claim_time) / 1000).toFixed(0)}:R>` })
     }
@@ -84,11 +85,10 @@ export default createCommand({
       ovr: parseInt(ovr.toString()),
       price
     }
-    await ctx.db.user.addPlayerToRoster(player.id.toString())
     const embed = new EmbedBuilder()
     .setTitle(player.name)
     .setDesc(
-      locale(
+      t(
         "commands.claim.claimed",
         {
           player: player.name,
@@ -98,5 +98,6 @@ export default createCommand({
     )
     .setImage(`${process.env.CDN_URL}/cards/${player.id}.png`)
     await ctx.reply(embed.build())
+    await ctx.db.user.addPlayerToRoster(player.id.toString())
   }
 })

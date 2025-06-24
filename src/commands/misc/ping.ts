@@ -1,4 +1,4 @@
-import createCommand from "../../structures/command/createCommand.js"
+import createCommand from "../../structures/command/createCommand.ts"
 
 export default createCommand({
   name: "ping",
@@ -7,7 +7,10 @@ export default createCommand({
   descriptionLocalizations: {
     "pt-BR": "Mostra a latência do bot"
   },
+  userInstall: true,
   async run({ ctx }) {
-    ctx.reply(`🏓 Pong! \`${ctx.guild.shard.latency}ms\` (Shard \`${ctx.guild.shard.id}\`)`)
+    const start = Date.now()
+    await (await fetch("https://discord.com/api/v10/gateway")).json()
+    await ctx.reply(`🏓 Pong! \`${Date.now() - start}ms\``)
   }
 })

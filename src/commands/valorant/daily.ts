@@ -1,4 +1,4 @@
-import createCommand from "../../structures/command/createCommand.js"
+import createCommand from "../../structures/command/createCommand.ts"
 
 export default createCommand({
   name: "daily",
@@ -7,6 +7,7 @@ export default createCommand({
     "pt-BR": "Obtenha sua recompensa diária"
   },
   category: "simulator",
+  userInstall: true,
   async run({ ctx, client }) {
     if(ctx.db.user.daily_time > Date.now()) {
       return await ctx.reply("commands.daily.has_been_claimed", { t: `<t:${((ctx.db.user.daily_time) / 1000).toFixed(0)}:R>` })

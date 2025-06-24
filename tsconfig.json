@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "ES2022",
+    "target": "ES2023",
+    "module": "nodenext",
     "outDir": "./dist",
     "lib": ["ES2023", "DOM"],
     "removeComments": true,
@@ -11,8 +11,8 @@
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "moduleResolution": "node"
+    "rewriteRelativeImportExtensions": true
   },
-  "include": ["src", "env.d.ts", "types"],
-  "exclude": ["node_modules"]
+  "include": ["src", "env.d.ts"],
+  "exclude": ["node_modules", "types"]
 }

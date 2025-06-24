@@ -1,9 +1,9 @@
-import { Constants, SelectOption } from "oceanic.js"
-import { User } from "../../database/index.js"
-import getPlayer from "../../simulator/valorant/players/getPlayer.js"
-import SelectMenuBuilder from "../../structures/builders/SelectMenuBuilder.js"
-import createCommand from "../../structures/command/createCommand.js"
-import calcPlayerOvr from "../../structures/util/calcPlayerOvr.js"
+import type { SelectOption } from "oceanic.js"
+import { User } from "../../database/index.ts"
+import getPlayer from "../../simulator/valorant/players/getPlayer.ts"
+import SelectMenuBuilder from "../../structures/builders/SelectMenuBuilder.ts"
+import createCommand from "../../structures/command/createCommand.ts"
+import calcPlayerOvr from "../../structures/util/calcPlayerOvr.ts"
 
 export default createCommand({
   name: "promote",
@@ -30,7 +30,8 @@ export default createCommand({
       autocomplete: true
     }
   ],
-  async run({ ctx, locale }) {
+  userInstall: true,
+  async run({ ctx, t }) {
     const p = getPlayer(Number(ctx.args[0]))
     if(!p) {
       return ctx.reply("commands.promote.player_not_found")
@@ -57,7 +58,7 @@ export default createCommand({
     const menu = new SelectMenuBuilder()
     .setCustomId(`promote;${ctx.interaction.user.id};${ctx.args[0]}`)
     .setOptions(...options)
-    await ctx.reply(menu.build(locale("commands.promote.select_player")))
+    await ctx.reply(menu.build(t("commands.promote.select_player")))
   },
   async createAutocompleteInteraction({ i }) {
     const user = await User.get(i.user.id)
@@ -80,7 +81,7 @@ export default createCommand({
       .map(p => ({ name: p.name, value: p.id }))
     )
   },
-  async createInteraction({ ctx, i, locale }) {
+  async createInteraction({ ctx, i, t }) {
     if(i.data.componentType === 3) {
       const id = i.data.values.getStrings()[0]
       let index = ctx.db.user.roster.active.findIndex(p => p === id)
@@ -92,7 +93,7 @@ export default createCommand({
       await ctx.db.user.save()
       const p = getPlayer(Number(ctx.args[2]))!
       await i.editParent({
-        content: locale("commands.promote.player_promoted", { p: p.name }),
+        content: t("commands.promote.player_promoted", { p: p.name }),
         components: []
       })
     }
