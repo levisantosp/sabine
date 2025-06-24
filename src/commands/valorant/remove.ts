@@ -1,10 +1,8 @@
-import { User } from "../../database/index.ts"
+import { SabineUser } from "../../database/index.ts"
 import getPlayer from "../../simulator/valorant/players/getPlayer.ts"
 import createCommand from "../../structures/command/createCommand.ts"
+import calcPlayerOvr from "../../structures/util/calcPlayerOvr.ts"
 
-const calc_player_ovr = (player: Player) => {
-  return (player.aim + player.HS + player.movement + player.aggression + player.ACS + player.gamesense) / 4.5
-}
 type Player = {
   id: number
   name: string
@@ -26,7 +24,7 @@ export default createCommand({
   nameLocalizations: {
     "pt-BR": "remover"
   },
-  description: "Remove a player from active roster",
+  description: "Remove a player from active roster!",
   descriptionLocalizations: {
     "pt-BR": "Remova um jogador do elenco principal"
   },
@@ -47,27 +45,34 @@ export default createCommand({
     }
   ],
   userInstall: true,
-  async run({ ctx }) {
+  async run({ ctx, client }) {
     const p = getPlayer(Number(ctx.args[0]))
-    if(!ctx.db.user.roster.active.includes(ctx.args[0]) || !p) {
+    if(!ctx.db.user.roster!.active.includes(ctx.args[0]) || !p) {
       return ctx.reply("commands.remove.player_not_found")
     }
-    const players = ctx.db.user.roster.active
+    const players = ctx.db.user.roster!.active
     if(players.length < 5) {
-      let i = ctx.db.user.roster.active.findIndex(pl => pl === p.id.toString())
-      ctx.db.user.roster.reserve.push(p.id.toString())
-      ctx.db.user.roster.active.splice(i, 1)
-      await ctx.db.user.save()
+      let i = ctx.db.user.roster!.active.findIndex(pl => pl === p.id.toString())
+      ctx.db.user.roster!.reserve.push(p.id.toString())
+      ctx.db.user.roster!.active.splice(i, 1)
+      await client.prisma.users.update({
+        where: {
+          id: ctx.db.user.id
+        },
+        data: {
+          roster: ctx.db.user.roster
+        }
+      })
       return await ctx.reply("commands.remove.player_removed", { p: p.name })
     }
   },
   async createAutocompleteInteraction({ i }) {
-    const user = await User.get(i.user.id)
+    const user = (await new SabineUser(i.user.id).get())!
     const players: Array<{ name: string, ovr: number, id: string }> = []
-    for(const p_id of user.roster.active) {
+    for(const p_id of user.roster!.active) {
       const p = getPlayer(Number(p_id))
       if(!p) break
-      const ovr = parseInt(calc_player_ovr(p).toString())
+      const ovr = parseInt(calcPlayerOvr(p).toString())
       players.push({
         name: `${p.name} (${ovr})`,
         ovr,

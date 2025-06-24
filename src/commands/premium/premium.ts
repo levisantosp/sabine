@@ -1,4 +1,3 @@
-import { Key, type KeySchemaInterface } from "../../database/index.ts"
 import createCommand from "../../structures/command/createCommand.ts"
 import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
 import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
@@ -31,9 +30,13 @@ export default createCommand({
       ))
     ctx.reply(button.build(embed.build()))
   },
-  async createInteraction({ ctx, t }) {
+  async createInteraction({ ctx, t, client }) {
     await ctx.interaction.defer(64)
-    const keys = await Key.find({ user: { $eq: ctx.args[1] } }) as KeySchemaInterface[]
+    const keys = await client.prisma.keys.findMany({
+      where: {
+        id: ctx.args[1]
+      }
+    })
     if(!keys.length) {
       ctx.reply("commands.premium.you_dont_have_keys")
       return
@@ -51,6 +54,6 @@ export default createCommand({
         )
       )
     }
-    ctx.reply(embed.build())
+    await ctx.reply(embed.build())
   }
 })

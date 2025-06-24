@@ -1,0 +1,170 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGO_URI")
+}
+
+type PredictionTeams {
+  name   String
+  score  String
+  winner Boolean
+}
+
+enum PredictionStatus {
+  pending
+  correct
+  wrong
+}
+
+type Prediction {
+  match  String
+  teams  PredictionTeams[]
+  status PredictionStatus
+  bet    BigInt?
+  odd    Int?
+}
+
+enum Language {
+  pt
+  en
+}
+
+enum PremiumType {
+  PREMIUM
+}
+
+type Premium {
+  type      PremiumType
+  expiresAt Int         @db.Long
+}
+
+type Roster {
+  active  String[] @default([])
+  reserve String[] @default([])
+}
+
+type Team {
+  name String?
+  tag  String?
+}
+
+type CarrerTeam {
+  user  String
+  score Int
+}
+
+type Carrer {
+  teams CarrerTeam[]
+}
+
+type Event {
+  name     String
+  channel1 String
+  channel2 String
+}
+
+type TBDMatch {
+  id      String
+  channel String
+}
+
+type LiveMatchTeam {
+  name  String
+  score String
+}
+
+type LiveMatchTour {
+  name      String
+  full_name String?
+  image     String?
+}
+
+type LiveMatch {
+  teams      LiveMatchTeam[]
+  currentMap String?
+  score1     String?
+  score2     String?
+  id         String
+  url        String?
+  stage      String?
+  tournament LiveMatchTour
+}
+
+enum KeyType {
+  BOOSTER
+  PREMIUM
+}
+
+type Key {
+  type      KeyType
+  expiresAt Int?    @db.Long
+  id        String
+}
+
+type BlacklistProps {
+  id     String
+  name   String?
+  when   Float   @db.Double
+  reason String
+  endsAt Float   @db.Double
+}
+
+model blacklists {
+  id     String           @id @map("_id")
+  guilds BlacklistProps[]
+  users  BlacklistProps[]
+}
+
+model guilds {
+  id                        String      @id @map("_id")
+  lang                      Language
+  valorant_events           Event[]
+  valorant_resend_time      Int         @default(0) @db.Long
+  valorant_matches          String[]    @default([])
+  valorant_tbd_matches      TBDMatch[]
+  valorant_news_channel     String?
+  valorant_livefeed_channel String?
+  valorant_live_matches     LiveMatch[]
+  lol_events                Event[]
+  lol_resend_time           Int         @default(0) @db.Long
+  lol_matches               String[]    @default([])
+  lol_tbd_matches           TBDMatch[]
+  lol_news_channel          String?
+  lol_livefeed_channel      String?
+  lol_live_matches          LiveMatch[]
+  key                       Key?
+  tournamentsLength        Int         @default(5)
+  partner                   Boolean?
+  invite                    String?
+}
+
+model keys {
+  id        String   @id @map("_id")
+  active    Boolean
+  activeIn  String[]
+  expiresAt Float?   @db.Double
+  type      KeyType
+  user      String
+}
+
+model users {
+  id                   String       @id @map("_id")
+  valorant_predictions Prediction[]
+  lol_predictions      Prediction[]
+  correct_predictions  Int          @default(0)
+  wrong_predictions    Int          @default(0)
+  lang                 Language?
+  plan                 Premium?
+  warned               Boolean?
+  roster               Roster?
+  coins                BigInt       @default(0)
+  team                 Team?
+  carrer               Carrer[]
+  wins                 Int          @default(0)
+  defeats              Int          @default(0)
+  daily_time           Int          @default(0) @db.Long
+  claim_time           Int          @default(0) @db.Long
+}

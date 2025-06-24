@@ -1,5 +1,4 @@
 import type { ComponentInteraction } from "oceanic.js"
-import { User, type UserSchemaInterface } from "../../database/index.ts"
 import createCommand from "../../structures/command/createCommand.ts"
 import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
 import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
@@ -66,11 +65,13 @@ export default createCommand({
   ],
   async run({ ctx, t, client }) {
     if(ctx.args[0] === "local" && ctx.guild) {
-      let users = (await User.find({
-        correct_predictions: {
-          $gt: 0
+      let users = (await client.prisma.users.findMany({
+        where: {
+          correct_predictions: {
+            gt: 0
+          }
         }
-      }) as UserSchemaInterface[]).filter(user => ctx.guild!.members.get(user.id)).sort((a, b) => b.correct_predictions - a.correct_predictions)
+      })).filter(user => ctx.guild!.members.get(user.id)).sort((a, b) => b.correct_predictions - a.correct_predictions)
       let array = users
       let page = Number(ctx.args[1])
       if(!page || page === 1 || isNaN(page)) {
@@ -130,11 +131,13 @@ export default createCommand({
       }))
     }
     else {
-      let users = (await User.find({
-        correct_predictions: {
-          $gt: 0
+      let users = (await client.prisma.users.findMany({
+        where: {
+          correct_predictions: {
+            gt: 0
+          }
         }
-      }) as UserSchemaInterface[]).sort((a, b) => b.correct_predictions - a.correct_predictions)
+      })).sort((a, b) => b.correct_predictions - a.correct_predictions)
       let array = users
       let page = Number(ctx.args[1])
       if(!page || page === 1 || isNaN(page)) {
@@ -198,11 +201,13 @@ export default createCommand({
   async createInteraction({ ctx, t, client }) {
     await ctx.interaction.deferUpdate()
     if(ctx.args[4] === "local" && ctx.guild) {
-      let users = (await User.find({
-        correct_predictions: {
-          $gt: 0
+      let users = (await client.prisma.users.findMany({
+        where: {
+          correct_predictions: {
+            gt: 0
+          }
         }
-      }) as UserSchemaInterface[]).filter(user => ctx.guild!.members.get(user.id)).sort((a, b) => b.correct_predictions - a.correct_predictions)
+      })).filter(user => ctx.guild!.members.get(user.id)).sort((a, b) => b.correct_predictions - a.correct_predictions)
       let array = users
       let page = Number(ctx.args[2])
       let pages = Math.ceil(array.length / 10)
@@ -259,11 +264,13 @@ export default createCommand({
       }))
     }
     else {
-      let users = (await User.find({
-        correct_predictions: {
-          $gt: 0
+      let users = (await client.prisma.users.findMany({
+        where: {
+          correct_predictions: {
+            gt: 0
+          }
         }
-      }) as UserSchemaInterface[]).sort((a, b) => b.correct_predictions - a.correct_predictions)
+      })).sort((a, b) => b.correct_predictions - a.correct_predictions)
       let array = users
       let page = Number(ctx.args[2])
       let pages = Math.ceil(array.length / 10)

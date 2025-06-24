@@ -1,9 +1,8 @@
-import { User } from "../../database/index.ts"
+import { SabineUser } from "../../database/index.ts"
 import getPlayer from "../../simulator/valorant/players/getPlayer.ts"
 import createCommand from "../../structures/command/createCommand.ts"
 import calcPlayerOvr from "../../structures/util/calcPlayerOvr.ts"
 import calcPlayerPrice from "../../structures/util/calcPlayerPrice.ts"
-import Logger from "../../structures/util/Logger.ts"
 
 export default createCommand({
   name: "sell",
@@ -33,18 +32,19 @@ export default createCommand({
   userInstall: true,
   async run({ ctx }) {
     const player = getPlayer(Number(ctx.args[0]))
-    let i = ctx.db.user.roster.reserve.findIndex(p => p === ctx.args[0])
+    let i = ctx.db.user.roster!.reserve.findIndex(p => p === ctx.args[0])
     if(!player || i === -1) {
       return ctx.reply("commands.sell.player_not_found")
     }
+    const user = new SabineUser(ctx.interaction.user.id)
     const price = BigInt(calcPlayerPrice(player, true).toString())
-    await ctx.db.user.sellPlayer(player.id.toString(), price, i)
+    await user.sellPlayer(player.id.toString(), price, i)
     await ctx.reply("commands.sell.sold", { p: player.name, price: price.toLocaleString("en-US") })
   },
   async createAutocompleteInteraction({ i }) {
-    const user = await User.get(i.user.id)
+    const user = (await new SabineUser(i.user.id).get())!
     const players: Array<{ name: string, ovr: number, id: string }> = []
-    for(const p_id of user.roster.reserve) {
+    for(const p_id of user.roster!.reserve) {
       const p = getPlayer(Number(p_id))
       if(!p) break
       const ovr = parseInt(calcPlayerOvr(p).toString())

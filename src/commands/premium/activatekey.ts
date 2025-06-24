@@ -1,4 +1,3 @@
-import { Key, type KeySchemaInterface } from "../../database/index.ts"
 import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
 import createCommand from "../../structures/command/createCommand.ts"
 
@@ -32,68 +31,90 @@ export default createCommand({
   ],
   permissions: ["ADMINISTRATOR"],
   ephemeral: true,
-  async run({ ctx, t }) {
+  async run({ ctx, t, client }) {
     if(!ctx.guild) return
-    const key = await Key.findById(ctx.args[0]) as KeySchemaInterface
+    const key = await client.prisma.keys.findFirst()
     if(!key) {
-      ctx.reply("commands.activatekey.invalid_key")
-      return
+      return await ctx.reply("commands.activatekey.invalid_key")
     }
     if((key.type === "BOOSTER" && key.active) || key.activeIn.includes(ctx.guild.id)) {
-      ctx.reply("commands.activatekey.key_already_activated")
-      return
+      return await ctx.reply("commands.activatekey.key_already_activated")
     }
     if(key.type === "PREMIUM" && key.activeIn.length >= 2) {
-      ctx.reply("commands.activatekey.limit_reached")
-      return
+      return await ctx.reply("commands.activatekey.limit_reached")
     }
     if(ctx.db.guild.key) {
       const button = new ButtonBuilder()
         .setStyle("red")
         .setLabel(t("commands.activatekey.button"))
         .setCustomId(`activatekey;${ctx.interaction.user.id};${key.type};${ctx.args[0]}`)
-      ctx.reply(button.build(t("commands.activatekey.would_like_to_continue", { key: ctx.db.guild.key.type })))
+      await ctx.reply(button.build(t("commands.activatekey.would_like_to_continue", { key: ctx.db.guild.key.type })))
     }
     else {
-      ctx.db.guild.key = {
-        type: key.type,
-        id: key.id,
-        expiresAt: key.expiresAt
-      }
-      ctx.db.guild.tournamentsLength = 20
-      key.active = true
-      key.activeIn.push(ctx.guild.id)
-      await key.save()
-      await ctx.db.guild.save()
-      ctx.reply("commands.activatekey.key_activated")
+      await client.prisma.keys.update({
+        where: {
+          id: key.id
+        },
+        data: {
+          active: true,
+          activeIn: {
+            push: ctx.guild.id
+          }
+        }
+      })
+      await client.prisma.guilds.update({
+        where: {
+          id: ctx.db.guild.id
+        },
+        data: {
+          tournamentsLength: 20,
+          key: {
+            type: key.type,
+            id: key.id,
+            expiresAt: key.expiresAt
+          }
+        }
+      })
+      await ctx.reply("commands.activatekey.key_activated")
     }
   },
-  async createInteraction({ ctx }) {
+  async createInteraction({ ctx, client }) {
     if(!ctx.guild) return
     await ctx.interaction.defer(64)
-    const key = await Key.findById(ctx.args[3]) as KeySchemaInterface
+    const key = await client.prisma.keys.findFirst()
     if(!key) {
-      ctx.reply("commands.activatekey.invalid_key")
-      return
+      return await ctx.reply("commands.activatekey.invalid_key")
     }
     if((key.type === "BOOSTER" && key.active) || key.activeIn.includes(ctx.guild.id)) {
-      ctx.reply("commands.activatekey.key_already_activated")
-      return
+      return await ctx.reply("commands.activatekey.key_already_activated")
     }
     if(key.type === "PREMIUM" && key.activeIn.length >= 2) {
-      ctx.reply("commands.activatekey.limit_reached")
-      return
+      return await ctx.reply("commands.activatekey.limit_reached")
     }
-    ctx.db.guild.key = {
-      id: key.id,
-      type: key.type,
-      expiresAt: key.expiresAt
-    }
-    ctx.db.guild.tournamentsLength = 20
-    key.active = true
-    key.activeIn.push(ctx.guild.id)
-    await key.save()
-    await ctx.db.guild.save()
-    ctx.reply("commands.activatekey.key_activated")
+    await client.prisma.keys.update({
+      where: {
+        id: key.id
+      },
+      data: {
+        active: true,
+        activeIn: {
+          push: ctx.guild.id
+        }
+      }
+    })
+    await client.prisma.guilds.update({
+      where: {
+        id: ctx.db.guild.id
+      },
+      data: {
+        tournamentsLength: 20,
+        key: {
+          type: key.type,
+          id: key.id,
+          expiresAt: key.expiresAt
+        }
+      }
+    })
+    await ctx.reply("commands.activatekey.key_activated")
   }
 })

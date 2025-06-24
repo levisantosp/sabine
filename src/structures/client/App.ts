@@ -1,24 +1,27 @@
 import * as Oceanic from "oceanic.js"
 import { readdirSync } from "fs"
-import mongoose from "mongoose"
 import path from "path"
 import type { Command } from "../command/createCommand.ts"
 import Logger from "../util/Logger.ts"
 import { fileURLToPath } from "url"
+import { PrismaClient } from "@prisma/client"
 
+const prisma = new PrismaClient()
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 export default class App extends Oceanic.Client {
   public commands: Map<string, Command> = new Map()
   public _uptime: number = Date.now()
+  public prisma: typeof prisma
   public constructor(options?: Oceanic.ClientOptions) {
     super(options)
+    this.prisma = prisma
   }
   public override async connect() {
     const start = Date.now()
     Logger.warn("Connecting to database...")
-    await mongoose.connect(process.env.MONGO_URI!)
+    await prisma.$connect()
     Logger.send(`Database connected in ${((Date.now() - start) / 1000).toFixed(1)}s!`)
     for(const file of readdirSync(path.resolve(__dirname, "../../listeners"))) {
       const listener = (await import(`../../listeners/${file}`)).default

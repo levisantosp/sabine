@@ -1,11 +1,11 @@
 import type { ComponentInteraction, EditInteractionContent, File, Guild, InteractionContent } from "oceanic.js"
 import App from "../client/App.ts"
-import type { GuildSchemaInterface, UserSchemaInterface } from "../../database/index.ts"
 import locales, { type Args } from "../../locales/index.ts"
+import type { guilds, users } from "@prisma/client"
 
 type Database = {
-  guild: GuildSchemaInterface
-  user: UserSchemaInterface
+  guild: guilds
+  user: users
 }
 type ComponentInteractionContextOptions = {
   client: App

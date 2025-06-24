@@ -1,13 +1,15 @@
 import type { CommandInteraction, ComponentInteraction } from "oceanic.js"
 import type { MatchesData } from "../../types.ts"
 import Service from "../../api/index.ts"
-import { Guild, type GuildSchemaInterface } from "../../database/index.ts"
 import locales from "../../locales/index.ts"
 import createCommand from "../../structures/command/createCommand.ts"
 import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
 import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
 import { emojis } from "../../structures/util/emojis.ts"
+import { PrismaClient } from "@prisma/client"
 const service = new Service(process.env.AUTH)
+
+const prisma = new PrismaClient()
 
 export default createCommand({
 	name: "admin",
@@ -93,7 +95,7 @@ export default createCommand({
 					lol_news: !ctx.db.guild.lol_news_channel ? "`undefined`" : `<#${ctx.db.guild.lol_news_channel}>`,
 					lol_live: !ctx.db.guild.lol_livefeed_channel ? "`undefined`" : `<#${ctx.db.guild.lol_livefeed_channel}>`,
 				}))
-			ctx.reply(embed.build({
+			await ctx.reply(embed.build({
 				components: [
 					{
 						type: 1,
@@ -127,22 +129,33 @@ export default createCommand({
 		else if(ctx.args[0] === "language") {
 			const options = {
 				en: async() => {
-					ctx.db.guild.lang = "en"
-					await ctx.db.guild.save()
-					ctx.reply("Now I will interact in English on this server!")
+					await prisma.guilds.update({
+						where: {
+							id: ctx.db.guild.id
+						},
+						data: {
+							lang: "en"
+						}
+					})
+					await ctx.reply("Now I will interact in English on this server!")
 				},
 				pt: async() => {
-					ctx.db.guild.lang = "pt"
-					await ctx.db.guild.save()
-					ctx.reply("Agora eu irei interagir em português neste servidor!")
+					await prisma.guilds.update({
+						where: {
+							id: ctx.db.guild.id
+						},
+						data: {
+							lang: "pt"
+						}
+					})
+					await ctx.reply("Agora eu irei interagir em português neste servidor!")
 				}
 			}
-			options[(ctx.interaction as CommandInteraction).data.options.getStringOption("lang")?.value as "pt" | "en"]()
+			await options[(ctx.interaction as CommandInteraction).data.options.getStringOption("lang")?.value as "pt" | "en"]()
 		}
 		else if(ctx.args[0] === "premium") {
 			if(!ctx.db.guild.key) {
-				ctx.reply("commands.admin.no_premium")
-				return
+				return await ctx.reply("commands.admin.no_premium")
 			}
 			const embed = new EmbedBuilder()
 				.setTitle("Premium")
@@ -164,7 +177,7 @@ export default createCommand({
 					ch2: `<#${event.channel2}>`
 				}), true)
 			}
-			ctx.reply(embed.build())
+			await ctx.reply(embed.build())
 		}
 		else if(ctx.args[2] === "lol") {
 			await ctx.interaction.defer(64)
@@ -176,40 +189,37 @@ export default createCommand({
 					ch2: `<#${event.channel2}>`
 				}), true)
 			}
-			ctx.reply(embed.build())
+			await ctx.reply(embed.build())
 		}
 		else if(ctx.args[2] === "resend" && ctx.args[3] === "vlr") {
 			await ctx.interaction.defer(64)
-			const guild = await Guild.findById(ctx.interaction.guild!.id) as GuildSchemaInterface
+			const guild = (await prisma.guilds.findUnique({ where: { id: ctx.interaction.guild!.id } }))!
 			if(guild.valorant_resend_time > Date.now()) {
-				ctx.reply("commands.admin.resend_time", { t: `<t:${(guild.valorant_resend_time / 1000).toFixed(0)}:R>` })
-				return
+				return await ctx.reply("commands.admin.resend_time", { t: `<t:${(guild.valorant_resend_time / 1000).toFixed(0)}:R>` })
 			}
 			const button = new ButtonBuilder()
 				.setLabel(t("commands.admin.continue"))
 				.setStyle("red")
 				.setCustomId(`admin;${ctx.interaction.user.id};continue;vlr`)
-			ctx.reply(button.build(t("commands.admin.confirm")))
+			await ctx.reply(button.build(t("commands.admin.confirm")))
 		}
 		else if(ctx.args[2] === "resend" && ctx.args[3] === "lol") {
 			await ctx.interaction.defer(64)
-			const guild = await Guild.findById(ctx.interaction.guild!.id) as GuildSchemaInterface
+			const guild = (await prisma.guilds.findUnique({ where: { id: ctx.interaction.guild!.id } }))!
 			if(guild.lol_resend_time > Date.now()) {
-				ctx.reply("commands.admin.resend_time", { t: `<t:${(guild.lol_resend_time / 1000).toFixed(0)}:R>` })
-				return
+				return await ctx.reply("commands.admin.resend_time", { t: `<t:${(guild.lol_resend_time / 1000).toFixed(0)}:R>` })
 			}
 			const button = new ButtonBuilder()
 				.setLabel(t("commands.admin.continue"))
 				.setStyle("red")
 				.setCustomId(`admin;${ctx.interaction.user.id};continue;lol`)
-			ctx.reply(button.build(t("commands.admin.confirm")))
+			await ctx.reply(button.build(t("commands.admin.confirm")))
 		}
 		else if(ctx.args[2] === "continue" && ctx.args[3] === "vlr") {
 			await (ctx.interaction as ComponentInteraction).deferUpdate()
-			const guild = (await Guild.findById(ctx.interaction.guildID!))!
+			const guild = (await prisma.guilds.findUnique({ where: { id: ctx.interaction.guild!.id } }))!
 			if(guild.valorant_resend_time > Date.now()) {
-				ctx.edit("commands.admin.resend_time", { t: `<t:${(guild.valorant_resend_time / 1000).toFixed(0)}:R>` })
-				return
+				return await ctx.edit("commands.admin.resend_time", { t: `<t:${(guild.valorant_resend_time / 1000).toFixed(0)}:R>` })
 			}
 			guild.valorant_matches = []
 			guild.valorant_tbd_matches = []
@@ -219,7 +229,6 @@ export default createCommand({
 			if(!res || !res.length) return
 			const res2 = await service.getResults("valorant")
 			if(guild.valorant_matches.length && !res2.some(d => d.id === guild.valorant_matches[guild.valorant_matches.length - 1])) return
-			guild.valorant_matches = []
 			let data: MatchesData[]
 			if(guild.valorant_events.length > 5 && !guild.key) {
 				data = res.filter(d => guild.valorant_events.reverse().slice(0, 5).some(e => e.name === d.tournament.name))
@@ -231,7 +240,7 @@ export default createCommand({
 					let messages = await ctx.client.rest.channels.getMessages(e.channel1, { limit: 100 })
 					let messagesIds = messages.filter(m => m.author.id === ctx.client.user.id).map(m => m.id)
 					if(messagesIds.length) {
-						ctx.client.rest.channels.deleteMessages(e.channel1, messagesIds).catch(() => { })
+						await ctx.client.rest.channels.deleteMessages(e.channel1, messagesIds).catch(() => { })
 					}
 				}
 				catch { }
@@ -299,15 +308,23 @@ export default createCommand({
 				}
 			}
 			catch { }
-			await guild.save()
-			ctx.edit("commands.admin.resent")
+			await prisma.guilds.update({
+				where: {
+					id: ctx.interaction.guildID!
+				},
+				data: {
+					valorant_matches: guild.valorant_matches,
+					valorant_tbd_matches: guild.valorant_tbd_matches,
+					valorant_resend_time: guild.valorant_resend_time
+				}
+			})
+			await ctx.edit("commands.admin.resent")
 		}
 		else if(ctx.args[2] === "continue" && ctx.args[3] === "lol") {
 			await (ctx.interaction as ComponentInteraction).deferUpdate()
-			const guild = (await Guild.findById(ctx.interaction.guildID!))!
+			const guild = (await prisma.guilds.findUnique({ where: { id: ctx.interaction.guild!.id } }))!
 			if(guild.lol_resend_time > Date.now()) {
-				ctx.edit("commands.admin.resend_time", { t: `<t:${(guild.lol_resend_time / 1000).toFixed(0)}:R>` })
-				return
+				return await ctx.edit("commands.admin.resend_time", { t: `<t:${(guild.lol_resend_time / 1000).toFixed(0)}:R>` })
 			}
 			guild.lol_matches = []
 			guild.lol_tbd_matches = []
@@ -389,8 +406,17 @@ export default createCommand({
 				}
 			}
 			catch { }
-			await guild.save()
-			ctx.edit("commands.admin.resent")
+			await prisma.guilds.update({
+				where: {
+					id: ctx.interaction.guildID!
+				},
+				data: {
+					lol_matches: guild.lol_matches,
+					lol_tbd_matches: guild.lol_tbd_matches,
+					lol_resend_time: guild.lol_resend_time
+				}
+			})
+			await ctx.edit("commands.admin.resent")
 		}
 	}
 })

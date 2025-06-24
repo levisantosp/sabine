@@ -1,5 +1,4 @@
 import type { CreateApplicationCommandOptions, TextChannel } from "oceanic.js"
-import { Guild, type GuildSchemaInterface } from "../database/index.ts"
 import Service from "../api/index.ts"
 import locales from "../locales/index.ts"
 import type { MatchesData } from "../types.ts"
@@ -9,24 +8,26 @@ import { emojis } from "../structures/util/emojis.ts"
 import EmbedBuilder from "../structures/builders/EmbedBuilder.ts"
 import ButtonBuilder from "../structures/builders/ButtonBuilder.ts"
 import App from "../structures/client/App.ts"
+import { PrismaClient } from "@prisma/client"
 const service = new Service(process.env.AUTH)
 
+const prisma = new PrismaClient()
 const deleteGuild = async(client: App) => {
-  const guilds = await Guild.find()
+  const guilds = await prisma.guilds.findMany()
   for(const guild of guilds) {
     if(!client.guilds.get(guild.id)) {
-      await guild.deleteOne()
+      await prisma.guilds.delete({
+        where: {
+          id: guild.id
+        }
+      })
     }
   }
 }
 const sendValorantMatches = async(client: App) => {
   const res = await service.getMatches("valorant")
   if(!res || !res.length) return
-  const guilds = await Guild.find({
-    events: {
-      $ne: []
-    }
-  }) as GuildSchemaInterface[]
+  const guilds = await prisma.guilds.findMany()
   if(!guilds.length) return
   const res2 = await service.getResults("valorant")
   for(const guild of guilds) {
@@ -108,17 +109,21 @@ const sendValorantMatches = async(client: App) => {
       }
     }
     catch { }
-    await guild.save()
+    await prisma.guilds.update({
+      where: {
+        id: guild.id
+      },
+      data: {
+        valorant_matches: guild.valorant_matches,
+        valorant_tbd_matches: guild.valorant_tbd_matches
+      }
+    })
   }
 }
 const sendValorantTBDMatches = async(client: App) => {
   const res = await service.getMatches("valorant")
   if(!res || !res.length) return
-  const guilds = await Guild.find({
-    valorant_tbd_matches: {
-      $ne: []
-    }
-  }) as GuildSchemaInterface[]
+  const guilds = await prisma.guilds.findMany()
   if(!guilds.length) return
   for(const guild of guilds) {
     if(!guild.valorant_tbd_matches.length) continue
@@ -158,10 +163,17 @@ const sendValorantTBDMatches = async(client: App) => {
             }
           ]
         })
-          .catch(() => { })
+        .catch(() => {})
         let index = guild.valorant_tbd_matches.findIndex((m) => m.id === match.id)
         guild.valorant_tbd_matches.splice(index, 1)
-        await guild.save()
+        await prisma.guilds.update({
+          where: {
+            id: guild.id
+          },
+          data: {
+            valorant_tbd_matches: guild.valorant_tbd_matches
+          }
+        })
       }
     }
   }
@@ -169,27 +181,17 @@ const sendValorantTBDMatches = async(client: App) => {
 const sendLolMatches = async(client: App) => {
   const res = await service.getMatches("lol")
   const res2 = await service.getResults("lol")
-
   if(!res || !res.length) return
-
-  const guilds = await Guild.find({
-    lol_events: {
-      $ne: []
-    }
-  }) as GuildSchemaInterface[]
-
+  const guilds = await prisma.guilds.findMany()
   if(!guilds.length) return
-
   for(const guild of guilds) {
     if(guild.lol_matches.length && !res2.some(d => d.id === guild.lol_matches[guild.lol_matches.length - 1])) continue
-
     guild.lol_matches = []
     let data: MatchesData[]
     if(guild.lol_events.length > 5 && !guild.key) {
       data = res.filter(d => guild.lol_events.reverse().slice(0, 5).some(e => e.name === d.tournament.name))
     }
     else data = res.filter(d => guild.lol_events.some(e => e.name === d.tournament.name))
-
     for(const e of guild.lol_events) {
       if(!client.getChannel(e.channel1)) continue
       try {
@@ -199,7 +201,7 @@ const sendLolMatches = async(client: App) => {
           client.rest.channels.deleteMessages(e.channel1, messagesIds).catch(() => { })
         }
       }
-      catch { }
+      catch {}
     }
     try {
       for(const d of data) {
@@ -211,7 +213,6 @@ const sendLolMatches = async(client: App) => {
             let index = guild.lol_matches.findIndex((m) => m === d.id)
             if(index > -1) guild.lol_matches.splice(index, 1)
             if(!d.stage.toLowerCase().includes("showmatch")) guild.lol_matches.push(d.id!)
-
             const embed = new EmbedBuilder()
               .setAuthor({
                 iconURL: d.tournament.image,
@@ -221,12 +222,10 @@ const sendLolMatches = async(client: App) => {
               .setFooter({
                 text: d.stage
               })
-
             const button = new ButtonBuilder()
               .setLabel(locales(guild.lang, "helper.palpitate"))
               .setCustomId(`predict;lol;${d.id}`)
               .setStyle("green")
-
             if(d.stage.toLowerCase().includes("showmatch")) continue
             if(d.teams[0].name !== "TBD" && d.teams[1].name !== "TBD") await client.rest.channels.createMessage(e.channel1, {
               embeds: [embed],
@@ -258,17 +257,21 @@ const sendLolMatches = async(client: App) => {
       }
     }
     catch { }
-    await guild.save()
+    await prisma.guilds.update({
+      where: {
+        id: guild.id
+      },
+      data: {
+        lol_matches: guild.lol_matches,
+        lol_tbd_matches: guild.lol_tbd_matches
+      }
+    })
   }
 }
 const sendLolTBDMatches = async(client: App) => {
   const res = await service.getMatches("lol")
   if(!res || !res.length) return
-  const guilds = await Guild.find({
-    lol_tbd_matches: {
-      $ne: []
-    }
-  }) as GuildSchemaInterface[]
+  const guilds = await prisma.guilds.findMany()
   if(!guilds.length) return
   for(const guild of guilds) {
     if(!guild.lol_tbd_matches.length) continue
@@ -307,7 +310,14 @@ const sendLolTBDMatches = async(client: App) => {
           .catch(() => { })
         let index = guild.lol_tbd_matches.findIndex((m) => m.id === match.id)
         guild.lol_tbd_matches.splice(index, 1)
-        await guild.save()
+        await prisma.guilds.update({
+          where: {
+            id: guild.id
+          },
+          data: {
+            lol_tbd_matches: guild.lol_tbd_matches
+          }
+        })
       }
     }
   }

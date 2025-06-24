@@ -2,8 +2,9 @@ import { valorant_agents, valorant_weapons } from "../../config.ts"
 import locales from "../../locales/index.ts"
 import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
 import getPlayer from "./players/getPlayer.ts"
-import { User } from "../../database/index.ts"
 import ComponentInteractionContext from "../../structures/interactions/ComponentInteractionContext.ts"
+import { SabineUser } from "../../database/index.ts"
+import { client } from "../../structures/client/App.ts"
 
 const calcPlayerOvr = (player: TeamPlayer) => {
   return (player.stats.aim + player.stats.HS + player.stats.movement + player.stats.aggression + player.stats.ACS + player.stats.gamesense) / 4.5
@@ -808,8 +809,8 @@ export default class ValorantMatch {
     this.finished = true
     const score1 = this.rounds_played.filter(r => r.winning_team === 0).length
     const score2 = this.rounds_played.filter(r => r.winning_team === 1).length
-    const user1 = await User.get(this.teams[0].user.id)
-    const user2 = await User.get(this.teams[1].user.id)
+    const user1 = (await new SabineUser(this.teams[0].user.id).get())!
+    const user2 = (await new SabineUser(this.teams[1].user.id).get())!
     if(score1 >= 13) {
       user1.wins += 1
       user2.defeats += 1
@@ -820,7 +821,7 @@ export default class ValorantMatch {
       user2.wins += 1
       await this.ctx.reply("simulator.winner", { user: `<@${this.teams[1].user.id}>` })
     }
-    user1.career.push({
+    user1.carrer.push({
       teams: [
         {
           user: this.teams[0].user.id,
@@ -832,7 +833,7 @@ export default class ValorantMatch {
         }
       ]
     })
-    user2.career.push({
+    user2.carrer.push({
       teams: [
         {
           user: this.teams[1].user.id,
@@ -844,7 +845,25 @@ export default class ValorantMatch {
         }
       ]
     })
-    await user1.save()
-    await user2.save()
+    await client.prisma.users.update({
+      where: {
+        id: user1.id
+      },
+      data: {
+        carrer: {
+          push: user1.carrer
+        }
+      }
+    })
+    await client.prisma.users.update({
+      where: {
+        id: user2.id
+      },
+      data: {
+        carrer: {
+          push: user2.carrer
+        }
+      }
+    })
   }
 }

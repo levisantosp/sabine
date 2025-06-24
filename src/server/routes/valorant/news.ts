@@ -1,12 +1,14 @@
 import { Type, type TypeBoxTypeProvider } from "@fastify/type-provider-typebox"
 import type { FastifyBaseLogger, RawServerDefault, FastifyInstance } from "fastify"
 import type { IncomingMessage, ServerResponse } from "http"
-import { Guild, type GuildSchemaInterface } from "../../../database/index.ts"
 import { TextChannel } from "oceanic.js"
 import { client } from "../../../structures/client/App.ts"
 import EmbedBuilder from "../../../structures/builders/EmbedBuilder.ts"
 import locales from "../../../locales/index.ts"
 import ButtonBuilder from "../../../structures/builders/ButtonBuilder.ts"
+import { PrismaClient } from "@prisma/client"
+
+const prisma = new PrismaClient()
 
 export default async function(
   fastify: FastifyInstance<RawServerDefault, IncomingMessage, ServerResponse<IncomingMessage>, FastifyBaseLogger, TypeBoxTypeProvider>
@@ -23,10 +25,13 @@ export default async function(
       )
     }
   }, async(req) => {
-    const guilds = await Guild.find({
-      valorant_news_channel: { $exists: true },
-      key: { $exists: true }
-    }) as GuildSchemaInterface[]
+    const guilds = await prisma.guilds.findMany({
+      where: {
+        valorant_news_channel: {
+          isSet: true
+        }
+      }
+    })
     if(!guilds.length) return
     for(const guild of guilds) {
       if(!guild.partner && !["PREMIUM"].some(x => x === guild.key?.type)) continue

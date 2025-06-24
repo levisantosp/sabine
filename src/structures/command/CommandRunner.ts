@@ -1,13 +1,15 @@
 import type { CommandInteraction, TextChannel } from "oceanic.js"
 import App from "../client/App.ts"
 import CommandContext from "./CommandContext.ts"
-import { Blacklist, type BlacklistSchemaInterface, Guild, type GuildSchemaInterface, User, type UserSchemaInterface } from "../../database/index.ts"
 import locales, { type Args } from "../../locales/index.ts"
 import ButtonBuilder from "../builders/ButtonBuilder.ts"
 import EmbedBuilder from "../builders/EmbedBuilder.ts"
 import Logger from "../util/Logger.ts"
 import { createRequire } from "node:module"
+import { PrismaClient } from "@prisma/client"
+import { SabineUser } from "../../database/index.ts"
 
+const prisma = new PrismaClient()
 const require = createRequire(import.meta.url)
 
 export default class CommandRunner {
@@ -16,9 +18,13 @@ export default class CommandRunner {
   ) {
     const command = client.commands.get(interaction.data.name)
     if(!command) return
-    const guild = (await Guild.findById(interaction.guildID) ?? new Guild({ _id: interaction.guildID })) as GuildSchemaInterface
-    const user = (await User.findById(interaction.user.id) ?? new User({ _id: interaction.user.id })) as UserSchemaInterface
-    const blacklist = await Blacklist.findById("blacklist") as BlacklistSchemaInterface
+    const guild = (await prisma.guilds.findUnique({
+      where: {
+        id: interaction.guild?.id
+      }
+    }))!
+    const user = (await new SabineUser(interaction.user.id).get())!
+    const blacklist = (await prisma.blacklists.findFirst())!
     const ban = blacklist.users.find(user => user.id === interaction.user.id)
     if(blacklist.guilds.find(guild => guild.id === interaction.guildID)) {
       return await interaction.guild?.leave()

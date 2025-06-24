@@ -40,18 +40,30 @@ export default createCommand({
     "language pt-BR"
   ],
   userInstall: true,
-  async run({ ctx }) {
+  async run({ ctx, client }) {
     switch (ctx.args[0]) {
       case "pt": {
-        ctx.db.user.lang = "pt"
-        await ctx.db.user.save()
-        ctx.reply("Agora eu irei interagir em português com você!")
+        await client.prisma.users.update({
+          where: {
+            id: ctx.interaction.user.id
+          },
+          data: {
+            lang: "pt"
+          }
+        })
+        await ctx.reply("Agora eu irei interagir em português com você!")
       }
-        break
+      break
       case "en": {
-        ctx.db.user.lang = "en"
-        await ctx.db.user.save()
-        ctx.reply("Now I will interact in english with you!")
+        await client.prisma.users.update({
+          where: {
+            id: ctx.interaction.user.id
+          },
+          data: {
+            lang: "en"
+          }
+        })
+        await ctx.reply("Now I will interact in english with you!")
       }
     }
   }

@@ -2,12 +2,12 @@ import * as Oceanic from "oceanic.js"
 import App from "../client/App.ts"
 import locales from "../../locales/index.ts"
 import type { Args } from "../../locales/index.ts"
-import type { GuildSchemaInterface, UserSchemaInterface } from "../../database/index.ts"
 import Logger from "../util/Logger.ts"
+import type { guilds, users } from "@prisma/client"
 
 type Database = {
-  guild: GuildSchemaInterface
-  user: UserSchemaInterface
+  guild: guilds
+  user: users
 }
 type CommandContextOptions = {
   client: App

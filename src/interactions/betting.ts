@@ -1,17 +1,23 @@
+import { PrismaClient } from "@prisma/client"
 import createModalSubmitInteraction from "../structures/interactions/createModalSubmitInteraction.ts"
-import { User, type UserSchemaInterface } from "../database/index.ts"
 import calcOdd from "../structures/util/calcOdd.ts"
+import { SabineUser } from "../database/index.ts"
+
+const prisma = new PrismaClient()
 
 export default createModalSubmitInteraction({
   name: "betting",
   flags: 64,
   async run({ ctx }) {
-    const users = await User.find({
-      valorant_predictions: {
-        $ne: []
+    const users = await prisma.users.findMany({
+      where: {
+        valorant_predictions: {
+          isEmpty: false
+        }
       }
-    }) as UserSchemaInterface[]
-    const user = await User.get(ctx.interaction.user.id) as UserSchemaInterface
+    })
+    const user = await new SabineUser(ctx.interaction.user.id).get()
+    if(!user) return
     const games = {
       valorant: async () => {
         const value = BigInt(ctx.args[0])
@@ -39,9 +45,16 @@ export default createModalSubmitInteraction({
           odd = calcOdd(oddB)
         }
         ctx.db.user.valorant_predictions[index].bet = value + BigInt(user.valorant_predictions[index].bet ?? 0)
-        await user.updateOne({
-          $set: { valorant_predictions: user.valorant_predictions },
-          $inc: { coins: -value }
+        await prisma.users.update({
+          where: {
+            id: user.id
+          },
+          data: {
+            valorant_predictions: user.valorant_predictions,
+            coins: {
+              decrement: value
+            }
+          }
         })
         let winnerIndex = user.valorant_predictions[index].teams.findIndex(t => t.winner)
         await ctx.reply(
@@ -79,9 +92,16 @@ export default createModalSubmitInteraction({
           odd = calcOdd(oddB)
         }
         ctx.db.user.lol_predictions[index].bet = value + BigInt(user.lol_predictions[index].bet ?? 0)
-        await user.updateOne({
-          $set: { lol_predictions: user.lol_predictions },
-          $inc: { coins: -value }
+        await prisma.users.update({
+          where: {
+            id: user.id
+          },
+          data: {
+            lol_predictions: user.lol_predictions,
+            coins: {
+              decrement: value
+            }
+          }
         })
         let winnerIndex = user.lol_predictions.map(p => p.teams.findIndex(t => t.winner)).join()
         await ctx.reply(

@@ -5,15 +5,13 @@ import ButtonBuilder from "../../../structures/builders/ButtonBuilder.ts"
 import locales from "../../../locales/index.ts"
 import EmbedBuilder from "../../../structures/builders/EmbedBuilder.ts"
 import { emojis } from "../../../structures/util/emojis.ts"
-import {
-  Guild,
-  type GuildSchemaInterface,
-  User,
-  type UserSchemaInterface
-} from "../../../database/index.ts"
 import { client } from "../../../structures/client/App.ts"
 import type { ResultsData } from "../../../types.ts"
 import type { IncomingMessage, ServerResponse } from "http"
+import { PrismaClient } from "@prisma/client"
+import { SabineUser } from "../../../database/index.ts"
+
+const prisma = new PrismaClient()
 
 export default async function(
   fastify: FastifyInstance<RawServerDefault, IncomingMessage, ServerResponse<IncomingMessage>, FastifyBaseLogger, TypeBoxTypeProvider>
@@ -49,14 +47,20 @@ export default async function(
     }
   }, async(req) => {
     console.log(req.body)
-    const guilds = await Guild.find({
-      events: { $ne: [] }
-    }) as GuildSchemaInterface[]
-    const users = await User.find({
-      valorant_predictions: {
-        $ne: []
+    const guilds = await prisma.guilds.findMany({
+      where: {
+        valorant_events: {
+          isEmpty: false
+        }
       }
-    }) as UserSchemaInterface[]
+    })
+    const users = await prisma.users.findMany({
+      where: {
+        valorant_predictions: {
+          isEmpty: false
+        }
+      }
+    })
     console.log(guilds.length)
     if(!guilds.length) return
     for(const guild of guilds) {
@@ -105,14 +109,12 @@ export default async function(
           }
         }
       }
-      data.reverse()
-      guild.valorant_last_result = data[0].id
-      await guild.save()
     }
     if(!users.length) return
-    for(const user of users) {
+    for(const usr of users) {
+      const user = new SabineUser(usr.id)
       for(const data of req.body) {
-        const pred = user.valorant_predictions.find(p => p.match === data.id)
+        const pred = usr.valorant_predictions.find(p => p.match === data.id)
         if(!pred) continue
         if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
           await user.addCorrectPrediction("valorant", data.id)
@@ -122,8 +124,8 @@ export default async function(
         }
         if(pred.bet) {
           const winnerIndex = data.teams.findIndex(t => t.winner)
-          const i = user.valorant_predictions.findIndex(p => p.match === data.id)
-          if(user.valorant_predictions[i].teams[winnerIndex].winner) {
+          const i = usr.valorant_predictions.findIndex(p => p.match === data.id)
+          if(usr.valorant_predictions[i].teams[winnerIndex].winner) {
             let oddA = 0
             let oddB = 0
             for(const u of users) {
@@ -137,22 +139,25 @@ export default async function(
               }
             }
             let odd: number
-            if(user.valorant_predictions[i].teams[0].winner) {
+            if(usr.valorant_predictions[i].teams[0].winner) {
               odd = calcOdd(oddA)
             }
             else {
               odd = calcOdd(oddB)
             }
             let bonus = 0
-            if(user.plan) {
+            if(usr.plan) {
               bonus = Number(pred.bet) / 2
             }
-            user.coins += BigInt(Number(pred.bet) * odd) + BigInt(bonus)
-            user.valorant_predictions[i].odd = odd
-            await user.updateOne({
-              $set: {
-                valorant_predictions: user.valorant_predictions,
-                coins: user.coins
+            usr.coins += BigInt(Number(pred.bet) * odd) + BigInt(bonus)
+            usr.valorant_predictions[i].odd = odd
+            await prisma.users.update({
+              where: {
+                id: usr.id
+              },
+              data: {
+                coins: usr.coins,
+                valorant_predictions: usr.valorant_predictions
               }
             })
           }

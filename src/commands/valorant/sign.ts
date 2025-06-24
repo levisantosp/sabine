@@ -71,7 +71,7 @@ export default createCommand({
       .map(p => ({ name: p.name, value: p.id.toString() }))
     )
   },
-  async createInteraction({ ctx, i }) {
+  async createInteraction({ ctx, i, client }) {
     await i.defer(64)
     const player = getPlayer(Number(ctx.args[2]))
     if(!player) return
@@ -79,8 +79,15 @@ export default createCommand({
     const ovr = parseInt(calcPlayerOvr(player).toString())
     if(price > ctx.db.user.coins) return ctx.reply("commands.sign.coins_needed")
     ctx.db.user.coins -= BigInt(price)
-    ctx.db.user.roster.reserve.push(player.id.toString())
-    await ctx.db.user.save()
+    ctx.db.user.roster!.reserve.push(player.id.toString())
+    await client.prisma.users.update({
+      where: {
+        id: ctx.db.user.id
+      },
+      data: {
+        roster: ctx.db.user.roster
+      }
+    })
     await ctx.reply("commands.sign.signed", {
       player: `${player.name} (${ovr})`,
       price: price.toLocaleString("en-US")

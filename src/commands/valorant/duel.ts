@@ -2,8 +2,8 @@ import { ApplicationCommandOptionTypes } from "oceanic.js"
 import ValorantMatch from "../../simulator/valorant/ValorantMatch.ts"
 import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
 import createCommand from "../../structures/command/createCommand.ts"
-import { User } from "../../database/index.ts"
 import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
+import { SabineUser } from "../../database/index.ts"
 
 const users: {[key: string]: boolean} = {}
 
@@ -33,18 +33,18 @@ export default createCommand({
   ],
   userInstall: true,
   async run({ ctx, t }) {
-    const user = await User.get(ctx.args[0])
-    if(!ctx.db.user.team.name || !ctx.db.user.team.tag) {
-      return ctx.reply("commands.duel.needed_team_name")
+    const user = await new SabineUser(ctx.db.user.id).get()
+    if(!ctx.db.user.team?.name || !ctx.db.user.team.tag) {
+      return await ctx.reply("commands.duel.needed_team_name")
     }
-    if(ctx.db.user.roster.active.length < 5) {
-      return ctx.reply("commands.duel.team_not_completed_1")
+    if(!ctx.db.user.roster || ctx.db.user.roster.active.length < 5) {
+      return await  ctx.reply("commands.duel.team_not_completed_1")
     }
-    if(!user || user.roster.active.length < 5) {
-      return ctx.reply("commands.duel.team_not_completed_2")
+    if(!user || !user.roster || user.roster.active.length < 5) {
+      return await ctx.reply("commands.duel.team_not_completed_2")
     }
-    if(!user.team.name || !user.team.tag) {
-      return ctx.reply("commands.duel.needed_team_name_2")
+    if(!user.team?.name || !user.team.tag) {
+      return await ctx.reply("commands.duel.needed_team_name_2")
     }
     if(users[ctx.interaction.user.id]) {
       return ctx.reply("commands.duel.already_in_match")
@@ -63,17 +63,17 @@ export default createCommand({
   },
   async createInteraction({ ctx, client, t, i }) {
     await i.deferUpdate()
-    const user = await User.get(ctx.args[2])
-    if(!ctx.db.user.team.name || !ctx.db.user.team.tag) {
+    const user = await new SabineUser(ctx.args[2]).get()
+    if(!ctx.db.user.team?.name || !ctx.db.user.team.tag) {
       return await ctx.reply("commands.duel.needed_team_name")
     }
-    if(ctx.db.user.roster.active.length < 5) {
+    if(!ctx.db.user.roster || ctx.db.user.roster.active.length < 5) {
       return await  ctx.reply("commands.duel.team_not_completed_1")
     }
-    if(!user || user.roster.active.length < 5) {
+    if(!user || !user.roster || user.roster.active.length < 5) {
       return await ctx.reply("commands.duel.team_not_completed_2")
     }
-    if(!user.team.name || !user.team.tag) {
+    if(!user.team?.name || !user.team.tag) {
       return await ctx.reply("commands.duel.needed_team_name_2")
     }
     if(users[ctx.interaction.user.id]) {
@@ -99,7 +99,7 @@ export default createCommand({
             name: ctx.interaction.user.username,
             id: ctx.db.user.id
           },
-          name: ctx.db.user.team.name!,
+          name: ctx.db.user.team.name,
           tag: ctx.db.user.team.tag!
         }
       ],

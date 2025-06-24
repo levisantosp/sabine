@@ -1,7 +1,6 @@
 import { Type, type TypeBoxTypeProvider } from "@fastify/type-provider-typebox"
 import type { FastifyBaseLogger, RawServerDefault, FastifyInstance } from "fastify"
 import type { IncomingMessage, ServerResponse } from "http"
-import { Guild, type GuildSchemaInterface, User, type UserSchemaInterface } from "../../../database/index.ts"
 import { client } from "../../../structures/client/App.ts"
 import { emojis } from "../../../structures/util/emojis.ts"
 import EmbedBuilder from "../../../structures/builders/EmbedBuilder.ts"
@@ -9,6 +8,10 @@ import locales from "../../../locales/index.ts"
 import ButtonBuilder from "../../../structures/builders/ButtonBuilder.ts"
 import { type ResultsData } from "../../../types.ts"
 import calcOdd from "../../../structures/util/calcOdd.ts"
+import { PrismaClient } from "@prisma/client"
+import { SabineUser } from "../../../database/index.ts"
+
+const prisma = new PrismaClient()
 
 export default async function(
   fastify: FastifyInstance<RawServerDefault, IncomingMessage, ServerResponse<IncomingMessage>, FastifyBaseLogger, TypeBoxTypeProvider>
@@ -36,14 +39,20 @@ export default async function(
       )
     }
   }, async(req) => {
-    const guilds = await Guild.find({
-      events: { $ne: [] }
-    }) as GuildSchemaInterface[]
-    const users = await User.find({
-      lol_predictions: {
-        $ne: []
+    const guilds = await prisma.guilds.findMany({
+      where: {
+        lol_events: {
+          isEmpty: false
+        }
       }
-    }) as UserSchemaInterface[]
+    })
+    const users = await prisma.users.findMany({
+      where: {
+        lol_predictions: {
+          isEmpty: false
+        }
+      }
+    })
     if(!guilds.length) return
     for(const guild of guilds) {
       let data: ResultsData[]
@@ -87,14 +96,12 @@ export default async function(
           }
         }
       }
-      data.reverse()
-      guild.lol_last_result = data[0].id
-      await guild.save()
     }
     if(!users.length) return
-    for(const user of users) {
+    for(const usr of users) {
+      const user = new SabineUser(usr.id)
       for(const data of req.body) {
-        const pred = user.lol_predictions.find(p => p.match === data.id)
+        const pred = usr.lol_predictions.find(p => p.match === data.id)
         if(!pred) continue
         if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
           await user.addCorrectPrediction("lol", data.id)
@@ -104,8 +111,8 @@ export default async function(
         }
         if(pred.bet) {
           const winnerIndex = data.teams.findIndex(t => t.winner)
-          const i = user.lol_predictions.findIndex(p => p.match === data.id)
-          if(user.lol_predictions[i].teams[winnerIndex].winner) {
+          const i = usr.lol_predictions.findIndex(p => p.match === data.id)
+          if(usr.lol_predictions[i].teams[winnerIndex].winner) {
             let oddA = 0
             let oddB = 0
             for(const u of users) {
@@ -119,22 +126,25 @@ export default async function(
               }
             }
             let odd: number
-            if(user.lol_predictions[i].teams[0].winner) {
+            if(usr.lol_predictions[i].teams[0].winner) {
               odd = calcOdd(oddA)
             }
             else {
               odd = calcOdd(oddB)
             }
             let bonus = 0
-            if(user.plan) {
+            if(usr.plan) {
               bonus = Number(pred.bet) / 2
             }
-            user.coins += BigInt(Number(pred.bet) * odd) + BigInt(bonus)
-            user.lol_predictions[i].odd = odd
-            await user.updateOne({
-              $set: {
-                lol_predictions: user.lol_predictions,
-                coins: user.coins
+            usr.coins += BigInt(Number(pred.bet) * odd) + BigInt(bonus)
+            usr.lol_predictions[i].odd = odd
+            await prisma.users.update({
+              where: {
+                id: usr.id
+              },
+              data: {
+                coins: usr.coins,
+                lol_predictions: usr.lol_predictions
               }
             })
           }

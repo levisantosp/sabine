@@ -34,8 +34,8 @@ export default createCommand({
   },
   userInstall: true,
   async run({ ctx, t }) {
-    const active_players = ctx.db.user.roster.active
-    const reserve_players = ctx.db.user.roster.reserve
+    const active_players = ctx.db.user.roster!.active
+    const reserve_players = ctx.db.user.roster!.reserve
     let value = 0
     let ovr = 0
     for(const p of active_players) {
@@ -59,7 +59,7 @@ export default createCommand({
       {
         value: parseInt(value.toString()).toLocaleString("en-US"),
         ovr: (ovr / (active_players.length + reserve_players.length)).toFixed(0),
-        name: ctx.db.user.team.name ? `${ctx.db.user.team.name} (${ctx.db.user.team.tag})` : "`undefined`"
+        name: ctx.db.user.team!.name ? `${ctx.db.user.team!.name} (${ctx.db.user.team!.tag})` : "`undefined`"
       }
     ))
     .setThumb(ctx.interaction.user.avatarURL())
@@ -130,8 +130,8 @@ export default createCommand({
     if(ctx.args[2] === "file") {
       await ctx.interaction.defer(64)
       let players = ""
-      const active_players = ctx.db.user.roster.active
-      const reserve_players = ctx.db.user.roster.reserve
+      const active_players = ctx.db.user.roster!.active
+      const reserve_players = ctx.db.user.roster!.reserve
       for(const p of active_players) {
         if(!active_players.length) break
         const player = getPlayer(Number(p))
@@ -167,7 +167,7 @@ export default createCommand({
               {
                 type: 4,
                 customID: `roster;${i.user.id};modal;response-1`,
-                label: t("commands.roster.modal.team_name"),
+                label: t("commands.roster.modal.team!_name"),
                 style: 1,
                 minLength: 2,
                 maxLength: 20,
@@ -181,7 +181,7 @@ export default createCommand({
               {
                 type: 4,
                 customID: `roster;${i.user.id};modal;response-2`,
-                label: t("commands.roster.modal.team_tag"),
+                label: t("commands.roster.modal.team!_tag"),
                 style: 1,
                 minLength: 2,
                 maxLength: 4,
@@ -193,15 +193,22 @@ export default createCommand({
       })
     }
   },
-  async createModalSubmitInteraction({ ctx, i }) {
+  async createModalSubmitInteraction({ ctx, i, client }) {
     await i.defer(64)
     const responses = i.data.components.getComponents()
-    ctx.db.user.team = {
+    ctx.db.user.team! = {
       name: responses[0].value,
       tag: responses[1].value
     }
-    await ctx.db.user.save()
-    await ctx.reply("commands.roster.team_info_changed", {
+    await client.prisma.users.update({
+      where: {
+        id: ctx.db.user.id
+      },
+      data: {
+        roster: ctx.db.user.roster
+      }
+    })
+    await ctx.reply("commands.roster.team!_info_changed", {
       name: responses[0].value,
       tag: responses[1].value
     })
