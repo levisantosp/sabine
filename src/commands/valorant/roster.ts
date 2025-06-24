@@ -196,16 +196,16 @@ export default createCommand({
   async createModalSubmitInteraction({ ctx, i, client }) {
     await i.defer(64)
     const responses = i.data.components.getComponents()
-    ctx.db.user.team = {
-      name: responses[0].value,
-      tag: responses[1].value
-    }
     await client.prisma.users.update({
       where: {
         id: ctx.db.user.id
       },
       data: {
-        roster: ctx.db.user.roster
+        roster: ctx.db.user.roster,
+        team: {
+          name: responses[0].value,
+          tag: responses[1].value
+        }
       }
     })
     await ctx.reply("commands.roster.team_info_changed", {
