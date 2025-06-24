@@ -99,7 +99,7 @@ export default createCommand({
       ]
     }
   ],
-  async run({ ctx, t }) {
+  async run({ ctx, t, client }) {
     if(ctx.args[0] === "enable") {
       if(!ctx.db.guild.partner && !["PREMIUM"].some(k => k === ctx.db.guild.key?.type)) {
         const button = new ButtonBuilder()
@@ -122,16 +122,28 @@ export default createCommand({
           if(!ctx.guild) return
           let channel = ctx.guild.channels.get(ctx.args[2])!
           if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.news.invalid_channel")
-          ctx.db.guild.valorant_news_channel = ctx.args[2]
-          await ctx.db.guild.save()
+          await client.prisma.guilds.update({
+            where: {
+              id: ctx.db.guild.id
+            },
+            data: {
+              valorant_livefeed_channel: channel.id
+            }
+          })
           await ctx.reply("commands.news.news_enabled", { ch: channel.mention })
         },
         lol: async() => {
           if(!ctx.guild) return
           let channel = ctx.guild.channels.get(ctx.args[2])!
           if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.news.invalid_channel")
-          ctx.db.guild.lol_news_channel = channel.id
-          await ctx.db.guild.save()
+          await client.prisma.guilds.update({
+            where: {
+              id: ctx.db.guild.id
+            },
+            data: {
+              valorant_livefeed_channel: channel.id
+            }
+          })
           await ctx.reply("commands.news.news_enabled", { ch: channel.mention })
         }
       }
@@ -140,14 +152,28 @@ export default createCommand({
     else {
       const games = {
         valorant: async() => {
-          await ctx.db.guild.updateOne({
-            $unset: { valorant_news_channel: "" }
+          await client.prisma.guilds.update({
+            where: {
+              id: ctx.db.guild.id
+            },
+            data: {
+              valorant_news_channel: {
+                unset: true
+              }
+            }
           })
           await ctx.reply("commands.news.news_disabled")
         },
         lol: async() => {
-          await ctx.db.guild.updateOne({
-            $unset: { lol_news_channel: "" }
+          await client.prisma.guilds.update({
+            where: {
+              id: ctx.db.guild.id
+            },
+            data: {
+              lol_news_channel: {
+                unset: true
+              }
+            }
           })
           await ctx.reply("commands.news.news_disabled")
         }
