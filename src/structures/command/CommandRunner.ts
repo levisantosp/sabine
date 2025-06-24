@@ -6,6 +6,9 @@ import locales, { type Args } from "../../locales/index.ts"
 import ButtonBuilder from "../builders/ButtonBuilder.ts"
 import EmbedBuilder from "../builders/EmbedBuilder.ts"
 import Logger from "../util/Logger.ts"
+import { createRequire } from "node:module"
+
+const require = createRequire(import.meta.url)
 
 export default class CommandRunner {
   public async run(
@@ -56,7 +59,7 @@ export default class CommandRunner {
         guild
       }
     })
-    const { permissions } = await import(`../../locales/${ctx.locale}.ts`)
+    const { permissions } = require(`../../locales/${ctx.locale}.json`)
     if(command.permissions) {
       let perms: string[] = []
       for(let perm of command.permissions) {

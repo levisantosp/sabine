@@ -3,6 +3,7 @@ import App from "../client/App.ts"
 import CommandContext from "./CommandContext.ts"
 import type { Args } from "../../locales/index.ts"
 import ComponentInteractionContext from "../interactions/ComponentInteractionContext.ts"
+import ModalSubmitInteractionContext from "../interactions/ModalSubmitInteractionContext.ts"
 
 type CommandOptions = {
   ctx: CommandContext
@@ -23,7 +24,7 @@ type CreateComponentInteractionOptions = {
   client: App
 }
 type CreateModalSubmitInteractionOptions = {
-  ctx: CommandContext
+  ctx: ModalSubmitInteractionContext
   client: App
   t: (content: string, args?: Args) => string
   i: Oceanic.ModalSubmitInteraction
