@@ -46,7 +46,6 @@ export default async function(
       )
     }
   }, async(req) => {
-    console.log(req.body)
     const guilds = await prisma.guilds.findMany({
       where: {
         valorant_events: {
@@ -61,7 +60,6 @@ export default async function(
         }
       }
     })
-    console.log(guilds.length)
     if(!guilds.length) return
     for(const guild of guilds) {
       let data: ResultsData[]
