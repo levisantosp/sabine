@@ -18,7 +18,7 @@ import locales, { type Args } from "../../../locales/index.ts"
 import ComponentInteractionContext from "../../../structures/interactions/ComponentInteractionContext.ts"
 import ModalSubmitInteractionContext from "../../../structures/interactions/ModalSubmitInteractionContext.ts"
 import Logger from "../../../structures/util/Logger.ts"
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient, type guilds } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
@@ -33,16 +33,19 @@ const types: Record<number, (raw: AnyRawInteraction) => Promise<any>> = {
     if(!command) return
     if(!command.createAutocompleteInteraction) return
     const user = await new SabineUser(interaction.user.id).get()
-    const guild = await prisma.guilds.findUnique({
-      where: {
-        id: interaction.guild?.id
-      }
-    }) ?? await prisma.guilds.create({
-      data: {
-        id: interaction.guild!.id,
-        lang: "en"
-      }
-    })
+    let guild: guilds
+    if(interaction.guild) {
+      guild = await prisma.guilds.findUnique({
+        where: {
+          id: interaction.guild?.id
+        }
+      }) ?? await prisma.guilds.create({
+        data: {
+          id: interaction.guild!.id,
+          lang: "en"
+        }
+      })
+    }
     const t = (content: string, args?: Args) => {
       return locales(user?.lang ?? guild.lang, content, args)
     }
@@ -64,21 +67,24 @@ const types: Record<number, (raw: AnyRawInteraction) => Promise<any>> = {
           id: interaction.user.id
         }
       })
-      const guild = await prisma.guilds.findUnique({
-        where: {
-          id: interaction.guild?.id
-        }
-      }) ?? await prisma.guilds.create({
-        data: {
-          id: interaction.guild!.id,
-          lang: "en"
-        }
-      })
+      let guild
+      if(interaction.guild) {
+        guild = await prisma.guilds.findUnique({
+          where: {
+            id: interaction.guild?.id
+          }
+        }) ?? await prisma.guilds.create({
+          data: {
+            id: interaction.guild!.id,
+            lang: "en"
+          }
+        })
+      }
       const ctx = new ComponentInteractionContext({
         args,
         client,
         guild: interaction.guild,
-        locale: user?.lang ?? guild.lang,
+        locale: user?.lang ?? guild?.lang ?? "en",
         db: {
           user,
           guild
@@ -116,21 +122,24 @@ const types: Record<number, (raw: AnyRawInteraction) => Promise<any>> = {
           id: interaction.user.id
         }
       })
-      const guild = await prisma.guilds.findUnique({
-        where: {
-          id: interaction.guild?.id
-        }
-      }) ?? await prisma.guilds.create({
-        data: {
-          id: interaction.guild!.id,
-          lang: "en"
-        }
-      })
+      let guild
+      if(interaction.guild) {
+        guild = await prisma.guilds.findUnique({
+          where: {
+            id: interaction.guild?.id
+          }
+        }) ?? await prisma.guilds.create({
+          data: {
+            id: interaction.guild!.id,
+            lang: "en"
+          }
+        })
+      }
       const ctx = new ComponentInteractionContext({
         args,
         client,
         guild: interaction.guild,
-        locale: user?.lang ?? guild.lang,
+        locale: user?.lang ?? guild?.lang ?? "en",
         db: {
           user,
           guild
@@ -155,16 +164,19 @@ const types: Record<number, (raw: AnyRawInteraction) => Promise<any>> = {
           id: interaction.user.id
         }
       })
-      const guild = await prisma.guilds.findUnique({
-        where: {
-          id: interaction.guild?.id
-        }
-      }) ?? await prisma.guilds.create({
-        data: {
-          id: interaction.guild!.id,
-          lang: "en"
-        }
-      })
+      let guild
+      if(interaction.guild) {
+        guild = await prisma.guilds.findUnique({
+          where: {
+            id: interaction.guild?.id
+          }
+        }) ?? await prisma.guilds.create({
+          data: {
+            id: interaction.guild!.id,
+            lang: "en"
+          }
+        })
+      }
       args = []
       for(const component of interaction.data.components.getComponents()) {
         args.push(component.value)
@@ -173,7 +185,7 @@ const types: Record<number, (raw: AnyRawInteraction) => Promise<any>> = {
         args,
         client,
         guild: interaction.guild,
-        locale: user?.lang ?? guild.lang,
+        locale: user?.lang ?? guild?.lang ?? "en",
         db: {
           user,
           guild
@@ -197,22 +209,25 @@ const types: Record<number, (raw: AnyRawInteraction) => Promise<any>> = {
           id: interaction.user.id
         }
       })
-    const guild = await prisma.guilds.findUnique({
-      where: {
-        id: interaction.guild?.id
-      }
-    }) ?? await prisma.guilds.create({
-      data: {
-        id: interaction.guild!.id,
-        lang: "en"
-      }
-    })
+    let guild
+    if(interaction.guild) {
+      guild = await prisma.guilds.findUnique({
+        where: {
+          id: interaction.guild?.id
+        }
+      }) ?? await prisma.guilds.create({
+        data: {
+          id: interaction.guild!.id,
+          lang: "en"
+        }
+      })
+    }
     const ctx = new ModalSubmitInteractionContext({
       args,
       client,
       guild: interaction.guild,
       interaction,
-      locale: user?.lang ?? guild.lang,
+      locale: user?.lang ?? guild?.lang ?? "en",
       db: {
         user,
         guild

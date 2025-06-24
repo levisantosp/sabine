@@ -4,7 +4,7 @@ import locales, { type Args } from "../../locales/index.ts"
 import type { guilds, users } from "@prisma/client"
 
 type Database = {
-  guild: guilds
+  guild?: guilds
   user: users
 }
 type ComponentInteractionContextOptions = {

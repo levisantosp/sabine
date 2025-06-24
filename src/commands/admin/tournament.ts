@@ -202,20 +202,20 @@ export default createCommand({
       const games = {
         valorant: async() => {
           if(!ctx.guild) return
-          if((ctx.db.guild.lol_events.length + ctx.db.guild.valorant_events.length) >= ctx.db.guild.tournamentsLength) return ctx.reply("commands.tournament.limit_reached", { cmd: `</tournament remove valorant:${id}>` })
+          if((ctx.db.guild!.lol_events.length + ctx.db.guild!.valorant_events.length) >= ctx.db.guild!.tournamentsLength) return ctx.reply("commands.tournament.limit_reached", { cmd: `</tournament remove valorant:${id}>` })
           if(ctx.args[3] === ctx.args[4]) return ctx.reply("commands.tournament.channels_must_be_different")
           if(ctx.guild.channels.get(ctx.args[3])?.type !== 0 || ctx.guild.channels.get(ctx.args[4])?.type !== 0) return ctx.reply("commands.tournament.invalid_channel")
-          ctx.db.guild.valorant_events.push({
+          ctx.db.guild!.valorant_events.push({
             name: ctx.args[2],
             channel1: ctx.args[3],
             channel2: ctx.args[4]
           })
           await prisma.guilds.update({
             where: {
-              id: ctx.db.guild.id
+              id: ctx.db.guild!.id
             },
             data: {
-              valorant_events: ctx.db.guild.valorant_events
+              valorant_events: ctx.db.guild!.valorant_events
             }
           })
           ctx.reply("commands.tournament.tournament_added", {
@@ -224,20 +224,20 @@ export default createCommand({
         },
         lol: async() => {
           if(!ctx.guild) return
-          if((ctx.db.guild.lol_events.length + ctx.db.guild.valorant_events.length) >= ctx.db.guild.tournamentsLength) return ctx.reply("commands.tournament.limit_reached", { cmd: `</tournament remove lol:${id}>` })
+          if((ctx.db.guild!.lol_events.length + ctx.db.guild!.valorant_events.length) >= ctx.db.guild!.tournamentsLength) return ctx.reply("commands.tournament.limit_reached", { cmd: `</tournament remove lol:${id}>` })
           if(ctx.args[3] === ctx.args[4]) return ctx.reply("commands.tournament.channels_must_be_different")
           if(ctx.guild.channels.get(ctx.args[3])?.type !== 0 || ctx.guild.channels.get(ctx.args[4])?.type !== 0) return ctx.reply("commands.tournament.invalid_channel")
-          ctx.db.guild.lol_events.push({
+          ctx.db.guild!.lol_events.push({
             name: ctx.args[2],
             channel1: ctx.args[3],
             channel2: ctx.args[4]
           })
           await prisma.guilds.update({
             where: {
-              id: ctx.db.guild.id
+              id: ctx.db.guild!.id
             },
             data: {
-              valorant_events: ctx.db.guild.valorant_events
+              valorant_events: ctx.db.guild!.valorant_events
             }
           })
           ctx.reply("commands.tournament.tournament_added", {
@@ -253,7 +253,7 @@ export default createCommand({
           if(ctx.args[2] === t("commands.tournament.remove_all")) {
           await prisma.guilds.update({
             where: {
-              id: ctx.db.guild.id
+              id: ctx.db.guild!.id
             },
             data: {
               valorant_events: []
@@ -261,13 +261,13 @@ export default createCommand({
           })
             return ctx.reply("commands.tournament.tournament_removed")
           }
-          ctx.db.guild.valorant_events.splice(ctx.db.guild.valorant_events.findIndex(e => e.name === ctx.args[2]), 1)
+          ctx.db.guild!.valorant_events.splice(ctx.db.guild!.valorant_events.findIndex(e => e.name === ctx.args[2]), 1)
           await prisma.guilds.update({
             where: {
-              id: ctx.db.guild.id
+              id: ctx.db.guild!.id
             },
             data: {
-              valorant_events: ctx.db.guild.valorant_events
+              valorant_events: ctx.db.guild!.valorant_events
             }
           })
           await ctx.reply("commands.tournament.tournament_removed", {
@@ -278,7 +278,7 @@ export default createCommand({
           if(ctx.args[2] === t("commands.tournament.remove_all")) {
           await prisma.guilds.update({
             where: {
-              id: ctx.db.guild.id
+              id: ctx.db.guild!.id
             },
             data: {
               valorant_events: []
@@ -286,13 +286,13 @@ export default createCommand({
           })
             return ctx.reply("commands.tournament.tournament_removed")
           }
-          ctx.db.guild.lol_events.splice(ctx.db.guild.lol_events.findIndex(e => e.name === ctx.args[2]), 1)
+          ctx.db.guild!.lol_events.splice(ctx.db.guild!.lol_events.findIndex(e => e.name === ctx.args[2]), 1)
           await prisma.guilds.update({
             where: {
-              id: ctx.db.guild.id
+              id: ctx.db.guild!.id
             },
             data: {
-              valorant_events: ctx.db.guild.valorant_events
+              valorant_events: ctx.db.guild!.valorant_events
             }
           })
           ctx.reply("commands.tournament.tournament_removed", {

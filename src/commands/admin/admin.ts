@@ -87,13 +87,13 @@ export default createCommand({
 			const embed = new EmbedBuilder()
 				.setTitle(t("commands.admin.dashboard"))
 				.setDesc(t("commands.admin.desc", {
-					lang: ctx.db.guild.lang.replace("en", "English").replace("pt", "Português"),
-					limit: ctx.db.guild.tournamentsLength === Infinity ? "`Infinity`" : `${ctx.db.guild.lol_events.length + ctx.db.guild.valorant_events.length}/${ctx.db.guild.tournamentsLength}`,
+					lang: ctx.db.guild!.lang.replace("en", "English").replace("pt", "Português"),
+					limit: ctx.db.guild!.tournamentsLength === Infinity ? "`Infinity`" : `${ctx.db.guild!.lol_events.length + ctx.db.guild!.valorant_events.length}/${ctx.db.guild!.tournamentsLength}`,
 					id,
-					vlr_news: !ctx.db.guild.valorant_news_channel ? "`undefined`" : `<#${ctx.db.guild.valorant_news_channel}>`,
-					vlr_live: !ctx.db.guild.valorant_livefeed_channel ? "`undefined`" : `<#${ctx.db.guild.valorant_livefeed_channel}>`,
-					lol_news: !ctx.db.guild.lol_news_channel ? "`undefined`" : `<#${ctx.db.guild.lol_news_channel}>`,
-					lol_live: !ctx.db.guild.lol_livefeed_channel ? "`undefined`" : `<#${ctx.db.guild.lol_livefeed_channel}>`,
+					vlr_news: !ctx.db.guild!.valorant_news_channel ? "`undefined`" : `<#${ctx.db.guild!.valorant_news_channel}>`,
+					vlr_live: !ctx.db.guild!.valorant_livefeed_channel ? "`undefined`" : `<#${ctx.db.guild!.valorant_livefeed_channel}>`,
+					lol_news: !ctx.db.guild!.lol_news_channel ? "`undefined`" : `<#${ctx.db.guild!.lol_news_channel}>`,
+					lol_live: !ctx.db.guild!.lol_livefeed_channel ? "`undefined`" : `<#${ctx.db.guild!.lol_livefeed_channel}>`,
 				}))
 			await ctx.reply(embed.build({
 				components: [
@@ -131,7 +131,7 @@ export default createCommand({
 				en: async() => {
 					await prisma.guilds.update({
 						where: {
-							id: ctx.db.guild.id
+							id: ctx.db.guild!.id
 						},
 						data: {
 							lang: "en"
@@ -142,7 +142,7 @@ export default createCommand({
 				pt: async() => {
 					await prisma.guilds.update({
 						where: {
-							id: ctx.db.guild.id
+							id: ctx.db.guild!.id
 						},
 						data: {
 							lang: "pt"
@@ -154,14 +154,14 @@ export default createCommand({
 			await options[(ctx.interaction as CommandInteraction).data.options.getStringOption("lang")?.value as "pt" | "en"]()
 		}
 		else if(ctx.args[0] === "premium") {
-			if(!ctx.db.guild.key) {
+			if(!ctx.db.guild!.key) {
 				return await ctx.reply("commands.admin.no_premium")
 			}
 			const embed = new EmbedBuilder()
 				.setTitle("Premium")
 				.setDesc(t("commands.admin.premium", {
-					key: ctx.db.guild.key.type,
-					expiresAt: `<t:${(ctx.db.guild.key.expiresAt! / 1000).toFixed(0)}:R>`
+					key: ctx.db.guild!.key.type,
+					expiresAt: `<t:${(ctx.db.guild!.key.expiresAt! / 1000).toFixed(0)}:R>`
 				}))
 			ctx.reply(embed.build())
 		}
@@ -171,7 +171,7 @@ export default createCommand({
 			await ctx.interaction.defer(64)
 			const embed = new EmbedBuilder()
 				.setDesc(t("commands.admin.tournaments", { game: "VALORANT" }))
-			for(const event of ctx.db.guild.valorant_events) {
+			for(const event of ctx.db.guild!.valorant_events) {
 				embed.addField(event.name, t("commands.admin.event_channels", {
 					ch1: `<#${event.channel1}>`,
 					ch2: `<#${event.channel2}>`
@@ -183,7 +183,7 @@ export default createCommand({
 			await ctx.interaction.defer(64)
 			const embed = new EmbedBuilder()
 				.setDesc(t("commands.admin.tournaments", { game: "League of Legends" }))
-			for(const event of ctx.db.guild.lol_events) {
+			for(const event of ctx.db.guild!.lol_events) {
 				embed.addField(event.name, t("commands.admin.event_channels", {
 					ch1: `<#${event.channel1}>`,
 					ch2: `<#${event.channel2}>`

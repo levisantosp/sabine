@@ -6,7 +6,7 @@ import ButtonBuilder from "../builders/ButtonBuilder.ts"
 import EmbedBuilder from "../builders/EmbedBuilder.ts"
 import Logger from "../util/Logger.ts"
 import { createRequire } from "node:module"
-import { PrismaClient } from "@prisma/client"
+import { type guilds, PrismaClient } from "@prisma/client"
 import { SabineUser } from "../../database/index.ts"
 
 const prisma = new PrismaClient()
@@ -18,11 +18,19 @@ export default class CommandRunner {
   ) {
     const command = client.commands.get(interaction.data.name)
     if(!command) return
-    const guild = (await prisma.guilds.findUnique({
-      where: {
-        id: interaction.guild?.id
-      }
-    }))!
+    let guild: guilds | undefined
+    if(interaction.guild) {
+      guild = await prisma.guilds.findUnique({
+        where: {
+          id: interaction.guild?.id
+        }
+      }) ?? await prisma.guilds.create({
+        data: {
+          id: interaction.guild!.id,
+          lang: "en"
+        }
+      })
+    }
     const user = (await new SabineUser(interaction.user.id).get())!
     const blacklist = (await prisma.blacklists.findFirst())!
     const ban = blacklist.users.find(user => user.id === interaction.user.id)
@@ -31,7 +39,7 @@ export default class CommandRunner {
     }
     if(ban) {
       return interaction.createMessage({
-        content: locales(guild.lang, "helper.banned", {
+        content: locales(guild?.lang ?? "en", "helper.banned", {
           reason: ban.reason,
           ends: ban.endsAt === Infinity ? Infinity : `<t:${ban.endsAt}:F> | <t:${ban.endsAt}:R>`,
           when: `<t:${ban.when}:F> | <t:${ban.when}:R>`
@@ -43,7 +51,7 @@ export default class CommandRunner {
             components: [
               new ButtonBuilder()
                 .setStyle("link")
-                .setLabel(locales(guild.lang, "commands.help.community"))
+                .setLabel(locales(guild?.lang ?? "en", "commands.help.community"))
                 .setURL("https://discord.gg/g5nmc376yh")
             ]
           }
@@ -57,7 +65,7 @@ export default class CommandRunner {
     const ctx = new CommandContext({
       client,
       interaction,
-      locale: user.lang ?? guild.lang,
+      locale: user.lang ?? guild?.lang ?? "en",
       guild: interaction.guild,
       args,
       db: {
@@ -75,9 +83,9 @@ export default class CommandRunner {
         permissions: perms.map(p => `\`${permissions[p]}\``).join(', ')
       })
     }
-    if(command.botPermissions) {
+    if(command.botPermissions && guild) {
       let perms = []
-      let member = client.guilds.get(guild?.id)?.members.get(client.user.id)
+      let member = client.guilds.get(guild.id)?.members.get(client.user.id)
       for(let perm of command.botPermissions) {
         if(!member?.permissions.has(perm as any)) perms.push(perm)
       }
@@ -92,7 +100,7 @@ export default class CommandRunner {
       await interaction.defer()
     }
     const t = (content: string, args?: Args) => {
-      return locales(user.lang ?? guild.lang, content, args)
+      return locales(user.lang ?? guild?.lang ?? "en", content, args)
     }
     command.run({ ctx, client, t, id: interaction.data.id })
       .then(async() => {

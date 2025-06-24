@@ -101,7 +101,7 @@ export default createCommand({
   ],
   async run({ ctx, t, client }) {
     if(ctx.args[0] === "enable") {
-      if(!ctx.db.guild.partner && !["PREMIUM"].some(k => k === ctx.db.guild.key?.type)) {
+      if(!ctx.db.guild!.partner && !["PREMIUM"].some(k => k === ctx.db.guild!.key?.type)) {
         const button = new ButtonBuilder()
           .setLabel(t("commands.news.buy_premium"))
           .setStyle("link")
@@ -124,7 +124,7 @@ export default createCommand({
           if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.news.invalid_channel")
           await client.prisma.guilds.update({
             where: {
-              id: ctx.db.guild.id
+              id: ctx.db.guild!.id
             },
             data: {
               valorant_livefeed_channel: channel.id
@@ -138,7 +138,7 @@ export default createCommand({
           if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.news.invalid_channel")
           await client.prisma.guilds.update({
             where: {
-              id: ctx.db.guild.id
+              id: ctx.db.guild!.id
             },
             data: {
               valorant_livefeed_channel: channel.id
@@ -154,7 +154,7 @@ export default createCommand({
         valorant: async() => {
           await client.prisma.guilds.update({
             where: {
-              id: ctx.db.guild.id
+              id: ctx.db.guild!.id
             },
             data: {
               valorant_news_channel: {
@@ -167,7 +167,7 @@ export default createCommand({
         lol: async() => {
           await client.prisma.guilds.update({
             where: {
-              id: ctx.db.guild.id
+              id: ctx.db.guild!.id
             },
             data: {
               lol_news_channel: {

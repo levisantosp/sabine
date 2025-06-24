@@ -56,7 +56,7 @@ export default createCommand({
         },
         {
           name: "Client",
-          value: `Shards: \`${client.shards.size}\`\nShard Uptime: \`${ms(client.uptime, { language: ctx.db.user.lang ?? ctx.db.guild.lang, round: true })}\`\nClient Uptime: \`${ms(Date.now() - client._uptime, { language: ctx.db.user.lang ?? ctx.db.guild.lang, round: true })}\``,
+          value: `Shards: \`${client.shards.size}\`\nShard Uptime: \`${ms(client.uptime, { language: ctx.db.user.lang ?? ctx.db.guild!.lang, round: true })}\`\nClient Uptime: \`${ms(Date.now() - client._uptime, { language: ctx.db.user.lang ?? ctx.db.guild!.lang, round: true })}\``,
           inline: true
         }
       )

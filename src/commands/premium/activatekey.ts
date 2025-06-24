@@ -43,12 +43,12 @@ export default createCommand({
     if(key.type === "PREMIUM" && key.activeIn.length >= 2) {
       return await ctx.reply("commands.activatekey.limit_reached")
     }
-    if(ctx.db.guild.key) {
+    if(ctx.db.guild!.key) {
       const button = new ButtonBuilder()
         .setStyle("red")
         .setLabel(t("commands.activatekey.button"))
         .setCustomId(`activatekey;${ctx.interaction.user.id};${key.type};${ctx.args[0]}`)
-      await ctx.reply(button.build(t("commands.activatekey.would_like_to_continue", { key: ctx.db.guild.key.type })))
+      await ctx.reply(button.build(t("commands.activatekey.would_like_to_continue", { key: ctx.db.guild!.key.type })))
     }
     else {
       await client.prisma.keys.update({
@@ -64,7 +64,7 @@ export default createCommand({
       })
       await client.prisma.guilds.update({
         where: {
-          id: ctx.db.guild.id
+          id: ctx.db.guild!.id
         },
         data: {
           tournamentsLength: 20,
@@ -104,7 +104,7 @@ export default createCommand({
     })
     await client.prisma.guilds.update({
       where: {
-        id: ctx.db.guild.id
+        id: ctx.db.guild!.id
       },
       data: {
         tournamentsLength: 20,

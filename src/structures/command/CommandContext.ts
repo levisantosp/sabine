@@ -6,7 +6,7 @@ import Logger from "../util/Logger.ts"
 import type { guilds, users } from "@prisma/client"
 
 type Database = {
-  guild: guilds
+  guild?: guilds
   user: users
 }
 type CommandContextOptions = {

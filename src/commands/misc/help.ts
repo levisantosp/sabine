@@ -46,11 +46,11 @@ export default createCommand({
         ctx.reply("commands.help.command_not_found")
         return
       }
-      const { permissions } = require(`../ts/${ctx.db.guild.lang}`)
+      const { permissions } = require(`../ts/${ctx.db.guild!.lang}`)
       const embed = new EmbedBuilder()
         .setTitle(ctx.args[0])
         .setDesc((await translate(cmd.description, {
-          to: ctx.db.guild.lang
+          to: ctx.db.guild!.lang
         })).text)
         .addField(t("commands.help.name"), `\`${cmd.name}\``)
         .setFooter({ text: t("commands.help.footer") })

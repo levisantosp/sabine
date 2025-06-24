@@ -104,7 +104,7 @@ export default createCommand({
         }
       ],
       ctx,
-      locale: ctx.db.user.lang ?? ctx.db.guild.lang
+      locale: ctx.db.user.lang ?? ctx.db.guild!.lang
     })
     const embed = new EmbedBuilder()
     .setTitle(`${match.__teams[0].name} 0 <:versus:1349105624180330516> 0 ${match.__teams[1].name}`)
