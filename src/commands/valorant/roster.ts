@@ -59,7 +59,7 @@ export default createCommand({
       {
         value: parseInt(value.toString()).toLocaleString("en-US"),
         ovr: (ovr / (active_players.length + reserve_players.length)).toFixed(0),
-        name: ctx.db.user.team?.name ? `${ctx.db.user.team!.name} (${ctx.db.user.team!.tag})` : "`undefined`"
+        name: ctx.db.user.team?.name ? `${ctx.db.user.team.name} (${ctx.db.user.team.tag})` : "`undefined`"
       }
     ))
     .setThumb(ctx.interaction.user.avatarURL())
@@ -167,7 +167,7 @@ export default createCommand({
               {
                 type: 4,
                 customID: `roster;${i.user.id};modal;response-1`,
-                label: t("commands.roster.modal.team!_name"),
+                label: t("commands.roster.modal.team_name"),
                 style: 1,
                 minLength: 2,
                 maxLength: 20,
@@ -181,7 +181,7 @@ export default createCommand({
               {
                 type: 4,
                 customID: `roster;${i.user.id};modal;response-2`,
-                label: t("commands.roster.modal.team!_tag"),
+                label: t("commands.roster.modal.team_tag"),
                 style: 1,
                 minLength: 2,
                 maxLength: 4,
@@ -196,7 +196,7 @@ export default createCommand({
   async createModalSubmitInteraction({ ctx, i, client }) {
     await i.defer(64)
     const responses = i.data.components.getComponents()
-    ctx.db.user.team! = {
+    ctx.db.user.team = {
       name: responses[0].value,
       tag: responses[1].value
     }
@@ -208,7 +208,7 @@ export default createCommand({
         roster: ctx.db.user.roster
       }
     })
-    await ctx.reply("commands.roster.team!_info_changed", {
+    await ctx.reply("commands.roster.team_info_changed", {
       name: responses[0].value,
       tag: responses[1].value
     })
