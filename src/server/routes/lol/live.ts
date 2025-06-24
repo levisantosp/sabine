@@ -1,7 +1,7 @@
 import { Type, type TypeBoxTypeProvider } from "@fastify/type-provider-typebox"
 import type { FastifyBaseLogger, RawServerDefault, FastifyInstance } from "fastify"
 import type { IncomingMessage, ServerResponse } from "http"
-import { Guild, GuildSchemaInterface } from "../../../database/index.ts"
+import { Guild, type GuildSchemaInterface } from "../../../database/index.ts"
 import { TextChannel } from "oceanic.js"
 import { client } from "../../../structures/client/App.ts"
 import { emojis } from "../../../structures/util/emojis.ts"
