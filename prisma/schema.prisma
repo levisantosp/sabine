@@ -10,7 +10,7 @@ datasource db {
 type PredictionTeams {
   name   String
   score  String
-  winner Boolean
+  winner Boolean?
 }
 
 enum PredictionStatus {
@@ -20,9 +20,9 @@ enum PredictionStatus {
 }
 
 type Prediction {
-  match  String
+  match  Json?
   teams  PredictionTeams[]
-  status PredictionStatus
+  status PredictionStatus?
   bet    BigInt?
   odd    Int?
 }

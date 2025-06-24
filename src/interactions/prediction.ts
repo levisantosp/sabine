@@ -46,7 +46,7 @@ export default createModalSubmitInteraction({
         })
       },
       lol: async() => {
-        if(ctx.db.user.lol_predictions.find(p => p.match.toString() === ctx.args[2])) {
+        if(ctx.db.user.lol_predictions.find(p => p.match!.toString() === ctx.args[2])) {
           return await ctx.reply("helper.replied")
         }
         const res = await service.getMatches("lol")
