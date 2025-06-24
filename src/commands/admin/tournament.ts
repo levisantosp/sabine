@@ -262,7 +262,7 @@ export default createCommand({
       await games[ctx.args[1] as "valorant" | "lol"]()
     }
   },
-  async createAutocompleteInteraction({ i, client, t, args }) {
+  async createAutocompleteInteraction({ i, t, args }) {
     if(!args) return
     if(args[1] === "valorant") {
       const res = await service.getEvents("valorant")
