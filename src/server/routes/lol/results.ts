@@ -1,7 +1,7 @@
 import { Type, type TypeBoxTypeProvider } from "@fastify/type-provider-typebox"
 import type { FastifyBaseLogger, RawServerDefault, FastifyInstance } from "fastify"
 import type { IncomingMessage, ServerResponse } from "http"
-import { Guild, GuildSchemaInterface, User, UserSchemaInterface } from "../../../database/index.ts"
+import { Guild, type GuildSchemaInterface, User, type UserSchemaInterface } from "../../../database/index.ts"
 import { client } from "../../../structures/client/App.ts"
 import { emojis } from "../../../structures/util/emojis.ts"
 import EmbedBuilder from "../../../structures/builders/EmbedBuilder.ts"
