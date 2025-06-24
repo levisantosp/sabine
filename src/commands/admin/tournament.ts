@@ -263,7 +263,6 @@ export default createCommand({
     }
   },
   async createAutocompleteInteraction({ i, client, t, args }) {
-    console.log(args)
     if(!args) return
     if(args[1] === "valorant") {
       const res = await service.getEvents("valorant")
