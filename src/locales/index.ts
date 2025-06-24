@@ -6,7 +6,7 @@ export type Args = {
 }
 const require = createRequire(import.meta.url)
 export default function(lang: string, content: string, args?: Args): string {
-  let locale = require(`./${lang}.ts`)
+  let locale = require(`./${lang}.json`)
   for(const param of content.split(".")) {
     locale = locale[param]
     if(!locale) return content
