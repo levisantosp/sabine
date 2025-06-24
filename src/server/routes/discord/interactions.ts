@@ -146,6 +146,27 @@ const types: Record<number, (raw: AnyRawInteraction) => Promise<any>> = {
       }
       return await i.run({ ctx, t })
     }
+    if(!command.createModalSubmitInteraction) return
+    const user = await User.findById(interaction.user.id) as UserSchemaInterface
+    const guild = (await Guild.findById(interaction.guildID) ?? new Guild({ _id: interaction.guildID })) as GuildSchemaInterface
+    const locale = (content: string, args?: Args) => {
+      return locales(user.lang ?? guild.lang, content, args)
+    }
+    const ctx = new ModalSubmitInteractionContext({
+      args,
+      client,
+      guild: interaction.guild,
+      interaction,
+      locale: user?.lang ?? guild.lang,
+      db: {
+        user,
+        guild
+      }
+    })
+    const t = (content: string, args?: Args) => {
+      return locales(ctx.locale, content, args)
+    }
+    await command.createModalSubmitInteraction({ ctx, t, client, i: interaction })
   },
   [InteractionType.PING]: async() => {
     return { type: 1 }
