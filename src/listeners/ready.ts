@@ -356,6 +356,6 @@ export default createListener({
         }
       ])
     }
-    // await runTasks(client)
+    await runTasks(client)
   }
 })
