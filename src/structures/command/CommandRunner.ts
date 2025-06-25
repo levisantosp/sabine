@@ -31,7 +31,11 @@ export default class CommandRunner {
         }
       })
     }
-    const user = (await new SabineUser(interaction.user.id).get())!
+    const user = await new SabineUser(interaction.user.id).get() ?? await prisma.users.create({
+      data: {
+        id: interaction.user.id
+      }
+    })
     const blacklist = (await prisma.blacklists.findFirst())!
     const ban = blacklist.users.find(user => user.id === interaction.user.id)
     if(blacklist.guilds.find(guild => guild.id === interaction.guildID)) {
