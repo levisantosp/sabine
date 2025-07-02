@@ -15,9 +15,14 @@ export default createListener({
     const webhooks = await channel.getWebhooks()
     let webhook = webhooks.find(w => w.name === `${client.user.username} Logger`)
     if(!webhook) webhook = await channel.createWebhook({ name: `${client.user.username} Logger` })
-    webhook.execute({
+    await webhook.execute({
       embeds: [embed],
       avatarURL: client.user.avatarURL()
     }, webhook.token!)
+    await client.prisma.guilds.delete({
+      where: {
+        id: guild.id
+      }
+    })
   }
 })

@@ -12,18 +12,6 @@ import { PrismaClient } from "@prisma/client"
 const service = new Service(process.env.AUTH)
 
 const prisma = new PrismaClient()
-const deleteGuild = async(client: App) => {
-  const guilds = await prisma.guilds.findMany()
-  for(const guild of guilds) {
-    if(!client.guilds.get(guild.id)) {
-      await prisma.guilds.delete({
-        where: {
-          id: guild.id
-        }
-      })
-    }
-  }
-}
 const sendValorantMatches = async(client: App) => {
   const res = await service.getMatches("valorant")
   if(!res || !res.length) return
@@ -330,7 +318,6 @@ const runInBatches = async(client: App, tasks: any[], batch_size: number) => {
 }
 const runTasks = async(client: App) => {
   const tasks = [
-    deleteGuild,
     sendValorantMatches,
     sendValorantTBDMatches,
     sendLolMatches,
