@@ -177,7 +177,6 @@ const types: Record<number, (raw: AnyRawInteraction) => Promise<any>> = {
           }
         })
       }
-      args = []
       for(const component of interaction.data.components.getComponents()) {
         args.push(component.value)
       }
@@ -200,6 +199,9 @@ const types: Record<number, (raw: AnyRawInteraction) => Promise<any>> = {
       }
       else if(i.isThinking) {
         await interaction.defer()
+      }
+      else if(i.flags) {
+        ctx.setFlags(i.flags)
       }
       return await i.run({ ctx, t })
     }

@@ -17,21 +17,21 @@ export default createModalSubmitInteraction({
         const res = await service.getMatches("valorant")
         const data = res.find(d => d.id === ctx.args[2])!
         const winnerScore = Math.max(
-          Number(ctx.args[0]),
-          Number(ctx.args[1])
+          Number(ctx.args[3]),
+          Number(ctx.args[4])
         )
         await user.addPrediction("valorant", {
           match: data.id!,
           teams: [
             {
               name: data.teams[0].name,
-              score: ctx.args[0],
-              winner: Number(ctx.args[0]) !== winnerScore ? false : true
+              score: ctx.args[3],
+              winner: Number(ctx.args[3]) !== winnerScore ? false : true
             },
             {
               name: data.teams[1].name,
-              score: ctx.args[1],
-              winner: Number(ctx.args[1]) !== winnerScore ? false : true
+              score: ctx.args[4],
+              winner: Number(ctx.args[4]) !== winnerScore ? false : true
             }
           ],
           status: "pending",
@@ -41,8 +41,8 @@ export default createModalSubmitInteraction({
         await ctx.reply("helper.palpitate_response", {
           t1: data.teams[0].name,
           t2: data.teams[1].name,
-          s1: ctx.args[0],
-          s2: ctx.args[1]
+          s1: ctx.args[3],
+          s2: ctx.args[4]
         })
       },
       lol: async() => {
@@ -52,21 +52,21 @@ export default createModalSubmitInteraction({
         const res = await service.getMatches("lol")
         const data = res.find(d => d.id?.toString() === ctx.args[2])!
         const winnerScore = Math.max(
-          Number(ctx.args[0]),
-          Number(ctx.args[1])
+          Number(ctx.args[3]),
+          Number(ctx.args[4])
         )
         await user.addPrediction("lol", {
           match: data.id!,
           teams: [
             {
               name: data.teams[0].name,
-              score: ctx.args[0],
-              winner: Number(ctx.args[0]) !== winnerScore ? false : true
+              score: ctx.args[3],
+              winner: Number(ctx.args[3]) !== winnerScore ? false : true
             },
             {
               name: data.teams[1].name,
-              score: ctx.args[1],
-              winner: Number(ctx.args[1]) !== winnerScore ? false : true
+              score: ctx.args[4],
+              winner: Number(ctx.args[4]) !== winnerScore ? false : true
             }
           ],
           status: "pending",
@@ -76,8 +76,8 @@ export default createModalSubmitInteraction({
         await ctx.reply("helper.palpitate_response", {
           t1: data.teams[0].name,
           t2: data.teams[1].name,
-          s1: ctx.args[0],
-          s2: ctx.args[1]
+          s1: ctx.args[3],
+          s2: ctx.args[4]
         })
       }
     }

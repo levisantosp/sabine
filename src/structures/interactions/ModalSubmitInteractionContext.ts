@@ -42,25 +42,29 @@ export default class ModalSubmitInteractionContext {
           if(this.interaction.acknowledged) return await this.interaction.createFollowup(
             {
               content: locales(this.locale, content, options),
-              files: options.files as File[]
+              files: options.files as File[],
+              flags: this.flags
             }
           )
           else return await this.interaction.createMessage(
             {
               content: locales(this.locale, content, options),
-              files: options.files as File[]
+              files: options.files as File[],
+              flags: this.flags
             }
           )
         }
         else {
           if(this.interaction.acknowledged) return await this.interaction.createFollowup(
             {
-              content: locales(this.locale, content, options)
+              content: locales(this.locale, content, options),
+              flags: this.flags
             }
           )
           else return await this.interaction.createMessage(
             {
-              content: locales(this.locale, content, options)
+              content: locales(this.locale, content, options),
+              flags: this.flags
             }
           )
         }
@@ -71,7 +75,8 @@ export default class ModalSubmitInteractionContext {
             Object.assign(
               content,
               {
-                files: options.files
+                files: options.files,
+                flags: this.flags
               }
             )
           )
@@ -79,7 +84,8 @@ export default class ModalSubmitInteractionContext {
             Object.assign(
               content,
               {
-                files: options.files
+                files: options.files,
+                flags: this.flags
               }
             )
           )
