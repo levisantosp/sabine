@@ -141,7 +141,7 @@ export default createCommand({
               id: ctx.db.guild!.id
             },
             data: {
-              valorant_livefeed_channel: channel.id
+              lol_livefeed_channel: channel.id
             }
           })
           await ctx.reply("commands.news.news_enabled", { ch: channel.mention })
