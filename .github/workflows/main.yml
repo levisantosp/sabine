@@ -12,7 +12,7 @@ jobs:
       - name: Setup ssh
         run: |
           mkdir -p ~/.ssh/
-          echo '$SSH_PRIVATE_KEY' > ~/.ssh/sabine
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/sabine
           chmod 600 ~/.ssh/sabine
           cat >>~/.ssh/config << END
           Host prod
