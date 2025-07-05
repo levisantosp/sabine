@@ -1,8 +1,8 @@
-import { SabineUser } from "../../database/index.ts"
-import getPlayers from "../../simulator/valorant/players/getPlayers.ts"
-import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
-import createCommand from "../../structures/command/createCommand.ts"
-import calcPlayerPrice from "../../structures/util/calcPlayerPrice.ts"
+import { SabineUser } from '../../database/index.ts'
+import getPlayers from '../../simulator/valorant/players/getPlayers.ts'
+import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
+import createCommand from '../../structures/command/createCommand.ts'
+import calcPlayerPrice from '../../structures/util/calcPlayerPrice.ts'
 
 type Player = {
   id: number
@@ -23,11 +23,9 @@ type Player = {
 const calcPlayerOvr = (player: Player) => {
   return (player.aim + player.HS + player.movement + player.aggression + player.ACS + player.gamesense) / 4.5
 }
-
 const players = getPlayers()
-
 const tier = (() => {
-  let tier = {
+  const tier = {
     s: [] as Player[], // ovr 95+ (0.1%)
     a: [] as Player[], // ovr 90-94 (0.9%)
     b: [] as Player[], // ovr 80-89 (4%)
@@ -45,7 +43,7 @@ const tier = (() => {
   return tier
 })()
 
-const getRandomPlayerByOvr = (players: Player[]) => {
+const getRandomPlayerByOvr = () => {
   let random = Math.random() * 100
   if(random < 0.1) {
     random = Math.floor(Math.random() * tier.s.length)
@@ -70,23 +68,23 @@ const getRandomPlayerByOvr = (players: Player[]) => {
 }
 
 export default createCommand({
-  name: "claim",
-  category: "simulator",
+  name: 'claim',
+  category: 'simulator',
   nameLocalizations: {
-    "pt-BR": "obter"
+    'pt-BR': 'obter'
   },
-  description: "Claim a random player",
+  description: 'Claim a random player',
   descriptionLocalizations: {
-    "pt-BR": "Obtenha um jogador aleatório"
+    'pt-BR': 'Obtenha um jogador aleatório'
   },
   userInstall: true,
   async run({ ctx, t }) {
     if(ctx.db.user.claim_time > Date.now()) {
-      return await ctx.reply("commands.claim.has_been_claimed", { t: `<t:${((ctx.db.user.claim_time) / 1000).toFixed(0)}:R>` })
+      return await ctx.reply('commands.claim.has_been_claimed', { t: `<t:${((ctx.db.user.claim_time) / 1000).toFixed(0)}:R>` })
     }
-    let player = getRandomPlayerByOvr(players)
-    let ovr = calcPlayerOvr(player)
-    let price = calcPlayerPrice(player)
+    let player = getRandomPlayerByOvr()
+    const ovr = calcPlayerOvr(player)
+    const price = calcPlayerPrice(player)
     player = {
       ...player,
       ovr: parseInt(ovr.toString()),
@@ -96,10 +94,10 @@ export default createCommand({
     .setTitle(player.name)
     .setDesc(
       t(
-        "commands.claim.claimed",
+        'commands.claim.claimed',
         {
           player: player.name,
-          price: price.toLocaleString("en-US")
+          price: price.toLocaleString('en-US')
         }
       )
     )

@@ -1,36 +1,19 @@
-import getPlayer from "../../simulator/valorant/players/getPlayer.ts"
-import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
-import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
-import createCommand from "../../structures/command/createCommand.ts"
-import calcPlayerOvr from "../../structures/util/calcPlayerOvr.ts"
-import calcPlayerPrice from "../../structures/util/calcPlayerPrice.ts"
-
-type Player = {
-  id: number
-  name: string
-  collection: string
-  team: string
-  country: string
-  role: string
-  aim: number
-  HS: number
-  movement: number
-  aggression: number
-  ACS: number
-  gamesense: number
-  ovr?: number
-  price?: number
-}
+import getPlayer from '../../simulator/valorant/players/getPlayer.ts'
+import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
+import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
+import createCommand from '../../structures/command/createCommand.ts'
+import calcPlayerOvr from '../../structures/util/calcPlayerOvr.ts'
+import calcPlayerPrice from '../../structures/util/calcPlayerPrice.ts'
 
 export default createCommand({
-  name: "roster",
-  category: "simulator",
+  name: 'roster',
+  category: 'simulator',
   nameLocalizations: {
-    "pt-BR": "elenco"
+    'pt-BR': 'elenco'
   },
-  description: "Check your roster",
+  description: 'Check your roster',
   descriptionLocalizations: {
-    "pt-BR": "Veja seu elenco"
+    'pt-BR': 'Veja seu elenco'
   },
   userInstall: true,
   async run({ ctx, t }) {
@@ -39,32 +22,32 @@ export default createCommand({
     let value = 0
     let ovr = 0
     for(const p of active_players) {
-      let o = calcPlayerOvr(getPlayer(Number(p))!)
+      const o = calcPlayerOvr(getPlayer(Number(p))!)
       const player = getPlayer(Number(p))
       if(!player) break
       ovr += o
       value += calcPlayerPrice(player, true)
     }
     for(const p of reserve_players) {
-      let o = calcPlayerOvr(getPlayer(Number(p))!)
+      const o = calcPlayerOvr(getPlayer(Number(p))!)
       const player = getPlayer(Number(p))
       if(!player) break
       ovr += o
       value += calcPlayerPrice(player, true)
     }
     const embed = new EmbedBuilder()
-    .setTitle(t("commands.roster.embed.title"))
+    .setTitle(t('commands.roster.embed.title'))
     .setDesc(t(
-      "commands.roster.embed.desc",
+      'commands.roster.embed.desc',
       {
-        value: parseInt(value.toString()).toLocaleString("en-US"),
+        value: parseInt(value.toString()).toLocaleString('en-US'),
         ovr: (ovr / (active_players.length + reserve_players.length)).toFixed(0),
-        name: ctx.db.user.team?.name ? `${ctx.db.user.team.name} (${ctx.db.user.team.tag})` : "`undefined`"
+        name: ctx.db.user.team?.name ? `${ctx.db.user.team.name} (${ctx.db.user.team.tag})` : '`undefined`'
       }
     ))
     .setThumb(ctx.interaction.user.avatarURL())
-    let active_content = ""
-    let reserve_content = ""
+    let active_content = ''
+    let reserve_content = ''
     for(const p_id of active_players) {
       const player = getPlayer(Number(p_id))!
       const ovr = parseInt(calcPlayerOvr(player).toString())
@@ -82,7 +65,7 @@ export default createCommand({
       reserve_content += `- +${reserve_players.length - 10}...`
     }
     embed.addField(t(
-      "commands.roster.embed.field.name1",
+      'commands.roster.embed.field.name1',
       {
         total: active_players.length
       }
@@ -90,7 +73,7 @@ export default createCommand({
     embed.setFields(
       {
         name: t(
-          "commands.roster.embed.field.name1",
+          'commands.roster.embed.field.name1',
           {
             total: active_players.length
           }
@@ -100,7 +83,7 @@ export default createCommand({
       },
       {
         name: t(
-          "commands.roster.embed.field.name2",
+          'commands.roster.embed.field.name2',
           {
             total: reserve_players.length
           }
@@ -110,13 +93,13 @@ export default createCommand({
       }
     )
     const button = new ButtonBuilder()
-    .setLabel(t("commands.roster.generate_file"))
+    .setLabel(t('commands.roster.generate_file'))
     .setCustomId(`roster;${ctx.interaction.user.id};file`)
-    .setStyle("blue")
+    .setStyle('blue')
     const button2 = new ButtonBuilder()
-    .setLabel(t("commands.roster.change_team"))
+    .setLabel(t('commands.roster.change_team'))
     .setCustomId(`roster;${ctx.interaction.user.id};team`)
-    .setStyle("green")
+    .setStyle('green')
     await ctx.reply(embed.build({
       components: [
         {
@@ -127,9 +110,9 @@ export default createCommand({
     }))
   },
   async createInteraction({ ctx, i, t }) {
-    if(ctx.args[2] === "file") {
+    if(ctx.args[2] === 'file') {
       await ctx.interaction.defer(64)
-      let players = ""
+      let players = ''
       const active_players = ctx.db.user.roster!.active
       const reserve_players = ctx.db.user.roster!.reserve
       for(const p of active_players) {
@@ -146,8 +129,8 @@ export default createCommand({
         const ovr = calcPlayerOvr(player)
         players += `${player.name} (${parseInt(ovr.toString())})\n`
       }
-      const txt = Buffer.from(players, "utf-8")
-      await ctx.reply("", {
+      const txt = Buffer.from(players, 'utf-8')
+      await ctx.reply('', {
         files: [
           {
             name: `roster_${ctx.interaction.user.id}.txt`,
@@ -159,7 +142,7 @@ export default createCommand({
     else {
       await i.createModal({
         customID: `roster;${i.user.id};modal`,
-        title: t("commands.roster.modal.title"),
+        title: t('commands.roster.modal.title'),
         components: [
           {
             type: 1,
@@ -167,7 +150,7 @@ export default createCommand({
               {
                 type: 4,
                 customID: `roster;${i.user.id};modal;response-1`,
-                label: t("commands.roster.modal.team_name"),
+                label: t('commands.roster.modal.team_name'),
                 style: 1,
                 minLength: 2,
                 maxLength: 20,
@@ -181,7 +164,7 @@ export default createCommand({
               {
                 type: 4,
                 customID: `roster;${i.user.id};modal;response-2`,
-                label: t("commands.roster.modal.team_tag"),
+                label: t('commands.roster.modal.team_tag'),
                 style: 1,
                 minLength: 2,
                 maxLength: 4,
@@ -208,7 +191,7 @@ export default createCommand({
         }
       }
     })
-    await ctx.reply("commands.roster.team_info_changed", {
+    await ctx.reply('commands.roster.team_info_changed', {
       name: responses[0].value,
       tag: responses[1].value
     })

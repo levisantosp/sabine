@@ -1,12 +1,12 @@
-import type { TextChannel } from "oceanic.js"
-import createListener from "../structures/client/createListener.ts"
-import EmbedBuilder from "../structures/builders/EmbedBuilder.ts"
+import type { TextChannel } from 'oceanic.js'
+import createListener from '../structures/client/createListener.ts'
+import EmbedBuilder from '../structures/builders/EmbedBuilder.ts'
 
 export default createListener({
-  name: "shardPreReady",
+  name: 'shardPreReady',
   async run(client, shard) {
     const embed = new EmbedBuilder()
-      .setTitle("Shard Connecting")
+      .setTitle('Shard Connecting')
       .setDesc(`Shard ID: \`${shard}\` => \`Connecting...\``)
       .setFooter({
         text: `Instance: ${client.user.tag}`,

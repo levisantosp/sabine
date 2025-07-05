@@ -1,5 +1,5 @@
-import { createRequire } from "module"
-import * as Oceanic from "oceanic.js"
+import { createRequire } from 'module'
+import * as Oceanic from 'oceanic.js'
 
 export type Args = {
   [key: string]: string | Error | number | Oceanic.File[] | undefined | null
@@ -7,7 +7,7 @@ export type Args = {
 const require = createRequire(import.meta.url)
 export default function(lang: string, content: string, args?: Args): string {
   let locale = require(`./${lang}.json`)
-  for(const param of content.split(".")) {
+  for(const param of content.split('.')) {
     locale = locale[param]
     if(!locale) return content
   }

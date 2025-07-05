@@ -1,30 +1,30 @@
-import type { SelectOption } from "oceanic.js"
-import getPlayer from "../../simulator/valorant/players/getPlayer.ts"
-import SelectMenuBuilder from "../../structures/builders/SelectMenuBuilder.ts"
-import createCommand from "../../structures/command/createCommand.ts"
-import calcPlayerOvr from "../../structures/util/calcPlayerOvr.ts"
-import { SabineUser } from "../../database/index.ts"
+import type { SelectOption } from 'oceanic.js'
+import getPlayer from '../../simulator/valorant/players/getPlayer.ts'
+import SelectMenuBuilder from '../../structures/builders/SelectMenuBuilder.ts'
+import createCommand from '../../structures/command/createCommand.ts'
+import calcPlayerOvr from '../../structures/util/calcPlayerOvr.ts'
+import { SabineUser } from '../../database/index.ts'
 
 export default createCommand({
-  name: "promote",
+  name: 'promote',
   nameLocalizations: {
-    "pt-BR": "promover"
+    'pt-BR': 'promover'
   },
-  description: "Promote a player to your active roster",
+  description: 'Promote a player to your active roster',
   descriptionLocalizations: {
-    "pt-BR": "Promova um jogador para o elenco principal"
+    'pt-BR': 'Promova um jogador para o elenco principal'
   },
-  category: "simulator",
+  category: 'simulator',
   options: [
     {
       type: 3,
-      name: "player",
+      name: 'player',
       nameLocalizations: {
-        "pt-BR": "jogador"
+        'pt-BR': 'jogador'
       },
-      description: "Select a player",
+      description: 'Select a player',
       descriptionLocalizations: {
-        "pt-BR": "Selecione um jogador"
+        'pt-BR': 'Selecione um jogador'
       },
       required: true,
       autocomplete: true
@@ -34,12 +34,12 @@ export default createCommand({
   async run({ ctx, t, client }) {
     const p = getPlayer(Number(ctx.args[0]))
     if(!p) {
-      return ctx.reply("commands.promote.player_not_found")
+      return ctx.reply('commands.promote.player_not_found')
     }
     const options: SelectOption[] = []
     const players = ctx.db.user.roster!.active
     if(players.length < 5) {
-      let i = ctx.db.user.roster!.reserve.findIndex(pl => pl === p.id.toString())
+      const i = ctx.db.user.roster!.reserve.findIndex(pl => pl === p.id.toString())
       ctx.db.user.roster!.active.push(p.id.toString())
       ctx.db.user.roster!.reserve.splice(i, 1)
       await client.prisma.users.update({
@@ -50,7 +50,7 @@ export default createCommand({
           roster: ctx.db.user.roster
         }
       })
-      return await ctx.reply("commands.promote.player_promoted", { p: p.name })
+      return await ctx.reply('commands.promote.player_promoted', { p: p.name })
     }
     for(const p_id of players) {
       const p = getPlayer(Number(p_id))
@@ -65,7 +65,7 @@ export default createCommand({
     const menu = new SelectMenuBuilder()
     .setCustomId(`promote;${ctx.interaction.user.id};${ctx.args[0]}`)
     .setOptions(...options)
-    await ctx.reply(menu.build(t("commands.promote.select_player")))
+    await ctx.reply(menu.build(t('commands.promote.select_player')))
   },
   async createAutocompleteInteraction({ i }) {
     const user = (await new SabineUser(i.user.id).get())!
@@ -107,7 +107,7 @@ export default createCommand({
       })
       const p = getPlayer(Number(ctx.args[2]))!
       await i.editParent({
-        content: t("commands.promote.player_promoted", { p: p.name }),
+        content: t('commands.promote.player_promoted', { p: p.name }),
         components: []
       })
     }

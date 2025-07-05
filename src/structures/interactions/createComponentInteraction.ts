@@ -1,6 +1,5 @@
-import type { Args } from "../../locales/index.ts"
-import App from "../client/App.ts"
-import ComponentInteractionContext from "./ComponentInteractionContext.ts"
+import type { Args } from '../../locales/index.ts'
+import ComponentInteractionContext from './ComponentInteractionContext.ts'
 
 type CreateInteractionProps = {
   ctx: ComponentInteractionContext

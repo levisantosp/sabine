@@ -1,8 +1,8 @@
-import type { ResultsData } from "../../../types.ts"
+import type { ResultsData } from '../../../types.ts'
 
 export default class ResultsService {
   public static async get(auth: string) {
-    const data = await (await fetch(process.env.API_URL + "/results/valorant", {
+    const data = await (await fetch(process.env.API_URL + '/results/valorant', {
       headers: {
         authorization: auth
       }

@@ -1,23 +1,23 @@
-import type { CreateApplicationCommandOptions, TextChannel } from "oceanic.js"
-import Service from "../api/index.ts"
-import locales from "../locales/index.ts"
-import type { MatchesData } from "../types.ts"
-import createListener from "../structures/client/createListener.ts"
-import Logger from "../structures/util/Logger.ts"
-import { emojis } from "../structures/util/emojis.ts"
-import EmbedBuilder from "../structures/builders/EmbedBuilder.ts"
-import ButtonBuilder from "../structures/builders/ButtonBuilder.ts"
-import App from "../structures/client/App.ts"
-import { PrismaClient } from "@prisma/client"
+import type { TextChannel } from 'oceanic.js'
+import Service from '../api/index.ts'
+import locales from '../locales/index.ts'
+import type { MatchesData } from '../types.ts'
+import createListener from '../structures/client/createListener.ts'
+import Logger from '../structures/util/Logger.ts'
+import { emojis } from '../structures/util/emojis.ts'
+import EmbedBuilder from '../structures/builders/EmbedBuilder.ts'
+import ButtonBuilder from '../structures/builders/ButtonBuilder.ts'
+import App from '../structures/client/App.ts'
+import { PrismaClient } from '@prisma/client'
 const service = new Service(process.env.AUTH)
 
 const prisma = new PrismaClient()
 const sendValorantMatches = async(client: App) => {
-  const res = await service.getMatches("valorant")
+  const res = await service.getMatches('valorant')
   if(!res || !res.length) return
   const guilds = await prisma.guilds.findMany()
   if(!guilds.length) return
-  const res2 = await service.getResults("valorant")
+  const res2 = await service.getResults('valorant')
   for(const guild of guilds) {
     if(guild.valorant_matches.length && !res2.some(d => d.id === guild.valorant_matches[guild.valorant_matches.length - 1])) continue
     guild.valorant_matches = []
@@ -29,8 +29,8 @@ const sendValorantMatches = async(client: App) => {
     for(const e of guild.valorant_events) {
       if(!client.getChannel(e.channel1)) continue
       try {
-        let messages = await client.rest.channels.getMessages(e.channel1, { limit: 100 })
-        let messagesIds = messages.filter(m => m.author.id === client.user.id).map(m => m.id)
+        const messages = await client.rest.channels.getMessages(e.channel1, { limit: 100 })
+        const messagesIds = messages.filter(m => m.author.id === client.user.id).map(m => m.id)
         if(messagesIds.length) {
           client.rest.channels.deleteMessages(e.channel1, messagesIds).catch(() => { })
         }
@@ -44,9 +44,9 @@ const sendValorantMatches = async(client: App) => {
           if(e.name === d.tournament.name) {
             const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
             const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
-            let index = guild.valorant_matches.findIndex((m) => m === d.id)
+            const index = guild.valorant_matches.findIndex((m) => m === d.id)
             if(index > -1) guild.valorant_matches.splice(index, 1)
-            if(!d.stage.toLowerCase().includes("showmatch")) guild.valorant_matches.push(d.id!)
+            if(!d.stage.toLowerCase().includes('showmatch')) guild.valorant_matches.push(d.id!)
 
             const embed = new EmbedBuilder()
               .setAuthor({
@@ -58,15 +58,15 @@ const sendValorantMatches = async(client: App) => {
                 text: d.stage
               })
             const button = new ButtonBuilder()
-              .setLabel(locales(guild.lang, "helper.palpitate"))
+              .setLabel(locales(guild.lang, 'helper.palpitate'))
               .setCustomId(`predict;valorant;${d.id}`)
-              .setStyle("green")
+              .setStyle('green')
             const urlButton = new ButtonBuilder()
-              .setLabel(locales(guild.lang, "helper.stats"))
-              .setStyle("link")
+              .setLabel(locales(guild.lang, 'helper.stats'))
+              .setStyle('link')
               .setURL(`https://vlr.gg/${d.id}`)
-            if(d.stage.toLowerCase().includes("showmatch")) continue
-            if(d.teams[0].name !== "TBD" && d.teams[1].name !== "TBD") await client.rest.channels.createMessage(e.channel1, {
+            if(d.stage.toLowerCase().includes('showmatch')) continue
+            if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') await client.rest.channels.createMessage(e.channel1, {
               embeds: [embed],
               components: [
                 {
@@ -74,14 +74,14 @@ const sendValorantMatches = async(client: App) => {
                   components: [
                     button,
                     new ButtonBuilder()
-                      .setLabel(locales(guild.lang, "helper.bet"))
+                      .setLabel(locales(guild.lang, 'helper.bet'))
                       .setCustomId(`bet;valorant;${d.id}`)
-                      .setStyle("gray"),
+                      .setStyle('gray'),
                     urlButton,
                     new ButtonBuilder()
-                      .setLabel(locales(guild.lang, "helper.pickem.label"))
-                      .setStyle("blue")
-                      .setCustomId("pickem")
+                      .setLabel(locales(guild.lang, 'helper.pickem.label'))
+                      .setStyle('blue')
+                      .setCustomId('pickem')
                   ]
                 }
               ]
@@ -109,7 +109,7 @@ const sendValorantMatches = async(client: App) => {
   }
 }
 const sendValorantTBDMatches = async(client: App) => {
-  const res = await service.getMatches("valorant")
+  const res = await service.getMatches('valorant')
   if(!res || !res.length) return
   const guilds = await prisma.guilds.findMany()
   if(!guilds.length) return
@@ -118,7 +118,7 @@ const sendValorantTBDMatches = async(client: App) => {
     for(const match of guild.valorant_tbd_matches) {
       const data = res.find(d => d.id === match.id)
       if(!data) continue
-      if(data.teams[0].name !== "TBD" && data.teams[1].name !== "TBD") {
+      if(data.teams[0].name !== 'TBD' && data.teams[1].name !== 'TBD') {
         const emoji1 = emojis.find(e => e?.name === data.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
         const emoji2 = emojis.find(e => e?.name === data.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
         const channel = client.getChannel(match.channel) as TextChannel
@@ -136,23 +136,23 @@ const sendValorantTBDMatches = async(client: App) => {
               type: 1,
               components: [
                 new ButtonBuilder()
-                  .setLabel(locales(guild.lang, "helper.palpitate"))
+                  .setLabel(locales(guild.lang, 'helper.palpitate'))
                   .setCustomId(`predict;valorant;${match.id}`)
-                  .setStyle("green"),
+                  .setStyle('green'),
                 new ButtonBuilder()
-                  .setLabel(locales(guild.lang, "helper.bet"))
+                  .setLabel(locales(guild.lang, 'helper.bet'))
                   .setCustomId(`bet;valorant;${data.id}`)
-                  .setStyle("gray"),
+                  .setStyle('gray'),
                 new ButtonBuilder()
-                  .setLabel(locales(guild.lang, "helper.stats"))
-                  .setStyle("link")
+                  .setLabel(locales(guild.lang, 'helper.stats'))
+                  .setStyle('link')
                   .setURL(`https://vlr.gg/${data.id}`)
               ]
             }
           ]
         })
         .catch(() => {})
-        let index = guild.valorant_tbd_matches.findIndex((m) => m.id === match.id)
+        const index = guild.valorant_tbd_matches.findIndex((m) => m.id === match.id)
         guild.valorant_tbd_matches.splice(index, 1)
         await prisma.guilds.update({
           where: {
@@ -167,8 +167,8 @@ const sendValorantTBDMatches = async(client: App) => {
   }
 }
 const sendLolMatches = async(client: App) => {
-  const res = await service.getMatches("lol")
-  const res2 = await service.getResults("lol")
+  const res = await service.getMatches('lol')
+  const res2 = await service.getResults('lol')
   if(!res || !res.length) return
   const guilds = await prisma.guilds.findMany()
   if(!guilds.length) return
@@ -183,8 +183,8 @@ const sendLolMatches = async(client: App) => {
     for(const e of guild.lol_events) {
       if(!client.getChannel(e.channel1)) continue
       try {
-        let messages = await client.rest.channels.getMessages(e.channel1, { limit: 100 })
-        let messagesIds = messages.filter(m => m.author.id === client.user.id).map(m => m.id)
+        const messages = await client.rest.channels.getMessages(e.channel1, { limit: 100 })
+        const messagesIds = messages.filter(m => m.author.id === client.user.id).map(m => m.id)
         if(messagesIds.length) {
           client.rest.channels.deleteMessages(e.channel1, messagesIds).catch(() => { })
         }
@@ -198,9 +198,9 @@ const sendLolMatches = async(client: App) => {
           if(e.name === d.tournament.name) {
             const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
             const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
-            let index = guild.lol_matches.findIndex((m) => m === d.id)
+            const index = guild.lol_matches.findIndex((m) => m === d.id)
             if(index > -1) guild.lol_matches.splice(index, 1)
-            if(!d.stage.toLowerCase().includes("showmatch")) guild.lol_matches.push(d.id!)
+            if(!d.stage.toLowerCase().includes('showmatch')) guild.lol_matches.push(d.id!)
             const embed = new EmbedBuilder()
               .setAuthor({
                 iconURL: d.tournament.image,
@@ -211,11 +211,11 @@ const sendLolMatches = async(client: App) => {
                 text: d.stage
               })
             const button = new ButtonBuilder()
-              .setLabel(locales(guild.lang, "helper.palpitate"))
+              .setLabel(locales(guild.lang, 'helper.palpitate'))
               .setCustomId(`predict;lol;${d.id}`)
-              .setStyle("green")
-            if(d.stage.toLowerCase().includes("showmatch")) continue
-            if(d.teams[0].name !== "TBD" && d.teams[1].name !== "TBD") await client.rest.channels.createMessage(e.channel1, {
+              .setStyle('green')
+            if(d.stage.toLowerCase().includes('showmatch')) continue
+            if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') await client.rest.channels.createMessage(e.channel1, {
               embeds: [embed],
               components: [
                 {
@@ -223,13 +223,13 @@ const sendLolMatches = async(client: App) => {
                   components: [
                     button,
                     new ButtonBuilder()
-                      .setLabel(locales(guild.lang, "helper.bet"))
+                      .setLabel(locales(guild.lang, 'helper.bet'))
                       .setCustomId(`bet;lol;${d.id}`)
-                      .setStyle("gray"),
+                      .setStyle('gray'),
                     new ButtonBuilder()
-                      .setLabel(locales(guild.lang, "helper.pickem.label"))
-                      .setStyle("blue")
-                      .setCustomId("pickem")
+                      .setLabel(locales(guild.lang, 'helper.pickem.label'))
+                      .setStyle('blue')
+                      .setCustomId('pickem')
                   ]
                 }
               ]
@@ -257,7 +257,7 @@ const sendLolMatches = async(client: App) => {
   }
 }
 const sendLolTBDMatches = async(client: App) => {
-  const res = await service.getMatches("lol")
+  const res = await service.getMatches('lol')
   if(!res || !res.length) return
   const guilds = await prisma.guilds.findMany()
   if(!guilds.length) return
@@ -266,7 +266,7 @@ const sendLolTBDMatches = async(client: App) => {
     for(const match of guild.lol_tbd_matches) {
       const data = res.find(d => d.id === match.id)
       if(!data) continue
-      if(data.teams[0].name !== "TBD" && data.teams[1].name !== "TBD") {
+      if(data.teams[0].name !== 'TBD' && data.teams[1].name !== 'TBD') {
         const emoji1 = emojis.find(e => e?.name === data.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
         const emoji2 = emojis.find(e => e?.name === data.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
         const channel = client.getChannel(match.channel) as TextChannel
@@ -284,19 +284,19 @@ const sendLolTBDMatches = async(client: App) => {
               type: 1,
               components: [
                 new ButtonBuilder()
-                  .setLabel(locales(guild.lang, "helper.palpitate"))
+                  .setLabel(locales(guild.lang, 'helper.palpitate'))
                   .setCustomId(`predict;lol;${match.id}`)
-                  .setStyle("green"),
+                  .setStyle('green'),
                 new ButtonBuilder()
-                  .setLabel(locales(guild.lang, "helper.bet"))
+                  .setLabel(locales(guild.lang, 'helper.bet'))
                   .setCustomId(`bet;lol;${data.id}`)
-                  .setStyle("gray")
+                  .setStyle('gray')
               ]
             }
           ]
         })
           .catch(() => { })
-        let index = guild.lol_tbd_matches.findIndex((m) => m.id === match.id)
+        const index = guild.lol_tbd_matches.findIndex((m) => m.id === match.id)
         guild.lol_tbd_matches.splice(index, 1)
         await prisma.guilds.update({
           where: {
@@ -328,17 +328,17 @@ const runTasks = async(client: App) => {
 }
 
 export default createListener({
-  name: "ready",
+  name: 'ready',
   async run(client) {
     Logger.send(`${client.user.tag} online!`)
-    if(client.user.id !== "1235576817683922954") {
-      client.editStatus("dnd")
+    if(client.user.id !== '1235576817683922954') {
+      client.editStatus('dnd')
     }
     else {
-      client.editStatus("online", [
+      client.editStatus('online', [
         {
-          name: "status",
-          state: "Join support server! Link on about me",
+          name: 'status',
+          state: 'Join support server! Link on about me',
           type: 4
         }
       ])

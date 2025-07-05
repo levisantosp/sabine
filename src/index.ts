@@ -1,5 +1,5 @@
-import { client } from "./structures/client/App.ts"
-import { server } from "./server/index.ts"
+import { client } from './structures/client/App.ts'
+import { server } from './server/index.ts'
 
 await client.connect()
 server.listen({

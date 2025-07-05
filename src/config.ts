@@ -1,202 +1,202 @@
 export const valorant_agents = [
   {
-    name: "Brimstone",
-    role: "controller"
+    name: 'Brimstone',
+    role: 'controller'
   },
   {
-    name: "Omen",
-    role: "controller"
+    name: 'Omen',
+    role: 'controller'
   },
   {
-    name: "Viper",
-    role: "controller"
+    name: 'Viper',
+    role: 'controller'
   },
   {
-    name: "Raze",
-    role: "duelist"
+    name: 'Raze',
+    role: 'duelist'
   },
   {
-    name: "Cypher",
-    role: "sentinel"
+    name: 'Cypher',
+    role: 'sentinel'
   },
   {
-    name: "Sage",
-    role: "sentinel"
+    name: 'Sage',
+    role: 'sentinel'
   },
   {
-    name: "Sova",
-    role: "initiator"
+    name: 'Sova',
+    role: 'initiator'
   },
   {
-    name: "Phoenix",
-    role: "duelist"
+    name: 'Phoenix',
+    role: 'duelist'
   },
   {
-    name: "Jett",
-    role: "duelist"
+    name: 'Jett',
+    role: 'duelist'
   },
   {
-    name: "Breach",
-    role: "initiator"
+    name: 'Breach',
+    role: 'initiator'
   },
   {
-    name: "Reyna",
-    role: "duelist"
+    name: 'Reyna',
+    role: 'duelist'
   },
   {
-    name: "Killjoy",
-    role: "sentinel"
+    name: 'Killjoy',
+    role: 'sentinel'
   },
   {
-    name: "Skye",
-    role: "initiator"
+    name: 'Skye',
+    role: 'initiator'
   },
   {
-    name: "Yoru",
-    role: "duelist"
+    name: 'Yoru',
+    role: 'duelist'
   },
   {
-    name: "Astra",
-    role: "controller"
+    name: 'Astra',
+    role: 'controller'
   },
   {
-    name: "KAY/O",
-    role: "initiator"
+    name: 'KAY/O',
+    role: 'initiator'
   },
   {
-    name: "Chamber",
-    role: "sentinel"
+    name: 'Chamber',
+    role: 'sentinel'
   },
   {
-    name: "Neon",
-    role: "duelist"
+    name: 'Neon',
+    role: 'duelist'
   },
   {
-    name: "Fade",
-    role: "initiator"
+    name: 'Fade',
+    role: 'initiator'
   },
   {
-    name: "Harbor",
-    role: "controller"
+    name: 'Harbor',
+    role: 'controller'
   },
   {
-    name: "Gekko",
-    role: "initiator"
+    name: 'Gekko',
+    role: 'initiator'
   },
   {
-    name: "Deadlock",
-    role: "sentinel"
+    name: 'Deadlock',
+    role: 'sentinel'
   },
   {
-    name: "Iso",
-    role: "duelist"
+    name: 'Iso',
+    role: 'duelist'
   },
   {
-    name: "Clove",
-    role: "controller"
+    name: 'Clove',
+    role: 'controller'
   },
   {
-    name: "Vyse",
-    role: "sentinel"
+    name: 'Vyse',
+    role: 'sentinel'
   },
   {
-    name: "Tejo",
-    role: "initiator"
+    name: 'Tejo',
+    role: 'initiator'
   }
 ] as const
 export const valorant_weapons = [
   {
-    name: "Classic",
+    name: 'Classic',
     price: 0,
     damage: 26
   },
   {
-    name: "Shorty",
+    name: 'Shorty',
     price: 200,
     damage: 12
   },
   {
-    name: "Frenzy",
+    name: 'Frenzy',
     price: 450,
     damage: 26
   },
   {
-    name: "Ghost",
+    name: 'Ghost',
     price: 500,
     damage: 30
   },
   {
-    name: "Sheriff",
+    name: 'Sheriff',
     price: 800,
     damage: 55
   },
   {
-    name: "Stinger",
+    name: 'Stinger',
     price: 950,
     damage: 27
   },
   {
-    name: "Spectre",
+    name: 'Spectre',
     price: 1600,
     damage: 26
   },
   {
-    name: "Bucky",
+    name: 'Bucky',
     price: 850,
     damage: 22
   },
   {
-    name: "Judge",
+    name: 'Judge',
     price: 1850,
     damage: 17
   },
   {
-    name: "Bulldog",
+    name: 'Bulldog',
     price: 2050,
     damage: 35
   },
   {
-    name: "Guardian",
+    name: 'Guardian',
     price: 2250,
     damage: 65
   },
   {
-    name: "Phantom",
+    name: 'Phantom',
     price: 2900,
     damage: 39
   },
   {
-    name: "Vandal",
+    name: 'Vandal',
     price: 2900,
     damage: 40
   },
   {
-    name: "Marshal",
+    name: 'Marshal',
     price: 950,
     damage: 101
   },
   {
-    name: "Operator",
+    name: 'Operator',
     price: 4700,
     damage: 150
   },
   {
-    name: "Outlaw",
+    name: 'Outlaw',
     price: 2400,
     damage: 140
   },
   {
-    name: "Ares",
+    name: 'Ares',
     price: 1600,
     damage: 30
   },
   {
-    name: "Odin",
+    name: 'Odin',
     price: 3200,
     damage: 38
   },
   {
-    name: "Melee",
+    name: 'Melee',
     price: 0,
     damage: 50
   }

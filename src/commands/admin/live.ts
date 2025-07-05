@@ -1,42 +1,42 @@
-import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
-import createCommand from "../../structures/command/createCommand.ts"
+import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
+import createCommand from '../../structures/command/createCommand.ts'
 
 export default createCommand({
-  name: "live",
-  category: "admin",
-  description: "Manage lvie feed feature",
+  name: 'live',
+  category: 'admin',
+  description: 'Manage lvie feed feature',
   descriptionLocalizations: {
-    "pt-BR": "Gerencie a funcionalidade de transmissão ao vivo"
+    'pt-BR': 'Gerencie a funcionalidade de transmissão ao vivo'
   },
   options: [
     {
       type: 2,
-      name: "enable",
+      name: 'enable',
       nameLocalizations: {
-        "pt-BR": "habilitar"
+        'pt-BR': 'habilitar'
       },
-      description: "Enable live feed feature",
+      description: 'Enable live feed feature',
       descriptionLocalizations: {
-        "pt-BR": "Habilita a funcionalidade de transmissão aivo"
+        'pt-BR': 'Habilita a funcionalidade de transmissão aivo'
       },
       options: [
         {
           type: 1,
-          name: "valorant",
-          description: "Enable VALORANT live feed feature",
+          name: 'valorant',
+          description: 'Enable VALORANT live feed feature',
           descriptionLocalizations: {
-            "pt-BR": "Habilita a funcionalidade de transmissão ao vivo de VALORANT"
+            'pt-BR': 'Habilita a funcionalidade de transmissão ao vivo de VALORANT'
           },
           options: [
             {
               type: 7,
-              name: "channel",
+              name: 'channel',
               nameLocalizations: {
-                "pt-BR": "canal"
+                'pt-BR': 'canal'
               },
-              description: "Enter a channel",
+              description: 'Enter a channel',
               descriptionLocalizations: {
-                "pt-BR": "Informe o canal"
+                'pt-BR': 'Informe o canal'
               },
               required: true
             }
@@ -44,21 +44,21 @@ export default createCommand({
         },
         {
           type: 1,
-          name: "lol",
-          description: "Enable League of Legends live feed feature",
+          name: 'lol',
+          description: 'Enable League of Legends live feed feature',
           descriptionLocalizations: {
-            "pt-BR": "Habilita a funcionalidade de transmissão ao vivo de League of Legends"
+            'pt-BR': 'Habilita a funcionalidade de transmissão ao vivo de League of Legends'
           },
           options: [
             {
               type: 7,
-              name: "channel",
+              name: 'channel',
               nameLocalizations: {
-                "pt-BR": "canal"
+                'pt-BR': 'canal'
               },
-              description: "Enter a channel",
+              description: 'Enter a channel',
               descriptionLocalizations: {
-                "pt-BR": "Informe o canal"
+                'pt-BR': 'Informe o canal'
               },
               required: true
             }
@@ -68,43 +68,43 @@ export default createCommand({
     },
     {
       type: 2,
-      name: "disable",
+      name: 'disable',
       nameLocalizations: {
-        "pt-BR": "desabilitar"
+        'pt-BR': 'desabilitar'
       },
-      description: "Disable live feed feature",
+      description: 'Disable live feed feature',
       descriptionLocalizations: {
-        "pt-BR": "Desabilitar a funcionalidade de transmissão ao vivo"
+        'pt-BR': 'Desabilitar a funcionalidade de transmissão ao vivo'
       },
       options: [
         {
           type: 1,
-          name: "valorant",
-          description: "Disable VALORANT live feed feature",
+          name: 'valorant',
+          description: 'Disable VALORANT live feed feature',
           descriptionLocalizations: {
-            "pt-BR": "Desabilita a funcionalidade de transmissão ao vivo de VALORANT"
+            'pt-BR': 'Desabilita a funcionalidade de transmissão ao vivo de VALORANT'
           }
         },
         {
           type: 1,
-          name: "lol",
-          description: "Disable League of Legends live feed feature",
+          name: 'lol',
+          description: 'Disable League of Legends live feed feature',
           descriptionLocalizations: {
-            "pt-BR": "Desabilita a funcionalidade de transmissão ao vivo de League of Legends"
+            'pt-BR': 'Desabilita a funcionalidade de transmissão ao vivo de League of Legends'
           }
         }
       ]
     }
   ],
   async run({ ctx, t, client }) {
-    if(ctx.args[0] === "enable") {
-      if(!ctx.db.guild!.partner && !["PREMIUM"].some(k => k === ctx.db.guild!.key?.type)) {
+    if(ctx.args[0] === 'enable') {
+      if(!ctx.db.guild!.partner && !['PREMIUM'].some(k => k === ctx.db.guild!.key?.type)) {
         const button = new ButtonBuilder()
-          .setLabel(t("commands.news.buy_premium"))
-          .setStyle("link")
-          .setURL("https://discord.com/invite/FaqYcpA84r")
+          .setLabel(t('commands.news.buy_premium'))
+          .setStyle('link')
+          .setURL('https://discord.com/invite/FaqYcpA84r')
         await ctx.reply({
-          content: t("helper.premium_feature"),
+          content: t('helper.premium_feature'),
           components: [
             {
               type: 1,
@@ -117,8 +117,8 @@ export default createCommand({
       const games = {
         valorant: async() => {
           if(!ctx.guild) return
-          let channel = ctx.guild.channels.get(ctx.args[2])!
-          if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
+          const channel = ctx.guild.channels.get(ctx.args[2])!
+          if(![0, 5].some(t => t === channel.type)) return await ctx.reply('commands.live.invalid_channel')
           await client.prisma.guilds.update({
             where: {
               id: ctx.db.guild!.id
@@ -127,23 +127,23 @@ export default createCommand({
               valorant_livefeed_channel: channel.id
             }
           })
-          await ctx.reply("commands.live.live_enabled", { ch: channel.mention })
+          await ctx.reply('commands.live.live_enabled', { ch: channel.mention })
         },
         lol: async() => {
           if(!ctx.guild) return
-          let channel = ctx.guild.channels.get(ctx.args[2])!
-          if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
-          await ctx.reply("commands.live.live_enabled", { ch: channel.mention })
+          const channel = ctx.guild.channels.get(ctx.args[2])!
+          if(![0, 5].some(t => t === channel.type)) return await ctx.reply('commands.live.invalid_channel')
+          await ctx.reply('commands.live.live_enabled', { ch: channel.mention })
         }
       }
-      await games[ctx.args[1] as "valorant" | "lol"]()
+      await games[ctx.args[1] as 'valorant' | 'lol']()
     }
     else {
       const games = {
         valorant: async() => {
           if(!ctx.guild) return
-          let channel = ctx.guild.channels.get(ctx.args[2])!
-          if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
+          const channel = ctx.guild.channels.get(ctx.args[2])!
+          if(![0, 5].some(t => t === channel.type)) return await ctx.reply('commands.live.invalid_channel')
           await client.prisma.guilds.update({
             where: {
               id: ctx.db.guild!.id
@@ -154,12 +154,12 @@ export default createCommand({
               }
             }
           })
-          await ctx.reply("commands.live.live_disabled")
+          await ctx.reply('commands.live.live_disabled')
         },
         lol: async() => {
           if(!ctx.guild) return
-          let channel = ctx.guild.channels.get(ctx.args[2])!
-          if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
+          const channel = ctx.guild.channels.get(ctx.args[2])!
+          if(![0, 5].some(t => t === channel.type)) return await ctx.reply('commands.live.invalid_channel')
           await client.prisma.guilds.update({
             where: {
               id: ctx.db.guild!.id
@@ -170,10 +170,10 @@ export default createCommand({
               }
             }
           })
-          await ctx.reply("commands.live.live_disabled")
+          await ctx.reply('commands.live.live_disabled')
         }
       }
-      await games[ctx.args[1] as "valorant" | "lol"]()
+      await games[ctx.args[1] as 'valorant' | 'lol']()
     }
   }
 })

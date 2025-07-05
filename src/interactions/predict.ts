@@ -1,38 +1,38 @@
-import Service from "../api/index.ts"
-import createComponentInteraction from "../structures/interactions/createComponentInteraction.ts"
+import Service from '../api/index.ts'
+import createComponentInteraction from '../structures/interactions/createComponentInteraction.ts'
 
 const service = new Service(process.env.AUTH)
 
 export default createComponentInteraction({
-  name: "predict",
+  name: 'predict',
   flags: 64,
   async run({ ctx, t }) {
     const games = {
       valorant: async() => {
         if(ctx.db.user.valorant_predictions.find(p => p.match === ctx.args[2])) {
-          return await ctx.reply("helper.replied")
+          return await ctx.reply('helper.replied')
         }
-        const res = await service.getMatches("valorant")
+        const res = await service.getMatches('valorant')
         const data = res.find(d => d.id === ctx.args[2])
-        if(!data || data.status === "LIVE") {
-          return await ctx.reply("helper.started")
+        if(!data || data.status === 'LIVE') {
+          return await ctx.reply('helper.started')
         }
         await ctx.interaction.createModal({
           customID: `prediction;valorant;${ctx.args[2]}`,
-          title: t("helper.prediction_modal.title"),
+          title: t('helper.prediction_modal.title'),
           components: [
             {
               type: 1,
               components: [
                 {
                   type: 4,
-                  customID: "response-modal-1",
+                  customID: 'response-modal-1',
                   label: data.teams[0].name,
                   style: 1,
                   minLength: 1,
                   maxLength: 2,
                   required: true,
-                  placeholder: "0"
+                  placeholder: '0'
                 },
               ]
             },
@@ -41,13 +41,13 @@ export default createComponentInteraction({
               components: [
                 {
                   type: 4,
-                  customID: "response-modal-2",
+                  customID: 'response-modal-2',
                   label: data.teams[1].name,
                   style: 1,
                   minLength: 1,
                   maxLength: 2,
                   required: true,
-                  placeholder: "0"
+                  placeholder: '0'
                 }
               ]
             }
@@ -56,29 +56,29 @@ export default createComponentInteraction({
       },
       lol: async() => {
         if(ctx.db.user.lol_predictions.find(p => p.match === ctx.args[2])) {
-          return await ctx.reply("helper.replied")
+          return await ctx.reply('helper.replied')
         }
-        const res = await service.getMatches("lol")
+        const res = await service.getMatches('lol')
         const data = res.find(d => d.id === ctx.args[2])
-        if(!data || data.status === "LIVE") {
-          return await ctx.reply("helper.started")
+        if(!data || data.status === 'LIVE') {
+          return await ctx.reply('helper.started')
         }
         await ctx.interaction.createModal({
           customID: `prediction;lol;${ctx.args[2]}`,
-          title: t("helper.prediction_modal.title"),
+          title: t('helper.prediction_modal.title'),
           components: [
             {
               type: 1,
               components: [
                 {
                   type: 4,
-                  customID: "response-modal-1",
+                  customID: 'response-modal-1',
                   label: data.teams[0].name,
                   style: 1,
                   minLength: 1,
                   maxLength: 2,
                   required: true,
-                  placeholder: "0"
+                  placeholder: '0'
                 },
               ]
             },
@@ -87,13 +87,13 @@ export default createComponentInteraction({
               components: [
                 {
                   type: 4,
-                  customID: "response-modal-2",
+                  customID: 'response-modal-2',
                   label: data.teams[1].name,
                   style: 1,
                   minLength: 1,
                   maxLength: 2,
                   required: true,
-                  placeholder: "0"
+                  placeholder: '0'
                 }
               ]
             }

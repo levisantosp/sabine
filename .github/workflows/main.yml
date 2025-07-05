@@ -5,14 +5,14 @@ on:
       - 'main'
 jobs:
   deploy:
-    name: "deploy to production"
+    name: 'deploy to production'
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - name: Setup ssh
         run: |
           mkdir -p ~/.ssh/
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/sabine
+          echo '$SSH_PRIVATE_KEY' > ~/.ssh/sabine
           chmod 600 ~/.ssh/sabine
           cat >>~/.ssh/config << END
           Host prod

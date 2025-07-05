@@ -136,7 +136,7 @@ model guilds {
   lol_livefeed_channel      String?
   lol_live_matches          LiveMatch[]
   key                       Key?
-  tournamentsLength        Int         @default(5)
+  tournamentsLength         Int         @default(5)
   partner                   Boolean?
   invite                    String?
 }

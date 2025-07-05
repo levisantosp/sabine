@@ -1,26 +1,26 @@
-import Service from "../api/index.ts"
-import { SabineUser } from "../database/index.ts"
-import createModalSubmitInteraction from "../structures/interactions/createModalSubmitInteraction.ts"
+import Service from '../api/index.ts'
+import { SabineUser } from '../database/index.ts'
+import createModalSubmitInteraction from '../structures/interactions/createModalSubmitInteraction.ts'
 
 const service = new Service(process.env.AUTH)
 
 export default createModalSubmitInteraction({
-  name: "prediction",
+  name: 'prediction',
   flags: 64,
   async run({ ctx }) {
     const user = new SabineUser(ctx.db.user.id)
     const games = {
       valorant: async() => {
         if(ctx.db.user.valorant_predictions.find(p => p.match === ctx.args[2])) {
-          return await ctx.reply("helper.replied")
+          return await ctx.reply('helper.replied')
         }
-        const res = await service.getMatches("valorant")
+        const res = await service.getMatches('valorant')
         const data = res.find(d => d.id === ctx.args[2])!
         const winnerScore = Math.max(
           Number(ctx.args[3]),
           Number(ctx.args[4])
         )
-        await user.addPrediction("valorant", {
+        await user.addPrediction('valorant', {
           match: data.id!,
           teams: [
             {
@@ -34,11 +34,11 @@ export default createModalSubmitInteraction({
               winner: Number(ctx.args[4]) !== winnerScore ? false : true
             }
           ],
-          status: "pending",
+          status: 'pending',
           bet: null,
           odd: null
         })
-        await ctx.reply("helper.palpitate_response", {
+        await ctx.reply('helper.palpitate_response', {
           t1: data.teams[0].name,
           t2: data.teams[1].name,
           s1: ctx.args[3],
@@ -47,15 +47,15 @@ export default createModalSubmitInteraction({
       },
       lol: async() => {
         if(ctx.db.user.lol_predictions.find(p => p.match!.toString() === ctx.args[2])) {
-          return await ctx.reply("helper.replied")
+          return await ctx.reply('helper.replied')
         }
-        const res = await service.getMatches("lol")
+        const res = await service.getMatches('lol')
         const data = res.find(d => d.id?.toString() === ctx.args[2])!
         const winnerScore = Math.max(
           Number(ctx.args[3]),
           Number(ctx.args[4])
         )
-        await user.addPrediction("lol", {
+        await user.addPrediction('lol', {
           match: data.id!,
           teams: [
             {
@@ -69,11 +69,11 @@ export default createModalSubmitInteraction({
               winner: Number(ctx.args[4]) !== winnerScore ? false : true
             }
           ],
-          status: "pending",
+          status: 'pending',
           bet: null,
           odd: null
         })
-        await ctx.reply("helper.palpitate_response", {
+        await ctx.reply('helper.palpitate_response', {
           t1: data.teams[0].name,
           t2: data.teams[1].name,
           s1: ctx.args[3],
@@ -81,6 +81,6 @@ export default createModalSubmitInteraction({
         })
       }
     }
-    await games[ctx.args[1] as "valorant" | "lol"]()
+    await games[ctx.args[1] as 'valorant' | 'lol']()
   }
 })

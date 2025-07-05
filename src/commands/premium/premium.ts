@@ -1,29 +1,29 @@
-import createCommand from "../../structures/command/createCommand.ts"
-import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
-import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
+import createCommand from '../../structures/command/createCommand.ts'
+import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
+import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
 
 export default createCommand({
-  name: "premium",
-  category: "premium",
-  description: "Shows your premium's informations",
+  name: 'premium',
+  category: 'premium',
+  description: 'Shows your premium\'s informations',
   descriptionLocalizations: {
-    "pt-BR": "Mostra as informações do seu premium"
+    'pt-BR': 'Mostra as informações do seu premium'
   },
-  botPermissions: ["EMBED_LINKS"],
+  botPermissions: ['EMBED_LINKS'],
   userInstall: true,
   async run({ ctx, t }) {
-    if(!ctx.db.user.plan || ctx.db.user.plan.type !== "PREMIUM") {
-      ctx.reply("commands.premium.you_dont_have_premium")
+    if(!ctx.db.user.plan || ctx.db.user.plan.type !== 'PREMIUM') {
+      ctx.reply('commands.premium.you_dont_have_premium')
       return
     }
     const button = new ButtonBuilder()
-      .setLabel(t("commands.premium.button.label"))
-      .setStyle("blue")
+      .setLabel(t('commands.premium.button.label'))
+      .setStyle('blue')
       .setCustomId(`premium;${ctx.interaction.user.id}`)
     const embed = new EmbedBuilder()
-      .setTitle("Premium")
+      .setTitle('Premium')
       .setDesc(t(
-        "commands.premium.embed.description",
+        'commands.premium.embed.description',
         {
           expiresAt: `<t:${(ctx.db.user.plan.expiresAt / 1000).toFixed(0)}:R>`
         }
@@ -38,7 +38,7 @@ export default createCommand({
       }
     })
     if(!keys.length) {
-      ctx.reply("commands.premium.you_dont_have_keys")
+      ctx.reply('commands.premium.you_dont_have_keys')
       return
     }
     const embed = new EmbedBuilder()
@@ -46,7 +46,7 @@ export default createCommand({
       embed.addField(
         key.type,
         t(
-          "commands.premium.embed.field.value",
+          'commands.premium.embed.field.value',
           {
             expiresAt: `<t:${(key.expiresAt! / 1000).toFixed(0)}:R>`,
             key: key.id

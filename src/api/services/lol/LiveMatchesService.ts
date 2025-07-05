@@ -1,8 +1,8 @@
-import type { LiveFeed } from "../../../types.ts"
+import type { LiveFeed } from '../../../types.ts'
 
 export default class LiveMatchesService {
   public static async get(auth: string) {
-    const data = await (await fetch(process.env.API_URL + "/live/lol", {
+    const data = await (await fetch(process.env.API_URL + '/live/lol', {
       headers: {
         authorization: auth
       }

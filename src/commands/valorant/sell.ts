@@ -1,29 +1,29 @@
-import { SabineUser } from "../../database/index.ts"
-import getPlayer from "../../simulator/valorant/players/getPlayer.ts"
-import createCommand from "../../structures/command/createCommand.ts"
-import calcPlayerOvr from "../../structures/util/calcPlayerOvr.ts"
-import calcPlayerPrice from "../../structures/util/calcPlayerPrice.ts"
+import { SabineUser } from '../../database/index.ts'
+import getPlayer from '../../simulator/valorant/players/getPlayer.ts'
+import createCommand from '../../structures/command/createCommand.ts'
+import calcPlayerOvr from '../../structures/util/calcPlayerOvr.ts'
+import calcPlayerPrice from '../../structures/util/calcPlayerPrice.ts'
 
 export default createCommand({
-  name: "sell",
+  name: 'sell',
   nameLocalizations: {
-    "pt-BR": "vender"
+    'pt-BR': 'vender'
   },
-  description: "Sell a player",
+  description: 'Sell a player',
   descriptionLocalizations: {
-    "pt-BR" : "Venda um jogador"
+    'pt-BR' : 'Venda um jogador'
   },
-  category: "simulator",
+  category: 'simulator',
   options: [
     {
       type: 3,
-      name: "player",
+      name: 'player',
       nameLocalizations: {
-        "pt-BR": "jogador"
+        'pt-BR': 'jogador'
       },
-      description: "Select a player",
+      description: 'Select a player',
       descriptionLocalizations: {
-        "pt-BR": "Selecione um jogador"
+        'pt-BR': 'Selecione um jogador'
       },
       autocomplete: true,
       required: true
@@ -32,14 +32,14 @@ export default createCommand({
   userInstall: true,
   async run({ ctx }) {
     const player = getPlayer(Number(ctx.args[0]))
-    let i = ctx.db.user.roster!.reserve.findIndex(p => p === ctx.args[0])
+    const i = ctx.db.user.roster!.reserve.findIndex(p => p === ctx.args[0])
     if(!player || i === -1) {
-      return ctx.reply("commands.sell.player_not_found")
+      return ctx.reply('commands.sell.player_not_found')
     }
     const user = new SabineUser(ctx.interaction.user.id)
     const price = BigInt(calcPlayerPrice(player, true).toString())
     await user.sellPlayer(player.id.toString(), price, i)
-    await ctx.reply("commands.sell.sold", { p: player.name, price: price.toLocaleString("en-US") })
+    await ctx.reply('commands.sell.sold', { p: player.name, price: price.toLocaleString('en-US') })
   },
   async createAutocompleteInteraction({ i }) {
     const user = (await new SabineUser(i.user.id).get())!

@@ -1,8 +1,8 @@
-import colors from "colors"
-import moment from "moment"
-import { TextChannel } from "oceanic.js"
-import App from "../client/App.ts"
-import EmbedBuilder from "../builders/EmbedBuilder.ts"
+import colors from 'colors'
+import moment from 'moment'
+import { TextChannel } from 'oceanic.js'
+import App from '../client/App.ts'
+import EmbedBuilder from '../builders/EmbedBuilder.ts'
 
 export default class Logger {
   private client: App
@@ -10,20 +10,20 @@ export default class Logger {
     this.client = client
   }
   public static send(message: string) {
-    return console.log(colors.green(`[${moment(Date.now()).format("hh:mm:ss")}] ${message}`))
+    return console.log(colors.green(`[${moment(Date.now()).format('hh:mm:ss')}] ${message}`))
   }
   public static warn(message: string) {
-    return console.log(colors.yellow(`[${moment(Date.now()).format("hh:mm:ss")}] ${message}`))
+    return console.log(colors.yellow(`[${moment(Date.now()).format('hh:mm:ss')}] ${message}`))
   }
   public async error(error: Error | string, shardId?: number) {
-    let ignoredErrors = [
-      "Missing Permissions",
-      "AbortError: This operation was aborted"
+    const ignoredErrors = [
+      'Missing Permissions',
+      'AbortError: This operation was aborted'
     ]
     if(ignoredErrors.some(e => error.toString().includes(e))) return
-    if(typeof error === "string") {
+    if(typeof error === 'string') {
       const embed = new EmbedBuilder()
-        .setTitle("An error has occurred")
+        .setTitle('An error has occurred')
         .setDesc(`Shard ID: \`${shardId}\`\n\`\`\`js\n${error}\`\`\``)
       const channel = await this.client.rest.channels.get(process.env.ERROR_LOG) as TextChannel
       const webhooks = await channel.getWebhooks()
@@ -33,11 +33,11 @@ export default class Logger {
         embeds: [embed],
         avatarURL: this.client.user.avatarURL()
       }, webhook.token!)
-      return console.log(colors.red(`[${moment(Date.now()).format("hh:mm:ss")}] ${error}`))
+      return console.log(colors.red(`[${moment(Date.now()).format('hh:mm:ss')}] ${error}`))
     }
     else {
       const embed = new EmbedBuilder()
-        .setTitle("An error has occurred")
+        .setTitle('An error has occurred')
         .setDesc(`Shard ID: \`${shardId}\`\n\`\`\`js\n${error.stack}\`\`\``)
       const channel = await this.client.rest.channels.get(process.env.ERROR_LOG) as TextChannel
       const webhooks = await channel.getWebhooks()
@@ -47,7 +47,7 @@ export default class Logger {
         embeds: [embed],
         avatarURL: this.client.user.avatarURL()
       }, webhook.token!)
-      return console.log(colors.red(`[${moment(Date.now()).format("hh:mm:ss")}] ${error.stack ?? error}`))
+      return console.log(colors.red(`[${moment(Date.now()).format('hh:mm:ss')}] ${error.stack ?? error}`))
     }
   }
 }

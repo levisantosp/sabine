@@ -1,9 +1,9 @@
-import * as Oceanic from "oceanic.js"
-import App from "../client/App.ts"
-import CommandContext from "./CommandContext.ts"
-import type { Args } from "../../locales/index.ts"
-import ComponentInteractionContext from "../interactions/ComponentInteractionContext.ts"
-import ModalSubmitInteractionContext from "../interactions/ModalSubmitInteractionContext.ts"
+import * as Oceanic from 'oceanic.js'
+import App from '../client/App.ts'
+import CommandContext from './CommandContext.ts'
+import type { Args } from '../../locales/index.ts'
+import ComponentInteractionContext from '../interactions/ComponentInteractionContext.ts'
+import ModalSubmitInteractionContext from '../interactions/ModalSubmitInteractionContext.ts'
 
 type CommandOptions = {
   ctx: CommandContext
@@ -33,7 +33,7 @@ export type Command = {
   name: string
   nameLocalizations?: Partial<Record<Oceanic.Locale, string>>
   description: string
-  category: "simulator" | "admin" | "esports" | "misc" | "premium"
+  category: 'simulator' | 'admin' | 'esports' | 'misc' | 'premium'
   descriptionLocalizations?: Partial<Record<Oceanic.Locale, string>>
   options?: Oceanic.ApplicationCommandOptions[]
   syntax?: string
@@ -50,7 +50,7 @@ export type Command = {
   createInteraction?: (options: CreateComponentInteractionOptions) => Promise<any>
   createModalSubmitInteraction?: (options: CreateModalSubmitInteractionOptions) => Promise<any>
 }
-export default function (
+export default function(
   command: Command
 ): Command {
   return command
