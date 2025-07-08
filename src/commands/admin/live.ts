@@ -139,8 +139,6 @@ export default createCommand({
       const games = {
         valorant: async() => {
           if(!ctx.guild) return
-          const channel = ctx.guild.channels.get(ctx.args[2])!
-          if(![0, 5].some(t => t === channel.type)) return await ctx.reply('commands.live.invalid_channel')
           await client.prisma.guilds.update({
             where: {
               id: ctx.db.guild!.id
@@ -155,8 +153,6 @@ export default createCommand({
         },
         lol: async() => {
           if(!ctx.guild) return
-          const channel = ctx.guild.channels.get(ctx.args[2])!
-          if(![0, 5].some(t => t === channel.type)) return await ctx.reply('commands.live.invalid_channel')
           await client.prisma.guilds.update({
             where: {
               id: ctx.db.guild!.id
