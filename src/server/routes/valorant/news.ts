@@ -45,7 +45,7 @@ export default async function(
         }
         const button = new ButtonBuilder()
           .setStyle('link')
-          .setLabel(locales(guild.lang, 'helper.source'))
+          .setLabel(locales(guild.lang ?? 'en', 'helper.source'))
           .setURL(data.url)
         channel.createMessage(embed.build({
           components: [

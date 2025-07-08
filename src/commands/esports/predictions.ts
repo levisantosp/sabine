@@ -70,8 +70,7 @@ export default createCommand({
   async run({ ctx, t }) {
     if(ctx.args[0] === 'valorant') {
       if(!ctx.db.user.valorant_predictions.length) {
-        ctx.reply('commands.predictions.no_predictions')
-        return
+        return await ctx.reply('commands.predictions.no_predictions')
       }
       let preds = ctx.db.user.valorant_predictions.reverse()
       const page = !ctx.args[1] ? 1 : Number(ctx.args[1])
@@ -79,8 +78,7 @@ export default createCommand({
       if(page === 1) preds = preds.slice(0, 5)
       else preds = preds.slice(page * 5 - 5, page * 5)
       if(!preds.length) {
-        ctx.reply('commands.predictions.no_pages')
-        return
+        return await ctx.reply('commands.predictions.no_pages')
       }
       const embed = new EmbedBuilder()
         .setAuthor({
@@ -130,7 +128,7 @@ export default createCommand({
         .setStyle('gray')
       if(page <= 1) previous.setDisabled()
       if(page >= pages) next.setDisabled()
-      ctx.reply(embed.build({
+      await ctx.reply(embed.build({
         components: [
           {
             type: 1,
@@ -141,8 +139,7 @@ export default createCommand({
     }
     else {
       if(!ctx.db.user.lol_predictions.length) {
-        ctx.reply('commands.predictions.no_predictions')
-        return
+        return await ctx.reply('commands.predictions.no_predictions')
       }
       let preds = ctx.db.user.lol_predictions.reverse()
       const page = !ctx.args[1] ? 1 : Number(ctx.args[1])
@@ -150,8 +147,7 @@ export default createCommand({
       if(page === 1) preds = preds.slice(0, 5)
       else preds = preds.slice(page * 5 - 5, page * 5)
       if(!preds.length) {
-        ctx.reply('commands.predictions.no_pages')
-        return
+        return await ctx.reply('commands.predictions.no_pages')
       }
       const embed = new EmbedBuilder()
         .setAuthor({
@@ -201,7 +197,7 @@ export default createCommand({
         .setStyle('gray')
       if(page <= 1) previous.setDisabled()
       if(page >= pages) next.setDisabled()
-      ctx.reply(embed.build({
+      await ctx.reply(embed.build({
         components: [
           {
             type: 1,
@@ -215,16 +211,14 @@ export default createCommand({
     if(ctx.args[4] === 'valorant') {
       await (ctx.interaction as ComponentInteraction).deferUpdate()
       if(!ctx.db.user.valorant_predictions.length) {
-        ctx.reply('commands.predictions.no_predictions')
-        return
+        return await ctx.reply('commands.predictions.no_predictions')
       }
       let preds = ctx.db.user.valorant_predictions.reverse()
       const page = Number(ctx.args[2])
       const pages = Math.ceil(ctx.db.user.valorant_predictions.length / 5)
       preds = preds.slice(page * 5 - 5, page * 5)
       if(!preds.length) {
-        ctx.reply('commands.predictions.no_pages')
-        return
+        return await ctx.reply('commands.predictions.no_pages')
       }
       const embed = new EmbedBuilder()
         .setAuthor({
@@ -274,7 +268,7 @@ export default createCommand({
         .setCustomId(`${ctx.args[0]};${ctx.args[1]};${page + 1};next;valorant`)
       if(page <= 1) previous.setDisabled()
       if(page >= pages) next.setDisabled()
-      ctx.edit(embed.build({
+      await ctx.edit(embed.build({
         components: [
           {
             type: 1,
@@ -286,16 +280,14 @@ export default createCommand({
     else {
       await (ctx.interaction as ComponentInteraction).deferUpdate()
       if(!ctx.db.user.lol_predictions.length) {
-        ctx.reply('commands.predictions.no_predictions')
-        return
+        return await ctx.reply('commands.predictions.no_predictions')
       }
       let preds = ctx.db.user.lol_predictions.reverse()
       const page = Number(ctx.args[2])
       const pages = Math.ceil(ctx.db.user.lol_predictions.length / 5)
       preds = preds.slice(page * 5 - 5, page * 5)
       if(!preds.length) {
-        ctx.reply('commands.predictions.no_pages')
-        return
+        return await ctx.reply('commands.predictions.no_pages')
       }
       const embed = new EmbedBuilder()
         .setAuthor({
@@ -345,7 +337,7 @@ export default createCommand({
         .setCustomId(`${ctx.args[0]};${ctx.args[1]};${page + 1};next;lol`)
       if(page <= 1) previous.setDisabled()
       if(page >= pages) next.setDisabled()
-      ctx.edit(embed.build({
+      await ctx.edit(embed.build({
         components: [
           {
             type: 1,

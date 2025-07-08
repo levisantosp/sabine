@@ -59,10 +59,10 @@ export default async function(
             name: data.tournament.name,
             iconURL: data.tournament.image
           })
-          .setTitle(locales(guild.lang, 'helper.live_now'))
+          .setTitle(locales(guild.lang ?? 'en', 'helper.live_now'))
           .setField(
             `${emoji1} ${data.teams[0].name} \`${data.teams[0].score}\` <:versus:1349105624180330516> \`${data.teams[1].score}\` ${data.teams[1].name} ${emoji2}`,
-            locales(guild.lang, 'helper.live_feed_value', {
+            locales(guild.lang ?? 'en', 'helper.live_feed_value', {
               map: data.currentMap,
               score: `${data.score1}-${data.score2}`
             })
@@ -70,7 +70,7 @@ export default async function(
           .setFooter({ text: data.stage })
         const button = new ButtonBuilder()
           .setStyle('link')
-          .setLabel(locales(guild.lang, 'helper.stats'))
+          .setLabel(locales(guild.lang ?? 'en', 'helper.stats'))
           .setURL(data.url)
         channel.createMessage(embed.build({
           components: [

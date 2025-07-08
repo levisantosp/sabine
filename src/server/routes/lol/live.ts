@@ -68,7 +68,7 @@ export default async function(
             name: data.tournament.full_name,
             iconURL: data.tournament.image
           })
-          .setTitle(locales(guild.lang, 'helper.live_now'))
+          .setTitle(locales(guild.lang ?? 'en', 'helper.live_now'))
           .setField(
             `${emoji1} ${data.teams[0].name} \`${data.teams[0].score}\` <:versus:1349105624180330516> \`${data.teams[1].score}\` ${data.teams[1].name} ${emoji2}`,
             ''
@@ -76,7 +76,7 @@ export default async function(
         if(data.stage) embed.setFooter({ text: data.stage })
         const button = new ButtonBuilder()
           .setStyle('blue')
-          .setLabel(locales(guild.lang, 'helper.streams'))
+          .setLabel(locales(guild.lang ?? 'en', 'helper.streams'))
           .setCustomId(`stream;lol;${data.id}`)
         await channel.createMessage(embed.build(button.build()))
       }

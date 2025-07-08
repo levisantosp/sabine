@@ -3,11 +3,11 @@ import App from '../client/App.ts'
 import locales from '../../locales/index.ts'
 import type { Args } from '../../locales/index.ts'
 import Logger from '../util/Logger.ts'
-import type { guilds, users } from '@prisma/client'
+import { SabineGuild, SabineUser } from '../../database/index.ts'
 
 type Database = {
-  guild?: guilds
-  user: users
+  guild?: SabineGuild
+  user: SabineUser
 }
 type CommandContextOptions = {
   client: App

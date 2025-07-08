@@ -42,7 +42,7 @@ export default createCommand({
     await ctx.reply('commands.sell.sold', { p: player.name, price: price.toLocaleString('en-US') })
   },
   async createAutocompleteInteraction({ i }) {
-    const user = (await new SabineUser(i.user.id).get())!
+    const user = (await SabineUser.fetch(i.user.id))!
     const players: Array<{ name: string, ovr: number, id: string }> = []
     for(const p_id of user.roster!.reserve) {
       const p = getPlayer(Number(p_id))

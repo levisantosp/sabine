@@ -23,7 +23,7 @@ export default createComponentInteraction({
             'helper.bet_modal.title',
             {
               teams: `${ctx.db.user.valorant_predictions[index].teams[0].name} vs ${ctx.db.user.valorant_predictions[index].teams[1].name}`
-              .slice(0, 45)
+              .slice(0, 42) + '...'
             }
           ),
           components: [

@@ -58,11 +58,11 @@ const sendValorantMatches = async(client: App) => {
                 text: d.stage
               })
             const button = new ButtonBuilder()
-              .setLabel(locales(guild.lang, 'helper.palpitate'))
+              .setLabel(locales(guild.lang ?? 'en', 'helper.palpitate'))
               .setCustomId(`predict;valorant;${d.id}`)
               .setStyle('green')
             const urlButton = new ButtonBuilder()
-              .setLabel(locales(guild.lang, 'helper.stats'))
+              .setLabel(locales(guild.lang ?? 'en', 'helper.stats'))
               .setStyle('link')
               .setURL(`https://vlr.gg/${d.id}`)
             if(d.stage.toLowerCase().includes('showmatch')) continue
@@ -74,12 +74,12 @@ const sendValorantMatches = async(client: App) => {
                   components: [
                     button,
                     new ButtonBuilder()
-                      .setLabel(locales(guild.lang, 'helper.bet'))
+                      .setLabel(locales(guild.lang ?? 'en', 'helper.bet'))
                       .setCustomId(`bet;valorant;${d.id}`)
                       .setStyle('gray'),
                     urlButton,
                     new ButtonBuilder()
-                      .setLabel(locales(guild.lang, 'helper.pickem.label'))
+                      .setLabel(locales(guild.lang ?? 'en', 'helper.pickem.label'))
                       .setStyle('blue')
                       .setCustomId('pickem')
                   ]
@@ -136,15 +136,15 @@ const sendValorantTBDMatches = async(client: App) => {
               type: 1,
               components: [
                 new ButtonBuilder()
-                  .setLabel(locales(guild.lang, 'helper.palpitate'))
+                  .setLabel(locales(guild.lang ?? 'en', 'helper.palpitate'))
                   .setCustomId(`predict;valorant;${match.id}`)
                   .setStyle('green'),
                 new ButtonBuilder()
-                  .setLabel(locales(guild.lang, 'helper.bet'))
+                  .setLabel(locales(guild.lang ?? 'en', 'helper.bet'))
                   .setCustomId(`bet;valorant;${data.id}`)
                   .setStyle('gray'),
                 new ButtonBuilder()
-                  .setLabel(locales(guild.lang, 'helper.stats'))
+                  .setLabel(locales(guild.lang ?? 'en', 'helper.stats'))
                   .setStyle('link')
                   .setURL(`https://vlr.gg/${data.id}`)
               ]
@@ -211,7 +211,7 @@ const sendLolMatches = async(client: App) => {
                 text: d.stage
               })
             const button = new ButtonBuilder()
-              .setLabel(locales(guild.lang, 'helper.palpitate'))
+              .setLabel(locales(guild.lang ?? 'en', 'helper.palpitate'))
               .setCustomId(`predict;lol;${d.id}`)
               .setStyle('green')
             if(d.stage.toLowerCase().includes('showmatch')) continue
@@ -223,11 +223,11 @@ const sendLolMatches = async(client: App) => {
                   components: [
                     button,
                     new ButtonBuilder()
-                      .setLabel(locales(guild.lang, 'helper.bet'))
+                      .setLabel(locales(guild.lang ?? 'en', 'helper.bet'))
                       .setCustomId(`bet;lol;${d.id}`)
                       .setStyle('gray'),
                     new ButtonBuilder()
-                      .setLabel(locales(guild.lang, 'helper.pickem.label'))
+                      .setLabel(locales(guild.lang ?? 'en', 'helper.pickem.label'))
                       .setStyle('blue')
                       .setCustomId('pickem')
                   ]
@@ -284,11 +284,11 @@ const sendLolTBDMatches = async(client: App) => {
               type: 1,
               components: [
                 new ButtonBuilder()
-                  .setLabel(locales(guild.lang, 'helper.palpitate'))
+                  .setLabel(locales(guild.lang ?? 'en', 'helper.palpitate'))
                   .setCustomId(`predict;lol;${match.id}`)
                   .setStyle('green'),
                 new ButtonBuilder()
-                  .setLabel(locales(guild.lang, 'helper.bet'))
+                  .setLabel(locales(guild.lang ?? 'en', 'helper.bet'))
                   .setCustomId(`bet;lol;${data.id}`)
                   .setStyle('gray')
               ]

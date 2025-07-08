@@ -79,8 +79,7 @@ export default createCommand({
       }
       else users = users.slice(page * 10 - 10, page * 10)
       if(!users.length) {
-        ctx.reply('commands.ranking.no_users')
-        return
+        return await ctx.reply('commands.ranking.no_users')
       }
       const embed = new EmbedBuilder()
         .setAuthor({
@@ -119,7 +118,7 @@ export default createCommand({
         .setStyle('gray')
       if(page <= 1) previous.setDisabled()
       if(page >= Math.ceil(array.length / 10)) next.setDisabled()
-      ctx.reply(embed.build({
+      await ctx.reply(embed.build({
         components: [
           {
             type: 1,
@@ -144,8 +143,7 @@ export default createCommand({
       }
       else users = users.slice(page * 10 - 10, page * 10)
       if(!users.length) {
-        ctx.reply('commands.ranking.no_users')
-        return
+        return await ctx.reply('commands.ranking.no_users')
       }
       const embed = new EmbedBuilder()
         .setAuthor({
@@ -156,7 +154,6 @@ export default createCommand({
         })
         .setTitle(t('commands.ranking.title'))
         .setThumb((await client.rest.users.get(array[0].id!))?.avatarURL())
-
       let pos = 0
       if(!isNaN(page) && page > 1) pos = page * 10 - 10
       for(const user of users) {
@@ -185,7 +182,7 @@ export default createCommand({
         .setStyle('gray')
       if(page <= 1) previous.setDisabled()
       if(page >= Math.ceil(array.length / 10)) next.setDisabled()
-      ctx.reply(embed.build({
+      return await ctx.reply(embed.build({
         components: [
           {
             type: 1,
@@ -211,8 +208,7 @@ export default createCommand({
       const pages = Math.ceil(array.length / 10)
       users = users.slice(page * 10 - 10, page * 10)
       if(!users.length) {
-        ctx.reply('commands.ranking.no_users')
-        return
+        return await ctx.reply('commands.ranking.no_users')
       }
       const embed = new EmbedBuilder()
         .setAuthor({
@@ -251,7 +247,7 @@ export default createCommand({
         .setStyle('gray')
       if(page <= 1) previous.setDisabled()
       if(page >= pages) next.setDisabled()
-      ctx.edit(embed.build({
+      return await ctx.edit(embed.build({
         components: [
           {
             type: 1,
@@ -273,8 +269,7 @@ export default createCommand({
       const pages = Math.ceil(array.length / 10)
       users = users.slice(page * 10 - 10, page * 10)
       if(!users.length) {
-        ctx.reply('commands.ranking.no_users')
-        return
+        return await ctx.reply('commands.ranking.no_users')
       }
       const embed = new EmbedBuilder()
         .setAuthor({
@@ -313,7 +308,7 @@ export default createCommand({
         .setStyle('gray')
       if(page <= 1) previous.setDisabled()
       if(page >= pages) next.setDisabled()
-      ctx.edit(embed.build({
+      return await ctx.edit(embed.build({
         components: [
           {
             type: 1,

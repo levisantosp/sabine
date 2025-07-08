@@ -1,4 +1,3 @@
-import { SabineUser } from '../../database/index.ts'
 import getPlayers from '../../simulator/valorant/players/getPlayers.ts'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
 import createCommand from '../../structures/command/createCommand.ts'
@@ -103,7 +102,6 @@ export default createCommand({
     )
     .setImage(`${process.env.CDN_URL}/cards/${player.id}.png`)
     await ctx.reply(embed.build())
-    const user = new SabineUser(ctx.db.user.id)
-    await user.addPlayerToRoster(player.id.toString())
+    await ctx.db.user.addPlayerToRoster(player.id.toString())
   }
 })

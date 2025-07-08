@@ -120,7 +120,7 @@ model blacklists {
 
 model guilds {
   id                        String      @id @map("_id")
-  lang                      Language
+  lang                      Language?
   valorant_events           Event[]
   valorant_resend_time      Int         @default(0) @db.Long
   valorant_matches          String[]    @default([])

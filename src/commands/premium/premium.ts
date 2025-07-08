@@ -13,13 +13,12 @@ export default createCommand({
   userInstall: true,
   async run({ ctx, t }) {
     if(!ctx.db.user.plan || ctx.db.user.plan.type !== 'PREMIUM') {
-      ctx.reply('commands.premium.you_dont_have_premium')
-      return
+      return await ctx.reply('commands.premium.you_dont_have_premium')
     }
     const button = new ButtonBuilder()
-      .setLabel(t('commands.premium.button.label'))
-      .setStyle('blue')
-      .setCustomId(`premium;${ctx.interaction.user.id}`)
+    .setLabel(t('commands.premium.button.label'))
+    .setStyle('blue')
+    .setCustomId(`premium;${ctx.interaction.user.id}`)
     const embed = new EmbedBuilder()
       .setTitle('Premium')
       .setDesc(t(
@@ -28,18 +27,17 @@ export default createCommand({
           expiresAt: `<t:${(ctx.db.user.plan.expiresAt / 1000).toFixed(0)}:R>`
         }
       ))
-    ctx.reply(button.build(embed.build()))
+    await ctx.reply(button.build({ embeds: [embed] }))
   },
   async createInteraction({ ctx, t, client }) {
     await ctx.interaction.defer(64)
     const keys = await client.prisma.keys.findMany({
       where: {
-        id: ctx.args[1]
+        user: ctx.args[1]
       }
     })
     if(!keys.length) {
-      ctx.reply('commands.premium.you_dont_have_keys')
-      return
+      return await ctx.reply('commands.premium.you_dont_have_keys')
     }
     const embed = new EmbedBuilder()
     for(const key of keys) {

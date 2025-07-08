@@ -42,41 +42,49 @@ export default createCommand({
     if(ctx.args[0]) {
       const cmd = client.commands.get(ctx.args[0])
       if(!cmd || cmd.onlyDev) {
-        ctx.reply('commands.help.command_not_found')
-        return
+        return await ctx.reply('commands.help.command_not_found')
       }
       const { permissions } = require(`../ts/${ctx.db.guild!.lang}`)
       const embed = new EmbedBuilder()
-        .setTitle(ctx.args[0])
-        .setDesc((await translate(cmd.description, {
-          to: ctx.db.guild!.lang
-        })).text)
-        .addField(t('commands.help.name'), `\`${cmd.name}\``)
-        .setFooter({ text: t('commands.help.footer') })
-        .setThumb(client.user.avatarURL())
+      .setTitle(ctx.args[0])
+      .setDesc((await translate(cmd.description, {
+        to: ctx.db.guild!.lang
+      })).text)
+      .addField(t('commands.help.name'), `\`${cmd.name}\``)
+      .setFooter({ text: t('commands.help.footer') })
+      .setThumb(client.user.avatarURL())
       if(cmd.syntax) embed.addField(t('commands.help.syntax'), `\`/${cmd.syntax}\``)
       if(cmd.syntaxes) embed.addField(t('commands.help.syntax'), cmd.syntaxes.map(syntax => `\`/${syntax}\``).join('\n'))
       if(cmd.examples) embed.addField(t('commands.help.examples'), cmd.examples.map(ex => `\`/${ex}\``).join('\n'))
       if(cmd.permissions) embed.addField(t('commands.help.permissions'), cmd.permissions.map(perm => `\`${permissions[perm]}\``).join(', '), true)
       if(cmd.botPermissions) embed.addField(t('commands.help.bot_permissions'), cmd.botPermissions.map(perm => `\`${permissions[perm]}\``).join(', '), true)
-      ctx.reply(embed.build())
+      await ctx.reply(embed.build())
     }
     else {
       const embed = new EmbedBuilder()
-        .setThumb(client.user.avatarURL())
-        .setDesc(t('commands.help.description', {
-          arg: '/help [command]',
-          website: 'https://sabinebot.xyz/commands'
-        }))
+      .setThumb(client.user.avatarURL())
+      .setFields(
+        {
+          name: t('commands.help.support.title'),
+          value: t('commands.help.support.desc')
+        },
+        {
+          name: t('commands.help.get.title'),
+          value: t('commands.help.get.desc')
+        }
+      )
       const button = new ButtonBuilder()
-        .setLabel(t('commands.help.community'))
-        .setStyle('link')
-        .setURL('https://discord.gg/g5nmc376yh')
+      .setLabel(t('commands.help.community'))
+      .setStyle('link')
+      .setURL('https://discord.gg/g5nmc376yh')
       const privacyButton = new ButtonBuilder()
-        .setLabel(t('commands.help.privacy'))
-        .setStyle('link')
-        .setURL('https://sabinebot.xyz/privacy')
-      ctx.reply(embed.build(
+      .setLabel(t('commands.help.privacy'))
+      .setStyle('link')
+      .setURL('https://sabinebot.xyz/privacy')
+      if(ctx.interaction.guild) {
+        embed.setTitle(ctx.interaction.guild.name)
+      }
+      await ctx.reply(embed.build(
         {
           components: [
             {

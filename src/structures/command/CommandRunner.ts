@@ -6,8 +6,8 @@ import ButtonBuilder from '../builders/ButtonBuilder.ts'
 import EmbedBuilder from '../builders/EmbedBuilder.ts'
 import Logger from '../util/Logger.ts'
 import { createRequire } from 'node:module'
-import { type guilds, PrismaClient } from '@prisma/client'
-import { SabineUser } from '../../database/index.ts'
+import { PrismaClient } from '@prisma/client'
+import { SabineGuild, SabineUser } from '../../database/index.ts'
 
 const prisma = new PrismaClient()
 const require = createRequire(import.meta.url)
@@ -18,24 +18,11 @@ export default class CommandRunner {
   ) {
     const command = client.commands.get(interaction.data.name)
     if(!command) return
-    let guild: guilds | undefined
+    let guild: SabineGuild | undefined
     if(interaction.guild) {
-      guild = await prisma.guilds.findUnique({
-        where: {
-          id: interaction.guild?.id
-        }
-      }) ?? await prisma.guilds.create({
-        data: {
-          id: interaction.guild!.id,
-          lang: 'en'
-        }
-      })
+      guild = await SabineGuild.fetch(interaction.guild.id) ?? new SabineGuild(interaction.guild.id)
     }
-    const user = await new SabineUser(interaction.user.id).get() ?? await prisma.users.create({
-      data: {
-        id: interaction.user.id
-      }
-    })
+    const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
     const blacklist = (await prisma.blacklists.findFirst())!
     const ban = blacklist.users.find(user => user.id === interaction.user.id)
     if(blacklist.guilds.find(guild => guild.id === interaction.guildID)) {

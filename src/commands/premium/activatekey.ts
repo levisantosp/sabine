@@ -33,7 +33,11 @@ export default createCommand({
   ephemeral: true,
   async run({ ctx, t, client }) {
     if(!ctx.guild) return
-    const key = await client.prisma.keys.findFirst()
+    const key = await client.prisma.keys.findFirst({
+      where: {
+        user: ctx.db.user.id
+      }
+    })
     if(!key) {
       return await ctx.reply('commands.activatekey.invalid_key')
     }
@@ -45,9 +49,9 @@ export default createCommand({
     }
     if(ctx.db.guild!.key) {
       const button = new ButtonBuilder()
-        .setStyle('red')
-        .setLabel(t('commands.activatekey.button'))
-        .setCustomId(`activatekey;${ctx.interaction.user.id};${key.type};${ctx.args[0]}`)
+      .setStyle('red')
+      .setLabel(t('commands.activatekey.button'))
+      .setCustomId(`activatekey;${ctx.interaction.user.id};${key.type};${ctx.args[0]}`)
       await ctx.reply(button.build(t('commands.activatekey.would_like_to_continue', { key: ctx.db.guild!.key.type })))
     }
     else {
@@ -81,7 +85,11 @@ export default createCommand({
   async createInteraction({ ctx, client }) {
     if(!ctx.guild) return
     await ctx.interaction.defer(64)
-    const key = await client.prisma.keys.findFirst()
+    const key = await client.prisma.keys.findFirst({
+      where: {
+        user: ctx.db.user.id
+      }
+    })
     if(!key) {
       return await ctx.reply('commands.activatekey.invalid_key')
     }

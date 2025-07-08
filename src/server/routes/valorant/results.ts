@@ -91,11 +91,11 @@ export default async function(
                   type: 1,
                   components: [
                     new ButtonBuilder()
-                      .setLabel(locales(guild.lang, 'helper.stats'))
+                      .setLabel(locales(guild.lang ?? 'en', 'helper.stats'))
                       .setStyle('link')
                       .setURL(`https://vlr.gg/${d.id}`),
                     new ButtonBuilder()
-                      .setLabel(locales(guild.lang, 'helper.pickem.label'))
+                      .setLabel(locales(guild.lang ?? 'en', 'helper.pickem.label'))
                       .setStyle('blue')
                       .setCustomId('pickem')
                   ]

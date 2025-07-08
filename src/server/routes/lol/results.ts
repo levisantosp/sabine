@@ -85,7 +85,7 @@ export default async function(
                   type: 1,
                   components: [
                     new ButtonBuilder()
-                      .setLabel(locales(guild.lang, 'helper.pickem.label'))
+                      .setLabel(locales(guild.lang ?? '', 'helper.pickem.label'))
                       .setStyle('blue')
                       .setCustomId('pickem')
                   ]

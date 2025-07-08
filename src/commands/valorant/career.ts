@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionTypes, type ComponentInteraction } from 'oceanic.js'
+import { ApplicationCommandOptionTypes } from 'oceanic.js'
 import createCommand from '../../structures/command/createCommand.ts'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
 import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
@@ -87,7 +87,7 @@ export default createCommand({
     }))
   },
   async createInteraction({ ctx, t }) {
-    await (ctx.interaction as ComponentInteraction).deferUpdate()
+    await ctx.interaction.deferUpdate()
     let career = ctx.db.user.carrer.reverse()
     const page = Number(ctx.args[2])
     const pages = Math.ceil(career.length / 5)

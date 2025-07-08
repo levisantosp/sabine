@@ -33,7 +33,7 @@ export default createCommand({
   ],
   userInstall: true,
   async run({ ctx, t }) {
-    const user = await new SabineUser(ctx.db.user.id).get()
+    const user = await SabineUser.fetch(ctx.args[0])
     if(!ctx.db.user.team?.name || !ctx.db.user.team.tag) {
       return await ctx.reply('commands.duel.needed_team_name')
     }
@@ -63,7 +63,7 @@ export default createCommand({
   },
   async createInteraction({ ctx, client, t, i }) {
     await i.deferUpdate()
-    const user = await new SabineUser(ctx.args[2]).get()
+    const user = await SabineUser.fetch(ctx.args[2])
     if(!ctx.db.user.team?.name || !ctx.db.user.team.tag) {
       return await ctx.reply('commands.duel.needed_team_name')
     }

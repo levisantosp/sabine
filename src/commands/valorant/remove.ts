@@ -29,7 +29,7 @@ export default createCommand({
     }
   ],
   userInstall: true,
-  async run({ ctx, client }) {
+  async run({ ctx }) {
     const p = getPlayer(Number(ctx.args[0]))
     if(!ctx.db.user.roster!.active.includes(ctx.args[0]) || !p) {
       return ctx.reply('commands.remove.player_not_found')
@@ -39,19 +39,12 @@ export default createCommand({
       const i = ctx.db.user.roster!.active.findIndex(pl => pl === p.id.toString())
       ctx.db.user.roster!.reserve.push(p.id.toString())
       ctx.db.user.roster!.active.splice(i, 1)
-      await client.prisma.users.update({
-        where: {
-          id: ctx.db.user.id
-        },
-        data: {
-          roster: ctx.db.user.roster
-        }
-      })
+      await ctx.db.user.save()
       return await ctx.reply('commands.remove.player_removed', { p: p.name })
     }
   },
   async createAutocompleteInteraction({ i }) {
-    const user = (await new SabineUser(i.user.id).get())!
+    const user = (await SabineUser.fetch(i.user.id))!
     const players: Array<{ name: string, ovr: number, id: string }> = []
     for(const p_id of user.roster!.active) {
       const p = getPlayer(Number(p_id))

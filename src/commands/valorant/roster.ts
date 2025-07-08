@@ -176,21 +176,14 @@ export default createCommand({
       })
     }
   },
-  async createModalSubmitInteraction({ ctx, i, client }) {
+  async createModalSubmitInteraction({ ctx, i }) {
     await i.defer(64)
     const responses = i.data.components.getComponents()
-    await client.prisma.users.update({
-      where: {
-        id: ctx.db.user.id
-      },
-      data: {
-        roster: ctx.db.user.roster,
-        team: {
-          name: responses[0].value,
-          tag: responses[1].value
-        }
-      }
-    })
+    ctx.db.user.team = {
+      name: responses[0].value,
+      tag: responses[1].value
+    }
+    await ctx.db.user.save()
     await ctx.reply('commands.roster.team_info_changed', {
       name: responses[0].value,
       tag: responses[1].value

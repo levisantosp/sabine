@@ -31,7 +31,7 @@ export default createCommand({
     }
   ],
   userInstall: true,
-  async run({ ctx, t, client }) {
+  async run({ ctx, t }) {
     const p = getPlayer(Number(ctx.args[0]))
     if(!p) {
       return ctx.reply('commands.promote.player_not_found')
@@ -42,14 +42,7 @@ export default createCommand({
       const i = ctx.db.user.roster!.reserve.findIndex(pl => pl === p.id.toString())
       ctx.db.user.roster!.active.push(p.id.toString())
       ctx.db.user.roster!.reserve.splice(i, 1)
-      await client.prisma.users.update({
-        where: {
-          id: ctx.db.user.id
-        },
-        data: {
-          roster: ctx.db.user.roster
-        }
-      })
+      await ctx.db.user.save()
       return await ctx.reply('commands.promote.player_promoted', { p: p.name })
     }
     for(const p_id of players) {
@@ -68,7 +61,7 @@ export default createCommand({
     await ctx.reply(menu.build(t('commands.promote.select_player')))
   },
   async createAutocompleteInteraction({ i }) {
-    const user = (await new SabineUser(i.user.id).get())!
+    const user = (await SabineUser.fetch(i.user.id))!
     const players: Array<{ name: string, ovr: number, id: string }> = []
     for(const p_id of user.roster!.reserve) {
       const p = getPlayer(Number(p_id))
@@ -88,7 +81,7 @@ export default createCommand({
       .map(p => ({ name: p.name, value: p.id }))
     )
   },
-  async createInteraction({ ctx, i, t, client }) {
+  async createInteraction({ ctx, i, t }) {
     if(i.data.componentType === 3) {
       const id = i.data.values.getStrings()[0]
       let index = ctx.db.user.roster!.active.findIndex(p => p === id)
@@ -97,14 +90,7 @@ export default createCommand({
       index = ctx.db.user.roster!.reserve.findIndex(p => p === ctx.args[2])
       ctx.db.user.roster!.reserve.splice(index, 1)
       ctx.db.user.roster!.active.push(ctx.args[2])
-      await client.prisma.users.update({
-        where: {
-          id: ctx.db.user.id
-        },
-        data: {
-          roster: ctx.db.user.roster
-        }
-      })
+      await ctx.db.user.save()
       const p = getPlayer(Number(ctx.args[2]))!
       await i.editParent({
         content: t('commands.promote.player_promoted', { p: p.name }),

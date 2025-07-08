@@ -1,5 +1,4 @@
 import Service from '../api/index.ts'
-import { SabineUser } from '../database/index.ts'
 import createModalSubmitInteraction from '../structures/interactions/createModalSubmitInteraction.ts'
 
 const service = new Service(process.env.AUTH)
@@ -8,7 +7,6 @@ export default createModalSubmitInteraction({
   name: 'prediction',
   flags: 64,
   async run({ ctx }) {
-    const user = new SabineUser(ctx.db.user.id)
     const games = {
       valorant: async() => {
         if(ctx.db.user.valorant_predictions.find(p => p.match === ctx.args[2])) {
@@ -20,7 +18,7 @@ export default createModalSubmitInteraction({
           Number(ctx.args[3]),
           Number(ctx.args[4])
         )
-        await user.addPrediction('valorant', {
+        await ctx.db.user.addPrediction('valorant', {
           match: data.id!,
           teams: [
             {
@@ -55,7 +53,7 @@ export default createModalSubmitInteraction({
           Number(ctx.args[3]),
           Number(ctx.args[4])
         )
-        await user.addPrediction('lol', {
+        await ctx.db.user.addPrediction('lol', {
           match: data.id!,
           teams: [
             {

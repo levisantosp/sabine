@@ -267,12 +267,12 @@ export default createCommand({
 								})
 
 							const button = new ButtonBuilder()
-								.setLabel(locales(guild.lang, 'helper.palpitate'))
+								.setLabel(locales(guild.lang!, 'helper.palpitate'))
 								.setCustomId(`predict;valorant;${d.id}`)
 								.setStyle('green')
 
 							const urlButton = new ButtonBuilder()
-								.setLabel(locales(guild.lang, 'helper.stats'))
+								.setLabel(locales(guild.lang!, 'helper.stats'))
 								.setStyle('link')
 								.setURL(`https://vlr.gg/${d.id}`)
 
@@ -285,12 +285,12 @@ export default createCommand({
 							      components: [
 							        button,
 											new ButtonBuilder()
-												.setLabel(locales(guild.lang, 'helper.bet'))
+												.setLabel(locales(guild.lang!, 'helper.bet'))
 												.setCustomId(`bet;valorant;${d.id}`)
 												.setStyle('gray'),
 											urlButton,
 											new ButtonBuilder()
-												.setLabel(locales(guild.lang, 'helper.pickem.label'))
+												.setLabel(locales(guild.lang!, 'helper.pickem.label'))
 												.setStyle('blue')
 												.setCustomId('pickem')
 							      ]
@@ -384,11 +384,11 @@ export default createCommand({
 							      components: [
 							        button,
 											new ButtonBuilder()
-												.setLabel(locales(guild.lang, 'helper.bet'))
+												.setLabel(locales(guild.lang!, 'helper.bet'))
 												.setCustomId(`bet;lol;${d.id}`)
 												.setStyle('gray'),
 											new ButtonBuilder()
-												.setLabel(locales(guild.lang, 'helper.pickem.label'))
+												.setLabel(locales(guild.lang!, 'helper.pickem.label'))
 												.setStyle('blue')
 												.setCustomId('pickem')
 							      ]

@@ -20,16 +20,8 @@ export default createCommand({
       coins += bonus
       await ctx.reply('commands.daily.bonus', { bonus: bonus.toLocaleString('en-us') })
     }
-    await client.prisma.users.update({
-      where: {
-        id: ctx.db.user.id
-      },
-      data: {
-        coins: {
-          increment: coins
-        },
-        daily_time: new Date().setHours(24, 0, 0, 0)
-      }
-    })
+    ctx.db.user.coins += coins
+    ctx.db.user.daily_time = new Date().setHours(24, 0, 0, 0)
+    await ctx.db.user.save()
   }
 })
