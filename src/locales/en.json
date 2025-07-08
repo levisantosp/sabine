@@ -128,7 +128,7 @@
     "live": {
       "invalid_channel": "Invalid channel type. Consider select a TEXT channel.",
       "live_enabled": "Live feed feature enabled to channel {ch}",
-      "news_disabled": "Live feed feature disabled successfully!",
+      "live_disabled": "Live feed feature has been disabled successfully!",
       "buy_premium": "Buy the premium!"
     },
     "claim": {
