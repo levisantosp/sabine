@@ -33,11 +33,17 @@
       "permissions": "Permissions",
       "footer": "[] = required argument | <> = optional argument",
       "bot_permissions": "My permissions",
-      "title": "My commands",
-      "description": "You can see my commands here: {website}\nFor more information about a particular command, use `{arg}`.\nNeed help? Join our support server by clicking the button below!",
       "field": "Commands ({q})",
       "community": "Community and Support",
-      "privacy": "Terms of Service and Privacy"
+      "privacy": "Terms of Service and Privacy",
+      "support": {
+        "title": "Help & Support",
+        "desc": "[Wiki](https://sabinebot.xyz/wiki)\n[Commands List](https://sabinebot.xyz/commands)"
+      },
+      "get": {
+        "title": "Get Sabine",
+        "desc": "[Add Sabine to your server](https://api.sabinebot.xyz/invite)\n[Get premium](https://discord.com/invite/FaqYcpA84r)"
+      }
     },
     "ranking": {
       "author": "Page {page}/{pages}",
@@ -69,7 +75,7 @@
       "news_enabled": "News feature enabled to channel {ch}",
       "news_disabled": "News feature disabled successfully!",
       "no_premium": "This server does not have any premium keys.",
-      "premium": "This server has the {key} key activated.",
+      "premium": "This server has the {key} key activated.\nThe key expires {expiresAt}",
       "lol_esports_coverage": "League of Legends e-sports coverage",
       "vlr_esports_coverage": "VALORANT e-sports coverage",
       "tournaments": "## {game} tournaments added"

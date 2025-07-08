@@ -33,11 +33,17 @@
       "permissions": "Permissões",
       "footer": "[] = argumento obrigatório | <> = argumento opcional",
       "bot_permissions": "Minhas permissões",
-      "title": "Meus comandos",
-      "description": "Você pode ver meus comandos aqui: {website}\nPara mais informações a respeito de determinado comando, use `{arg}`.\nPrecisando de ajuda? Entre no servidor de suporte clicando no botão abaixo!",
       "field": "Comandos ({q})",
       "community": "Comunidade e Suporte",
-      "privacy": "Termos de Serviço e Privacidade"
+      "privacy": "Termos de Serviço e Privacidade",
+      "support": {
+        "title": "Ajuda & Suporte",
+        "desc": "[Wiki](https://sabinebot.xyz/wiki)\n[Lista de Comandos](https://sabinebot.xyz/commands)"
+      },
+      "get": {
+        "title": "Obter a Sabine",
+        "desc": "[Me adicione em seu servidor](https://api.sabinebot.xyz/invite)\n[Obter o premium](https://discord.com/invite/FaqYcpA84r)"
+      }
     },
     "ranking": {
       "author": "Página {page}/{pages}",
