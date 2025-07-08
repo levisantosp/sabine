@@ -17,15 +17,18 @@ export default createComponentInteraction({
           return await ctx.reply('helper.started')
         }
         if(index === -1) return await ctx.reply('helper.prediction_needed')
+        let title = t(
+          'helper.bet_modal.title',
+          {
+            teams: `${ctx.db.user.valorant_predictions[index].teams[0].name} vs ${ctx.db.user.valorant_predictions[index].teams[1].name}`
+          }
+        )
+        if(title.length > 45) {
+          title = title.slice(0, 42) + '...'
+        }
         await ctx.interaction.createModal({
           customID: `betting;valorant;${ctx.args[2]}`,
-          title: t(
-            'helper.bet_modal.title',
-            {
-              teams: `${ctx.db.user.valorant_predictions[index].teams[0].name} vs ${ctx.db.user.valorant_predictions[index].teams[1].name}`
-              .slice(0, 42) + '...'
-            }
-          ),
+          title,
           components: [
             {
               type: 1,
