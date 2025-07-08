@@ -201,6 +201,7 @@ export default createCommand({
     if(ctx.args[0] === 'add') {
       const games = {
         valorant: async() => {
+          if(!ctx.db.guild) return
           if(!ctx.guild) return
           if((ctx.db.guild!.lol_events.length + ctx.db.guild!.valorant_events.length) >= ctx.db.guild!.tournamentsLength) return ctx.reply('commands.tournament.limit_reached', { cmd: `</tournament remove valorant:${id}>` })
           if(ctx.args[3] === ctx.args[4]) return ctx.reply('commands.tournament.channels_must_be_different')
@@ -210,19 +211,13 @@ export default createCommand({
             channel1: ctx.args[3],
             channel2: ctx.args[4]
           })
-          await prisma.guilds.update({
-            where: {
-              id: ctx.db.guild!.id
-            },
-            data: {
-              valorant_events: ctx.db.guild!.valorant_events
-            }
-          })
-          ctx.reply('commands.tournament.tournament_added', {
+          await ctx.db.guild.save()
+          await ctx.reply('commands.tournament.tournament_added', {
             t: ctx.args[2]
           })
         },
         lol: async() => {
+          if(!ctx.db.guild) return
           if(!ctx.guild) return
           if((ctx.db.guild!.lol_events.length + ctx.db.guild!.valorant_events.length) >= ctx.db.guild!.tournamentsLength) return ctx.reply('commands.tournament.limit_reached', { cmd: `</tournament remove lol:${id}>` })
           if(ctx.args[3] === ctx.args[4]) return ctx.reply('commands.tournament.channels_must_be_different')
@@ -232,15 +227,8 @@ export default createCommand({
             channel1: ctx.args[3],
             channel2: ctx.args[4]
           })
-          await prisma.guilds.update({
-            where: {
-              id: ctx.db.guild!.id
-            },
-            data: {
-              valorant_events: ctx.db.guild!.valorant_events
-            }
-          })
-          ctx.reply('commands.tournament.tournament_added', {
+          await ctx.db.guild.save()
+          await ctx.reply('commands.tournament.tournament_added', {
             t: ctx.args[2]
           })
         }
@@ -250,51 +238,27 @@ export default createCommand({
     else {
       const games = {
         valorant: async() => {
-          if(ctx.args[2] === t('commands.tournament.remove_all')) {
-            await prisma.guilds.update({
-              where: {
-                id: ctx.db.guild!.id
-              },
-              data: {
-                valorant_events: []
-              }
-            })
-            return ctx.reply('commands.tournament.tournament_removed')
+          if(!ctx.db.guild) return
+          if(ctx.args[2] === t('commands.tournament.remove_all') ) {
+            ctx.db.guild.valorant_events = []
+            await ctx.db.guild.save()
+            return await ctx.reply('commands.tournament.tournament_removed')
           }
           ctx.db.guild!.valorant_events.splice(ctx.db.guild!.valorant_events.findIndex(e => e.name === ctx.args[2]), 1)
-          await prisma.guilds.update({
-            where: {
-              id: ctx.db.guild!.id
-            },
-            data: {
-              valorant_events: ctx.db.guild!.valorant_events
-            }
-          })
+          await ctx.db.guild.save()
           await ctx.reply('commands.tournament.tournament_removed', {
             t: ctx.args[2]
           })
         },
         lol: async() => {
+          if(!ctx.db.guild) return
           if(ctx.args[2] === t('commands.tournament.remove_all')) {
-            await prisma.guilds.update({
-              where: {
-                id: ctx.db.guild!.id
-              },
-              data: {
-                valorant_events: []
-              }
-            })
+            ctx.db.guild.lol_events = []
+            await ctx.db.guild.save()
             return ctx.reply('commands.tournament.tournament_removed')
           }
           ctx.db.guild!.lol_events.splice(ctx.db.guild!.lol_events.findIndex(e => e.name === ctx.args[2]), 1)
-          await prisma.guilds.update({
-            where: {
-              id: ctx.db.guild!.id
-            },
-            data: {
-              valorant_events: ctx.db.guild!.valorant_events
-            }
-          })
+          await ctx.db.guild.save()
           ctx.reply('commands.tournament.tournament_removed', {
             t: ctx.args[2]
           })
