@@ -128,7 +128,7 @@
     },
     "live": {
       "invalid_channel": "Tipo de canal inválido. Considere selecionar um canal de TEXTO.",
-      "news_enabled": "Funcionalidade de transmissão ao vivo habilitada no canal {ch}",
+      "live_enabled": "Funcionalidade de transmissão ao vivo habilitada no canal {ch}",
       "news_disabled": "Funcionalidade de transmissão ao vivo desabilitada com sucesso!",
       "buy_premium": "Compre o premium!"
     },
