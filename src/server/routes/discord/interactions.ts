@@ -35,10 +35,8 @@ const types: Record<number, (raw: AnyRawInteraction) => Promise<any>> = {
     if(!command.createAutocompleteInteraction) return
     const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
     let guild: SabineGuild | undefined
-    let g: Guild | undefined
     if(interaction.guildID) {
       guild = await SabineGuild.fetch(interaction.guildID) ?? new SabineGuild(interaction.guildID)
-      g = client.guilds.get(interaction.guildID)
     }
     const t = (content: string, args?: Args) => {
       return locales(user.lang ?? guild?.lang, content, args)
@@ -59,7 +57,7 @@ const types: Record<number, (raw: AnyRawInteraction) => Promise<any>> = {
       const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
       let guild: SabineGuild | undefined
       let g: Guild | undefined
-      if (interaction.guildID) {
+      if(interaction.guildID) {
         guild = await SabineGuild.fetch(interaction.guildID) ?? new SabineGuild(interaction.guildID)
         g = client.guilds.get(interaction.guildID)
       }
@@ -103,7 +101,7 @@ const types: Record<number, (raw: AnyRawInteraction) => Promise<any>> = {
       const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
       let guild: SabineGuild | undefined
       let g: Guild | undefined
-      if (interaction.guildID) {
+      if(interaction.guildID) {
         guild = await SabineGuild.fetch(interaction.guildID) ?? new SabineGuild(interaction.guildID)
         g = client.guilds.get(interaction.guildID)
       }
@@ -134,7 +132,7 @@ const types: Record<number, (raw: AnyRawInteraction) => Promise<any>> = {
       const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
       let guild: SabineGuild | undefined
       let g: Guild | undefined
-      if (interaction.guildID) {
+      if(interaction.guildID) {
         guild = await SabineGuild.fetch(interaction.guildID) ?? new SabineGuild(interaction.guildID)
         g = client.guilds.get(interaction.guildID)
       }
@@ -170,7 +168,7 @@ const types: Record<number, (raw: AnyRawInteraction) => Promise<any>> = {
     const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
     let guild: SabineGuild | undefined
     let g: Guild | undefined
-    if (interaction.guildID) {
+    if(interaction.guildID) {
       guild = await SabineGuild.fetch(interaction.guildID) ?? new SabineGuild(interaction.guildID)
       g = client.guilds.get(interaction.guildID)
     }

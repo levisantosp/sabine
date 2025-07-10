@@ -7,7 +7,7 @@ export type Args = {
 }
 export default function(lang: string, content: string, args?: Args): string {
   const path = resolve(`src/locales/${lang}.json`)
-  const raw = readFileSync(path, "utf-8")
+  const raw = readFileSync(path, 'utf-8')
   let json = JSON.parse(raw)
   for(const param of content.split('.')) {
     json = json[param]

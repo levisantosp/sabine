@@ -44,7 +44,7 @@ export default createCommand({
         return await ctx.reply('commands.help.command_not_found')
       }
       const path = resolve(`src/locales/${ctx.locale}.json`)
-      const raw = readFileSync(path, "utf-8")
+      const raw = readFileSync(path, 'utf-8')
       const { permissions } = JSON.parse(raw)
       const embed = new EmbedBuilder()
       .setTitle(ctx.args[0])
