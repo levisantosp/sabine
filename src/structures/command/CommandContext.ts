@@ -11,7 +11,7 @@ type Database = {
 }
 type CommandContextOptions = {
   client: App
-  guild: Oceanic.Guild | null
+  guild?: Oceanic.Guild | null
   interaction: Oceanic.CommandInteraction | Oceanic.ComponentInteraction | Oceanic.ModalSubmitInteraction
   locale: string
   db: Database
@@ -19,7 +19,7 @@ type CommandContextOptions = {
 }
 export default class CommandContext {
   public client: App
-  public guild: Oceanic.Guild | null
+  public guild?: Oceanic.Guild | null
   public interaction: Oceanic.CommandInteraction | Oceanic.ComponentInteraction | Oceanic.ModalSubmitInteraction
   public locale: string
   public db: Database
