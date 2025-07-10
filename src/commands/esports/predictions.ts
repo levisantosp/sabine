@@ -57,7 +57,6 @@ export default createCommand({
       ]
     }
   ],
-  botPermissions: ['EMBED_LINKS'],
   syntax: 'predictions <page>',
   examples: [
     'predictions valorant',

@@ -34,14 +34,11 @@ export default createCommand({
     if(!ctx.db.user.roster!.active.includes(ctx.args[0]) || !p) {
       return ctx.reply('commands.remove.player_not_found')
     }
-    const players = ctx.db.user.roster!.active
-    if(players.length < 5) {
-      const i = ctx.db.user.roster!.active.findIndex(pl => pl === p.id.toString())
-      ctx.db.user.roster!.reserve.push(p.id.toString())
-      ctx.db.user.roster!.active.splice(i, 1)
-      await ctx.db.user.save()
-      return await ctx.reply('commands.remove.player_removed', { p: p.name })
-    }
+    const i = ctx.db.user.roster!.active.findIndex(pl => pl === p.id.toString())
+    ctx.db.user.roster!.reserve.push(p.id.toString())
+    ctx.db.user.roster!.active.splice(i, 1)
+    await ctx.db.user.save()
+    return await ctx.reply('commands.remove.player_removed', { p: p.name })
   },
   async createAutocompleteInteraction({ i }) {
     const user = (await SabineUser.fetch(i.user.id))!

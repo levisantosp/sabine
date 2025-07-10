@@ -9,7 +9,6 @@ export default createCommand({
   descriptionLocalizations: {
     'pt-BR': 'Mostra as informações do seu premium'
   },
-  botPermissions: ['EMBED_LINKS'],
   userInstall: true,
   async run({ ctx, t }) {
     if(!ctx.db.user.plan || ctx.db.user.plan.type !== 'PREMIUM') {

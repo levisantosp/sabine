@@ -72,7 +72,7 @@ export default createCommand({
     }
   ],
   permissions: ['MANAGE_GUILD', 'MANAGE_CHANNELS'],
-  botPermissions: ['MANAGE_MESSAGES', 'EMBED_LINKS', 'SEND_MESSAGES'],
+  botPermissions: ['MANAGE_MESSAGES', 'SEND_MESSAGES'],
   syntaxes: [
     'admin dashboard',
     'adming language [lang]',

@@ -184,7 +184,7 @@ export default createCommand({
     }
   ],
   permissions: ['MANAGE_GUILD', 'MANAGE_CHANNELS'],
-  botPermissions: ['MANAGE_MESSAGES', 'EMBED_LINKS', 'SEND_MESSAGES'],
+  botPermissions: ['MANAGE_MESSAGES', 'SEND_MESSAGES'],
   syntaxes: [
     'tournament add valorant [tournament] [matches_channel] [results_channel]',
     'tournament add lol [tournament] [matches_channel] [results_channel]',

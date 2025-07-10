@@ -10,7 +10,8 @@ import {
   ComponentInteraction,
   type RawMessageComponentInteraction,
   ModalSubmitInteraction,
-  type RawModalSubmitInteraction
+  type RawModalSubmitInteraction,
+  Guild
 } from 'oceanic.js'
 import CommandRunner from '../../../structures/command/CommandRunner.ts'
 import { SabineGuild, SabineUser } from '../../../database/index.ts'
@@ -34,8 +35,10 @@ const types: Record<number, (raw: AnyRawInteraction) => Promise<any>> = {
     if(!command.createAutocompleteInteraction) return
     const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
     let guild: SabineGuild | undefined
-    if(interaction.guild) {
-      guild = await SabineGuild.fetch(interaction.guild.id) ?? new SabineGuild(interaction.guild.id)
+    let g: Guild | undefined
+    if(interaction.guildID) {
+      guild = await SabineGuild.fetch(interaction.guildID) ?? new SabineGuild(interaction.guildID)
+      g = client.guilds.get(interaction.guildID)
     }
     const t = (content: string, args?: Args) => {
       return locales(user.lang ?? guild?.lang, content, args)
@@ -55,13 +58,15 @@ const types: Record<number, (raw: AnyRawInteraction) => Promise<any>> = {
       const i = (await import(`../../../interactions/${args[0]}.ts`)).default
       const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
       let guild: SabineGuild | undefined
-      if(interaction.guild) {
-        guild = await SabineGuild.fetch(interaction.guild.id) ?? new SabineGuild(interaction.guild.id)
+      let g: Guild | undefined
+      if (interaction.guildID) {
+        guild = await SabineGuild.fetch(interaction.guildID) ?? new SabineGuild(interaction.guildID)
+        g = client.guilds.get(interaction.guildID)
       }
       const ctx = new ComponentInteractionContext({
         args,
         client,
-        guild: interaction.guild,
+        guild: g,
         locale: user.lang ?? guild?.lang ?? 'en',
         db: {
           user,
@@ -97,13 +102,15 @@ const types: Record<number, (raw: AnyRawInteraction) => Promise<any>> = {
       if(args[1] !== 'all' && args[1] !== interaction.user.id) return
       const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
       let guild: SabineGuild | undefined
-      if(interaction.guild) {
-        guild = await SabineGuild.fetch(interaction.guild.id) ?? new SabineGuild(interaction.guild.id)
+      let g: Guild | undefined
+      if (interaction.guildID) {
+        guild = await SabineGuild.fetch(interaction.guildID) ?? new SabineGuild(interaction.guildID)
+        g = client.guilds.get(interaction.guildID)
       }
       const ctx = new ComponentInteractionContext({
         args,
         client,
-        guild: interaction.guild,
+        guild: g,
         locale: user.lang ?? guild?.lang,
         db: {
           user,
@@ -126,8 +133,10 @@ const types: Record<number, (raw: AnyRawInteraction) => Promise<any>> = {
       const i = (await import(`../../../interactions/${args[0]}.ts`)).default
       const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
       let guild: SabineGuild | undefined
-      if(interaction.guild) {
-        guild = await SabineGuild.fetch(interaction.guild.id) ?? new SabineGuild(interaction.guild.id)
+      let g: Guild | undefined
+      if (interaction.guildID) {
+        guild = await SabineGuild.fetch(interaction.guildID) ?? new SabineGuild(interaction.guildID)
+        g = client.guilds.get(interaction.guildID)
       }
       for(const component of interaction.data.components.getComponents()) {
         args.push(component.value)
@@ -135,7 +144,7 @@ const types: Record<number, (raw: AnyRawInteraction) => Promise<any>> = {
       const ctx = new ModalSubmitInteractionContext({
         args,
         client,
-        guild: interaction.guild,
+        guild: g,
         locale: user.lang ?? guild?.lang,
         db: {
           user,
@@ -160,13 +169,15 @@ const types: Record<number, (raw: AnyRawInteraction) => Promise<any>> = {
     if(!command.createModalSubmitInteraction) return
     const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
     let guild: SabineGuild | undefined
-    if(interaction.guild) {
-      guild = await SabineGuild.fetch(interaction.guild.id) ?? new SabineGuild(interaction.guild.id)
+    let g: Guild | undefined
+    if (interaction.guildID) {
+      guild = await SabineGuild.fetch(interaction.guildID) ?? new SabineGuild(interaction.guildID)
+      g = client.guilds.get(interaction.guildID)
     }
     const ctx = new ModalSubmitInteractionContext({
       args,
       client,
-      guild: interaction.guild,
+      guild: g,
       interaction,
       locale: user.lang ?? guild?.lang,
       db: {

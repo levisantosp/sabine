@@ -1,16 +1,16 @@
-import type { CommandInteraction, TextChannel } from 'oceanic.js'
+import type { CommandInteraction, Guild, TextChannel } from 'oceanic.js'
 import App from '../client/App.ts'
 import CommandContext from './CommandContext.ts'
 import locales, { type Args } from '../../locales/index.ts'
 import ButtonBuilder from '../builders/ButtonBuilder.ts'
 import EmbedBuilder from '../builders/EmbedBuilder.ts'
 import Logger from '../util/Logger.ts'
-import { createRequire } from 'node:module'
 import { PrismaClient } from '@prisma/client'
 import { SabineGuild, SabineUser } from '../../database/index.ts'
+import { resolve } from 'node:path'
+import { readFileSync } from 'node:fs'
 
 const prisma = new PrismaClient()
-const require = createRequire(import.meta.url)
 
 export default class CommandRunner {
   public async run(
@@ -19,8 +19,10 @@ export default class CommandRunner {
     const command = client.commands.get(interaction.data.name)
     if(!command) return
     let guild: SabineGuild | undefined
-    if(interaction.guild) {
-      guild = await SabineGuild.fetch(interaction.guild.id) ?? new SabineGuild(interaction.guild.id)
+    let g: Guild | undefined
+    if(interaction.guildID) {
+      guild = await SabineGuild.fetch(interaction.guildID) ?? new SabineGuild(interaction.guildID)
+      g = client.guilds.get(interaction.guildID)
     }
     const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
     const blacklist = (await prisma.blacklists.findFirst())!
@@ -57,14 +59,16 @@ export default class CommandRunner {
       client,
       interaction,
       locale: user.lang ?? guild?.lang ?? 'en',
-      guild: interaction.guild,
+      guild: g,
       args,
       db: {
         user,
         guild
       }
     })
-    const { permissions } = require(`../../locales/${ctx.locale}.json`)
+    const path = resolve(`src/locales/${ctx.locale}.json`)
+    const raw = readFileSync(path, "utf-8")
+    const { permissions } = JSON.parse(raw)
     if(command.permissions) {
       const perms: string[] = []
       for(const perm of command.permissions) {
