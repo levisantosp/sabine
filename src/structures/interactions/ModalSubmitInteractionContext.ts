@@ -9,7 +9,7 @@ type Database = {
 }
 type ModalSubmitInteractionContextOptions = {
   client: App
-  guild: Guild | null
+  guild?: Guild | null
   interaction: ModalSubmitInteraction
   locale: string
   db: Database
@@ -17,7 +17,7 @@ type ModalSubmitInteractionContextOptions = {
 }
 export default class ModalSubmitInteractionContext {
   public client: App
-  public guild: Guild | null
+  public guild?: Guild | null
   public interaction: ModalSubmitInteraction
   public locale: string
   public db: Database

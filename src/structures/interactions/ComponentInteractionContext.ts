@@ -9,7 +9,7 @@ type Database = {
 }
 type ComponentInteractionContextOptions = {
   client: App
-  guild: Guild | null
+  guild?: Guild | null
   interaction: ComponentInteraction
   locale: string
   db: Database
@@ -17,7 +17,7 @@ type ComponentInteractionContextOptions = {
 }
 export default class ComponentInteractionContext {
   public client: App
-  public guild: Guild | null
+  public guild?: Guild | null
   public interaction: ComponentInteraction
   public locale: string
   public db: Database
