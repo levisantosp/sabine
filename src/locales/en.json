@@ -228,8 +228,8 @@
     "replied": "You have already predicted this match.",
     "started": "This match has already started or finished.",
     "permissions": {
-      "user": "You\"re weak. You lack the following permissions to use this command: {permissions}",
-      "bot": "I lack the following permissions for this command to work properly: {permissins}"
+      "user": "You're weak. You lack the following permissions to use this command: {permissions}",
+      "bot": "I lack the following permissions for this command to work properly: {permissions}"
     },
     "error": "An unexpected error has occurred...\n`{e}`",
     "privacy": "Before you start to use the bot, you must accept the [Terms of Service and Privacy](https://levispires.github.io/sabine-terms/)",
