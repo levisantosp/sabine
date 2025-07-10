@@ -1,20 +1,22 @@
-import { createRequire } from 'module'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import * as Oceanic from 'oceanic.js'
 
 export type Args = {
   [key: string]: string | Error | number | Oceanic.File[] | undefined | null
 }
-const require = createRequire(import.meta.url)
 export default function(lang: string, content: string, args?: Args): string {
-  let locale = require(`./${lang}.json`)
+  const path = resolve(`src/locales/${lang}.json`)
+  const raw = readFileSync(path, "utf-8")
+  let json = JSON.parse(raw)
   for(const param of content.split('.')) {
-    locale = locale[param]
-    if(!locale) return content
+    json = json[param]
+    if(!json) return content
   }
   if(args) {
     for(const arg of Object.keys(args)) {
-      locale = locale.replaceAll(`{${arg}}`, args[arg])
+      json = json.replaceAll(`{${arg}}`, args[arg])
     }
   }
-  return locale
+  return json
 }
