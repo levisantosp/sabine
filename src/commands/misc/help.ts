@@ -2,8 +2,8 @@ import translate from '@iamtraction/google-translate'
 import createCommand from '../../structures/command/createCommand.ts'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
 import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
-import { createRequire } from 'node:module'
-const require = createRequire(import.meta.url)
+import { resolve } from 'node:path'
+import { readFileSync } from 'node:fs'
 
 export default createCommand({
   name: 'help',
@@ -29,7 +29,6 @@ export default createCommand({
       autocomplete: true
     }
   ],
-  botPermissions: ['EMBED_LINKS'],
   syntax: 'help <command>',
   examples: [
     'help',
@@ -44,7 +43,9 @@ export default createCommand({
       if(!cmd || cmd.onlyDev) {
         return await ctx.reply('commands.help.command_not_found')
       }
-      const { permissions } = require(`../ts/${ctx.db.guild!.lang}`)
+      const path = resolve(`src/locales/${ctx.locale}.json`)
+      const raw = readFileSync(path, "utf-8")
+      const { permissions } = JSON.parse(raw)
       const embed = new EmbedBuilder()
       .setTitle(ctx.args[0])
       .setDesc((await translate(cmd.description, {
@@ -81,9 +82,6 @@ export default createCommand({
       .setLabel(t('commands.help.privacy'))
       .setStyle('link')
       .setURL('https://sabinebot.xyz/privacy')
-      if(ctx.interaction.guild) {
-        embed.setTitle(ctx.interaction.guild.name)
-      }
       await ctx.reply(embed.build(
         {
           components: [
