@@ -5,22 +5,22 @@ export default createModalSubmitInteraction({
   name: 'betting',
   flags: 64,
   async run({ ctx }) {
-    const users = await ctx.client.prisma.users.findMany({
-      where: {
-        valorant_predictions: {
-          isEmpty: false
-        }
-      }
-    })
     const games = {
       valorant: async() => {
+        const users_vlr = await ctx.client.prisma.users.findMany({
+          where: {
+            valorant_predictions: {
+              isEmpty: false
+            }
+          }
+        })
         const value = BigInt(ctx.args[3])
         if(isNaN(Number(value))) return await ctx.reply('helper.invalid_coins')
         if(value < 500) return await ctx.reply('helper.min_value')
         if(value > ctx.db.user.coins) return await ctx.reply('helper.too_much')
         let oddA = 0
         let oddB = 0
-        for(const u of users) {
+        for(const u of users_vlr) {
           const index = u.valorant_predictions.findIndex(p => p.match === ctx.args[2])
           if(!u.valorant_predictions[index]) continue
           if(u.valorant_predictions[index].teams[0].winner && u.valorant_predictions[index].bet) {
@@ -52,13 +52,20 @@ export default createModalSubmitInteraction({
         )
       },
       lol: async() => {
+        const users_lol = await ctx.client.prisma.users.findMany({
+          where: {
+            lol_predictions: {
+              isEmpty: false
+            }
+          }
+        })
         const value = BigInt(ctx.args[0])
         if(isNaN(Number(value))) return await ctx.reply('helper.invalid_coins')
         if(value < 500) return await ctx.reply('helper.min_value')
         if(value > ctx.db.user.coins) return await ctx.reply('helper.too_much')
         let oddA = 0
         let oddB = 0
-        for(const u of users) {
+        for(const u of users_lol) {
           const index = u.lol_predictions.findIndex(p => p.match === ctx.args[2])
           if(!u.lol_predictions[index]) continue
           if(u.lol_predictions[index].teams[0].winner) {
