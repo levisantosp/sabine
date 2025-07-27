@@ -112,6 +112,11 @@ type BlacklistProps {
   endsAt Float   @db.Double
 }
 
+type Content {
+  lang  String
+  text  String
+}
+
 model blacklists {
   id     String           @id @map("_id")
   guilds BlacklistProps[]
@@ -167,6 +172,13 @@ model users {
   defeats              Int          @default(0)
   daily_time           Int          @default(0) @db.Long
   claim_time           Int          @default(0) @db.Long
+
   @@index([coins, correct_predictions, lol_predictions])
   @@index([valorant_predictions])
+}
+
+model updates {
+  id           String  @id @map("_id")
+  published_at Int     @default(0)
+  content      Content[]
 }
