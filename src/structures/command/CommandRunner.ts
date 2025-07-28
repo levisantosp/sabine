@@ -97,6 +97,17 @@ export default class CommandRunner {
     const t = (content: string, args?: Args) => {
       return locales(user.lang ?? guild?.lang ?? 'en', content, args)
     }
+    if(user.warn) {
+      const updates = (await prisma.updates.findMany()).sort((a, b) => b.published_at - a.published_at)
+      const button = new ButtonBuilder()
+      .setLabel(t('helper.dont_show_again'))
+      .setStyle('red')
+      .setCustomId('dontshowagain')
+      .build(t('helper.warn', {
+        link: `https://sabinebot.xyz/changelog/v${updates[0].id}`
+      }))
+      await ctx.reply(button)
+    }
     command.run({ ctx, client, t, id: interaction.data.id })
       .then(async() => {
         if(process.env.DEVS.includes(interaction.user.id)) return

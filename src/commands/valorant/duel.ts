@@ -4,6 +4,7 @@ import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
 import createCommand from '../../structures/command/createCommand.ts'
 import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
 import { SabineUser } from '../../database/index.ts'
+import Logger from '../../structures/util/Logger.ts'
 
 const users: {[key: string]: boolean} = {}
 
@@ -34,11 +35,20 @@ export default createCommand({
   userInstall: true,
   async run({ ctx, t }) {
     const user = await SabineUser.fetch(ctx.args[0])
+    const authorCounts: {[key: string]: number} = {}
+    const userCounts: {[key: string]: number} = {}
+    for(const p of ctx.db.user.roster?.active ?? []) {
+      authorCounts[p] = (authorCounts[p] || 0) + 1
+    }
+    const authorDuplicates = Object.values(authorCounts).filter(count => count > 1).length
     if(!ctx.db.user.team?.name || !ctx.db.user.team.tag) {
       return await ctx.reply('commands.duel.needed_team_name')
     }
     if(!ctx.db.user.roster || ctx.db.user.roster.active.length < 5) {
-      return await  ctx.reply('commands.duel.team_not_completed_1')
+      return await ctx.reply('commands.duel.team_not_completed_1')
+    }
+    if(authorDuplicates) {
+      return await ctx.reply('commands.duel.duplicated_cards')
     }
     if(!user || !user.roster || user.roster.active.length < 5) {
       return await ctx.reply('commands.duel.team_not_completed_2')
@@ -51,6 +61,13 @@ export default createCommand({
     }
     if(users[user.id]) {
       return ctx.reply('commands.already_in_match_2')
+    }
+    for(const p of user.roster?.active ?? []) {
+      userCounts[p] = (userCounts[p] || 0) + 1
+    }
+    const userDuplicates = Object.values(userCounts).filter(count => count > 1).length
+    if(userDuplicates) {
+      return await ctx.reply('commands.duel.duplicated_cards2')
     }
     const button = new ButtonBuilder()
     .setStyle('green')
@@ -119,9 +136,10 @@ export default createCommand({
         await match.startRound()
       }
     }
-    catch {
+    catch(e) {
       delete users[ctx.interaction.user.id]
       delete users[user.id]
+      new Logger(client).error(e as Error)
     }
     finally {
       delete users[ctx.interaction.user.id]

@@ -1,4 +1,6 @@
+import getPlayer from '../../simulator/valorant/players/getPlayer.ts'
 import getPlayers from '../../simulator/valorant/players/getPlayers.ts'
+import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
 import createCommand from '../../structures/command/createCommand.ts'
 import calcPlayerPrice from '../../structures/util/calcPlayerPrice.ts'
@@ -89,6 +91,7 @@ export default createCommand({
       ovr: parseInt(ovr.toString()),
       price
     }
+    await ctx.db.user.addPlayerToRoster(player.id.toString())
     const embed = new EmbedBuilder()
     .setTitle(player.name)
     .setDesc(
@@ -101,7 +104,46 @@ export default createCommand({
       )
     )
     .setImage(`${process.env.CDN_URL}/cards/${player.id}.png`)
-    await ctx.reply(embed.build())
-    await ctx.db.user.addPlayerToRoster(player.id.toString())
+    await ctx.reply(embed.build({
+      components: [
+        {
+          type: 1,
+          components: [
+            new ButtonBuilder()
+            .setStyle('green')
+            .setLabel(t('commands.claim.promote'))
+            .setCustomId(`claim;${ctx.interaction.user.id};promote;${player.id}`),
+            new ButtonBuilder()
+            .setStyle('red')
+            .setLabel(t('commands.claim.sell'))
+            .setCustomId(`claim;${ctx.interaction.user.id};sell;${player.id}`)
+          ]
+        }
+      ]
+    }))
+  },
+  async createInteraction({ ctx }) {
+    ctx.setFlags(64)
+    if(!ctx.db.user.roster?.reserve.includes(ctx.args[3])) {
+      return await ctx.reply('commands.sell.player_not_found')
+    }
+    const i = ctx.db.user.roster?.reserve.findIndex(p => p === ctx.args[3])
+    if(ctx.args[2] === 'promote') {
+      if(ctx.db.user.roster.active.length >= 5 ) {
+        ctx.db.user.roster.reserve.push(ctx.db.user.roster.active.at(-1)!)
+        ctx.db.user.roster.active.splice(-1, 1)
+      }
+      ctx.db.user.roster.active.push(ctx.args[3])
+      ctx.db.user.roster.reserve.splice(i, 1)
+      await ctx.db.user.save()
+      await ctx.reply('commands.promote.player_promoted', { p: players.find(p => p.id.toString() === ctx.args[3])?.name })
+    }
+    else if(ctx.args[2] === 'sell') {
+      const player = getPlayer(Number(ctx.args[3]))
+      if(!player) return
+      const price = BigInt(calcPlayerPrice(player, true).toString())
+      await ctx.db.user.sellPlayer(player.id.toString(), price, i)
+      await ctx.reply('commands.sell.sold', { p: player.name, price: price.toLocaleString('en-US') })
+    }
   }
 })

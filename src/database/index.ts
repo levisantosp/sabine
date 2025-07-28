@@ -34,6 +34,7 @@ export class SabineUser implements users {
   public defeats: number = 0
   public daily_time: number = 0
   public claim_time: number = 0
+  public warn: boolean = true
   public constructor(id: string) {
     this.id = id
     if(!this.roster) {

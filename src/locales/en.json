@@ -133,12 +133,14 @@
     },
     "claim": {
       "claimed": "**{player}** joined your roster for free\nMarket value: `{price}`",
-      "has_been_claimed": "You have already used this command recently. Try again {t}"
+      "has_been_claimed": "You have already used this command recently. Try again {t}",
+      "sell": "Sell",
+      "promote": "Promote"
     },
     "roster": {
       "embed": {
         "title": "Your roster",
-        "desc": "Team name: **{name}**\nRoster value: `{value}`\nRoster overral: `{ovr}`",
+        "desc": "Team name: **{name}**\nRoster value: `{value}`\nRoster overall: `{ovr}`",
         "field": {
           "name1": "Active Players ({total})",
           "name2": "Reserve Players ({total})"
@@ -178,7 +180,9 @@
       "needed_team_name_2": "Your opponent needs to set team name before play.",
       "already_in_match_2": "Your opponent is already in match.",
       "request": "{opponent} {author} wants to duel against you. You gonna accept or chicken out? 🐔",
-      "button": "Accept"
+      "button": "Accept",
+      "duplicated_cards": "You cannot have duplicated cards in your roster.",
+      "duplicated_cards2": "Your opponent cannot have duplicated cards in roster."
     },
     "career": {
       "no_pages": "Nothing to show in this page.",
@@ -255,7 +259,10 @@
     "invalid_coins": "Insert a valid value",
     "too_much": "You do not have enough coins",
     "bet_res": "You bet **{coins}** coins on **{team}**\nThe current odd is `{odd}x`. The value can change as users make bets.",
-    "min_value": "The minimum bet is 500 coins"
+    "min_value": "The minimum bet is 500 coins",
+    "warn": "A new patch is available! Check what has changed in {link}",
+    "dont_show_again": "Do not show again",
+    "wont_be_warned": "You won't be warned about this update again."
   },
   "permissions": {
     "CREATE_INSTANT_INVITE": "Create Instant Invite",

@@ -34,11 +34,10 @@ export default createCommand({
     const player = getPlayer(Number(ctx.args[0]))
     const i = ctx.db.user.roster!.reserve.findIndex(p => p === ctx.args[0])
     if(!player || i === -1) {
-      return ctx.reply('commands.sell.player_not_found')
+      return await ctx.reply('commands.sell.player_not_found')
     }
-    const user = new SabineUser(ctx.interaction.user.id)
     const price = BigInt(calcPlayerPrice(player, true).toString())
-    await user.sellPlayer(player.id.toString(), price, i)
+    await ctx.db.user.sellPlayer(player.id.toString(), price, i)
     await ctx.reply('commands.sell.sold', { p: player.name, price: price.toLocaleString('en-US') })
   },
   async createAutocompleteInteraction({ i }) {

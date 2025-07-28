@@ -85,13 +85,6 @@ const types: Record<number, (raw: AnyRawInteraction) => Promise<any>> = {
         ctx.setFlags(64)
       }
       await i.run({ ctx, t })
-      return await interaction.createFollowup({
-        content: '## I\'m now also a Valorant simulator with card system and duels between players!' + '\n' +
-          '- Use `/claim` to get a random player and build your `/roster`!' + '\n' +
-          '- You can see all commands by using `/help`' + '\n' +
-          '- More information about this update in our support and community server: https://discord.com/invite/FaqYcpA84r',
-        flags: 64
-      })
     }
     else {
       const blacklist = (await prisma.blacklists.findFirst())!

@@ -134,12 +134,14 @@
     },
     "claim": {
       "claimed": "**{player}** juntou-se ao seu elenco de graça\nValor de mercado: `{price}`",
-      "has_been_claimed": "Você já usou este comando recentemente. Tente novamente {t}"
+      "has_been_claimed": "Você já usou este comando recentemente. Tente novamente {t}",
+      "sell": "Vender",
+      "promote": "Promover"
     },
     "roster": {
       "embed": {
         "title": "Seu elenco",
-        "desc": "Nome da equipe: **{name}**\nValor do elenco: `{value}`\nOverral do elenco: `{ovr}`",
+        "desc": "Nome da equipe: **{name}**\nValor do elenco: `{value}`\nOverall do elenco: `{ovr}`",
         "field": {
           "name1": "Jogadores Titulares ({total})",
           "name2": "Jogadores Reservas ({total})"
@@ -179,7 +181,8 @@
       "needed_team_name_2": "Seu oponente precisa definir o nome da equipe antes de jogar.",
       "already_in_match_2": "Seu oponente já está em partida.",
       "request": "{opponent} {author} quer duelar contra você. Vai aceitar ou vai amarelar? 🐔",
-      "button": "Aceitar"
+      "button": "Aceitar",
+      "duplicated_cards": "Você não pode ter cards duplicados no seu elenco."
     },
     "career": {
       "no_pages": "Nada pra mostrar aqui.",
@@ -256,7 +259,10 @@
     "invalid_coins": "Insira um valor válido",
     "too_much": "Você não tem essa quantia de coins",
     "bet_res": "Você apostou **{coins}** coins em **{team}**\nA odd atual está valendo `{odd}x`. O valor pode mudar conforme os usuários forem apostando.",
-    "min_value": "O valor mínimo para apostar é 500 coins"
+    "min_value": "O valor mínimo para apostar é 500 coins",
+    "warn": "Uma nova atualização está disponível! Veja o que mudou em {link}",
+    "dont_show_again": "Não exibir novamente",
+    "wont_be_warned": "Você não será alertado novamente sobre essa atualização."
   },
   "permissions": {
     "CREATE_INSTANT_INVITE": "Criar convite instantâneo",
