@@ -33,7 +33,8 @@ export default defineConfig([
           if: { after: false },
           for: { after: false },
           while: { after: false },
-          switch: { after: false }
+          switch: { after: false },
+          catch: { after: false }
         }
       }],
       'space-before-function-paren': ['error', {
