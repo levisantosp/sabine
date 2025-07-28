@@ -12,6 +12,9 @@ export default function() {
       if(!isNaN(value)) {
         value = Number(values[i])
       }
+      if(value === 'true' || value === 'false') {
+        value = Boolean(value)
+      }
       obj[headers[i]] = value
     }
     data.push(obj)

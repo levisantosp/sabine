@@ -13,6 +13,7 @@ type Player = {
   aggression: number
   ACS: number
   gamesense: number
+  purchaseable: boolean
 }
 
 export default function<T extends Player[]>() {
@@ -20,12 +21,15 @@ export default function<T extends Player[]>() {
   const headers = lines.shift()!.split(',')
   const data = []
   for(let i = 0; i < lines.length; i++) {
-    const obj: Record<string, string | number> = {}
+    const obj: Record<string, string | number | boolean> = {}
     const values = lines[i].split(',')
     for(let i = 0; i < values.length; i++) {
-      let value: string | number = values[i]
+      let value: string | number | boolean = values[i]
       if(!isNaN(Number(value))) {
         value = Number(values[i])
+      }
+      if(value === 'true' || value === 'false') {
+        value = Boolean(value)
       }
       obj[headers[i]] = value
     }
