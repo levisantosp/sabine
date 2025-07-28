@@ -78,6 +78,7 @@ export default createCommand({
       .filter(p => {
         if(p.name.toLowerCase().includes(i.data.options.getOptions()[0].value.toString().toLowerCase())) return p
       })
+      .slice(0, 25)
       .map(p => ({ name: p.name, value: p.id }))
     )
   },
