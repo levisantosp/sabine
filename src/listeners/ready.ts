@@ -35,7 +35,7 @@ const sendValorantMatches = async(client: App) => {
           client.rest.channels.deleteMessages(e.channel1, messagesIds).catch(() => { })
         }
       }
-      catch { }
+      catch{ }
     }
     try {
       for(const d of data) {
@@ -96,7 +96,7 @@ const sendValorantMatches = async(client: App) => {
         }
       }
     }
-    catch { }
+    catch{ }
     await prisma.guilds.update({
       where: {
         id: guild.id
@@ -189,7 +189,7 @@ const sendLolMatches = async(client: App) => {
           client.rest.channels.deleteMessages(e.channel1, messagesIds).catch(() => { })
         }
       }
-      catch {}
+      catch{}
     }
     try {
       for(const d of data) {
@@ -244,7 +244,7 @@ const sendLolMatches = async(client: App) => {
         }
       }
     }
-    catch { }
+    catch{ }
     await prisma.guilds.update({
       where: {
         id: guild.id

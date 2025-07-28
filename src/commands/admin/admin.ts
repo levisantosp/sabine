@@ -243,7 +243,7 @@ export default createCommand({
             await ctx.client.rest.channels.deleteMessages(e.channel1, messagesIds).catch(() => { })
           }
         }
-        catch { }
+        catch{ }
       }
       try {
         for(const d of data) {
@@ -307,7 +307,7 @@ export default createCommand({
           }
         }
       }
-      catch { }
+      catch{ }
       await prisma.guilds.update({
         where: {
           id: ctx.interaction.guildID!
@@ -348,7 +348,7 @@ export default createCommand({
 						ctx.client.rest.channels.deleteMessages(e.channel1, messagesIds).catch(() => { })
           }
         }
-        catch { }
+        catch{ }
       }
       try {
         for(const d of data) {
@@ -405,7 +405,7 @@ export default createCommand({
           }
         }
       }
-      catch { }
+      catch{ }
       await prisma.guilds.update({
         where: {
           id: ctx.interaction.guildID!
