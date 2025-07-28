@@ -113,8 +113,8 @@ type BlacklistProps {
 }
 
 type Content {
-  lang  String
-  text  String
+  lang String
+  text String
 }
 
 model blacklists {
@@ -172,13 +172,14 @@ model users {
   defeats              Int          @default(0)
   daily_time           Int          @default(0) @db.Long
   claim_time           Int          @default(0) @db.Long
+  warn                 Boolean      @default(true)
 
   @@index([coins, correct_predictions, lol_predictions])
   @@index([valorant_predictions])
 }
 
 model updates {
-  id           String  @id @map("_id")
-  published_at Int     @default(0)
+  id           String    @id @map("_id")
+  published_at Int       @default(0)
   content      Content[]
 }
