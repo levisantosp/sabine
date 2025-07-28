@@ -28,8 +28,11 @@ export default function<T extends Player[]>() {
       if(!isNaN(Number(value))) {
         value = Number(values[i])
       }
-      if(value === 'true' || value === 'false') {
-        value = Boolean(value)
+      if(value === 'true') {
+        value = true
+      }
+      if(value === 'false') {
+        value = false
       }
       obj[headers[i]] = value
     }

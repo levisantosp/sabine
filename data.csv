@@ -1,4 +1,4 @@
-id,name,collection,team,country,role,aim,HS,movement,aggression,ACS,gamesense,purschaseable
+id,name,collection,team,country,role,aim,HS,movement,aggression,ACS,gamesense,purchaseable
 1,valyn,base,g2,us,controller,67.78,40.2,61.6,44.35,76.33,85.5,true
 2,jawgemo,base,g2,kh,duelist,80.08,55.2,67.2,33.9,73,79.2,true
 3,trent,base,g2,us,initiator,80.08,55.2,67.2,33.9,73.0,79.2,true

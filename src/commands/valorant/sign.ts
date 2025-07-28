@@ -35,7 +35,7 @@ export default createCommand({
   userInstall: true,
   async run({ ctx, t }) {
     const player = getPlayer(Number(ctx.args[0]))
-    if(!player) return await ctx.reply('commands.sign.player_not_found')
+    if(!player || !player.purchaseable) return await ctx.reply('commands.sign.player_not_found')
     const price = calcPlayerPrice(player)
     const embed = new EmbedBuilder()
     .setTitle(player.name)
@@ -54,7 +54,7 @@ export default createCommand({
   },
   async createAutocompleteInteraction({ i }) {
     const players: Array<{ name: string, ovr: number, id: number }> = []
-    for(const p of getPlayers()) {
+    for(const p of getPlayers().filter(p => p.purchaseable)) {
       const ovr = parseInt(calcPlayerOvr(p).toString())
       players.push({
         name: `${p.name} (${ovr})`,

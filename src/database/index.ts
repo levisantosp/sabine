@@ -43,7 +43,14 @@ export class SabineUser implements users {
   private async fetch(id: string) {
     const data = await prisma.users.findUnique({ where: { id } })
     if(!data) return data
-    const user = new SabineUser(data.id)
+    let user = new SabineUser(data.id)
+    user = Object.assign(user, data)
+    if(!user.roster) {
+      user.roster = {
+        active: [],
+        reserve: []
+      }
+    }
     return Object.assign(user, data)
   }
   public async save() {
@@ -61,8 +68,15 @@ export class SabineUser implements users {
   public static async fetch(id: string) {
     const data = await prisma.users.findUnique({ where: { id } })
     if(!data) return data
-    const user = new SabineUser(data.id)
-    return Object.assign(user, data)
+    let user = new SabineUser(data.id)
+    user = Object.assign(user, data)
+    if(!user.roster) {
+      user.roster = {
+        active: [],
+        reserve: []
+      }
+    }
+    return user
   }
   public async addPrediction(game: 'valorant' | 'lol', prediction: Prediction) {
     const user = await this.fetch(this.id) ?? this
