@@ -11,7 +11,7 @@ import { resolve } from 'node:path'
 import { readFileSync } from 'node:fs'
 
 const prisma = new PrismaClient()
-const locale = {
+const locale: {[key: string]: string} = {
   pt: 'br',
   en: 'us'
 }
@@ -108,7 +108,7 @@ export default class CommandRunner {
       .setStyle('red')
       .setCustomId('dontshowagain')
       .build(t('helper.warn', {
-        link: `https://sabinebot.xyz/${ctx.locale}/changelog/v${updates[0].id}`
+        link: `https://sabinebot.xyz/${locale[ctx.locale]}/changelog/v${updates[0].id}`
       }))
       await ctx.reply(button)
     }
