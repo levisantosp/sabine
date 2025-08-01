@@ -26,7 +26,7 @@ id,name,collection,team,country,role,aim,HS,movement,aggression,ACS,gamesense,pu
 25,C0M,BASE,leviatan,us,initiator,70.44,45.6,48.8,28.35,56.6,73.2,true
 26,heat,BASE,furia,br,sentinel,79.26,61.4,61.0,42.25,68.2,63.6,true
 27,Palla,BASE,furia,br,duelist,74.12,54.8,57.6,50.85,71.67,56.9,true
-28,Urango,BASE,furia,br,flex,64.32,52.8,60.0,29.5,67.33,67.5,true
+28,Urango,BASE,furia,br,flex,54.32,52.8,40.0,29.5,67.33,67.5,true
 29,tuyz,BASE,furia,br,controller,75.12,52.8,66.4,33.9,68.0,73.5,true
 30,basic,BASE,furia,it,initiator,73.72,58.8,59.6,26.65,64.9,75.1,true
 31,keznit,BASE,kru,cl,flex,87.8,46.0,62.4,49.85,86.13,59.6,true
