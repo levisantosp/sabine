@@ -35,10 +35,8 @@ export default class App extends Oceanic.Client {
       }
     }
     await super.connect()
-    await this.restMode()
-    await this.bulkEditGlobalCommands()
   }
-  private async bulkEditGlobalCommands() {
+  public async bulkEditGlobalCommands() {
     const commands: Oceanic.CreateApplicationCommandOptions[] = []
     this.commands.forEach(cmd => {
       const integrationTypes = [
