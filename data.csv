@@ -355,4 +355,9 @@ id,name,collection,team,country,role,aim,HS,movement,aggression,ACS,gamesense,pu
 354,havoc,BASE,solid,br,sentinel,69.46,61.8,49.92,51.7,59.54,44.96,true
 355,PxS,BASE,solid,us,initiator,55.12,41.0,51.2,57.0,63.04,56.88,true
 356,kon4n,BASE,solid,br,flex,48.32,49.0,53.12,30.8,55.76,60.0,true
-357,dgzin,BASE,solid,br,flex,77.26,55.2,79.92,65.4,74.4,45.36,true
+357,dgzin,BASE,solid,br,duelist,77.26,55.2,79.92,65.4,74.4,45.36,true
+358,Reduxx,BASE,sen,us,duelist,66.06,52.2,49.92,58.35,67.74,50.88,true
+359,NiSMO,BASE,sen,ca,flex,54.26,52.8,43.12,42.3,63.10,61.76,true
+360,nightz,BASE,sen,us,controller,50.83,77.6,39.28,44.2,58.42,45.24,true
+361,Kyu,base,sen,ca,initiator,64.30,54.2,54.40,34.35,60.34,60.56,true
+362,satellite,base,sen,ca,sentinel,53.82,39.2,49.28,62.0,61.52,50.88,true
