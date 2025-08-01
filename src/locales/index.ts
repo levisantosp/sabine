@@ -3,7 +3,7 @@ import { resolve } from 'node:path'
 import * as Oceanic from 'oceanic.js'
 
 export type Args = {
-  [key: string]: string | Error | number | Oceanic.File[] | undefined | null
+  [key: string]: string | Error | number | Oceanic.File[] | undefined | null | bigint
 }
 export default function(lang: string, content: string, args?: Args): string {
   const path = resolve(`src/locales/${lang}.json`)
