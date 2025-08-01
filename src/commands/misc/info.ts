@@ -60,7 +60,7 @@ export default createCommand({
           inline: true
         }
       )
-    ctx.reply(embed.build(
+    await ctx.reply(embed.build(
       {
         components: [
           {
