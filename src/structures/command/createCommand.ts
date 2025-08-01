@@ -45,6 +45,7 @@ export type Command = {
   onlyDev?: boolean
   ephemeral?: boolean
   userInstall?: boolean
+  isThiking?: boolean
   run: (options: CommandOptions) => Promise<any>
   createAutocompleteInteraction?: (options: CreateAutocompleteInteractionOptions) => Promise<any>
   createInteraction?: (options: CreateComponentInteractionOptions) => Promise<any>
