@@ -1,6 +1,5 @@
 import { ApplicationCommandOptionTypes } from 'oceanic.js'
 import createCommand from '../../structures/command/createCommand.ts'
-import { run } from 'node:test'
 import getPlayers from '../../simulator/valorant/players/getPlayers.ts'
 import calcPlayerOvr from '../../structures/util/calcPlayerOvr.ts'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'

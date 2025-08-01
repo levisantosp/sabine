@@ -211,7 +211,7 @@ export default createCommand({
           .setThumb((client.users.get(array[0].id!))!.avatarURL()!)
         let pos = 0
         if(!isNaN(page) && page > 1) pos = page * 10 - 10
-        for (const user of users) {
+        for(const user of users) {
           pos++
           const u = client.users.get(user.id)
           let field = `${pos} - ${!u ? '*unknown*' : u.username}`
@@ -275,7 +275,7 @@ export default createCommand({
           .setThumb((client.users.get(array[0].id!))!.avatarURL()!)
         let pos = 0
         if(!isNaN(page) && page > 1) pos = page * 10 - 10
-        for (const user of users) {
+        for(const user of users) {
           pos++
           const u = client.users.get(user.id)
           let field = `${pos} - ${!u ? '*unknown*' : u.username}`
@@ -339,7 +339,7 @@ export default createCommand({
           .setThumb((client.users.get(array[0].id!))!.avatarURL()!)
         let pos = 0
         if(!isNaN(page) && page > 1) pos = page * 10 - 10
-        for (const user of users) {
+        for(const user of users) {
           pos++
           const u = client.users.get(user.id)
           let field = `${pos} - ${!u ? '*unknown*' : u.username}`
@@ -405,7 +405,7 @@ export default createCommand({
           .setThumb((client.users.get(array[0].id!))!.avatarURL()!)
         let pos = 0
         if(!isNaN(page) && page > 1) pos = page * 10 - 10
-        for (const user of users) {
+        for(const user of users) {
           pos++
           const u = client.users.get(user.id)
           let field = `${pos} - ${!u ? '*unknown*' : u.username}`
@@ -469,7 +469,7 @@ export default createCommand({
           .setThumb((client.users.get(array[0].id!))!.avatarURL()!)
         let pos = 0
         if(!isNaN(page) && page > 1) pos = page * 10 - 10
-        for (const user of users) {
+        for(const user of users) {
           pos++
           const u = client.users.get(user.id)
           let field = `${pos} - ${!u ? '*unknown*' : u.username}`
@@ -533,7 +533,7 @@ export default createCommand({
           .setThumb((client.users.get(array[0].id!))!.avatarURL()!)
         let pos = 0
         if(!isNaN(page) && page > 1) pos = page * 10 - 10
-        for (const user of users) {
+        for(const user of users) {
           pos++
           const u = client.users.get(user.id)
           let field = `${pos} - ${!u ? '*unknown*' : u.username}`
@@ -600,7 +600,7 @@ export default createCommand({
           .setThumb(client.users.get(array[0].id!)!.avatarURL()!)
         let pos = 0
         if(!isNaN(page) && page > 1) pos = page * 10 - 10
-        for (const user of users) {
+        for(const user of users) {
           pos++
           const u = client.users.get(user.id)
           let field = `${pos} - ${!u ? '*unknown*' : u.username}`
@@ -661,7 +661,7 @@ export default createCommand({
           .setThumb(client.users.get(array[0].id!)!.avatarURL()!)
         let pos = 0
         if(!isNaN(page) && page > 1) pos = page * 10 - 10
-        for (const user of users) {
+        for(const user of users) {
           pos++
           const u = client.users.get(user.id)
           let field = `${pos} - ${!u ? '*unknown*' : u.username}`
@@ -722,7 +722,7 @@ export default createCommand({
           .setThumb(client.users.get(array[0].id!)!.avatarURL()!)
         let pos = 0
         if(!isNaN(page) && page > 1) pos = page * 10 - 10
-        for (const user of users) {
+        for(const user of users) {
           pos++
           const u = client.users.get(user.id)
           let field = `${pos} - ${!u ? '*unknown*' : u.username}`
@@ -759,7 +759,7 @@ export default createCommand({
       }
     }
     else {
-     if(ctx.args[5] === 'predictions') {
+      if(ctx.args[5] === 'predictions') {
         let users = (await client.prisma.users.findMany({
           where: {
             correct_predictions: {
@@ -785,7 +785,7 @@ export default createCommand({
           .setThumb(client.users.get(array[0].id!)!.avatarURL()!)
         let pos = 0
         if(!isNaN(page) && page > 1) pos = page * 10 - 10
-        for (const user of users) {
+        for(const user of users) {
           pos++
           const u = client.users.get(user.id)
           let field = `${pos} - ${!u ? '*unknown*' : u.username}`
@@ -846,7 +846,7 @@ export default createCommand({
           .setThumb(client.users.get(array[0].id!)!.avatarURL()!)
         let pos = 0
         if(!isNaN(page) && page > 1) pos = page * 10 - 10
-        for (const user of users) {
+        for(const user of users) {
           pos++
           const u = client.users.get(user.id)
           let field = `${pos} - ${!u ? '*unknown*' : u.username}`
@@ -907,7 +907,7 @@ export default createCommand({
           .setThumb(client.users.get(array[0].id!)!.avatarURL()!)
         let pos = 0
         if(!isNaN(page) && page > 1) pos = page * 10 - 10
-        for (const user of users) {
+        for(const user of users) {
           pos++
           const u = client.users.get(user.id)
           let field = `${pos} - ${!u ? '*unknown*' : u.username}`

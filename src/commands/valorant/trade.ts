@@ -120,7 +120,7 @@ export default createCommand({
       const user = await SabineUser.fetch(ctx.args[3])
       const player = getPlayer(Number(ctx.args[4]))
       if(!user || !player) return
-      let i = user.roster?.reserve.findIndex(p => p === ctx.args[4])
+      const i = user.roster?.reserve.findIndex(p => p === ctx.args[4])
       if(i === -1 || i === undefined) return
       if(ctx.db.user.coins < BigInt(ctx.args[5])) {
         return await ctx.edit('commands.trade.missing_coins', {
