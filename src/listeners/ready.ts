@@ -343,6 +343,7 @@ export default createListener({
         }
       ])
     }
+    await client.bulkEditGlobalCommands()
     await runTasks(client)
   }
 })
