@@ -1,21 +1,24 @@
 import type { CommandInteraction, Guild, TextChannel } from 'oceanic.js'
-import App from '../client/App.ts'
+import App, { client } from '../client/App.ts'
 import CommandContext from './CommandContext.ts'
 import locales, { type Args } from '../../locales/index.ts'
 import ButtonBuilder from '../builders/ButtonBuilder.ts'
 import EmbedBuilder from '../builders/EmbedBuilder.ts'
 import Logger from '../util/Logger.ts'
-import { PrismaClient } from '@prisma/client'
 import { SabineGuild, SabineUser } from '../../database/index.ts'
 import { resolve } from 'node:path'
 import { readFileSync } from 'node:fs'
 
-const prisma = new PrismaClient()
 const locale: {[key: string]: string} = {
   pt: 'br',
   en: 'us'
 }
-
+const blacklist = await (async() => {
+  return (await client.prisma.blacklists.findFirst())!
+})()
+const updates = await (async() => {
+  return (await client.prisma.updates.findMany()).sort((a, b) => b.published_at - a.published_at)
+})()
 export default class CommandRunner {
   public async run(
     client: App, interaction: CommandInteraction
@@ -29,13 +32,12 @@ export default class CommandRunner {
       g = client.guilds.get(interaction.guildID)
     }
     const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
-    const blacklist = (await prisma.blacklists.findFirst())!
     const ban = blacklist.users.find(user => user.id === interaction.user.id)
     if(blacklist.guilds.find(guild => guild.id === interaction.guildID)) {
       return await interaction.guild?.leave()
     }
     if(ban) {
-      return interaction.createMessage({
+      return await interaction.createMessage({
         content: locales(guild?.lang ?? 'en', 'helper.banned', {
           reason: ban.reason,
           ends: ban.endsAt === Infinity ? Infinity : `<t:${ban.endsAt}:F> | <t:${ban.endsAt}:R>`,
@@ -78,7 +80,7 @@ export default class CommandRunner {
       for(const perm of command.permissions) {
         if(!interaction.member?.permissions.has(perm)) perms.push(perm)
       }
-      if(perms[0]) return ctx.reply('helper.permissions.user', {
+      if(perms[0]) return await ctx.reply('helper.permissions.user', {
         permissions: perms.map(p => `\`${permissions[p]}\``).join(', ')
       })
     }
@@ -88,21 +90,20 @@ export default class CommandRunner {
       for(const perm of command.botPermissions) {
         if(!member?.permissions.has(perm as any)) perms.push(perm)
       }
-      if(perms[0]) return ctx.reply('helper.permissions.bot', {
+      if(perms[0]) return await ctx.reply('helper.permissions.bot', {
         permissions: perms.map(p => `\`${permissions[p]}\``).join(', ')
       })
     }
     if(command.ephemeral) {
       await interaction.defer(64)
     }
-    else {
+    else if(command.isThiking) {
       await interaction.defer()
     }
     const t = (content: string, args?: Args) => {
       return locales(user.lang ?? guild?.lang ?? 'en', content, args)
     }
     if(user.warn) {
-      const updates = (await prisma.updates.findMany()).sort((a, b) => b.published_at - a.published_at)
       const button = new ButtonBuilder()
       .setLabel(t('helper.dont_show_again'))
       .setStyle('red')
