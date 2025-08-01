@@ -138,7 +138,7 @@ id,name,collection,team,country,role,aim,HS,movement,aggression,ACS,gamesense,pu
 137,Ninebody,BASE,tyloo,cn,duelist,65.56,52.40,62.40,56.50,67.73,64.20,true
 138,hfmi0dzjc9z7,BASE,edg,cn,sentinel,67.42,45.80,58.40,33.65,59.67,72.70,true
 139,Viva,BASE,xlg,cn,initiator,66.24,53.60,63.20,26.00,59.23,82.10,true
-140,Midi,BASE,xlg,cn,flex,64.44,55.60,52.80,16.75,44.67,69.60,true
+140,Midi,BASE,no_team,cn,flex,64.44,55.60,52.80,16.75,44.67,69.60,true
 141,Rarga,BASE,xlg,ru,duelist,90.38,62.20,60.80,47.95,79.33,55.20,true
 142,happywei,BASE,xlg,tw,sentinel,84.44,59.6,63.2,41.55,73.67,64.34,true
 143,coconut,BASE,xlg,hk,controller,86.64,61.6,66.4,36.7,72.93,66.3,true
