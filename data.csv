@@ -312,3 +312,8 @@ id,name,collection,team,country,role,aim,HS,movement,aggression,ACS,gamesense,pu
 311,Dantedeu5,BASE,kru,ar,duelist,73.9,55.0,62.4,60.4,62.1,61.1,true
 312,trexx,BASE,liquid,ru,initiator,66.1,37.0,68.0,42.3,80.1,84.6,true
 313,NoMan,BASE,xlg,hk,flex,75.1,55.4,62.4,62.2,64.1,57.3,true
+314,NicoMachine,BASE,oxen,cl,initiator,59.58,46.2,54,35.5,47.83,60.4,true
+315,Yeah,BASE,oxen,br,duelist,60.84,57.6,51.6,60.25,45.63,36.4,true
+316,phc,BASE,oxen,br,controller,62.54,56.6,46.4,41.1,50.77,46.1,true
+317,benG,BASE,oxen,cl,sentinel,53.66,61.4,43.2,30.65,46.37,54.4,true
+318,mta,BASE,oxen,cl,flex,59.94,58.6,51.6,37.7,53.63,46.6,true
