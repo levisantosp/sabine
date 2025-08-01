@@ -46,11 +46,25 @@
       }
     },
     "ranking": {
-      "author": "Page {page}/{pages}",
-      "footer": "Your position: #{pos}",
-      "title": "Users with the most correct predictions",
-      "field": "`{t}` correct predictions",
-      "no_users": "No users to show in this page."
+      "no_users": "No users to show in this page.",
+      "predictions": {
+        "title": "Users with the most correct predictions",
+        "author": "Page {page}/{pages}",
+        "footer": "Your position: #{pos}",
+        "field": "`{t}` correct predictions"
+      },
+      "coins": {
+        "title": "Users with most coins",
+        "author": "Page {page}/{pages}",
+        "footer": "Your position: #{pos}",
+        "field": "`{t}` coins"
+      },
+      "wins": {
+        "title": "Users with most wins",
+        "author": "Page {page}/{pages}",
+        "footer": "Your position: #{pos}",
+        "field": "`{t}` wins"
+      }
     },
     "admin": {
       "tournament_has_been_added": "This tournament already has been added.",
@@ -205,6 +219,16 @@
       "buy": "Sign",
       "coins_needed": "You do not have enough coins to make this purchase",
       "signed": "You signed **{player}** for **{price}** coins succesfully!"
+    },
+    "claims": {
+      "res": "Your claims: `{claims}`\nYour pity: `{pity}`"
+    },
+    "card": {
+      "name": "Name",
+      "collection": "Collection",
+      "purchaseable": "Purchaseable?",
+      "price": "Price",
+      "devalued_price": "Sells for"
     }
   },
   "simulator": {
@@ -262,7 +286,9 @@
     "min_value": "The minimum bet is 500 coins",
     "warn": "A new patch is available! Check what has changed in {link}",
     "dont_show_again": "Do not show again",
-    "wont_be_warned": "You won't be warned about this update again."
+    "wont_be_warned": "You won't be warned about this update again.",
+    "yes": "Yes",
+    "no": "No"
   },
   "permissions": {
     "CREATE_INSTANT_INVITE": "Create Instant Invite",

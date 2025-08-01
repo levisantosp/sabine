@@ -46,11 +46,25 @@
       }
     },
     "ranking": {
-      "author": "Página {page}/{pages}",
-      "footer": "Sua posição: #{pos}",
-      "title": "Usuários com mais palpites certos",
-      "field": "`{t}` palpites certos",
-      "no_users": "Sem usuários para mostrar nesta página."
+      "no_users": "Sem usuários para mostrar nesta página.",
+      "predictions": {
+        "author": "Página {page}/{pages}",
+        "footer": "Sua posição: #{pos}",
+        "title": "Usuários com mais palpites certos",
+        "field": "`{t}` palpites certos"
+      },
+      "coins": {
+        "title": "Usuários com mais coins",
+        "author": "Página {page}/{pages}",
+        "footer": "Sua posição: #{pos}",
+        "field": "`{t}` coins"
+      },
+      "wins": {
+        "title": "Usuários com mais vitórias",
+        "author": "Página {page}/{pages}",
+        "footer": "Sua posição: #{pos}",
+        "field": "`{t}` vitórias"
+      }
     },
     "admin": {
       "tournament_has_been_added": "Este campeonato já foi adicionado.",
@@ -205,6 +219,16 @@
       "buy": "Contratar",
       "coins_needed": "Você não tem coins suficientes para realizar esta compra",
       "signed": "Você contratou **{player}** por **{price}** coins com sucesso!"
+    },
+    "claims": {
+      "res": "Seus claims: `{claims}`\nSeu pity: `{pity}`"
+    },
+    "card": {
+      "name": "Nome",
+      "collection": "Coleção",
+      "purchaseable": "Comprável?",
+      "price": "Preço",
+      "devalued_price": "Vende por"
     }
   },
   "simulator": {
@@ -262,7 +286,9 @@
     "min_value": "O valor mínimo para apostar é 500 coins",
     "warn": "Uma nova atualização está disponível! Veja o que mudou em {link}",
     "dont_show_again": "Não exibir novamente",
-    "wont_be_warned": "Você não será alertado novamente sobre essa atualização."
+    "wont_be_warned": "Você não será alertado novamente sobre essa atualização.",
+    "yes": "Sim",
+    "no": "Não"
   },
   "permissions": {
     "CREATE_INSTANT_INVITE": "Criar convite instantâneo",
