@@ -247,7 +247,7 @@ id,name,collection,team,country,role,aim,HS,movement,aggression,ACS,gamesense,pu
 246,GuhRVN,BASE,los,br,controller,59.12,52.8,59.6,23.55,45.07,62.5,true
 247,shion,BASE,sccp,br,initiator,60.98,44.2,56.4,28.8,40.13,63.4,true
 248,liazzi,BASE,sccp,br,flex,59.38,44.20,54.80,41.10,41.40,51.70,true
-249,sw,BASE,sccp,br,controller,54.40,52.00,54.80,32.85,46.10,51.30,true
+249,sw,BASE,stellae,br,controller,54.40,52.00,54.80,32.85,46.10,51.30,true
 250,tkzin,BASE,sccp,br,duelist,57.90,59.00,50.00,56.55,48.50,43.60,true
 251,pollo,BASE,sccp,br,sentinel,64.46,49.40,64.80,43.75,60.93,57.50,true
 252,Loss,BASE,furia,br,duelist,53.90,59.00,50.00,54.05,53.83,51.50,true
