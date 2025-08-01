@@ -26,7 +26,7 @@ const calcPlayerOvr = (player: Player) => {
 }
 const players = getPlayers()
 const tier = (() => {
-  const tier = {
+  const tier: {[key: string]: Player[]} = {
     s: [] as Player[], // ovr 95+ (0.1%)
     a: [] as Player[], // ovr 90-94 (0.9%)
     b: [] as Player[], // ovr 80-89 (4%)
@@ -43,7 +43,6 @@ const tier = (() => {
   }
   return tier
 })()
-
 const getRandomPlayerByOvr = () => {
   let random = Math.random() * 100
   if(random < 0.1) {
@@ -67,7 +66,11 @@ const getRandomPlayerByOvr = () => {
     return tier.d[random]
   }
 }
-
+const getRandomPlayerByTier = (t: string) => {
+  return tier[t][Math.floor(Math.random() * tier[t].length)]
+}
+const users: {[key: string]: number} = {}
+const date = Date.now()
 export default createCommand({
   name: 'claim',
   category: 'simulator',
@@ -79,11 +82,21 @@ export default createCommand({
     'pt-BR': 'Obtenha um jogador aleatório'
   },
   userInstall: true,
+  isThiking: true,
   async run({ ctx, t }) {
     if(ctx.db.user.claim_time > Date.now()) {
+      delete users[ctx.interaction.user.id]
       return await ctx.reply('commands.claim.has_been_claimed', { t: `<t:${((ctx.db.user.claim_time) / 1000).toFixed(0)}:R>` })
     }
-    let player = getRandomPlayerByOvr()
+    else if(users[ctx.interaction.user.id] && users[ctx.interaction.user.id] > Date.now()) {
+      return await ctx.reply('commands.claim.has_been_claimed', { t: `<t:${((users[ctx.interaction.user.id]) / 1000).toFixed(0)}:R>` })
+    }
+    users[ctx.interaction.user.id] = Date.now() + 600000
+    let player: Player
+    if(ctx.db.user.pity >= 49) {
+      player = getRandomPlayerByTier('s')
+    }
+    else player = getRandomPlayerByOvr()
     const ovr = calcPlayerOvr(player)
     const price = calcPlayerPrice(player)
     player = {
@@ -91,7 +104,6 @@ export default createCommand({
       ovr: parseInt(ovr.toString()),
       price
     }
-    await ctx.db.user.addPlayerToRoster(player.id.toString())
     const embed = new EmbedBuilder()
     .setTitle(player.name)
     .setDesc(
@@ -103,7 +115,7 @@ export default createCommand({
         }
       )
     )
-    .setImage(`${process.env.CDN_URL}/cards/${player.id}.png`)
+    .setImage(`${process.env.CDN_URL}/cards/${player.id}.png?ts=${date}`)
     await ctx.reply(embed.build({
       components: [
         {
@@ -121,6 +133,7 @@ export default createCommand({
         }
       ]
     }))
+    await ctx.db.user.addPlayerToRoster(player.id.toString())
   },
   async createInteraction({ ctx }) {
     ctx.setFlags(64)

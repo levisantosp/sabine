@@ -3,6 +3,8 @@ import EmbedBuilder from '../structures/builders/EmbedBuilder.ts'
 import { client } from '../structures/client/App.ts'
 import { $Enums, type guilds, Prisma, PrismaClient, type users } from '@prisma/client'
 import type { JsonValue } from '@prisma/client/runtime/library'
+import calcPlayerOvr from '../structures/util/calcPlayerOvr.ts'
+import getPlayer from '../simulator/valorant/players/getPlayer.ts'
 
 const prisma = new PrismaClient()
 type PredictionTeam = {
@@ -35,6 +37,8 @@ export class SabineUser implements users {
   public daily_time: number = 0
   public claim_time: number = 0
   public warn: boolean = true
+  public pity: number = 0
+  public claims: number = 0
   public constructor(id: string) {
     this.id = id
     if(!this.roster) {
@@ -237,6 +241,11 @@ export class SabineUser implements users {
     user.roster!.reserve.push(player)
     if(method === 'CLAIM_COMMAND') {
       user.claim_time = Date.now() + 600000
+    }
+    user.pity += 1
+    user.claims += 1
+    if(calcPlayerOvr(getPlayer(Number(player))!) >= 95) {
+      user.pity = 0
     }
     await user.save()
     const u = client.users.get(user.id)!
