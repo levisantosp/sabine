@@ -229,6 +229,14 @@
       "purchaseable": "Comprável?",
       "price": "Preço",
       "devalued_price": "Vende por"
+    },
+    "trade": {
+      "missing_coins": "{user} precisa de mais **{coins}** coins para comprar seu jogador.",
+      "request": "{user} {author} quer vender **{player} — {collection}** para você por **{coins}** coins. Quer comprar?",
+      "make_purchase": "Fazer compra",
+      "cancel": "Cancelar",
+      "cancelled": "Negociação cancelada.",
+      "res": "Você vendeu **{player} — {collection}** para {user} por **{coins}** coins com sucesso!"
     }
   },
   "simulator": {
