@@ -68,7 +68,7 @@ export default createCommand({
       if(!p) break
       const ovr = parseInt(calcPlayerOvr(p).toString())
       players.push({
-        name: `${p.name} (${ovr})`,
+        name: `${p.name} (${ovr}) — ${p.collection}`,
         ovr,
         id: p_id
       })

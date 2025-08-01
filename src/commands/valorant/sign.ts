@@ -57,7 +57,7 @@ export default createCommand({
     for(const p of getPlayers().filter(p => p.purchaseable)) {
       const ovr = parseInt(calcPlayerOvr(p).toString())
       players.push({
-        name: `${p.name} (${ovr})`,
+        name: `${p.name} (${ovr}) — ${p.collection}`,
         ovr,
         id: p.id
       })

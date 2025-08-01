@@ -51,7 +51,7 @@ export default createCommand({
     for(const p_id of active_players) {
       const player = getPlayer(Number(p_id))!
       const ovr = parseInt(calcPlayerOvr(player).toString())
-      active_content += `- ${player.name} (${ovr})\n`
+      active_content += `- ${player.name} (${ovr}) — ${player.collection}\n`
     }
     let i = 0
     for(const p_id of reserve_players) {
@@ -59,7 +59,7 @@ export default createCommand({
       if(i >= 10) break
       const player = getPlayer(Number(p_id))!
       const ovr = parseInt(calcPlayerOvr(player).toString())
-      reserve_content += `- ${player.name} (${ovr})\n`
+      reserve_content += `- ${player.name} (${ovr}) — ${player.collection}\n`
     }
     if(reserve_players.length > 10) {
       reserve_content += `- +${reserve_players.length - 10}...`
@@ -120,14 +120,14 @@ export default createCommand({
         const player = getPlayer(Number(p))
         if(!player) continue
         const ovr = calcPlayerOvr(player)
-        players += `${player.name} (${parseInt(ovr.toString())})\n`
+        players += `${player.name} (${parseInt(ovr.toString())}) — ${player.collection}\n`
       }
       for(const p of reserve_players) {
         if(!reserve_players.length) break
         const player = getPlayer(Number(p))
         if(!player) continue
         const ovr = calcPlayerOvr(player)
-        players += `${player.name} (${parseInt(ovr.toString())})\n`
+        players += `${player.name} (${parseInt(ovr.toString())}) — ${player.collection}\n`
       }
       const txt = Buffer.from(players, 'utf-8')
       await ctx.reply('', {
