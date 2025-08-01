@@ -351,3 +351,8 @@ id,name,collection,team,country,role,aim,HS,movement,aggression,ACS,gamesense,pu
 350,Siduzord,BASE,stellae,br,initiator,56.82,47.8,55.04,28.0,53.7,64.08,true
 351,Zanatsu,BASE,stellae,br,duelist,60.0,46.0,49.28,60.1,55.2,44.0,true
 352,Tisora,BASE,stellae,br,flex,54.98,40.8,45.92,52.0,61.33,53.52,true
+353,raafa,BASE,solid,br,controller,51.09,43.4,53.12,29.3,47.5,61.92,true
+354,havoc,BASE,solid,br,sentinel,69.46,61.8,49.92,51.7,59.54,44.96,true
+355,PxS,BASE,solid,us,initiator,55.12,41.0,51.2,57.0,63.04,56.88,true
+356,kon4n,BASE,solid,br,flex,48.32,49.0,53.12,30.8,55.76,60.0,true
+357,dgzin,BASE,solid,br,flex,77.26,55.2,79.92,65.4,74.4,45.36,true
