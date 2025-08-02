@@ -105,7 +105,7 @@ const interactionTypes: Record<number, (i: AnyInteractionGateway) => Promise<any
     const command = client.commands.get(args[0])
     if(!command) {
       if(!interaction.guild) return
-      const i = (await import(`../../../interactions/${args[0]}.ts`)).default
+      const i = (await import(`../interactions/${args[0]}.ts`)).default
       const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
       let guild: SabineGuild | undefined
       let g: Guild | undefined
@@ -141,6 +141,29 @@ const interactionTypes: Record<number, (i: AnyInteractionGateway) => Promise<any
       }
       return await i.run({ ctx, t })
     }
+    if(!command.createModalSubmitInteraction) return
+    const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
+    let guild: SabineGuild | undefined
+    let g: Guild | undefined
+    if(interaction.guildID) {
+      guild = await SabineGuild.fetch(interaction.guildID) ?? new SabineGuild(interaction.guildID)
+      g = client.guilds.get(interaction.guildID)
+    }
+    const ctx = new ModalSubmitInteractionContext({
+      args,
+      client,
+      guild: g,
+      interaction,
+      locale: user.lang ?? guild?.lang,
+      db: {
+        user,
+        guild
+      }
+    })
+    const t = (content: string, args?: Args) => {
+      return locales(ctx.locale, content, args)
+    }
+    await command.createModalSubmitInteraction({ ctx, t, client, i: interaction })
   }
 }
 export default createListener({
