@@ -244,7 +244,7 @@ export class SabineUser implements users {
     }
     user.pity += 1
     user.claims += 1
-    if(calcPlayerOvr(getPlayer(Number(player))!) >= 95) {
+    if(calcPlayerOvr(getPlayer(Number(player))!) >= 85) {
       user.pity = 0
     }
     await user.save()
