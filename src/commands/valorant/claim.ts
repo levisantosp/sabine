@@ -3,6 +3,7 @@ import getPlayers from '../../simulator/valorant/players/getPlayers.ts'
 import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
 import createCommand from '../../structures/command/createCommand.ts'
+import calcPlayerOvr from '../../structures/util/calcPlayerOvr.ts'
 import calcPlayerPrice from '../../structures/util/calcPlayerPrice.ts'
 
 type Player = {
@@ -21,25 +22,20 @@ type Player = {
   ovr?: number
   price?: number
 }
-const calcPlayerOvr = (player: Player) => {
-  return (player.aim + player.HS + player.movement + player.aggression + player.ACS + player.gamesense) / 4.5
-}
 const players = getPlayers()
 const tier = (() => {
   const tier: {[key: string]: Player[]} = {
-    s: [] as Player[], // ovr 95+ (0.1%)
-    a: [] as Player[], // ovr 90-94 (0.9%)
-    b: [] as Player[], // ovr 80-89 (4%)
-    c: [] as Player[], // ovr 70-79 (25%)
-    d: [] as Player[] // ovr 59-69 (70%)
+    s: [] as Player[], // ovr 85+ (0.1%)
+    a: [] as Player[], // ovr 80-84 (0.9%)
+    b: [] as Player[], // ovr 70-79 (14%)
+    c: [] as Player[] // ovr 69- (85%)
   }
   for(const p of players) {
     const ovr = calcPlayerOvr(p)
-    if(ovr >= 95) tier.s.push(p)
-    else if(ovr >= 90) tier.a.push(p)
-    else if(ovr >= 80) tier.b.push(p)
-    else if(ovr >= 70) tier.c.push(p)
-    else if(ovr >= 59) tier.d.push(p)
+    if(ovr >= 85) tier.s.push(p)
+    else if(ovr >= 80) tier.a.push(p)
+    else if(ovr >= 70) tier.b.push(p)
+    else tier.c.push(p)
   }
   return tier
 })()
@@ -53,17 +49,13 @@ const getRandomPlayerByOvr = () => {
     random = Math.floor(Math.random() * tier.a.length)
     return tier.a[random]
   }
-  else if(random < 5) {
+  else if(random < 15) {
     random = Math.floor(Math.random() * tier.b.length)
     return tier.b[random]
   }
-  else if(random < 30) {
+  else {
     random = Math.floor(Math.random() * tier.c.length)
     return tier.c[random]
-  }
-  else {
-    random = Math.floor(Math.random() * tier.d.length)
-    return tier.d[random]
   }
 }
 const getRandomPlayerByTier = (t: string) => {
@@ -91,7 +83,7 @@ export default createCommand({
     else if(users[ctx.interaction.user.id] && users[ctx.interaction.user.id] > Date.now()) {
       return await ctx.reply('commands.claim.has_been_claimed', { t: `<t:${((users[ctx.interaction.user.id]) / 1000).toFixed(0)}:R>` })
     }
-    users[ctx.interaction.user.id] = Date.now() + 600000
+    // users[ctx.interaction.user.id] = Date.now() + 600000
     let player: Player
     if(ctx.db.user.pity >= 49) {
       player = getRandomPlayerByTier('s')
