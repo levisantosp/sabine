@@ -381,11 +381,11 @@ id,name,collection,team,country,role,aim,HS,movement,aggression,ACS,gamesense,pu
 380,tex,Champions 2024,leviatan,de,sentinel,86.28,79.56,86.00,78.40,84.00,83.90,true
 381,C0M,Champions 2024,leviatan,us,initiator,78.82,69.54,71.70,74.70,76.40,85.60,true
 382,kiNgg,Champions 2024,leviatan,cl,controller,85.70,83.70,84.65,79.70,85.30,89.10,true
-383,Boo,BASE,heretics,lt,controller,86.34,85.78,85.70,77.10,82.60,92.70,false
-384,MiniBoo,BASE,heretics,lt,duelist,90.52,81.64,88.10,91.00,89.60,78.80,false
-385,Wo0t,BASE,heretics,tr,flex,93.12,89.44,86.95,88.40,84.33,81.90,false
-386,RieNs,BASE,heretics,tr,initiator,86.62,82.94,86.95,86.90,85.00,88.90,false
-387,benjyfishy,BASE,heretics,england,sentinel,89.70,81.90,87.90,85.50,88.87,88.80,false
+383,Boo,Champions 2024,heretics,lt,controller,86.34,85.78,85.70,77.10,82.60,92.70,false
+384,MiniBoo,Champions 2024,heretics,lt,duelist,90.52,81.64,88.10,91.00,89.60,78.80,false
+385,Wo0t,Champions 2024,heretics,tr,flex,93.12,89.44,86.95,88.40,84.33,81.90,false
+386,RieNs,Champions 2024,heretics,tr,initiator,86.62,82.94,86.95,86.90,85.00,88.90,false
+387,benjyfishy,Champions 2024,heretics,england,sentinel,89.70,81.90,87.90,85.50,88.87,88.80,false
 388,nobody,Champions 2024,edg,cn,initiator,87.22,93.18,89.80,82.30,80.30,99.00,false
 389,ZmjjKK,Champions 2024,edg,cn,duelist,105.62,94.34,98.20,97.50,98.10,89.90,false
 390,CHICHOO,Champions 2024,edg,cn,sentinel,95.48,98.76,92.65,92.60,93.37,95.90,false
