@@ -1,6 +1,6 @@
 {
   "name": "sabine",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "your esports coverage discord bot",
   "main": "dist/index.js",
   "type": "module",
@@ -22,6 +22,7 @@
     "@fastify/type-provider-typebox": "^5.1.0",
     "@iamtraction/google-translate": "^2.0.1",
     "@prisma/client": "^6.10.1",
+    "clipboardy": "^4.0.0",
     "colors": "^1.4.0",
     "fastify": "^5.3.3",
     "humanize-duration": "^3.32.2",
