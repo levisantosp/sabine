@@ -221,7 +221,7 @@
       "signed": "You signed **{player}** for **{price}** coins succesfully!"
     },
     "claims": {
-      "res": "Your claims: `{claims}`\nYour pity: `{pity}`"
+      "res": "Your claims: `{claims}`\nYour pity: `{pity}`\nUpon reaching pity **50**, you're guaranteed a Tier S card (85+)!"
     },
     "card": {
       "name": "Name",
