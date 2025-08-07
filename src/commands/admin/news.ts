@@ -122,7 +122,7 @@ export default createCommand({
           if(!ctx.guild || !ctx.db.guild) return
           const channel = ctx.guild.channels.get(ctx.args[2])!
           if(![0, 5].some(t => t === channel.type)) return await ctx.reply('commands.news.invalid_channel')
-          ctx.db.guild.valorant_livefeed_channel = channel.id
+          ctx.db.guild.valorant_news_channel = channel.id
           await ctx.db.guild.save()
           await ctx.reply('commands.news.news_enabled', { ch: channel.mention })
         },
@@ -130,7 +130,7 @@ export default createCommand({
           if(!ctx.guild || !ctx.db.guild) return
           const channel = ctx.guild.channels.get(ctx.args[2])!
           if(![0, 5].some(t => t === channel.type)) return await ctx.reply('commands.news.invalid_channel')
-          ctx.db.guild.lol_livefeed_channel = channel.id
+          ctx.db.guild.lol_news_channel = channel.id
           await ctx.db.guild.save()
           await ctx.reply('commands.news.news_enabled', { ch: channel.mention })
         }
