@@ -62,6 +62,9 @@ export default createCommand({
     if(users[user.id]) {
       return ctx.reply('commands.already_in_match_2')
     }
+    if(ctx.args[0] === ctx.interaction.user.id) {
+      return await ctx.reply('commands.duel.cannot_duel')
+    }
     for(const p of user.roster?.active ?? []) {
       userCounts[p] = (userCounts[p] || 0) + 1
     }
@@ -97,8 +100,9 @@ export default createCommand({
       return await ctx.reply('commands.duel.already_in_match')
     }
     if(users[user.id]) {
-      return await ctx.reply('commands.already_in_match_2')
+      return await ctx.reply('commands.duel.already_in_match_2')
     }
+    console.log(ctx.args, ctx.interaction.user.id)
     const match = new ValorantMatch({
       __teams: [
         {
