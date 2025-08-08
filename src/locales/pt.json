@@ -196,7 +196,8 @@
       "already_in_match_2": "Seu oponente já está em partida.",
       "request": "{opponent} {author} quer duelar contra você. Vai aceitar ou vai amarelar? 🐔",
       "button": "Aceitar",
-      "duplicated_cards": "Você não pode ter cards duplicados no seu elenco."
+      "duplicated_cards": "Você não pode ter cards duplicados no seu elenco.",
+      "cannot_duel": "Você não pode duelar contra você mesmo."
     },
     "career": {
       "no_pages": "Nada pra mostrar aqui.",

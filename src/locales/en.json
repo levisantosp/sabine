@@ -196,7 +196,8 @@
       "request": "{opponent} {author} wants to duel against you. You gonna accept or chicken out? 🐔",
       "button": "Accept",
       "duplicated_cards": "You cannot have duplicated cards in your roster.",
-      "duplicated_cards2": "Your opponent cannot have duplicated cards in roster."
+      "duplicated_cards2": "Your opponent cannot have duplicated cards in roster.",
+      "cannot_duel": "You cannot duel against yourself."
     },
     "career": {
       "no_pages": "Nothing to show in this page.",
