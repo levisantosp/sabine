@@ -57,9 +57,9 @@ export default class CommandRunner {
         ]
       })
     }
-    const args: string[] = interaction.data.options.getSubCommand() ?? []
+    const args: (string | number | boolean)[] = interaction.data.options.getSubCommand() ?? []
     for(const option of interaction.data.options.getOptions()) {
-      args.push(option.value.toString())
+      args.push(option.value.valueOf())
     }
     const ctx = new CommandContext({
       client,
