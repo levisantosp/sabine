@@ -73,8 +73,7 @@ const interactionTypes: Record<number, (i: AnyInteractionGateway) => Promise<any
     else {
       const blacklist = (await client.prisma.blacklists.findFirst())!
       if(blacklist.users.find(user => user.id === interaction.user.id)) return
-      if(!command.createInteraction) return
-      if(args[1] !== 'all' && args[1] !== interaction.user.id) return
+      if(!command.createMessageComponentInteraction) return
       const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
       let guild: SabineGuild | undefined
       let g: Guild | undefined
@@ -93,10 +92,21 @@ const interactionTypes: Record<number, (i: AnyInteractionGateway) => Promise<any
         },
         interaction
       })
+      if(
+        command.messageComponentInteractionTime &&
+        ((new Date(interaction.message.createdAt).getTime() + command.messageComponentInteractionTime) < Date.now())
+      ) {
+        ctx.setFlags(64)
+        return await ctx.reply('helper.unknown_interaction')
+      }
+      if(args[1] !== 'all' && args[1] !== interaction.user.id) {
+        ctx.setFlags(64)
+        return await ctx.reply('helper.this_isnt_for_you')
+      }
       const t = (content: string, args?: Args) => {
         return locales(ctx.locale, content, args)
       }
-      return await command.createInteraction({ ctx, t, i: interaction, client })
+      return await command.createMessageComponentInteraction({ ctx, t, i: interaction, client })
     }
   },
   [InteractionTypes.MODAL_SUBMIT]: async(interaction) => {
