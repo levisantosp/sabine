@@ -15,7 +15,7 @@ type CommandContextOptions = {
   interaction: Oceanic.CommandInteraction | Oceanic.ComponentInteraction | Oceanic.ModalSubmitInteraction
   locale: string
   db: Database
-  args: string[]
+  args: (string | number | boolean)[]
 }
 export default class CommandContext {
   public client: App
@@ -23,7 +23,7 @@ export default class CommandContext {
   public interaction: Oceanic.CommandInteraction | Oceanic.ComponentInteraction | Oceanic.ModalSubmitInteraction
   public locale: string
   public db: Database
-  public args: string[]
+  public args: (string | number | boolean)[]
   public constructor(options: CommandContextOptions) {
     this.client = options.client
     this.guild = options.guild
