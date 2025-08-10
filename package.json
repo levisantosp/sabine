@@ -7,8 +7,8 @@
   "scripts": {
     "test": "node --experimental-strip-types --env-file=.env test.ts",
     "start": "npx eslint --fix . && rm -rf dist && tsc && node --env-file=.env .",
-    "dev": "node --experimental-strip-types --env-file=.env src/index.ts",
-    "dev:watch": "node --watch --experimental-strip-types --env-file=.env src/index.ts",
+    "dev": "node --watch --experimental-strip-types --env-file=.env src/index.ts",
+    "dev:watch": "node --experimental-strip-types --env-file=.env src/index.ts",
     "build": "npx eslint --fix . && rm -rf dist && tsc",
     "push": "npx prisma db push",
     "pull": "npx prisma db pull",
@@ -27,7 +27,9 @@
     "fastify": "^5.3.3",
     "humanize-duration": "^3.32.2",
     "moment": "^2.30.1",
-    "oceanic.js": "^1.12.0"
+    "oceanic.js": "^1.12.0",
+    "players": "github:SabineBot/players",
+    "redis": "^5.8.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",
@@ -35,7 +37,7 @@
     "@types/node": "^24.0.7",
     "eslint": "^9.30.1",
     "globals": "^16.3.0",
-    "prisma": "^6.10.1",
+    "prisma": "^6.13.0",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.35.1"
   }
