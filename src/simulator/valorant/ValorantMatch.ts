@@ -1,7 +1,7 @@
 import { valorant_agents, valorant_weapons } from '../../config.ts'
 import locales from '../../locales/index.ts'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
-import getPlayer from './players/getPlayer.ts'
+import { getPlayer } from 'players'
 import ComponentInteractionContext from '../../structures/interactions/ComponentInteractionContext.ts'
 import { SabineUser } from '../../database/index.ts'
 
