@@ -20,21 +20,144 @@ export default createCommand({
   },
   options: [
     {
-      type: ApplicationCommandOptionTypes.USER,
-      name: 'user',
-      nameLocalizations: {
-        'pt-BR': 'usuario'
-      },
-      description: 'Insert a user',
+      type: ApplicationCommandOptionTypes.SUB_COMMAND,
+      name: 'unranked',
+      description: 'Start a unranked duel',
       descriptionLocalizations: {
-        'pt-BR': 'Insira um usuário'
+        'pt-BR': 'Inicia um confronto sem classificação'
       },
-      required: true
+      options: [
+        {
+          type: ApplicationCommandOptionTypes.USER,
+          name: 'user',
+          nameLocalizations: {
+            'pt-BR': 'usuário'
+          },
+          description: 'Provide a user',
+          descriptionLocalizations: {
+            'pt-BR': 'Informe o usuário'
+          },
+          required: true
+        }
+      ]
+    },
+    {
+      type: ApplicationCommandOptionTypes.SUB_COMMAND,
+      name: 'ranked',
+      description: 'Start a ranked duel',
+      descriptionLocalizations: {
+        'pt-BR': 'Inicia um confronto ranqueado'
+      },
+      options: [
+        {
+          type: ApplicationCommandOptionTypes.USER,
+          name: 'user',
+          nameLocalizations: {
+            'pt-BR': 'usuário'
+          },
+          description: 'Provide a user',
+          descriptionLocalizations: {
+            'pt-BR': 'Informe o usuário'
+          },
+          required: true
+        }
+      ]
+    },
+    {
+      type: ApplicationCommandOptionTypes.SUB_COMMAND_GROUP,
+      name: 'swiftplay',
+      nameLocalizations: {
+        'pt-BR': 'frenético'
+      },
+      description: 'Start a swiftplay duel',
+      descriptionLocalizations: {
+        'pt-BR': 'Inicia um confronto frenético'
+      },
+      options: [
+        {
+          type: ApplicationCommandOptionTypes.SUB_COMMAND,
+          name: 'unranked',
+          description: 'Start a unranked swiftplay duel',
+          descriptionLocalizations: {
+            'pt-BR': 'Inicia um confronto frenético sem classificação'
+          },
+          options: [
+            {
+              type: ApplicationCommandOptionTypes.USER,
+              name: 'user',
+              nameLocalizations: {
+                'pt-BR': 'usuário'
+              },
+              description: 'Provide a user',
+              descriptionLocalizations: {
+                'pt-BR': 'Informe o usuário'
+              },
+              required: true
+            }
+          ]
+        },
+        {
+          type: ApplicationCommandOptionTypes.SUB_COMMAND,
+          name: 'ranked',
+          description: 'Start a ranked swiftplay duel',
+          descriptionLocalizations: {
+            'pt-BR': 'Inicia um confronto frenético ranqueado'
+          },
+          options: [
+            {
+              type: ApplicationCommandOptionTypes.USER,
+              name: 'user',
+              nameLocalizations: {
+                'pt-BR': 'usuário'
+              },
+              description: 'Provide a user',
+              descriptionLocalizations: {
+                'pt-BR': 'Informe o usuário'
+              },
+              required: true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      type: ApplicationCommandOptionTypes.SUB_COMMAND,
+      name: 'tournament',
+      description: 'Start a duel in tournament mode',
+      descriptionLocalizations: {
+        'pt-BR': 'Inicia um confronto no modo torneio'
+      },
+      options: [
+        {
+          type: ApplicationCommandOptionTypes.USER,
+          name: 'user',
+          nameLocalizations: {
+            'pt-BR': 'usuário'
+          },
+          description: 'Provide a user',
+          descriptionLocalizations: {
+            'pt-BR': 'Informe o usuário'
+          },
+          required: true
+        },
+        {
+          type: ApplicationCommandOptionTypes.BOOLEAN,
+          name: 'overtime',
+          nameLocalizations: {
+            'pt-BR': 'prorrogação'
+          },
+          description: 'Select a value',
+          descriptionLocalizations: {
+            'pt-BR': 'Selecione um valor'
+          }
+        }
+      ]
     }
   ],
   userInstall: true,
+  messageComponentInteractionTime: 60 * 1000,
   async run({ ctx, t }) {
-    const user = await SabineUser.fetch(ctx.args[0])
+    const user = await SabineUser.fetch(ctx.args.at(-1)!.toString())
     const authorCounts: {[key: string]: number} = {}
     const userCounts: {[key: string]: number} = {}
     for(const p of ctx.db.user.roster?.active ?? []) {
@@ -62,7 +185,7 @@ export default createCommand({
     if(users[user.id]) {
       return ctx.reply('commands.already_in_match_2')
     }
-    if(ctx.args[0] === ctx.interaction.user.id) {
+    if(ctx.args.at(-1) === ctx.interaction.user.id) {
       return await ctx.reply('commands.duel.cannot_duel')
     }
     for(const p of user.roster?.active ?? []) {
@@ -72,16 +195,22 @@ export default createCommand({
     if(userDuplicates) {
       return await ctx.reply('commands.duel.duplicated_cards2')
     }
+    let mode: string
+    if(ctx.args.length === 2) {
+      mode = ctx.args.slice(0, 1).join(';')
+    }
+    else mode = ctx.args.slice(0, 2).join(';')
     const button = new ButtonBuilder()
     .setStyle('green')
     .setLabel(t('commands.duel.button'))
-    .setCustomId(`duel;${ctx.args[0]};${ctx.interaction.user.id}`)
+    .setCustomId(`duel;${ctx.args.at(-1)};${ctx.interaction.user.id};${mode}`)
     await ctx.reply(button.build(t('commands.duel.request', {
       author: ctx.interaction.user.mention,
-      opponent: `<@${ctx.args[0]}>`
-    })))
+      opponent: `<@${ctx.args.at(-1)}>`,
+      mode: t(`commands.duel.mode.${mode}`)
+    }))) // stopped here
   },
-  async createInteraction({ ctx, client, t, i }) {
+  async createMessageComponentInteraction({ ctx, client, t, i }) {
     await i.deferUpdate()
     const user = await SabineUser.fetch(ctx.args[2])
     if(!ctx.db.user.team?.name || !ctx.db.user.team.tag) {
@@ -102,7 +231,6 @@ export default createCommand({
     if(users[user.id]) {
       return await ctx.reply('commands.duel.already_in_match_2')
     }
-    console.log(ctx.args, ctx.interaction.user.id)
     const match = new ValorantMatch({
       __teams: [
         {
