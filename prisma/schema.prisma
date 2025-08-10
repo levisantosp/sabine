@@ -20,11 +20,12 @@ enum PredictionStatus {
 }
 
 type Prediction {
-  match  Json?
+  match  String
   teams  PredictionTeams[]
-  status PredictionStatus?
+  status PredictionStatus
   bet    BigInt?
   odd    Int?
+  when   Float             @db.Double
 }
 
 enum Language {
@@ -117,6 +118,17 @@ type Content {
   text String
 }
 
+enum ClaimType {
+  CLAIM_PLAYER_BY_CLAIM_COMMAND
+  CLAIM_PLAYER_BY_COMMAND
+}
+
+type Claim {
+  type   ClaimType
+  player String
+  when   Float     @db.Double
+}
+
 model blacklists {
   id     String           @id @map("_id")
   guilds BlacklistProps[]
@@ -170,11 +182,13 @@ model users {
   carrer               Carrer[]
   wins                 Int          @default(0) @db.Int
   defeats              Int          @default(0) @db.Int
-  daily_time           Int          @default(0) @db.Long
-  claim_time           Int          @default(0) @db.Long
+  daily_time           Float        @default(0) @db.Double
+  claim_time           Float        @default(0) @db.Double
   warn                 Boolean      @default(true)
   pity                 Int          @default(0) @db.Int
-  claims               Int          @default(0) @db.Int
+  claims               Claim[]
+  rank_rating          Int          @default(0) @db.Int
+  fates                Int          @default(0) @db.Int
 
   @@index([coins, correct_predictions, lol_predictions, wins, defeats])
   @@index([valorant_predictions])
