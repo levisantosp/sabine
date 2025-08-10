@@ -180,16 +180,13 @@ export default createCommand({
     'ranking local 5'
   ],
   isThiking: true,
+  messageComponentInteractionTime: 10 * 60 * 1000,
   async run({ ctx, t, client }) {
     if(ctx.args[0] === 'local' && ctx.guild) {
       if(ctx.args[1] === 'predictions') {
-        let users = (await client.prisma.users.findMany({
-          where: {
-            correct_predictions: {
-              gt: 0
-            }
-          }
-        })).filter(user => ctx.guild!.members.get(user.id)).sort((a, b) => b.correct_predictions - a.correct_predictions)
+        const value = JSON.parse((await client.redis.get('ranking:predictions'))!)
+        let users = value.data
+        .filter((user: any) => ctx.guild!.members.get(user.id)).sort((a: any, b: any) => b.correct_predictions - a.correct_predictions)
         const array = users
         let page = Number(ctx.args[1])
         if(!page || page === 1 || isNaN(page)) {
@@ -209,6 +206,9 @@ export default createCommand({
           })
           .setTitle(t('commands.ranking.predictions.title'))
           .setThumb((client.users.get(array[0].id!))!.avatarURL()!)
+          .setDesc(t('commands.ranking.desc', {
+            last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
+          }))
         let pos = 0
         if(!isNaN(page) && page > 1) pos = page * 10 - 10
         for(const user of users) {
@@ -224,7 +224,7 @@ export default createCommand({
         }
         embed.setFooter({
           text: t('commands.ranking.predictions.footer', {
-            pos: array.findIndex(user => user.id === ctx.interaction.user.id) + 1
+            pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
           })
         })
         const previous = new ButtonBuilder()
@@ -247,13 +247,10 @@ export default createCommand({
         }))
       }
       else if(ctx.args[1] === 'coins') {
-        let users = (await client.prisma.users.findMany({
-          where: {
-            coins: {
-              gt: 0
-            }
-          }
-        })).filter(user => ctx.guild!.members.get(user.id)).sort((a, b) => Number(b.coins - a.coins))
+        const value = JSON.parse((await client.redis.get('ranking:coins'))!)
+        let users = value.data
+        .filter((user: any) => ctx.guild!.members.get(user.id))
+        .sort((a: any, b: any) => Number(b.coins - a.coins))
         const array = users
         let page = Number(ctx.args[1])
         if(!page || page === 1 || isNaN(page)) {
@@ -273,6 +270,9 @@ export default createCommand({
           })
           .setTitle(t('commands.ranking.coins.title'))
           .setThumb((client.users.get(array[0].id!))!.avatarURL()!)
+          .setDesc(t('commands.ranking.desc', {
+            last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
+          }))
         let pos = 0
         if(!isNaN(page) && page > 1) pos = page * 10 - 10
         for(const user of users) {
@@ -283,12 +283,12 @@ export default createCommand({
           if(pos === 2) field = `🥈 - ${!u ? '*unknown*' : u.username}`
           if(pos === 3) field = `🥉 - ${!u ? '*unknown*' : u.username}`
           embed.addField(field, t('commands.ranking.coins.field', {
-            t: user.coins.toLocaleString('en')
+            t: BigInt(user.coins).toLocaleString('en')
           }))
         }
         embed.setFooter({
           text: t('commands.ranking.coins.footer', {
-            pos: array.findIndex(user => user.id === ctx.interaction.user.id) + 1
+            pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
           })
         })
         const previous = new ButtonBuilder()
@@ -311,13 +311,9 @@ export default createCommand({
         }))
       }
       else if(ctx.args[1] === 'wins') {
-        let users = (await client.prisma.users.findMany({
-          where: {
-            wins: {
-              gt: 0
-            }
-          }
-        })).filter(user => ctx.guild!.members.get(user.id)).sort((a, b) => b.wins - a.wins)
+        const value = JSON.parse((await client.redis.get('ranking:wins'))!)
+        let users = value.data
+        .filter((user: any) => ctx.guild!.members.get(user.id)).sort((a: any, b: any) => b.wins - a.wins)
         const array = users
         let page = Number(ctx.args[1])
         if(!page || page === 1 || isNaN(page)) {
@@ -337,6 +333,9 @@ export default createCommand({
           })
           .setTitle(t('commands.ranking.wins.title'))
           .setThumb((client.users.get(array[0].id!))!.avatarURL()!)
+          .setDesc(t('commands.ranking.desc', {
+            last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
+          }))
         let pos = 0
         if(!isNaN(page) && page > 1) pos = page * 10 - 10
         for(const user of users) {
@@ -352,7 +351,7 @@ export default createCommand({
         }
         embed.setFooter({
           text: t('commands.ranking.wins.footer', {
-            pos: array.findIndex(user => user.id === ctx.interaction.user.id) + 1
+            pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
           })
         })
         const previous = new ButtonBuilder()
@@ -377,13 +376,9 @@ export default createCommand({
     }
     else {
       if(ctx.args[1] === 'predictions') {
-        let users = (await client.prisma.users.findMany({
-          where: {
-            correct_predictions: {
-              gt: 0
-            }
-          }
-        })).sort((a, b) => b.correct_predictions - a.correct_predictions)
+        const value = JSON.parse((await client.redis.get('ranking:predictions'))!)
+        let users = value.data
+        .sort((a: any, b: any) => b.correct_predictions - a.correct_predictions)
         const array = users
         let page = Number(ctx.args[1])
         if(!page || page === 1 || isNaN(page)) {
@@ -403,6 +398,9 @@ export default createCommand({
           })
           .setTitle(t('commands.ranking.predictions.title'))
           .setThumb((client.users.get(array[0].id!))!.avatarURL()!)
+          .setDesc(t('commands.ranking.desc', {
+            last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
+          }))
         let pos = 0
         if(!isNaN(page) && page > 1) pos = page * 10 - 10
         for(const user of users) {
@@ -418,7 +416,7 @@ export default createCommand({
         }
         embed.setFooter({
           text: t('commands.ranking.predictions.footer', {
-            pos: array.findIndex(user => user.id === ctx.interaction.user.id) + 1
+            pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
           })
         })
         const previous = new ButtonBuilder()
@@ -441,13 +439,9 @@ export default createCommand({
         }))
       }
       else if(ctx.args[1] === 'coins') {
-        let users = (await client.prisma.users.findMany({
-          where: {
-            coins: {
-              gt: 0
-            }
-          }
-        })).sort((a, b) => Number(b.coins - a.coins))
+        const value = JSON.parse((await client.redis.get('ranking:coins'))!)
+        let users = value.data
+        .sort((a: any, b: any) => Number(b.coins - a.coins))
         const array = users
         let page = Number(ctx.args[1])
         if(!page || page === 1 || isNaN(page)) {
@@ -467,6 +461,9 @@ export default createCommand({
           })
           .setTitle(t('commands.ranking.coins.title'))
           .setThumb((client.users.get(array[0].id!))!.avatarURL()!)
+          .setDesc(t('commands.ranking.desc', {
+            last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
+          }))
         let pos = 0
         if(!isNaN(page) && page > 1) pos = page * 10 - 10
         for(const user of users) {
@@ -477,12 +474,12 @@ export default createCommand({
           if(pos === 2) field = `🥈 - ${!u ? '*unknown*' : u.username}`
           if(pos === 3) field = `🥉 - ${!u ? '*unknown*' : u.username}`
           embed.addField(field, t('commands.ranking.coins.field', {
-            t: user.coins.toLocaleString('en')
+            t: BigInt(user.coins).toLocaleString('en')
           }))
         }
         embed.setFooter({
           text: t('commands.ranking.coins.footer', {
-            pos: array.findIndex(user => user.id === ctx.interaction.user.id) + 1
+            pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
           })
         })
         const previous = new ButtonBuilder()
@@ -505,13 +502,9 @@ export default createCommand({
         }))
       }
       else if(ctx.args[1] === 'wins') {
-        let users = (await client.prisma.users.findMany({
-          where: {
-            wins: {
-              gt: 0
-            }
-          }
-        })).sort((a, b) => b.wins - a.wins)
+        const value = JSON.parse((await client.redis.get('ranking:wins'))!)
+        let users = value
+        .sort((a: any, b: any) => b.wins - a.wins)
         const array = users
         let page = Number(ctx.args[1])
         if(!page || page === 1 || isNaN(page)) {
@@ -531,6 +524,9 @@ export default createCommand({
           })
           .setTitle(t('commands.ranking.wins.title'))
           .setThumb((client.users.get(array[0].id!))!.avatarURL()!)
+          .setDesc(t('commands.ranking.desc', {
+            last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
+          }))
         let pos = 0
         if(!isNaN(page) && page > 1) pos = page * 10 - 10
         for(const user of users) {
@@ -546,7 +542,7 @@ export default createCommand({
         }
         embed.setFooter({
           text: t('commands.ranking.wins.footer', {
-            pos: array.findIndex(user => user.id === ctx.interaction.user.id) + 1
+            pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
           })
         })
         const previous = new ButtonBuilder()
@@ -571,17 +567,14 @@ export default createCommand({
     }
   },
   userInstall: true,
-  async createInteraction({ ctx, t, client }) {
+  async createMessageComponentInteraction({ ctx, t, client }) {
     await ctx.interaction.deferUpdate()
     if(ctx.args[4] === 'local' && ctx.guild) {
       if(ctx.args[5] === 'predictions') {
-        let users = (await client.prisma.users.findMany({
-          where: {
-            correct_predictions: {
-              gt: 0
-            }
-          }
-        })).filter(user => ctx.guild!.members.get(user.id)).sort((a, b) => b.correct_predictions - a.correct_predictions)
+        const value = JSON.parse((await client.redis.get('ranking:predictions'))!)
+        let users = value.data
+        .filter((user: any) => ctx.guild!.members.get(user.id))
+        .sort((a: any, b: any) => b.correct_predictions - a.correct_predictions)
         const array = users
         const page = Number(ctx.args[2]) || 1
         const pages = Math.ceil(array.length / 10)
@@ -598,6 +591,9 @@ export default createCommand({
           })
           .setTitle(t('commands.ranking.predictions.title'))
           .setThumb(client.users.get(array[0].id!)!.avatarURL()!)
+          .setDesc(t('commands.ranking.desc', {
+            last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
+          }))
         let pos = 0
         if(!isNaN(page) && page > 1) pos = page * 10 - 10
         for(const user of users) {
@@ -613,7 +609,7 @@ export default createCommand({
         }
         embed.setFooter({
           text: t('commands.ranking.predictions.footer', {
-            pos: array.findIndex((user) => user.id === ctx.interaction.user.id) + 1
+            pos: array.findIndex((user :any) => user.id === ctx.interaction.user.id) + 1
           })
         })
         const previous = new ButtonBuilder()
@@ -636,13 +632,10 @@ export default createCommand({
         }))
       }
       else if(ctx.args[5] === 'coins') {
-        let users = (await client.prisma.users.findMany({
-          where: {
-            coins: {
-              gt: 0
-            }
-          }
-        })).filter(user => ctx.guild!.members.get(user.id)).sort((a, b) => Number(b.coins - a.coins))
+        const value = JSON.parse((await client.redis.get('ranking:coins'))!)
+        let users = value.data
+        .filter((user: any) => ctx.guild!.members.get(user.id))
+        .sort((a: any, b: any) => Number(b.coins - a.coins))
         const array = users
         const page = Number(ctx.args[2]) || 1
         const pages = Math.ceil(array.length / 10)
@@ -659,6 +652,9 @@ export default createCommand({
           })
           .setTitle(t('commands.ranking.coins.title'))
           .setThumb(client.users.get(array[0].id!)!.avatarURL()!)
+          .setDesc(t('commands.ranking.desc', {
+            last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
+          }))
         let pos = 0
         if(!isNaN(page) && page > 1) pos = page * 10 - 10
         for(const user of users) {
@@ -669,12 +665,12 @@ export default createCommand({
           if(pos === 2) field = `🥈 - ${!u ? '*unknown*' : u.username}`
           if(pos === 3) field = `🥉 - ${!u ? '*unknown*' : u.username}`
           embed.addField(field, t('commands.ranking.coins.field', {
-            t: user.coins.toLocaleString('en')
+            t: BigInt(user.coins).toLocaleString('en')
           }))
         }
         embed.setFooter({
           text: t('commands.ranking.coins.footer', {
-            pos: array.findIndex((user) => user.id === ctx.interaction.user.id) + 1
+            pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
           })
         })
         const previous = new ButtonBuilder()
@@ -697,13 +693,10 @@ export default createCommand({
         }))
       }
       else if(ctx.args[5] === 'wins') {
-        let users = (await client.prisma.users.findMany({
-          where: {
-            wins: {
-              gt: 0
-            }
-          }
-        })).filter(user => ctx.guild!.members.get(user.id)).sort((a, b) => b.wins - a.wins)
+        const value = JSON.parse((await client.redis.get('ranking:wins'))!)
+        let users = value.data
+        .filter((user: any) => ctx.guild!.members.get(user.id))
+        .sort((a: any, b :any) => b.wins - a.wins)
         const array = users
         const page = Number(ctx.args[2]) || 1
         const pages = Math.ceil(array.length / 10)
@@ -720,6 +713,9 @@ export default createCommand({
           })
           .setTitle(t('commands.ranking.wins.title'))
           .setThumb(client.users.get(array[0].id!)!.avatarURL()!)
+          .setDesc(t('commands.ranking.desc', {
+            last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
+          }))
         let pos = 0
         if(!isNaN(page) && page > 1) pos = page * 10 - 10
         for(const user of users) {
@@ -735,7 +731,7 @@ export default createCommand({
         }
         embed.setFooter({
           text: t('commands.ranking.wins.footer', {
-            pos: array.findIndex((user) => user.id === ctx.interaction.user.id) + 1
+            pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
           })
         })
         const previous = new ButtonBuilder()
@@ -760,13 +756,8 @@ export default createCommand({
     }
     else {
       if(ctx.args[5] === 'predictions') {
-        let users = (await client.prisma.users.findMany({
-          where: {
-            correct_predictions: {
-              gt: 0
-            }
-          }
-        })).sort((a, b) => b.correct_predictions - a.correct_predictions)
+        const value = JSON.parse((await client.redis.get('ranking:predictions'))!)
+        let users = value.data.sort((a: any, b: any) => b.correct_predictions - a.correct_predictions)
         const array = users
         const page = Number(ctx.args[2]) || 1
         const pages = Math.ceil(array.length / 10)
@@ -783,6 +774,9 @@ export default createCommand({
           })
           .setTitle(t('commands.ranking.predictions.title'))
           .setThumb(client.users.get(array[0].id!)!.avatarURL()!)
+          .setDesc(t('commands.ranking.desc', {
+            last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
+          }))
         let pos = 0
         if(!isNaN(page) && page > 1) pos = page * 10 - 10
         for(const user of users) {
@@ -798,7 +792,7 @@ export default createCommand({
         }
         embed.setFooter({
           text: t('commands.ranking.predictions.footer', {
-            pos: array.findIndex((user) => user.id === ctx.interaction.user.id) + 1
+            pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
           })
         })
         const previous = new ButtonBuilder()
@@ -821,13 +815,8 @@ export default createCommand({
         }))
       }
       else if(ctx.args[5] === 'coins') {
-        let users = (await client.prisma.users.findMany({
-          where: {
-            coins: {
-              gt: 0
-            }
-          }
-        })).sort((a, b) => Number(b.coins - a.coins))
+        const value = JSON.parse((await client.redis.get('ranking:coins'))!)
+        let users = value.data.sort((a: any, b: any) => Number(b.coins - a.coins))
         const array = users
         const page = Number(ctx.args[2]) || 1
         const pages = Math.ceil(array.length / 10)
@@ -844,6 +833,9 @@ export default createCommand({
           })
           .setTitle(t('commands.ranking.coins.title'))
           .setThumb(client.users.get(array[0].id!)!.avatarURL()!)
+          .setDesc(t('commands.ranking.desc', {
+            last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
+          }))
         let pos = 0
         if(!isNaN(page) && page > 1) pos = page * 10 - 10
         for(const user of users) {
@@ -854,12 +846,12 @@ export default createCommand({
           if(pos === 2) field = `🥈 - ${!u ? '*unknown*' : u.username}`
           if(pos === 3) field = `🥉 - ${!u ? '*unknown*' : u.username}`
           embed.addField(field, t('commands.ranking.coins.field', {
-            t: user.coins.toLocaleString('en')
+            t: BigInt(user.coins).toLocaleString('en')
           }))
         }
         embed.setFooter({
           text: t('commands.ranking.coins.footer', {
-            pos: array.findIndex((user) => user.id === ctx.interaction.user.id) + 1
+            pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
           })
         })
         const previous = new ButtonBuilder()
@@ -882,13 +874,8 @@ export default createCommand({
         }))
       }
       else if(ctx.args[5] === 'wins') {
-        let users = (await client.prisma.users.findMany({
-          where: {
-            wins: {
-              gt: 0
-            }
-          }
-        })).sort((a, b) => b.wins - a.wins)
+        const value = JSON.parse((await client.redis.get('ranking:wins'))!)
+        let users = value.data.sort((a: any, b: any) => b.wins - a.wins)
         const array = users
         const page = Number(ctx.args[2]) || 1
         const pages = Math.ceil(array.length / 10)
@@ -905,6 +892,9 @@ export default createCommand({
           })
           .setTitle(t('commands.ranking.wins.title'))
           .setThumb(client.users.get(array[0].id!)!.avatarURL()!)
+          .setDesc(t('commands.ranking.desc', {
+            last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
+          }))
         let pos = 0
         if(!isNaN(page) && page > 1) pos = page * 10 - 10
         for(const user of users) {
@@ -920,7 +910,7 @@ export default createCommand({
         }
         embed.setFooter({
           text: t('commands.ranking.wins.footer', {
-            pos: array.findIndex((user) => user.id === ctx.interaction.user.id) + 1
+            pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
           })
         })
         const previous = new ButtonBuilder()
