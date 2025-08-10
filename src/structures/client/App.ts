@@ -5,18 +5,22 @@ import type { Command } from '../command/createCommand.ts'
 import Logger from '../util/Logger.ts'
 import { fileURLToPath } from 'url'
 import { PrismaClient } from '@prisma/client'
+import Redis from 'redis'
 
 const prisma = new PrismaClient()
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
+const redis = Redis.createClient()
 
 export default class App extends Oceanic.Client {
   public commands: Map<string, Command> = new Map()
   public _uptime: number = Date.now()
   public prisma: typeof prisma
+  public redis: typeof redis
   public constructor(options?: Oceanic.ClientOptions) {
     super(options)
     this.prisma = prisma
+    this.redis = redis
   }
   public override async connect() {
     const start = Date.now()
