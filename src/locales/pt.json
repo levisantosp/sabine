@@ -64,7 +64,8 @@
         "author": "Página {page}/{pages}",
         "footer": "Sua posição: #{pos}",
         "field": "`{t}` vitórias"
-      }
+      },
+      "desc": "A tabela é atualizada a cada 10 minutos\nÚltima atualização: {last}"
     },
     "admin": {
       "tournament_has_been_added": "Este campeonato já foi adicionado.",
@@ -184,7 +185,7 @@
       "sold": "Você vendeu **{p}** por **{price}** coins com sucesso!"
     },
     "coins": {
-      "res": "Você possui **{c}** coins"
+      "res": "Você possui **{c}** coins e **{f}** destinos."
     },
     "duel": {
       "started": "### Partida iniciada",
@@ -194,10 +195,17 @@
       "team_not_completed_2": "O time do seu oponente não está completo.",
       "needed_team_name_2": "Seu oponente precisa definir o nome da equipe antes de jogar.",
       "already_in_match_2": "Seu oponente já está em partida.",
-      "request": "{opponent} {author} quer duelar contra você. Vai aceitar ou vai amarelar? 🐔",
+      "request": "{opponent}, {author} quer duelar contra você em uma partida no modo **{mode}**. Vai aceitar ou vai amarelar? 🐔\n-# {opponent} tem 1 minuto para aceitar",
       "button": "Aceitar",
       "duplicated_cards": "Você não pode ter cards duplicados no seu elenco.",
-      "cannot_duel": "Você não pode duelar contra você mesmo."
+      "cannot_duel": "Você não pode duelar contra você mesmo.",
+      "mode": {
+        "ranked": "Ranqueado",
+        "swiftplay;ranked": "Frenético Ranqueado",
+        "swiftplay;unranked": "Frenético",
+        "tournament": "Torneio",
+        "unranked": "Sem Classificação"
+      }
     },
     "career": {
       "no_pages": "Nada pra mostrar aqui.",
@@ -297,7 +305,9 @@
     "dont_show_again": "Não exibir novamente",
     "wont_be_warned": "Você não será alertado novamente sobre essa atualização.",
     "yes": "Sim",
-    "no": "Não"
+    "no": "Não",
+    "unknown_interaction": "Hum... parece que os dados dessa interação sumiram porque você demorou demais para usá-la... por favor, use o comando novamente!",
+    "this_isnt_for_you": "Essa interação não é para você! Rode esse comando você mesmo!"
   },
   "permissions": {
     "CREATE_INSTANT_INVITE": "Criar convite instantâneo",

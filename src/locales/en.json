@@ -64,7 +64,8 @@
         "author": "Page {page}/{pages}",
         "footer": "Your position: #{pos}",
         "field": "`{t}` wins"
-      }
+      },
+      "desc": "The ranking is updated every 10 minutes\nLast update: {last}"
     },
     "admin": {
       "tournament_has_been_added": "This tournament already has been added.",
@@ -183,7 +184,7 @@
       "sold": "You sold **{p}** for **{price}** coins successfully"
     },
     "coins": {
-      "res": "You have **{c}** coins"
+      "res": "You have **{c}** coins and **{f}** fates."
     },
     "duel": {
       "started": "### Match started",
@@ -193,11 +194,18 @@
       "team_not_completed_2": "Your opponent's team is not completed.",
       "needed_team_name_2": "Your opponent needs to set team name before play.",
       "already_in_match_2": "Your opponent is already in match.",
-      "request": "{opponent} {author} wants to duel against you. You gonna accept or chicken out? 🐔",
+      "request": "{opponent}, {author} wants to duel against you in a **{mode}** mode match. You gonna accept or chicken out? 🐔\n-# {opponent} have 1 minute to accept",
       "button": "Accept",
       "duplicated_cards": "You cannot have duplicated cards in your roster.",
       "duplicated_cards2": "Your opponent cannot have duplicated cards in roster.",
-      "cannot_duel": "You cannot duel against yourself."
+      "cannot_duel": "You cannot duel against yourself.",
+      "mode": {
+        "ranked": "Ranked",
+        "swiftplay;ranked": "Ranked Swiftplay",
+        "swiftplay;unranked": "Swiftplay",
+        "tournament": "Tournament",
+        "unranked": "Unranked"
+      }
     },
     "career": {
       "no_pages": "Nothing to show in this page.",
@@ -297,7 +305,9 @@
     "dont_show_again": "Do not show again",
     "wont_be_warned": "You won't be warned about this update again.",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "unknown_interaction": "Hmm... looks like the data from this interaction is gone because you took too long to use it... please use the command again!",
+    "this_isnt_for_you": "This interaction is not for your! Run this command yourself!"
   },
   "permissions": {
     "CREATE_INSTANT_INVITE": "Create Instant Invite",
