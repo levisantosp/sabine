@@ -67,7 +67,7 @@ export default createCommand({
     }
     users[ctx.interaction.user.id] = Date.now() + 600000
     let player: Player
-    if(ctx.db.user.pity >= 49) {
+    if(ctx.db.user.pity >= 99) {
       player = getRandomPlayerByTier('s')
     }
     else player = getRandomPlayerByOvr()
@@ -78,6 +78,11 @@ export default createCommand({
       ovr: parseInt(ovr.toString()),
       price
     }
+    let channel: string | undefined = undefined
+    if(ctx.interaction.channel && ctx.db.user.remind) {
+      channel = ctx.interaction.channel?.id
+    }
+    await ctx.db.user.addPlayerToRoster(player.id.toString(), 'CLAIM_PLAYER_BY_CLAIM_COMMAND', channel)
     const embed = new EmbedBuilder()
     .setTitle(player.name)
     .setDesc(
@@ -107,7 +112,6 @@ export default createCommand({
         }
       ]
     }))
-    await ctx.db.user.addPlayerToRoster(player.id.toString())
   },
   async createMessageComponentInteraction({ ctx }) {
     ctx.setFlags(64)
