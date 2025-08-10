@@ -36,9 +36,15 @@ export class SabineUser implements users {
   public claim_time: number = 0
   public warn: boolean = true
   public pity: number = 0
-  public claims: { type: $Enums.ClaimType; player: string; when: number; }[] = []
+  public claims: number = 0
   public rank_rating: number = 0
   public fates: number = 0
+  public transactions: { type: $Enums.TransactionType; player: string; when: number; price: bigint | null; user: string | null; }[] = []
+  public elo: $Enums.Elo = 'UNRANKED'
+  public elo_rating: number = 50
+  public remind: boolean = false
+  public remindIn: string | null = null
+  public reminded: boolean = true
   public constructor(id: string) {
     this.id = id
     if(!this.roster) {
@@ -228,18 +234,25 @@ export class SabineUser implements users {
     }
     return user
   }
-  public async addPlayerToRoster(player: string, method: 'CLAIM_PLAYER_BY_CLAIM_COMMAND' | 'CLAIM_PLAYER_BY_COMMAND' = 'CLAIM_PLAYER_BY_CLAIM_COMMAND') {
+  public async addPlayerToRoster(player: string, method: 'CLAIM_PLAYER_BY_CLAIM_COMMAND' | 'CLAIM_PLAYER_BY_COMMAND' = 'CLAIM_PLAYER_BY_CLAIM_COMMAND', channel?: string) {
     const user = await this.fetch(this.id) ?? this
     user.roster!.reserve.push(player)
     if(method === 'CLAIM_PLAYER_BY_CLAIM_COMMAND') {
       user.claim_time = Date.now() + 600000
     }
     user.pity += 1
-    user.claims.push({
+    user.transactions.push({
       type: method,
       player,
-      when: Date.now()
+      when: Date.now(),
+      price: null,
+      user: null
     })
+    user.claims += 1
+    user.reminded = false
+    if(channel) {
+      user.remindIn = channel
+    }
     if(calcPlayerOvr(getPlayer(Number(player))!) >= 85) {
       user.pity = 0
     }
@@ -250,25 +263,14 @@ export class SabineUser implements users {
     const user = await this.fetch(this.id) ?? this
     user.roster!.reserve.splice(i, 1)
     user.coins += price
-    await user.save()
-    const u = client.users.get(user.id)!
-    const embed = new EmbedBuilder()
-    .setTitle('New register')
-    .setDesc(`User: ${u.mention}`)
-    .setFields(
-      {
-        name: 'SELL_PLAYER',
-        value: id
-      }
-    )
-    const channel = client.getChannel(process.env.USERS_LOG) as Oceanic.TextChannel
-    const webhooks = await channel.getWebhooks()
-    let webhook = webhooks.filter(w => w.name === client.user.username + ' Logger')[0]
-    if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + ' Logger' })
-    await webhook.execute({
-      avatarURL: client.user.avatarURL(),
-      embeds: [embed]
+    user.transactions.push({
+      type: 'SELL_PLAYER',
+      player: id,
+      when: Date.now(),
+      price,
+      user: null
     })
+    await user.save()
     return user
   }
 }
