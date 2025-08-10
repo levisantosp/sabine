@@ -185,7 +185,7 @@
       "sold": "Você vendeu **{p}** por **{price}** coins com sucesso!"
     },
     "coins": {
-      "res": "Você possui **{c}** coins e **{f}** destinos."
+      "res": "Você possui **{c}** coins e **{f}** destinos.\nObtenha **coins** e **destinos** usando `/daily`"
     },
     "duel": {
       "started": "### Partida iniciada",
@@ -230,7 +230,7 @@
       "signed": "Você contratou **{player}** por **{price}** coins com sucesso!"
     },
     "claims": {
-      "res": "Seus claims: `{claims}`\nSeu pity: `{pity}`\nAo chegar ao pity **50**, uma carta Tier S (85+) é garantida!"
+      "res": "Seus claims: `{claims}`\nSeu pity: `{pity}`\nAo chegar ao pity **100**, uma carta Tier S (85+) é garantida!"
     },
     "card": {
       "name": "Nome",
@@ -241,11 +241,28 @@
     },
     "trade": {
       "missing_coins": "{user} precisa de mais **{coins}** coins para comprar seu jogador.",
-      "request": "{user} {author} quer vender **{player} — {collection}** para você por **{coins}** coins. Quer comprar?",
+      "request": "{user}, {author} quer vender **{player} — {collection}** para você por **{coins}** coins. Quer comprar?",
       "make_purchase": "Fazer compra",
       "cancel": "Cancelar",
       "cancelled": "Negociação cancelada.",
       "res": "Você vendeu **{player} — {collection}** para {user} por **{coins}** coins com sucesso!"
+    },
+    "transactions": {
+      "type": {
+        "CLAIM_PLAYER_BY_CLAIM_COMMAND": "Obteve **{player}** pelo comando `/claim`",
+        "CLAIM_PLAYER_BY_COMMAND": "Recebeu **{player}** do sistema (comando `.giveplayer`)",
+        "SELL_PLAYER": "Vendeu **{player}** por **{price}** coins",
+        "TRADE_PLAYER": "Negociou **{player}** com {user} por **{price}** coins"
+      },
+      "embed": {
+        "title": "Your Player Transactions",
+        "footer": "Page {page}/{pages}"
+      },
+      "none_yet": "You don't have any transaction to show."
+    },
+    "remind": {
+      "enabled": "Agora eu irei te notificar quando o seu `/claim` estiver pronto!",
+      "disabled": "Agora eu não irei te notificar quando seu `/claim` estiver pronto!"
     }
   },
   "simulator": {
@@ -307,7 +324,8 @@
     "yes": "Sim",
     "no": "Não",
     "unknown_interaction": "Hum... parece que os dados dessa interação sumiram porque você demorou demais para usá-la... por favor, use o comando novamente!",
-    "this_isnt_for_you": "Essa interação não é para você! Rode esse comando você mesmo!"
+    "this_isnt_for_you": "Essa interação não é para você! Rode esse comando você mesmo!",
+    "reminder": "{user} Seu `/claim` está pronto!"
   },
   "permissions": {
     "CREATE_INSTANT_INVITE": "Criar convite instantâneo",
