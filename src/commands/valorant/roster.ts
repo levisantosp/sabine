@@ -1,9 +1,7 @@
-import getPlayer from '../../simulator/valorant/players/getPlayer.ts'
+import { calcPlayerOvr, calcPlayerPrice, getPlayer } from 'players'
 import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
 import createCommand from '../../structures/command/createCommand.ts'
-import calcPlayerOvr from '../../structures/util/calcPlayerOvr.ts'
-import calcPlayerPrice from '../../structures/util/calcPlayerPrice.ts'
 
 export default createCommand({
   name: 'roster',
@@ -16,6 +14,7 @@ export default createCommand({
     'pt-BR': 'Veja seu elenco'
   },
   userInstall: true,
+  messageComponentInteractionTime: 5 * 60 * 1000,
   async run({ ctx, t }) {
     const active_players = ctx.db.user.roster!.active
     const reserve_players = ctx.db.user.roster!.reserve
@@ -109,7 +108,7 @@ export default createCommand({
       ]
     }))
   },
-  async createInteraction({ ctx, i, t }) {
+  async createMessageComponentInteraction({ ctx, i, t }) {
     if(ctx.args[2] === 'file') {
       await ctx.interaction.defer(64)
       let players = ''

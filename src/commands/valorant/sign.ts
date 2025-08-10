@@ -1,12 +1,8 @@
 import { ApplicationCommandOptionTypes } from 'oceanic.js'
 import createCommand from '../../structures/command/createCommand.ts'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
-import getPlayer from '../../simulator/valorant/players/getPlayer.ts'
-import calcPlayerPrice from '../../structures/util/calcPlayerPrice.ts'
 import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
-import getPlayers from '../../simulator/valorant/players/getPlayers.ts'
-import calcPlayerOvr from '../../structures/util/calcPlayerOvr.ts'
-
+import { calcPlayerOvr, calcPlayerPrice, getPlayer, getPlayers } from 'players'
 export default createCommand({
   name: 'sign',
   nameLocalizations: {
@@ -33,6 +29,7 @@ export default createCommand({
     }
   ],
   userInstall: true,
+  messageComponentInteractionTime: 5 * 60 * 1000,
   async run({ ctx, t }) {
     const player = getPlayer(Number(ctx.args[0]))
     if(!player || !player.purchaseable) return await ctx.reply('commands.sign.player_not_found')
@@ -71,7 +68,7 @@ export default createCommand({
       .map(p => ({ name: p.name, value: p.id.toString() }))
     )
   },
-  async createInteraction({ ctx, i }) {
+  async createMessageComponentInteraction({ ctx, i }) {
     await i.defer(64)
     const player = getPlayer(Number(ctx.args[2]))
     if(!player) return

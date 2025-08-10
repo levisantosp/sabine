@@ -1,9 +1,8 @@
 import { ApplicationCommandOptionTypes } from 'oceanic.js'
 import createCommand from '../../structures/command/createCommand.ts'
 import { SabineUser } from '../../database/index.ts'
-import getPlayer from '../../simulator/valorant/players/getPlayer.ts'
-import calcPlayerOvr from '../../structures/util/calcPlayerOvr.ts'
 import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
+import { calcPlayerOvr, getPlayer } from 'players'
 
 export default createCommand({
   name: 'trade',
@@ -55,8 +54,9 @@ export default createCommand({
       required: true
     }
   ],
+  messageComponentInteractionTime: 5 * 60 * 1000,
   async run({ ctx, t }) {
-    const user = await SabineUser.fetch(ctx.args[0])
+    const user = await SabineUser.fetch(ctx.args[0].toString())
     const player = getPlayer(Number(ctx.args[1]))
     if(!user || user.coins < BigInt(ctx.args[2])) {
       return await ctx.reply('commands.trade.missing_coins', {
@@ -114,7 +114,7 @@ export default createCommand({
       .map(p => ({ name: p.name, value: p.id }))
     )
   },
-  async createInteraction({ ctx }) {
+  async createMessageComponentInteraction({ ctx }) {
     console.log(ctx.args)
     if(ctx.args[2] === 'buy') {
       const user = await SabineUser.fetch(ctx.args[3])

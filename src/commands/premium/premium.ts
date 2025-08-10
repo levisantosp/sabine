@@ -10,6 +10,7 @@ export default createCommand({
     'pt-BR': 'Mostra as informações do seu premium'
   },
   userInstall: true,
+  messageComponentInteractionTime: 5 * 60 * 1000,
   async run({ ctx, t }) {
     if(!ctx.db.user.plan || ctx.db.user.plan.type !== 'PREMIUM') {
       return await ctx.reply('commands.premium.you_dont_have_premium')
@@ -28,7 +29,7 @@ export default createCommand({
       ))
     await ctx.reply(button.build({ embeds: [embed] }))
   },
-  async createInteraction({ ctx, t, client }) {
+  async createMessageComponentInteraction({ ctx, t, client }) {
     await ctx.interaction.defer(64)
     const keys = await client.prisma.keys.findMany({
       where: {

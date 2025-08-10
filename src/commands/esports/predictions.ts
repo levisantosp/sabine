@@ -206,7 +206,7 @@ export default createCommand({
       }))
     }
   },
-  async createInteraction({ ctx, t }) {
+  async createMessageComponentInteraction({ ctx, t }) {
     if(ctx.args[4] === 'valorant') {
       await (ctx.interaction as ComponentInteraction).deferUpdate()
       if(!ctx.db.user.valorant_predictions.length) {

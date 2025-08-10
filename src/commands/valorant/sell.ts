@@ -1,8 +1,6 @@
+import { calcPlayerOvr, calcPlayerPrice, getPlayer } from 'players'
 import { SabineUser } from '../../database/index.ts'
-import getPlayer from '../../simulator/valorant/players/getPlayer.ts'
 import createCommand from '../../structures/command/createCommand.ts'
-import calcPlayerOvr from '../../structures/util/calcPlayerOvr.ts'
-import calcPlayerPrice from '../../structures/util/calcPlayerPrice.ts'
 
 export default createCommand({
   name: 'sell',

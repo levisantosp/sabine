@@ -82,6 +82,7 @@ export default createCommand({
     'admin language pt-BR',
     'admin language en-US'
   ],
+  messageComponentInteractionTime: 5 * 60 * 1000,
   async run({ ctx, t, id }) {
     if(ctx.args[0] === 'dashboard') {
       const embed = new EmbedBuilder()
@@ -166,7 +167,7 @@ export default createCommand({
 			ctx.reply(embed.build())
     }
   },
-  async createInteraction({ ctx, t }) {
+  async createMessageComponentInteraction({ ctx, t }) {
     if(ctx.args[2] === 'vlr') {
       await ctx.interaction.defer(64)
       const embed = new EmbedBuilder()

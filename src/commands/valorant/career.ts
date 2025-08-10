@@ -27,6 +27,7 @@ export default createCommand({
     }
   ],
   userInstall: true,
+  messageComponentInteractionTime: 5 * 60 * 1000,
   async run({ ctx, t }) {
     let career = ctx.db.user.carrer.reverse()
     const page = Number(ctx.args[0] ?? '1')
@@ -86,7 +87,7 @@ export default createCommand({
       ]
     }))
   },
-  async createInteraction({ ctx, t }) {
+  async createMessageComponentInteraction({ ctx, t }) {
     await ctx.interaction.deferUpdate()
     let career = ctx.db.user.carrer.reverse()
     const page = Number(ctx.args[2])

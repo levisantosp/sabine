@@ -9,6 +9,9 @@ export default createCommand({
   category: 'simulator',
   userInstall: true,
   async run({ ctx }) {
-    await ctx.reply('commands.coins.res', { c: ctx.db.user.coins.toLocaleString('en-US') })
+    await ctx.reply('commands.coins.res', {
+      c: ctx.db.user.coins.toLocaleString(),
+      f: ctx.db.user.fates.toLocaleString()
+    })
   }
 })

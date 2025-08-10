@@ -82,7 +82,8 @@ export default createCommand({
       await ctx.reply('commands.activatekey.key_activated')
     }
   },
-  async createInteraction({ ctx, client }) {
+  messageComponentInteractionTime: 60 * 1000,
+  async createMessageComponentInteraction({ ctx, client }) {
     if(!ctx.guild) return
     await ctx.interaction.defer(64)
     const key = await client.prisma.keys.findFirst({

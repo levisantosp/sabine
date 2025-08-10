@@ -1,9 +1,8 @@
 import type { SelectOption } from 'oceanic.js'
-import getPlayer from '../../simulator/valorant/players/getPlayer.ts'
 import SelectMenuBuilder from '../../structures/builders/SelectMenuBuilder.ts'
 import createCommand from '../../structures/command/createCommand.ts'
-import calcPlayerOvr from '../../structures/util/calcPlayerOvr.ts'
 import { SabineUser } from '../../database/index.ts'
+import { calcPlayerOvr, getPlayer } from 'players'
 
 export default createCommand({
   name: 'promote',
@@ -31,6 +30,7 @@ export default createCommand({
     }
   ],
   userInstall: true,
+  messageComponentInteractionTime: 5 * 60 * 1000,
   async run({ ctx, t }) {
     const p = getPlayer(Number(ctx.args[0]))
     if(!p) {
@@ -82,7 +82,7 @@ export default createCommand({
       .map(p => ({ name: p.name, value: p.id }))
     )
   },
-  async createInteraction({ ctx, i, t }) {
+  async createMessageComponentInteraction({ ctx, i, t }) {
     if(i.data.componentType === 3) {
       const id = i.data.values.getStrings()[0]
       let index = ctx.db.user.roster!.active.findIndex(p => p === id)

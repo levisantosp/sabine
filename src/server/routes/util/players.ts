@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify'
-import getPlayers from '../../../simulator/valorant/players/getPlayers.ts'
+import { getPlayers } from 'players'
 
 export default function(fastify: FastifyInstance) {
   fastify.get('/players', () => {

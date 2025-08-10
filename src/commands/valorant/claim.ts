@@ -1,27 +1,8 @@
-import getPlayer from '../../simulator/valorant/players/getPlayer.ts'
-import getPlayers from '../../simulator/valorant/players/getPlayers.ts'
+import { calcPlayerOvr, calcPlayerPrice, getPlayer, getPlayers, type Player } from 'players'
 import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
 import createCommand from '../../structures/command/createCommand.ts'
-import calcPlayerOvr from '../../structures/util/calcPlayerOvr.ts'
-import calcPlayerPrice from '../../structures/util/calcPlayerPrice.ts'
 
-type Player = {
-  id: number
-  name: string
-  collection: string
-  team: string
-  country: string
-  role: string
-  aim: number
-  HS: number
-  movement: number
-  aggression: number
-  ACS: number
-  gamesense: number
-  ovr?: number
-  price?: number
-}
 const players = getPlayers()
 const tier = (() => {
   const tier: {[key: string]: Player[]} = {
@@ -75,6 +56,7 @@ export default createCommand({
   },
   userInstall: true,
   isThiking: true,
+  messageComponentInteractionTime: 60 * 1000,
   async run({ ctx, t }) {
     if(ctx.db.user.claim_time > Date.now()) {
       delete users[ctx.interaction.user.id]
@@ -83,7 +65,7 @@ export default createCommand({
     else if(users[ctx.interaction.user.id] && users[ctx.interaction.user.id] > Date.now()) {
       return await ctx.reply('commands.claim.has_been_claimed', { t: `<t:${((users[ctx.interaction.user.id]) / 1000).toFixed(0)}:R>` })
     }
-    // users[ctx.interaction.user.id] = Date.now() + 600000
+    users[ctx.interaction.user.id] = Date.now() + 600000
     let player: Player
     if(ctx.db.user.pity >= 49) {
       player = getRandomPlayerByTier('s')
@@ -127,7 +109,7 @@ export default createCommand({
     }))
     await ctx.db.user.addPlayerToRoster(player.id.toString())
   },
-  async createInteraction({ ctx }) {
+  async createMessageComponentInteraction({ ctx }) {
     ctx.setFlags(64)
     if(!ctx.db.user.roster?.reserve.includes(ctx.args[3])) {
       return await ctx.reply('commands.sell.player_not_found')

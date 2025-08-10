@@ -1,7 +1,6 @@
+import { calcPlayerOvr, getPlayer } from 'players'
 import { SabineUser } from '../../database/index.ts'
-import getPlayer from '../../simulator/valorant/players/getPlayer.ts'
 import createCommand from '../../structures/command/createCommand.ts'
-import calcPlayerOvr from '../../structures/util/calcPlayerOvr.ts'
 
 export default createCommand({
   name: 'remove',
@@ -31,7 +30,7 @@ export default createCommand({
   userInstall: true,
   async run({ ctx }) {
     const p = getPlayer(Number(ctx.args[0]))
-    if(!ctx.db.user.roster!.active.includes(ctx.args[0]) || !p) {
+    if(!ctx.db.user.roster!.active.includes(ctx.args[0].toString()) || !p) {
       return ctx.reply('commands.remove.player_not_found')
     }
     const i = ctx.db.user.roster!.active.findIndex(pl => pl === p.id.toString())

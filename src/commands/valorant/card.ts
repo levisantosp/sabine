@@ -1,10 +1,7 @@
 import { ApplicationCommandOptionTypes } from 'oceanic.js'
 import createCommand from '../../structures/command/createCommand.ts'
-import getPlayers from '../../simulator/valorant/players/getPlayers.ts'
-import calcPlayerOvr from '../../structures/util/calcPlayerOvr.ts'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
-import getPlayer from '../../simulator/valorant/players/getPlayer.ts'
-import calcPlayerPrice from '../../structures/util/calcPlayerPrice.ts'
+import { calcPlayerOvr, calcPlayerPrice, getPlayer, getPlayers } from 'players'
 
 const date = Date.now()
 export default createCommand({
@@ -37,7 +34,6 @@ export default createCommand({
     const player = getPlayer(Number(ctx.args[0]))
     if(!player) return await ctx.reply('commands.card.player_not_found')
     const embed = new EmbedBuilder()
-    // .setDesc(t('commands.card.embed.desc'))
     .setFields(
       {
         name: t('commands.card.name'),
