@@ -46,9 +46,11 @@ export type Command = {
   ephemeral?: boolean
   userInstall?: boolean
   isThiking?: boolean
+  messageComponentInteractionTime?: number
+  modalSubmitInteractionTime?: number
   run: (options: CommandOptions) => Promise<any>
   createAutocompleteInteraction?: (options: CreateAutocompleteInteractionOptions) => Promise<any>
-  createInteraction?: (options: CreateComponentInteractionOptions) => Promise<any>
+  createMessageComponentInteraction?: (options: CreateComponentInteractionOptions) => Promise<any>
   createModalSubmitInteraction?: (options: CreateModalSubmitInteractionOptions) => Promise<any>
 }
 export default function(
