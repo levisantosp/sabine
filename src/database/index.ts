@@ -2,9 +2,7 @@ import * as Oceanic from 'oceanic.js'
 import EmbedBuilder from '../structures/builders/EmbedBuilder.ts'
 import { client } from '../structures/client/App.ts'
 import { $Enums, type guilds, Prisma, PrismaClient, type users } from '@prisma/client'
-import type { JsonValue } from '@prisma/client/runtime/library'
-import calcPlayerOvr from '../structures/util/calcPlayerOvr.ts'
-import getPlayer from '../simulator/valorant/players/getPlayer.ts'
+import { calcPlayerOvr, getPlayer } from 'players'
 
 const prisma = new PrismaClient()
 type PredictionTeam = {
@@ -21,14 +19,14 @@ type Prediction = {
 }
 export class SabineUser implements users {
   public id: string
-  public valorant_predictions: ({ match: JsonValue | null; status: $Enums.PredictionStatus | null; bet: bigint | null; odd: number | null; } & { teams: { name: string; score: string; winner: boolean | null; }[]; })[] = []
-  public lol_predictions: ({ match: JsonValue | null; status: $Enums.PredictionStatus | null; bet: bigint | null; odd: number | null; } & { teams: { name: string; score: string; winner: boolean | null; }[]; })[] = []
+  public valorant_predictions: ({ match: string; status: $Enums.PredictionStatus; bet: bigint | null; odd: number | null; when: number; } & { teams: { name: string; score: string; winner: boolean | null; }[]; })[] = []
+  public lol_predictions: ({ match: string; status: $Enums.PredictionStatus; bet: bigint | null; odd: number | null; when: number; } & { teams: { name: string; score: string; winner: boolean | null; }[]; })[] = []
   public correct_predictions: number = 0
   public wrong_predictions: number = 0
   public lang: $Enums.Language = 'en'
   public plan: { type: $Enums.PremiumType; expiresAt: number; } | null = null
   public warned: boolean | null = null
-  public roster: { active: string[]; reserve: string[]; } | null = null
+  public roster: { active: string[]; reserve: string[]; } | null = { active: [], reserve: [] }
   public coins: bigint = 0n
   public team: { name: string | null; tag: string | null; } | null = null
   public carrer: { teams: { user: string; score: number; }[]; }[] = []
@@ -38,7 +36,9 @@ export class SabineUser implements users {
   public claim_time: number = 0
   public warn: boolean = true
   public pity: number = 0
-  public claims: number = 0
+  public claims: { type: $Enums.ClaimType; player: string; when: number; }[] = []
+  public rank_rating: number = 0
+  public fates: number = 0
   public constructor(id: string) {
     this.id = id
     if(!this.roster) {
@@ -86,30 +86,22 @@ export class SabineUser implements users {
   public async addPrediction(game: 'valorant' | 'lol', prediction: Prediction) {
     const user = await this.fetch(this.id) ?? this
     if(game === 'valorant') {
-      user.valorant_predictions.push(prediction)
+      user.valorant_predictions.push(
+        {
+          ...prediction,
+          when: Date.now()
+        }
+      )
       await user.save()
-      const channel = client.getChannel(process.env.USERS_LOG) as Oceanic.TextChannel
-      const u = client.users.get(user.id)
-      const embed = new EmbedBuilder()
-        .setTitle('New register')
-        .setDesc(`User: ${u?.mention} (${user.id})`)
-        .setFields(
-          {
-            name: 'NEW_PREDICTION',
-            value: `\`\`\`js\n${JSON.stringify(prediction, null, 2)}\`\`\``
-          }
-        )
-      const webhooks = await channel.getWebhooks()
-      let webhook = webhooks.filter(w => w.name === client.user.username + ' Logger')[0]
-      if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + ' Logger' })
-      await webhook.execute({
-        avatarURL: client.user.avatarURL(),
-        embeds: [embed]
-      })
       return user
     }
     if(game === 'lol') {
-      this.lol_predictions.push(prediction)
+      this.lol_predictions.push(
+        {
+          ...prediction,
+          when: Date.now()
+        }
+      )
       await this.save()
       const channel = client.getChannel(process.env.USERS_LOG) as Oceanic.TextChannel
       const u = client.users.get(this.id)
@@ -236,36 +228,22 @@ export class SabineUser implements users {
     }
     return user
   }
-  public async addPlayerToRoster(player: string, method: 'CLAIM_COMMAND' | 'COMMAND' = 'CLAIM_COMMAND') {
+  public async addPlayerToRoster(player: string, method: 'CLAIM_PLAYER_BY_CLAIM_COMMAND' | 'CLAIM_PLAYER_BY_COMMAND' = 'CLAIM_PLAYER_BY_CLAIM_COMMAND') {
     const user = await this.fetch(this.id) ?? this
     user.roster!.reserve.push(player)
-    if(method === 'CLAIM_COMMAND') {
+    if(method === 'CLAIM_PLAYER_BY_CLAIM_COMMAND') {
       user.claim_time = Date.now() + 600000
     }
     user.pity += 1
-    user.claims += 1
+    user.claims.push({
+      type: method,
+      player,
+      when: Date.now()
+    })
     if(calcPlayerOvr(getPlayer(Number(player))!) >= 85) {
       user.pity = 0
     }
     await user.save()
-    const u = client.users.get(user.id)!
-    const embed = new EmbedBuilder()
-    .setTitle('New register')
-    .setDesc(`User: ${u.mention}`)
-    .setFields(
-      {
-        name: `CLAIM_PLAYER_BY_${method}`,
-        value: player
-      }
-    )
-    const channel = client.getChannel(process.env.USERS_LOG) as Oceanic.TextChannel
-    const webhooks = await channel.getWebhooks()
-    let webhook = webhooks.filter(w => w.name === client.user.username + ' Logger')[0]
-    if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + ' Logger' })
-    await webhook.execute({
-      avatarURL: client.user.avatarURL(),
-      embeds: [embed]
-    })
     return user
   }
   public async sellPlayer(id: string, price: bigint, i: number) {
