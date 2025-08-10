@@ -1,6 +1,6 @@
 import type { TextChannel } from 'oceanic.js'
 import Service from '../api/index.ts'
-import locales from '../locales/index.ts'
+import t from '../locales/index.ts'
 import type { MatchesData } from '../types.ts'
 import createListener from '../structures/client/createListener.ts'
 import Logger from '../structures/util/Logger.ts'
@@ -58,11 +58,11 @@ const sendValorantMatches = async(client: App) => {
                 text: d.stage
               })
             const button = new ButtonBuilder()
-              .setLabel(locales(guild.lang ?? 'en', 'helper.palpitate'))
+              .setLabel(t(guild.lang ?? 'en', 'helper.palpitate'))
               .setCustomId(`predict;valorant;${d.id}`)
               .setStyle('green')
             const urlButton = new ButtonBuilder()
-              .setLabel(locales(guild.lang ?? 'en', 'helper.stats'))
+              .setLabel(t(guild.lang ?? 'en', 'helper.stats'))
               .setStyle('link')
               .setURL(`https://vlr.gg/${d.id}`)
             if(d.stage.toLowerCase().includes('showmatch')) continue
@@ -74,12 +74,12 @@ const sendValorantMatches = async(client: App) => {
                   components: [
                     button,
                     new ButtonBuilder()
-                      .setLabel(locales(guild.lang ?? 'en', 'helper.bet'))
+                      .setLabel(t(guild.lang ?? 'en', 'helper.bet'))
                       .setCustomId(`bet;valorant;${d.id}`)
                       .setStyle('gray'),
                     urlButton,
                     new ButtonBuilder()
-                      .setLabel(locales(guild.lang ?? 'en', 'helper.pickem.label'))
+                      .setLabel(t(guild.lang ?? 'en', 'helper.pickem.label'))
                       .setStyle('blue')
                       .setCustomId('pickem')
                   ]
@@ -136,15 +136,15 @@ const sendValorantTBDMatches = async(client: App) => {
               type: 1,
               components: [
                 new ButtonBuilder()
-                  .setLabel(locales(guild.lang ?? 'en', 'helper.palpitate'))
+                  .setLabel(t(guild.lang ?? 'en', 'helper.palpitate'))
                   .setCustomId(`predict;valorant;${match.id}`)
                   .setStyle('green'),
                 new ButtonBuilder()
-                  .setLabel(locales(guild.lang ?? 'en', 'helper.bet'))
+                  .setLabel(t(guild.lang ?? 'en', 'helper.bet'))
                   .setCustomId(`bet;valorant;${data.id}`)
                   .setStyle('gray'),
                 new ButtonBuilder()
-                  .setLabel(locales(guild.lang ?? 'en', 'helper.stats'))
+                  .setLabel(t(guild.lang ?? 'en', 'helper.stats'))
                   .setStyle('link')
                   .setURL(`https://vlr.gg/${data.id}`)
               ]
@@ -211,7 +211,7 @@ const sendLolMatches = async(client: App) => {
                 text: d.stage
               })
             const button = new ButtonBuilder()
-              .setLabel(locales(guild.lang ?? 'en', 'helper.palpitate'))
+              .setLabel(t(guild.lang ?? 'en', 'helper.palpitate'))
               .setCustomId(`predict;lol;${d.id}`)
               .setStyle('green')
             if(d.stage.toLowerCase().includes('showmatch')) continue
@@ -223,11 +223,11 @@ const sendLolMatches = async(client: App) => {
                   components: [
                     button,
                     new ButtonBuilder()
-                      .setLabel(locales(guild.lang ?? 'en', 'helper.bet'))
+                      .setLabel(t(guild.lang ?? 'en', 'helper.bet'))
                       .setCustomId(`bet;lol;${d.id}`)
                       .setStyle('gray'),
                     new ButtonBuilder()
-                      .setLabel(locales(guild.lang ?? 'en', 'helper.pickem.label'))
+                      .setLabel(t(guild.lang ?? 'en', 'helper.pickem.label'))
                       .setStyle('blue')
                       .setCustomId('pickem')
                   ]
@@ -284,11 +284,11 @@ const sendLolTBDMatches = async(client: App) => {
               type: 1,
               components: [
                 new ButtonBuilder()
-                  .setLabel(locales(guild.lang ?? 'en', 'helper.palpitate'))
+                  .setLabel(t(guild.lang ?? 'en', 'helper.palpitate'))
                   .setCustomId(`predict;lol;${match.id}`)
                   .setStyle('green'),
                 new ButtonBuilder()
-                  .setLabel(locales(guild.lang ?? 'en', 'helper.bet'))
+                  .setLabel(t(guild.lang ?? 'en', 'helper.bet'))
                   .setCustomId(`bet;lol;${data.id}`)
                   .setStyle('gray')
               ]
@@ -309,6 +309,40 @@ const sendLolTBDMatches = async(client: App) => {
       }
     }
   }
+}
+const remindUsers = async(client: App) => {
+  const users = await client.prisma.users.findMany({
+    where: {
+      remind: {
+        not: false
+      },
+      reminded: {
+        not: true
+      },
+      remindIn: {
+        not: null
+      },
+      claim_time: {
+        lte: Date.now()
+      }
+    }
+  })
+  for(const user of users) {
+    if(!user.remindIn) continue
+    const channel = await client.rest.channels.get(user.remindIn) as TextChannel
+    await channel.createMessage({
+      content: t(user.lang, 'helper.reminder', { user: `<@${user.id}>` })
+    })
+    await client.prisma.users.update({
+      where: {
+        id: user.id
+      },
+      data: {
+        reminded: true
+      }
+    })
+  }
+  setTimeout(async() => await remindUsers(client), 60 * 1000)
 }
 const runInBatches = async(client: App, tasks: any[], batch_size: number) => {
   for(let i = 0;i < tasks.length;i += batch_size) {
@@ -344,6 +378,7 @@ export default createListener({
       ])
     }
     await client.bulkEditGlobalCommands()
+    await remindUsers(client)
     await runTasks(client)
   }
 })
