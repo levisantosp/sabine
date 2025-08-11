@@ -33,7 +33,7 @@ export type Command = {
   name: string
   nameLocalizations?: Partial<Record<Oceanic.Locale, string>>
   description: string
-  category: 'simulator' | 'admin' | 'esports' | 'misc' | 'premium'
+  category: 'economy' | 'admin' | 'esports' | 'misc' | 'premium'
   descriptionLocalizations?: Partial<Record<Oceanic.Locale, string>>
   options?: Oceanic.ApplicationCommandOptions[]
   syntax?: string
