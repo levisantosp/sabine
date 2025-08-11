@@ -2,6 +2,7 @@ import { calcPlayerOvr, calcPlayerPrice, getPlayer } from 'players'
 import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
 import createCommand from '../../structures/command/createCommand.ts'
+import { emojis } from '../../util/emojis.ts'
 
 export default createCommand({
   name: 'roster',
@@ -50,7 +51,7 @@ export default createCommand({
     for(const p_id of active_players) {
       const player = getPlayer(Number(p_id))!
       const ovr = parseInt(calcPlayerOvr(player).toString())
-      active_content += `- ${player.name} (${ovr}) — ${player.collection}\n`
+      active_content += `${emojis.find(e => e.name === player.role)?.emoji} ${player.name} (${ovr}) — ${player.collection}\n`
     }
     let i = 0
     for(const p_id of reserve_players) {
@@ -58,7 +59,7 @@ export default createCommand({
       if(i >= 10) break
       const player = getPlayer(Number(p_id))!
       const ovr = parseInt(calcPlayerOvr(player).toString())
-      reserve_content += `- ${player.name} (${ovr}) — ${player.collection}\n`
+      reserve_content += `${emojis.find(e => e.name === player.role)?.emoji} ${player.name} (${ovr}) — ${player.collection}\n`
     }
     if(reserve_players.length > 10) {
       reserve_content += `- +${reserve_players.length - 10}...`
