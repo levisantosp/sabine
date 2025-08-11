@@ -37,7 +37,7 @@ const interactionTypes: Record<number, (i: AnyInteractionGateway) => Promise<any
     const command = client.commands.get(args[0])
     if(!command) {
       if(!interaction.guild) return
-      const i = (await import(`../interactions/${args[0]}.ts`)).default
+      const i = (await import(`../interactions/globals/${args[0]}.ts`)).default
       const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
       let guild: SabineGuild | undefined
       let g: Guild | undefined
@@ -73,40 +73,75 @@ const interactionTypes: Record<number, (i: AnyInteractionGateway) => Promise<any
     else {
       const blacklist = (await client.prisma.blacklists.findFirst())!
       if(blacklist.users.find(user => user.id === interaction.user.id)) return
-      if(!command.createMessageComponentInteraction) return
-      const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
-      let guild: SabineGuild | undefined
-      let g: Guild | undefined
-      if(interaction.guildID) {
-        guild = await SabineGuild.fetch(interaction.guildID) ?? new SabineGuild(interaction.guildID)
-        g = client.guilds.get(interaction.guildID)
+      if(command.createMessageComponentInteraction) {
+        const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
+        let guild: SabineGuild | undefined
+        let g: Guild | undefined
+        if(interaction.guildID) {
+          guild = await SabineGuild.fetch(interaction.guildID) ?? new SabineGuild(interaction.guildID)
+          g = client.guilds.get(interaction.guildID)
+        }
+        const ctx = new ComponentInteractionContext({
+          args,
+          client,
+          guild: g,
+          locale: user.lang ?? guild?.lang,
+          db: {
+            user,
+            guild
+          },
+          interaction
+        })
+        if(
+          command.messageComponentInteractionTime &&
+          ((new Date(interaction.message.createdAt).getTime() + command.messageComponentInteractionTime) < Date.now())
+        ) {
+          ctx.setFlags(64)
+          return await ctx.reply('helper.unknown_interaction')
+        }
+        if(args[1] !== 'all' && args[1] !== interaction.user.id) {
+          ctx.setFlags(64)
+          return await ctx.reply('helper.this_isnt_for_you')
+        }
+        const t = (content: string, args?: Args) => {
+          return locales(ctx.locale, content, args)
+        }
+        return await command.createMessageComponentInteraction({ ctx, t, i: interaction, client })
       }
-      const ctx = new ComponentInteractionContext({
-        args,
-        client,
-        guild: g,
-        locale: user.lang ?? guild?.lang,
-        db: {
-          user,
-          guild
-        },
-        interaction
-      })
-      if(
-        command.messageComponentInteractionTime &&
-        ((new Date(interaction.message.createdAt).getTime() + command.messageComponentInteractionTime) < Date.now())
-      ) {
-        ctx.setFlags(64)
-        return await ctx.reply('helper.unknown_interaction')
+      else {
+        const i = (await import(`../interactions/commands/${args[0]}.ts`)).default
+        const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
+        let guild: SabineGuild | undefined
+        let g: Guild | undefined
+        if(interaction.guildID) {
+          guild = await SabineGuild.fetch(interaction.guildID) ?? new SabineGuild(interaction.guildID)
+          g = client.guilds.get(interaction.guildID)
+        }
+        const ctx = new ComponentInteractionContext({
+          args,
+          client,
+          guild: g,
+          locale: user.lang ?? guild?.lang ?? 'en',
+          db: {
+            user,
+            guild
+          },
+          interaction
+        })
+        const t = (content: string, args?: Args) => {
+          return locales(ctx.locale, content, args)
+        }
+        if(i.ephemeral) {
+          await interaction.defer(64)
+        }
+        else if(i.isThinking) {
+          await interaction.defer()
+        }
+        else if(i.flags) {
+          ctx.setFlags(64)
+        }
+        await i.run({ ctx, t, client })
       }
-      if(args[1] !== 'all' && args[1] !== interaction.user.id) {
-        ctx.setFlags(64)
-        return await ctx.reply('helper.this_isnt_for_you')
-      }
-      const t = (content: string, args?: Args) => {
-        return locales(ctx.locale, content, args)
-      }
-      return await command.createMessageComponentInteraction({ ctx, t, i: interaction, client })
     }
   },
   [InteractionTypes.MODAL_SUBMIT]: async(interaction) => {
