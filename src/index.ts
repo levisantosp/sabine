@@ -1,12 +1,6 @@
 import { client } from './structures/client/App.ts'
 import { server } from './server/index.ts'
-import DBL from 'top.gg'
 
-const dbl = new DBL(
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJib3QiOiJ0cnVlIiwiaWQiOiIxMjM1NTc2ODE3NjgzOTIyOTU0IiwiaWF0IjoiMTc1NDk0NTMxNyJ9.79XY26BJ3UCh30yHd8NG-wHeGVArS_vEbL7lG3iCdd0',
-  client
-)
-console.log(await dbl.hasVoted('441932495693414410'))
 await client.redis.connect()
 const updateRanking = async() => {
   const users = await client.prisma.users.findMany()
@@ -38,11 +32,13 @@ const updateRanking = async() => {
       }
     )
   )
+  setTimeout(updateRanking, 10 * 60 * 1000)
+}
+const keys = await client.redis.keys('match*')
+if(keys.length) {
+  await client.redis.del(keys)
 }
 await updateRanking()
-setInterval(async() => {
-  await updateRanking()
-}, 10 * 60 * 1000)
 await client.connect()
 server.listen({
   host: process.env.HOST,
