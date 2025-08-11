@@ -3,7 +3,6 @@ export type Emoji = {
   aliases?: string[]
   emoji: string
 }
-
 export const emojis: Emoji[] = [
   // DEFAULT TEAM EMOJIS
   {
@@ -293,5 +292,25 @@ export const emojis: Emoji[] = [
   {
     name: 'apeks',
     emoji: '<:apeks:1349081350430265456>'
+  },
+  {
+    name: 'controller',
+    emoji: '<:controller:1404609821818228817>'
+  },
+  {
+    name: 'duelist',
+    emoji: '<:duelist:1404610039335092225>'
+  },
+  {
+    name: 'initiator',
+    emoji: '<:initiator:1404610214400884866>'
+  },
+  {
+    name: 'sentinel',
+    emoji: '<:sentinel:1404610314091364394>'
+  },
+  {
+    name: 'flex',
+    emoji: '<:controller:1404609821818228817> <:duelist:1404610039335092225> <:initiator:1404610214400884866> <:sentinel:1404610314091364394>'
   }
 ]
