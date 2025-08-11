@@ -146,6 +146,18 @@ enum Elo {
   RADIANT
 }
 
+enum Packet {
+  IRON
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+  DIAMOND
+  ASCENDANT
+  IMMORTAL
+  RADIANT
+}
+
 model blacklists {
   id     String           @id @map("_id")
   guilds BlacklistProps[]
@@ -212,6 +224,7 @@ model users {
   remind               Boolean       @default(false)
   remindIn             String?
   reminded             Boolean       @default(true)
+  packets              Packet[]
 
   @@index([coins, correct_predictions, lol_predictions, wins, defeats])
   @@index([valorant_predictions])
