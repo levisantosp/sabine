@@ -3,7 +3,7 @@ import type { FastifyBaseLogger, RawServerDefault, FastifyInstance } from 'fasti
 import type { IncomingMessage, ServerResponse } from 'http'
 import { TextChannel } from 'oceanic.js'
 import { client } from '../../../structures/client/App.ts'
-import { emojis } from '../../../structures/util/emojis.ts'
+import { emojis } from '../../../util/emojis.ts'
 import EmbedBuilder from '../../../structures/builders/EmbedBuilder.ts'
 import locales from '../../../locales/index.ts'
 import ButtonBuilder from '../../../structures/builders/ButtonBuilder.ts'

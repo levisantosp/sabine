@@ -2,7 +2,7 @@ import * as Oceanic from 'oceanic.js'
 import App from '../client/App.ts'
 import locales from '../../locales/index.ts'
 import type { Args } from '../../locales/index.ts'
-import Logger from '../util/Logger.ts'
+import Logger from '../../util/Logger.ts'
 import { SabineGuild, SabineUser } from '../../database/index.ts'
 
 type Database = {
