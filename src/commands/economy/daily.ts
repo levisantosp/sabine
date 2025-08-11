@@ -6,7 +6,7 @@ export default createCommand({
   descriptionLocalizations: {
     'pt-BR': 'Obtenha sua recompensa diária'
   },
-  category: 'simulator',
+  category: 'economy',
   userInstall: true,
   async run({ ctx, client }) {
     if(ctx.db.user.daily_time > Date.now()) {

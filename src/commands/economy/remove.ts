@@ -1,17 +1,17 @@
-import { calcPlayerOvr, calcPlayerPrice, getPlayer } from 'players'
+import { calcPlayerOvr, getPlayer } from 'players'
 import { SabineUser } from '../../database/index.ts'
 import createCommand from '../../structures/command/createCommand.ts'
 
 export default createCommand({
-  name: 'sell',
+  name: 'remove',
   nameLocalizations: {
-    'pt-BR': 'vender'
+    'pt-BR': 'remover'
   },
-  description: 'Sell a player',
+  description: 'Remove a player from active roster!',
   descriptionLocalizations: {
-    'pt-BR' : 'Venda um jogador'
+    'pt-BR': 'Remova um jogador do elenco principal'
   },
-  category: 'simulator',
+  category: 'economy',
   options: [
     {
       type: 3,
@@ -29,24 +29,25 @@ export default createCommand({
   ],
   userInstall: true,
   async run({ ctx }) {
-    const player = getPlayer(Number(ctx.args[0]))
-    const i = ctx.db.user.roster!.reserve.findIndex(p => p === ctx.args[0])
-    if(!player || i === -1) {
-      return await ctx.reply('commands.sell.player_not_found')
+    const p = getPlayer(Number(ctx.args[0]))
+    if(!ctx.db.user.roster!.active.includes(ctx.args[0].toString()) || !p) {
+      return ctx.reply('commands.remove.player_not_found')
     }
-    const price = BigInt(calcPlayerPrice(player, true).toString())
-    await ctx.db.user.sellPlayer(player.id.toString(), price, i)
-    await ctx.reply('commands.sell.sold', { p: player.name, price: price.toLocaleString('en-US') })
+    const i = ctx.db.user.roster!.active.findIndex(pl => pl === p.id.toString())
+    ctx.db.user.roster!.reserve.push(p.id.toString())
+    ctx.db.user.roster!.active.splice(i, 1)
+    await ctx.db.user.save()
+    return await ctx.reply('commands.remove.player_removed', { p: p.name })
   },
   async createAutocompleteInteraction({ i }) {
     const user = (await SabineUser.fetch(i.user.id))!
     const players: Array<{ name: string, ovr: number, id: string }> = []
-    for(const p_id of user.roster!.reserve) {
+    for(const p_id of user.roster!.active) {
       const p = getPlayer(Number(p_id))
       if(!p) break
       const ovr = parseInt(calcPlayerOvr(p).toString())
       players.push({
-        name: `${p.name} (${ovr})`,
+        name: `${p.name} (${ovr}) — ${p.collection}`,
         ovr,
         id: p_id
       })
@@ -56,7 +57,6 @@ export default createCommand({
       .filter(p => {
         if(p.name.toLowerCase().includes(i.data.options.getOptions()[0].value.toString().toLowerCase())) return p
       })
-      .slice(0, 25)
       .map(p => ({ name: p.name, value: p.id }))
     )
   }

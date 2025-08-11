@@ -2,7 +2,7 @@ import createCommand from '../../structures/command/createCommand.ts'
 
 export default createCommand({
   name: 'claims',
-  category: 'simulator',
+  category: 'economy',
   description: 'See your claims counter',
   descriptionLocalizations: {
     'pt-BR': 'Veja o seu contador de obter'

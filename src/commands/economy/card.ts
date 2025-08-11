@@ -6,7 +6,7 @@ import { calcPlayerOvr, calcPlayerPrice, getPlayer, getPlayers } from 'players'
 const date = Date.now()
 export default createCommand({
   name: 'card',
-  category: 'simulator',
+  category: 'economy',
   nameLocalizations: {
     'pt-BR': 'carta'
   },

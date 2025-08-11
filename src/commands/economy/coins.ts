@@ -6,7 +6,7 @@ export default createCommand({
   descriptionLocalizations: {
     'pt-BR': 'Veja seus coins'
   },
-  category: 'simulator',
+  category: 'economy',
   userInstall: true,
   async run({ ctx }) {
     await ctx.reply('commands.coins.res', {

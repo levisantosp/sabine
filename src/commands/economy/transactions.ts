@@ -13,7 +13,7 @@ export default createCommand({
   descriptionLocalizations: {
     'pt-BR': 'Veja sua transação de jogadores'
   },
-  category: 'simulator',
+  category: 'economy',
   options: [
     {
       type: ApplicationCommandOptionTypes.INTEGER,

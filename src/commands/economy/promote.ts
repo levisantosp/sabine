@@ -13,7 +13,7 @@ export default createCommand({
   descriptionLocalizations: {
     'pt-BR': 'Promova um jogador para o elenco principal'
   },
-  category: 'simulator',
+  category: 'economy',
   options: [
     {
       type: 3,

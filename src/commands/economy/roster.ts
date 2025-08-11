@@ -5,7 +5,7 @@ import createCommand from '../../structures/command/createCommand.ts'
 
 export default createCommand({
   name: 'roster',
-  category: 'simulator',
+  category: 'economy',
   nameLocalizations: {
     'pt-BR': 'elenco'
   },

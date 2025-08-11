@@ -46,7 +46,7 @@ const users: {[key: string]: number} = {}
 const date = Date.now()
 export default createCommand({
   name: 'claim',
-  category: 'simulator',
+  category: 'economy',
   nameLocalizations: {
     'pt-BR': 'obter'
   },

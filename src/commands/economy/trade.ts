@@ -13,7 +13,7 @@ export default createCommand({
   descriptionLocalizations: {
     'pt-BR': 'Negocie um jogador'
   },
-  category: 'simulator',
+  category: 'economy',
   userInstall: true,
   options: [
     {

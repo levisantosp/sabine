@@ -12,7 +12,7 @@ export default createCommand({
   descriptionLocalizations: {
     'pt-BR': 'Contrate um jogador'
   },
-  category: 'simulator',
+  category: 'economy',
   options: [
     {
       type: ApplicationCommandOptionTypes.STRING,
