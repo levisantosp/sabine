@@ -1,12 +1,7 @@
 import { ApplicationCommandOptionTypes } from 'oceanic.js'
-import ValorantMatch from '../../simulator/valorant/ValorantMatch.ts'
-import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
 import createCommand from '../../structures/command/createCommand.ts'
 import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
 import { SabineUser } from '../../database/index.ts'
-import Logger from '../../structures/util/Logger.ts'
-
-const users: {[key: string]: boolean} = {}
 
 export default createCommand({
   name: 'duel',
@@ -155,9 +150,10 @@ export default createCommand({
     }
   ],
   userInstall: true,
-  messageComponentInteractionTime: 60 * 1000,
-  async run({ ctx, t }) {
-    const user = await SabineUser.fetch(ctx.args.at(-1)!.toString())
+  async run({ ctx, t, client }) {
+    const user = await SabineUser.fetch(
+      typeof ctx.args.at(-1) === 'boolean' ? ctx.args[ctx.args.length - 2].toString() : ctx.args.at(-1)!.toString()
+    )
     const authorCounts: {[key: string]: number} = {}
     const userCounts: {[key: string]: number} = {}
     for(const p of ctx.db.user.roster?.active ?? []) {
@@ -179,11 +175,11 @@ export default createCommand({
     if(!user.team?.name || !user.team.tag) {
       return await ctx.reply('commands.duel.needed_team_name_2')
     }
-    if(users[ctx.interaction.user.id]) {
-      return ctx.reply('commands.duel.already_in_match')
+    if(await client.redis.get(`match:${ctx.interaction.user.id}`)) {
+      return await ctx.reply('commands.duel.already_in_match')
     }
-    if(users[user.id]) {
-      return ctx.reply('commands.already_in_match_2')
+    if(await client.redis.get(`match:${user.id}`)) {
+      return await ctx.reply('commands.already_in_match_2')
     }
     if(ctx.args.at(-1) === ctx.interaction.user.id) {
       return await ctx.reply('commands.duel.cannot_duel')
@@ -203,79 +199,11 @@ export default createCommand({
     const button = new ButtonBuilder()
     .setStyle('green')
     .setLabel(t('commands.duel.button'))
-    .setCustomId(`duel;${ctx.args.at(-1)};${ctx.interaction.user.id};${mode}`)
+    .setCustomId(`accept;${ctx.args.at(-1)};${ctx.interaction.user.id};${mode}`)
     await ctx.reply(button.build(t('commands.duel.request', {
       author: ctx.interaction.user.mention,
       opponent: `<@${ctx.args.at(-1)}>`,
       mode: t(`commands.duel.mode.${mode}`)
-    }))) // stopped here
-  },
-  async createMessageComponentInteraction({ ctx, client, t, i }) {
-    await i.deferUpdate()
-    const user = await SabineUser.fetch(ctx.args[2])
-    if(!ctx.db.user.team?.name || !ctx.db.user.team.tag) {
-      return await ctx.reply('commands.duel.needed_team_name')
-    }
-    if(!ctx.db.user.roster || ctx.db.user.roster.active.length < 5) {
-      return await  ctx.reply('commands.duel.team_not_completed_1')
-    }
-    if(!user || !user.roster || user.roster.active.length < 5) {
-      return await ctx.reply('commands.duel.team_not_completed_2')
-    }
-    if(!user.team?.name || !user.team.tag) {
-      return await ctx.reply('commands.duel.needed_team_name_2')
-    }
-    if(users[ctx.interaction.user.id]) {
-      return await ctx.reply('commands.duel.already_in_match')
-    }
-    if(users[user.id]) {
-      return await ctx.reply('commands.duel.already_in_match_2')
-    }
-    const match = new ValorantMatch({
-      __teams: [
-        {
-          roster: user.roster.active,
-          user: {
-            name: client.users.get(user.id)!.username,
-            id: user.id
-          },
-          name: user.team.name!,
-          tag: user.team.tag!
-        },
-        {
-          roster: ctx.db.user.roster.active,
-          user: {
-            name: ctx.interaction.user.username,
-            id: ctx.db.user.id
-          },
-          name: ctx.db.user.team.name,
-          tag: ctx.db.user.team.tag!
-        }
-      ],
-      ctx,
-      locale: ctx.db.user.lang ?? ctx.db.guild!.lang
-    })
-    const embed = new EmbedBuilder()
-    .setTitle(`${match.__teams[0].name} 0 <:versus:1349105624180330516> 0 ${match.__teams[1].name}`)
-    .setDesc(t('commands.duel.started'))
-    match.setContent(embed.description + '\n')
-    await ctx.edit(embed.build())
-    try {
-      while(!match.finished) {
-        users[ctx.interaction.user.id] = true
-        users[user.id] = true
-        await match.wait(2000)
-        await match.startRound()
-      }
-    }
-    catch(e) {
-      delete users[ctx.interaction.user.id]
-      delete users[user.id]
-      new Logger(client).error(e as Error)
-    }
-    finally {
-      delete users[ctx.interaction.user.id]
-      delete users[user.id]
-    }
+    })))
   }
 })
