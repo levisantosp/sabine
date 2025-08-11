@@ -45,6 +45,7 @@ export class SabineUser implements users {
   public remind: boolean = false
   public remindIn: string | null = null
   public reminded: boolean = true
+  public packets: $Enums.Packet[] = []
   public constructor(id: string) {
     this.id = id
     if(!this.roster) {
