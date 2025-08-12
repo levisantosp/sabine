@@ -2,7 +2,7 @@ import * as Oceanic from 'oceanic.js'
 
 export default class SelectMenuBuilder {
   public type: number = Oceanic.Constants.ComponentTypes.STRING_SELECT
-  public customID?: string
+  public customID!: string
   public placeholder?: string
   public options: Oceanic.SelectOption[] = []
   public minValues?: number
