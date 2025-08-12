@@ -1,21 +1,21 @@
-import { client } from './structures/client/App.ts'
-import { server } from './server/index.ts'
+import { client } from "./structures/client/App.ts"
+import { server } from "./server/index.ts"
 
 await client.redis.connect()
 const updateRanking = async() => {
   const users = await client.prisma.users.findMany()
   await client.redis.set(
-    'ranking:coins',
+    "ranking:coins",
     JSON.stringify(
       {
         updated_at: Date.now(),
         data: users.map(user => ({ id: user.id, coins: user.coins })).filter(user => user.coins > 0)
       },
-      (_, value) => typeof value === 'bigint' ? value.toString() : value
+      (_, value) => typeof value === "bigint" ? value.toString() : value
     )
   )
   await client.redis.set(
-    'ranking:predictions',
+    "ranking:predictions",
     JSON.stringify(
       {
         updated_at: Date.now(),
@@ -24,7 +24,7 @@ const updateRanking = async() => {
     )
   )
   await client.redis.set(
-    'ranking:wins',
+    "ranking:wins",
     JSON.stringify(
       {
         updated_at: Date.now(),
@@ -34,10 +34,7 @@ const updateRanking = async() => {
   )
   setTimeout(updateRanking, 10 * 60 * 1000)
 }
-const keys = await client.redis.keys('match*')
-if(keys.length) {
-  await client.redis.del(keys)
-}
+await client.redis.flushDb()
 await updateRanking()
 await client.connect()
 server.listen({

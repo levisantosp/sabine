@@ -1,27 +1,27 @@
-import { calcPlayerOvr, calcPlayerPrice, getPlayer } from 'players'
-import { SabineUser } from '../../database/index.ts'
-import createCommand from '../../structures/command/createCommand.ts'
+import { calcPlayerOvr, calcPlayerPrice, getPlayer } from "players"
+import { SabineUser } from "../../database/index.ts"
+import createCommand from "../../structures/command/createCommand.ts"
 
 export default createCommand({
-  name: 'sell',
+  name: "sell",
   nameLocalizations: {
-    'pt-BR': 'vender'
+    "pt-BR": "vender"
   },
-  description: 'Sell a player',
+  description: "Sell a player",
   descriptionLocalizations: {
-    'pt-BR' : 'Venda um jogador'
+    "pt-BR" : "Venda um jogador"
   },
-  category: 'economy',
+  category: "economy",
   options: [
     {
       type: 3,
-      name: 'player',
+      name: "player",
       nameLocalizations: {
-        'pt-BR': 'jogador'
+        "pt-BR": "jogador"
       },
-      description: 'Select a player',
+      description: "Select a player",
       descriptionLocalizations: {
-        'pt-BR': 'Selecione um jogador'
+        "pt-BR": "Selecione um jogador"
       },
       autocomplete: true,
       required: true
@@ -32,11 +32,11 @@ export default createCommand({
     const player = getPlayer(Number(ctx.args[0]))
     const i = ctx.db.user.roster!.reserve.findIndex(p => p === ctx.args[0])
     if(!player || i === -1) {
-      return await ctx.reply('commands.sell.player_not_found')
+      return await ctx.reply("commands.sell.player_not_found")
     }
     const price = BigInt(calcPlayerPrice(player, true).toString())
     await ctx.db.user.sellPlayer(player.id.toString(), price, i)
-    await ctx.reply('commands.sell.sold', { p: player.name, price: price.toLocaleString('en-US') })
+    await ctx.reply("commands.sell.sold", { p: player.name, price: price.toLocaleString("en-US") })
   },
   async createAutocompleteInteraction({ i }) {
     const user = (await SabineUser.fetch(i.user.id))!

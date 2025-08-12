@@ -210,7 +210,10 @@
         "title": "Seleção de Agentes",
         "desc": "Vocês precisam selecionar os agentes que seus jogadores irão usar."
       },
-      "time": "Vocês têm 5 minutos para selecionar os agentes"
+      "time": "Vocês têm 5 minutos para selecionar os agentes",
+      "agent_selected": "**{p}** jogará de **{agent}**.",
+      "duplicated_agent": "Um jogador seu já está usando este agente.",
+      "starting_in": "Partida iniciando {time}"
     },
     "career": {
       "no_pages": "Nada pra mostrar aqui.",
@@ -330,7 +333,11 @@
     "no": "Não",
     "unknown_interaction": "Hum... parece que os dados dessa interação sumiram porque você demorou demais para usá-la... por favor, use o comando novamente!",
     "this_isnt_for_you": "Essa interação não é para você! Rode esse comando você mesmo!",
-    "reminder": "{user} Seu `/claim` está pronto!"
+    "reminder": "{user} Seu `/claim` está pronto!",
+    "controllers": "Controladores",
+    "duelists": "Duelistas",
+    "initiators": "Iniciadores",
+    "sentinels": "Sentinelas"
   },
   "permissions": {
     "CREATE_INSTANT_INVITE": "Criar convite instantâneo",

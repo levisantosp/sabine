@@ -1,56 +1,56 @@
-import { getPlayer } from 'players'
-import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
-import createCommand from '../../structures/command/createCommand.ts'
-import { ApplicationCommandOptionTypes } from 'oceanic.js'
-import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
+import { getPlayer } from "players"
+import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
+import createCommand from "../../structures/command/createCommand.ts"
+import { ApplicationCommandOptionTypes } from "oceanic.js"
+import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
 
 export default createCommand({
-  name: 'transactions',
+  name: "transactions",
   nameLocalizations: {
-    'pt-BR': 'transações'
+    "pt-BR": "transações"
   },
-  description: 'View your player transactions',
+  description: "View your player transactions",
   descriptionLocalizations: {
-    'pt-BR': 'Veja sua transação de jogadores'
+    "pt-BR": "Veja sua transação de jogadores"
   },
-  category: 'economy',
+  category: "economy",
   options: [
     {
       type: ApplicationCommandOptionTypes.INTEGER,
-      name: 'page',
+      name: "page",
       nameLocalizations: {
-        'pt-BR': 'página'
+        "pt-BR": "página"
       },
-      description: 'Provide a page',
+      description: "Provide a page",
       descriptionLocalizations: {
-        'pt-BR': 'Informe a página'
+        "pt-BR": "Informe a página"
       }
     }
   ],
   userInstall: true,
   messageComponentInteractionTime: 5 * 60 * 1000,
   async run({ ctx, t }) {
-    let page = Number(ctx.args[0]) || 1
+    const page = Number(ctx.args[0]) || 1
     let transactions = ctx.db.user.transactions.sort((a, b) => b.when - a.when)
     if(page === 1) {
       transactions = transactions.slice(0, 10)
     }
     else transactions = transactions.slice(page * 10 - 10, page * 10)
     if(!transactions.length) {
-      return await ctx.reply('commands.transactions.none_yet')
+      return await ctx.reply("commands.transactions.none_yet")
     }
     const embed = new EmbedBuilder()
-    .setTitle(t('commands.transactions.embed.title'))
+    .setTitle(t("commands.transactions.embed.title"))
     .setFooter({
       text: t(
-        'commands.transactions.embed.footer',
+        "commands.transactions.embed.footer",
         {
           page,
           pages: Math.ceil(ctx.db.user.transactions.length / 10)
         }
       )
     })
-    let description = ''
+    let description = ""
     for(const transaction of transactions) {
       const timestamp = (transaction.when / 1000).toFixed(0)
       const player = getPlayer(transaction.player)
@@ -58,12 +58,12 @@ export default createCommand({
     }
     embed.setDesc(description)
     const previous = new ButtonBuilder()
-    .setStyle('blue')
-    .setEmoji('1404176223621611572')
+    .setStyle("blue")
+    .setEmoji("1404176223621611572")
     .setCustomId(`transactions;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous`)
     const next = new ButtonBuilder()
-    .setStyle('blue')
-    .setEmoji('1404176291829121028')
+    .setStyle("blue")
+    .setEmoji("1404176291829121028")
     .setCustomId(`transactions;${ctx.interaction.user.id};${page + 1 > Math.ceil(ctx.db.user.transactions.length / 10) ? Math.ceil(ctx.db.user.transactions.length / 10) : page + 1};next`)
     if(page <= 1) previous.setDisabled()
     if(page >= Math.ceil(ctx.db.user.transactions.length / 10)) next.setDisabled()
@@ -78,24 +78,24 @@ export default createCommand({
   },
   async createMessageComponentInteraction({ ctx, t }) {
     ctx.setFlags(64)
-    let page = Number(ctx.args[2])
+    const page = Number(ctx.args[2])
     let transactions = ctx.db.user.transactions.sort((a, b) => b.when - a.when)
     transactions = transactions.slice(page * 10 - 10, page * 10)
     if(!transactions.length) {
-      return await ctx.reply('commands.transactions.none_yet')
+      return await ctx.reply("commands.transactions.none_yet")
     }
     const embed = new EmbedBuilder()
-    .setTitle(t('commands.transactions.embed.title'))
+    .setTitle(t("commands.transactions.embed.title"))
     .setFooter({
       text: t(
-        'commands.transactions.embed.footer',
+        "commands.transactions.embed.footer",
         {
           page,
           pages: Math.ceil(ctx.db.user.transactions.length / 10)
         }
       )
     })
-    let description = ''
+    let description = ""
     for(const transaction of transactions) {
       const timestamp = (transaction.when / 1000).toFixed(0)
       const player = getPlayer(transaction.player)
@@ -103,12 +103,12 @@ export default createCommand({
     }
     embed.setDesc(description)
     const previous = new ButtonBuilder()
-    .setStyle('blue')
-    .setEmoji('1404176223621611572')
+    .setStyle("blue")
+    .setEmoji("1404176223621611572")
     .setCustomId(`transactions;${ctx.interaction.user.id};${page - 1};previous`)
     const next = new ButtonBuilder()
-    .setStyle('blue')
-    .setEmoji('1404176291829121028')
+    .setStyle("blue")
+    .setEmoji("1404176291829121028")
     .setCustomId(`transactions;${ctx.interaction.user.id};${page + 1};next`)
     if(page <= 1) previous.setDisabled()
     if(page >= Math.ceil(ctx.db.user.transactions.length / 10)) next.setDisabled()

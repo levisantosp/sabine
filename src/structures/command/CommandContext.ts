@@ -1,9 +1,9 @@
-import * as Oceanic from 'oceanic.js'
-import App from '../client/App.ts'
-import locales from '../../locales/index.ts'
-import type { Args } from '../../locales/index.ts'
-import { SabineGuild, SabineUser } from '../../database/index.ts'
-import Logger from '../../util/Logger.ts'
+import * as Oceanic from "oceanic.js"
+import App from "../client/App.ts"
+import locales from "../../locales/index.ts"
+import type { Args } from "../../locales/index.ts"
+import { SabineGuild, SabineUser } from "../../database/index.ts"
+import Logger from "../../util/Logger.ts"
 
 type Database = {
   guild?: SabineGuild
@@ -34,7 +34,7 @@ export default class CommandContext {
   }
   public async reply(content: string | Oceanic.InteractionContent, options?: Args) {
     switch(typeof content) {
-    case 'string': {
+    case "string": {
       if(options?.files) {
         if(this.interaction.acknowledged) return await this.interaction.createFollowup(
           {
@@ -61,7 +61,7 @@ export default class CommandContext {
         ).catch(e => new Logger(this.client).error(e))
       }
     }
-    case 'object': {
+    case "object": {
       if(options?.files) {
         if(this.interaction.acknowledged) return await this.interaction.createFollowup(Object.assign(content, { files: options.files as Oceanic.File[] })).catch(e => new Logger(this.client).error(e))
         else return await this.interaction.createMessage(Object.assign(content, { files: options.files as Oceanic.File[] })).catch(e => new Logger(this.client).error(e))
@@ -76,7 +76,7 @@ export default class CommandContext {
   public async edit(content: string | Oceanic.EditInteractionContent, options?: Args) {
     if(this.interaction instanceof Oceanic.CommandInteraction) {
       switch(typeof content) {
-      case 'string': {
+      case "string": {
         if(options?.files) {
           if(this.interaction.acknowledged) return await this.interaction.editOriginal(
             {
@@ -86,7 +86,7 @@ export default class CommandContext {
             }
           ).catch(e => new Logger(this.client).error(e))
           else return await this.interaction.createMessage({
-            content: locales(this.locale, 'helper.interaction_failed'),
+            content: locales(this.locale, "helper.interaction_failed"),
             flags: 64
           }).catch(e => new Logger(this.client).error(e))
         }
@@ -98,12 +98,12 @@ export default class CommandContext {
             }
           ).catch(e => new Logger(this.client).error(e))
           else return await this.interaction.createMessage({
-            content: locales(this.locale, 'helper.interaction_failed'),
+            content: locales(this.locale, "helper.interaction_failed"),
             flags: 64
           }).catch(e => new Logger(this.client).error(e))
         }
       }
-      case 'object': {
+      case "object": {
         if(options?.files) {
           if(this.interaction.acknowledged) return await this.interaction.editOriginal(
               Object.assign(
@@ -115,7 +115,7 @@ export default class CommandContext {
               )
           )
           else return await this.interaction.createMessage({
-            content: locales(this.locale, 'helper.interaction_failed'),
+            content: locales(this.locale, "helper.interaction_failed"),
             flags: 64
           }).catch(e => new Logger(this.client).error(e))
         }
@@ -125,7 +125,7 @@ export default class CommandContext {
             components: []
           })
           else return await this.interaction.createMessage({
-            content: locales(this.locale, 'helper.interaction_failed'),
+            content: locales(this.locale, "helper.interaction_failed"),
             flags: 64
           }).catch(e => new Logger(this.client).error(e))
         }
@@ -134,7 +134,7 @@ export default class CommandContext {
     }
     else if(this.interaction instanceof Oceanic.ComponentInteraction) {
       switch(typeof content) {
-      case 'string': {
+      case "string": {
         if(options?.files) {
           if(this.interaction.acknowledged) return await this.interaction.editOriginal(
             {
@@ -144,7 +144,7 @@ export default class CommandContext {
             }
           ).catch(e => new Logger(this.client).error(e))
           else return await this.interaction.createMessage({
-            content: locales(this.locale, 'helper.interaction_failed'),
+            content: locales(this.locale, "helper.interaction_failed"),
             flags: 64
           }).catch(e => new Logger(this.client).error(e))
         }
@@ -156,16 +156,16 @@ export default class CommandContext {
             }
           ).catch(e => new Logger(this.client).error(e))
           else return await this.interaction.createMessage({
-            content: locales(this.locale, 'helper.interaction_failed'),
+            content: locales(this.locale, "helper.interaction_failed"),
             flags: 64
           }).catch(e => new Logger(this.client).error(e))
         }
       }
-      case 'object': {
+      case "object": {
         if(options?.files) {
           if(this.interaction.acknowledged) return await this.interaction.editOriginal(Object.assign(content, { files: options.files as Oceanic.File[] })).catch(e => new Logger(this.client).error(e))
           else return await this.interaction.createMessage({
-            content: locales(this.locale, 'helper.interaction_failed'),
+            content: locales(this.locale, "helper.interaction_failed"),
             flags: 64
           }).catch(e => new Logger(this.client).error(e))
         }
@@ -173,10 +173,10 @@ export default class CommandContext {
           if(this.interaction.acknowledged) return await this.interaction.editOriginal({
             ...content,
             components: !content.components ? [] : content.components,
-            content: !content.content ? '' : content.content
+            content: !content.content ? "" : content.content
           })
           else return await this.interaction.createMessage({
-            content: locales(this.locale, 'helper.interaction_failed'),
+            content: locales(this.locale, "helper.interaction_failed"),
             flags: 64
           }).catch(e => new Logger(this.client).error(e))
         }

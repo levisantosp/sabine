@@ -1,12 +1,12 @@
-import * as Oceanic from 'oceanic.js'
-import { readdirSync } from 'fs'
-import path from 'path'
-import type { Command } from '../command/createCommand.ts'
-import { fileURLToPath } from 'url'
-import { PrismaClient } from '@prisma/client'
-import Redis from 'redis'
-import Logger from '../../util/Logger.ts'
-import type { CreateInteractionOptions } from '../interactions/createComponentInteraction.ts'
+import * as Oceanic from "oceanic.js"
+import { readdirSync } from "fs"
+import path from "path"
+import type { Command } from "../command/createCommand.ts"
+import { fileURLToPath } from "url"
+import { PrismaClient } from "@prisma/client"
+import Redis from "redis"
+import Logger from "../../util/Logger.ts"
+import type { CreateInteractionOptions } from "../interactions/createComponentInteraction.ts"
 
 const prisma = new PrismaClient()
 const __filename = fileURLToPath(import.meta.url)
@@ -26,21 +26,21 @@ export default class App extends Oceanic.Client {
   }
   public override async connect() {
     const start = Date.now()
-    Logger.warn('Connecting to database...')
+    Logger.warn("Connecting to database...")
     await prisma.$connect()
     Logger.send(`Database connected in ${((Date.now() - start) / 1000).toFixed(1)}s!`)
-    for(const file of readdirSync(path.resolve(__dirname, '../../listeners'))) {
+    for(const file of readdirSync(path.resolve(__dirname, "../../listeners"))) {
       const listener = (await import(`../../listeners/${file}`)).default
-      if(listener.name === 'ready') this.once('ready', () => listener.run(this).catch((e: Error) => new Logger(this).error(e)))
+      if(listener.name === "ready") this.once("ready", () => listener.run(this).catch((e: Error) => new Logger(this).error(e)))
       else this.on(listener.name, (...args) => listener.run(this, ...args).catch((e: Error) => new Logger(this).error(e)))
     }
-    for(const folder of readdirSync(path.resolve(__dirname, '../../commands'))) {
+    for(const folder of readdirSync(path.resolve(__dirname, "../../commands"))) {
       for(const file of readdirSync(path.resolve(__dirname, `../../commands/${folder}`))) {
         const command = (await import(`../../commands/${folder}/${file}`)).default
         this.commands.set(command.name, command)
       }
     }
-    for(const file of readdirSync(path.resolve(__dirname, '../../interactions/commands'))) {
+    for(const file of readdirSync(path.resolve(__dirname, "../../interactions/commands"))) {
       const interaction = (await import(`../../interactions/commands/${file}`)).default
       this.interactions.set(interaction.name, interaction)
     }
@@ -77,11 +77,11 @@ export default class App extends Oceanic.Client {
   }
 }
 export const client = new App({
-  auth: 'Bot ' + process.env.BOT_TOKEN,
+  auth: "Bot " + process.env.BOT_TOKEN,
   gateway: {
-    intents: ['ALL'],
+    intents: ["ALL"],
     autoReconnect: true,
-    maxShards: 'auto'
+    maxShards: "auto"
   },
   allowedMentions: {
     everyone: false,
@@ -89,6 +89,6 @@ export const client = new App({
     repliedUser: true,
     roles: false
   },
-  defaultImageFormat: 'png',
+  defaultImageFormat: "png",
   defaultImageSize: 2048
 })

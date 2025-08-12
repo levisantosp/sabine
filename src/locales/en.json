@@ -210,7 +210,10 @@
         "title": "Agents Selection",
         "desc": "You need to select the agents your players will use."
       },
-      "time": "You have 5 minutes to select the agents"
+      "time": "You have 5 minutes to select the agents",
+      "agent_selected": "**{p}** will play as **{agent}**.",
+      "duplicated_agent": "One of your players is already using this agent.",
+      "starting_in": "Match starting {time}"
     },
     "career": {
       "no_pages": "Nothing to show in this page.",
@@ -330,7 +333,11 @@
     "no": "No",
     "unknown_interaction": "Hmm... looks like the data from this interaction is gone because you took too long to use it... please use the command again!",
     "this_isnt_for_you": "This interaction is not for you! Run this command yourself!",
-    "reminder": "{user} Your `/claim` is ready!"
+    "reminder": "{user} Your `/claim` is ready!",
+    "controllers": "Controllers",
+    "duelists": "Duelists",
+    "initiators": "Initiators",
+    "sentinels": "Sentinels"
   },
   "permissions": {
     "CREATE_INSTANT_INVITE": "Create Instant Invite",

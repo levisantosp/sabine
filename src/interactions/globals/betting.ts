@@ -1,8 +1,8 @@
-import createModalSubmitInteraction from '../structures/interactions/createModalSubmitInteraction.ts'
-import calcOdd from '../structures/util/calcOdd.ts'
+import createModalSubmitInteraction from "../structures/interactions/createModalSubmitInteraction.ts"
+import calcOdd from "../structures/util/calcOdd.ts"
 
 export default createModalSubmitInteraction({
-  name: 'betting',
+  name: "betting",
   flags: 64,
   async run({ ctx }) {
     const games = {
@@ -15,9 +15,9 @@ export default createModalSubmitInteraction({
           }
         })
         const value = BigInt(ctx.args[3])
-        if(isNaN(Number(value))) return await ctx.reply('helper.invalid_coins')
-        if(value < 500) return await ctx.reply('helper.min_value')
-        if(value > ctx.db.user.coins) return await ctx.reply('helper.too_much')
+        if(isNaN(Number(value))) return await ctx.reply("helper.invalid_coins")
+        if(value < 500) return await ctx.reply("helper.min_value")
+        if(value > ctx.db.user.coins) return await ctx.reply("helper.too_much")
         let oddA = 0
         let oddB = 0
         for(const u of users_vlr) {
@@ -43,10 +43,10 @@ export default createModalSubmitInteraction({
         await ctx.db.user.save()
         const winnerIndex = ctx.db.user.valorant_predictions[index].teams.findIndex(t => t.winner)
         await ctx.reply(
-          'helper.bet_res',
+          "helper.bet_res",
           {
             team: ctx.db.user.valorant_predictions[index].teams[winnerIndex].name,
-            coins: value.toLocaleString('en-US'),
+            coins: value.toLocaleString("en-US"),
             odd
           }
         )
@@ -60,9 +60,9 @@ export default createModalSubmitInteraction({
           }
         })
         const value = BigInt(ctx.args[0])
-        if(isNaN(Number(value))) return await ctx.reply('helper.invalid_coins')
-        if(value < 500) return await ctx.reply('helper.min_value')
-        if(value > ctx.db.user.coins) return await ctx.reply('helper.too_much')
+        if(isNaN(Number(value))) return await ctx.reply("helper.invalid_coins")
+        if(value < 500) return await ctx.reply("helper.min_value")
+        if(value > ctx.db.user.coins) return await ctx.reply("helper.too_much")
         let oddA = 0
         let oddB = 0
         for(const u of users_lol) {
@@ -88,10 +88,10 @@ export default createModalSubmitInteraction({
         await ctx.db.user.save()
         const winnerIndex = ctx.db.user.lol_predictions.map(p => p.teams.findIndex(t => t.winner)).join()
         await ctx.reply(
-          'helper.bet_res',
+          "helper.bet_res",
           {
             team: ctx.db.user.lol_predictions[index].teams[Number(winnerIndex)].name,
-            coins: value.toLocaleString('en-US'),
+            coins: value.toLocaleString("en-US"),
             odd
           }
         )

@@ -1,7 +1,7 @@
-import type { EditInteractionContent, File, Guild, InteractionContent, ModalSubmitInteraction } from 'oceanic.js'
-import App from '../client/App.ts'
-import locales, { type Args } from '../../locales/index.ts'
-import { SabineGuild, SabineUser } from '../../database/index.ts'
+import type { EditInteractionContent, File, Guild, InteractionContent, ModalSubmitInteraction } from "oceanic.js"
+import App from "../client/App.ts"
+import locales, { type Args } from "../../locales/index.ts"
+import { SabineGuild, SabineUser } from "../../database/index.ts"
 
 type Database = {
   guild?: SabineGuild
@@ -37,7 +37,7 @@ export default class ModalSubmitInteractionContext {
   }
   public async reply(content: string | InteractionContent, options?: Args) {
     switch(typeof content) {
-    case 'string': {
+    case "string": {
       if(options?.files) {
         if(this.interaction.acknowledged) return await this.interaction.createFollowup(
           {
@@ -69,7 +69,7 @@ export default class ModalSubmitInteractionContext {
         )
       }
     }
-    case 'object': {
+    case "object": {
       if(options?.files) {
         if(this.interaction.acknowledged) return await this.interaction.createFollowup(
             Object.assign(
@@ -99,7 +99,7 @@ export default class ModalSubmitInteractionContext {
   }
   public async edit(content: string | EditInteractionContent, options?: Args) {
     switch(typeof content) {
-    case 'string': {
+    case "string": {
       if(options?.files) {
         if(this.interaction.acknowledged) return await this.interaction.createFollowup(
           {
@@ -127,7 +127,7 @@ export default class ModalSubmitInteractionContext {
         )
       }
     }
-    case 'object': {
+    case "object": {
       if(options?.files) {
         if(this.interaction.acknowledged) return await this.interaction.editOriginal(
             Object.assign(

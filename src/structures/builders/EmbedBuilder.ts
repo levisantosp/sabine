@@ -1,4 +1,4 @@
-import * as Oceanic from 'oceanic.js'
+import * as Oceanic from "oceanic.js"
 
 export default class EmbedBuilder {
   public author?: Oceanic.EmbedAuthorOptions
@@ -65,9 +65,9 @@ export default class EmbedBuilder {
     return this
   }
   public build(content?: string | Oceanic.InteractionContent) {
-    if(typeof content === 'string' || !content) {
+    if(typeof content === "string" || !content) {
       return {
-        content: content ?? '',
+        content: content ?? "",
         embeds: [this],
         components: []
       }

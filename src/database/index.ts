@@ -1,8 +1,8 @@
-import * as Oceanic from 'oceanic.js'
-import EmbedBuilder from '../structures/builders/EmbedBuilder.ts'
-import { client } from '../structures/client/App.ts'
-import { $Enums, type guilds, Prisma, PrismaClient, type users } from '@prisma/client'
-import { calcPlayerOvr, getPlayer } from 'players'
+import * as Oceanic from "oceanic.js"
+import EmbedBuilder from "../structures/builders/EmbedBuilder.ts"
+import { client } from "../structures/client/App.ts"
+import { $Enums, type guilds, Prisma, PrismaClient, type users } from "@prisma/client"
+import { calcPlayerOvr, getPlayer } from "players"
 
 const prisma = new PrismaClient()
 type PredictionTeam = {
@@ -13,7 +13,7 @@ type PredictionTeam = {
 type Prediction = {
   match: string
   teams: PredictionTeam[]
-  status: 'pending' | 'correct' | 'wrong'
+  status: "pending" | "correct" | "wrong"
   bet: bigint | null
   odd: number | null
 }
@@ -23,7 +23,7 @@ export class SabineUser implements users {
   public lol_predictions: ({ match: string; status: $Enums.PredictionStatus; bet: bigint | null; odd: number | null; when: number; } & { teams: { name: string; score: string; winner: boolean | null; }[]; })[] = []
   public correct_predictions: number = 0
   public wrong_predictions: number = 0
-  public lang: $Enums.Language = 'en'
+  public lang: $Enums.Language = "en"
   public plan: { type: $Enums.PremiumType; expiresAt: number; } | null = null
   public warned: boolean | null = null
   public roster: { active: string[]; reserve: string[]; } | null = { active: [], reserve: [] }
@@ -40,7 +40,7 @@ export class SabineUser implements users {
   public rank_rating: number = 0
   public fates: number = 0
   public transactions: { type: $Enums.TransactionType; player: string; when: number; price: bigint | null; user: string | null; }[] = []
-  public elo: $Enums.Elo = 'UNRANKED'
+  public elo: $Enums.Elo = "UNRANKED"
   public elo_rating: number = 50
   public remind: boolean = false
   public remindIn: string | null = null
@@ -68,7 +68,7 @@ export class SabineUser implements users {
   public async save() {
     const data: Partial<users> = {}
     for(const key in this) {
-      if(typeof this[key] === 'function' || key === 'id') continue
+      if(typeof this[key] === "function" || key === "id") continue
       (data as any)[key] = this[key]
     }
     return await prisma.users.upsert({
@@ -90,9 +90,9 @@ export class SabineUser implements users {
     }
     return user
   }
-  public async addPrediction(game: 'valorant' | 'lol', prediction: Prediction) {
+  public async addPrediction(game: "valorant" | "lol", prediction: Prediction) {
     const user = await this.fetch(this.id) ?? this
-    if(game === 'valorant') {
+    if(game === "valorant") {
       user.valorant_predictions.push(
         {
           ...prediction,
@@ -102,7 +102,7 @@ export class SabineUser implements users {
       await user.save()
       return user
     }
-    if(game === 'lol') {
+    if(game === "lol") {
       this.lol_predictions.push(
         {
           ...prediction,
@@ -113,17 +113,17 @@ export class SabineUser implements users {
       const channel = client.getChannel(process.env.USERS_LOG) as Oceanic.TextChannel
       const u = client.users.get(this.id)
       const embed = new EmbedBuilder()
-        .setTitle('New register')
+        .setTitle("New register")
         .setDesc(`User: ${u?.mention} (${this.id})`)
         .setFields(
           {
-            name: 'NEW_PREDICTION',
+            name: "NEW_PREDICTION",
             value: `\`\`\`js\n${JSON.stringify(prediction, null, 2)}\`\`\``
           }
         )
       const webhooks = await channel.getWebhooks()
-      let webhook = webhooks.filter(w => w.name === client.user.username + ' Logger')[0]
-      if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + ' Logger' })
+      let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
+      if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
       await webhook.execute({
         avatarURL: client.user.avatarURL(),
         embeds: [embed]
@@ -131,27 +131,27 @@ export class SabineUser implements users {
       return user
     }
   }
-  public async addCorrectPrediction(game: 'valorant' | 'lol', predictionId: string) {
+  public async addCorrectPrediction(game: "valorant" | "lol", predictionId: string) {
     const user = await this.fetch(this.id) ?? this
-    if(game === 'valorant') {
+    if(game === "valorant") {
       const index = user.valorant_predictions.findIndex(p => p.match === predictionId)
-      user.valorant_predictions[index].status = 'correct'
+      user.valorant_predictions[index].status = "correct"
       user.correct_predictions += 1
       await user.save()
       const channel = client.getChannel(process.env.USERS_LOG) as Oceanic.TextChannel
       const u = client.users.get(user.id)
       const embed = new EmbedBuilder()
-        .setTitle('New register')
+        .setTitle("New register")
         .setDesc(`User: ${u?.mention} (${user.id})`)
         .setFields(
           {
-            name: 'CORRECT_PREDICTION',
+            name: "CORRECT_PREDICTION",
             value: predictionId
           }
         )
       const webhooks = await channel.getWebhooks()
-      let webhook = webhooks.filter(w => w.name === client.user.username + ' Logger')[0]
-      if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + ' Logger' })
+      let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
+      if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
       await webhook.execute({
         avatarURL: client.user.avatarURL(),
         embeds: [embed]
@@ -159,23 +159,23 @@ export class SabineUser implements users {
     }
     else {
       const index = user.lol_predictions.findIndex(p => p.match === predictionId)
-      user.lol_predictions[index].status = 'correct'
+      user.lol_predictions[index].status = "correct"
       user.correct_predictions += 1
       await user.save()
       const channel = client.getChannel(process.env.USERS_LOG) as Oceanic.TextChannel
       const u = client.users.get(user.id)
       const embed = new EmbedBuilder()
-        .setTitle('New register')
+        .setTitle("New register")
         .setDesc(`User: ${u?.mention} (${user.id})`)
         .setFields(
           {
-            name: 'CORRECT_PREDICTION',
+            name: "CORRECT_PREDICTION",
             value: predictionId
           }
         )
       const webhooks = await channel.getWebhooks()
-      let webhook = webhooks.filter(w => w.name === client.user.username + ' Logger')[0]
-      if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + ' Logger' })
+      let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
+      if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
       await webhook.execute({
         avatarURL: client.user.avatarURL(),
         embeds: [embed]
@@ -183,27 +183,27 @@ export class SabineUser implements users {
     }
     return user
   }
-  public async addWrongPrediction(game: 'valorant' | 'lol', predictionId: string) {
+  public async addWrongPrediction(game: "valorant" | "lol", predictionId: string) {
     const user = await this.fetch(this.id) ?? this
-    if(game === 'valorant') {
+    if(game === "valorant") {
       const index = user.valorant_predictions.findIndex(p => p.match === predictionId)
-      user.valorant_predictions[index].status = 'wrong'
+      user.valorant_predictions[index].status = "wrong"
       user.wrong_predictions += 1
       await user.save()
       const channel = client.getChannel(process.env.USERS_LOG) as Oceanic.TextChannel
       const u = client.users.get(user.id)
       const embed = new EmbedBuilder()
-        .setTitle('New register')
+        .setTitle("New register")
         .setDesc(`User: ${u?.mention} (${user.id})`)
         .setFields(
           {
-            name: 'WRONG_PREDICTION',
+            name: "WRONG_PREDICTION",
             value: predictionId
           }
         )
       const webhooks = await channel.getWebhooks()
-      let webhook = webhooks.filter(w => w.name === client.user.username + ' Logger')[0]
-      if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + ' Logger' })
+      let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
+      if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
       await webhook.execute({
         avatarURL: client.user.avatarURL(),
         embeds: [embed]
@@ -211,23 +211,23 @@ export class SabineUser implements users {
     }
     else {
       const index = user.lol_predictions.findIndex(p => p.match === predictionId)
-      user.lol_predictions[index].status = 'wrong'
+      user.lol_predictions[index].status = "wrong"
       user.wrong_predictions += 1
       await user.save()
       const channel = client.getChannel(process.env.USERS_LOG) as Oceanic.TextChannel
       const u = client.users.get(user.id)
       const embed = new EmbedBuilder()
-        .setTitle('New register')
+        .setTitle("New register")
         .setDesc(`User: ${u?.mention} (${user.id})`)
         .setFields(
           {
-            name: 'WRONG_PREDICTION',
+            name: "WRONG_PREDICTION",
             value: predictionId
           }
         )
       const webhooks = await channel.getWebhooks()
-      let webhook = webhooks.filter(w => w.name === client.user.username + ' Logger')[0]
-      if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + ' Logger' })
+      let webhook = webhooks.filter(w => w.name === client.user.username + " Logger")[0]
+      if(!webhook) webhook = await channel.createWebhook({ name: client.user.username + " Logger" })
       await webhook.execute({
         avatarURL: client.user.avatarURL(),
         embeds: [embed]
@@ -235,10 +235,10 @@ export class SabineUser implements users {
     }
     return user
   }
-  public async addPlayerToRoster(player: string, method: 'CLAIM_PLAYER_BY_CLAIM_COMMAND' | 'CLAIM_PLAYER_BY_COMMAND' = 'CLAIM_PLAYER_BY_CLAIM_COMMAND', channel?: string) {
+  public async addPlayerToRoster(player: string, method: "CLAIM_PLAYER_BY_CLAIM_COMMAND" | "CLAIM_PLAYER_BY_COMMAND" = "CLAIM_PLAYER_BY_CLAIM_COMMAND", channel?: string) {
     const user = await this.fetch(this.id) ?? this
     user.roster!.reserve.push(player)
-    if(method === 'CLAIM_PLAYER_BY_CLAIM_COMMAND') {
+    if(method === "CLAIM_PLAYER_BY_CLAIM_COMMAND") {
       user.claim_time = Date.now() + 600000
     }
     user.pity += 1
@@ -265,7 +265,7 @@ export class SabineUser implements users {
     user.roster!.reserve.splice(i, 1)
     user.coins += price
     user.transactions.push({
-      type: 'SELL_PLAYER',
+      type: "SELL_PLAYER",
       player: id,
       when: Date.now(),
       price,
@@ -277,7 +277,7 @@ export class SabineUser implements users {
 }
 export class SabineGuild implements guilds {
   public id: string
-  public lang: $Enums.Language = 'en'
+  public lang: $Enums.Language = "en"
   public valorant_events: { name: string; channel1: string; channel2: string; }[] = []
   public valorant_resend_time: number = 0
   public valorant_matches: string[] = []
@@ -302,7 +302,7 @@ export class SabineGuild implements guilds {
   public async save() {
     const data: Partial<guilds> = {}
     for(const key in this) {
-      if(typeof this[key] === 'function' || key === 'id') continue
+      if(typeof this[key] === "function" || key === "id") continue
       (data as any)[key] = this[key]
     }
     return await prisma.guilds.upsert({

@@ -1,7 +1,7 @@
-import { calcPlayerOvr, calcPlayerPrice, getPlayer, getPlayers, type Player } from 'players'
-import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
-import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
-import createCommand from '../../structures/command/createCommand.ts'
+import { calcPlayerOvr, calcPlayerPrice, getPlayer, getPlayers, type Player } from "players"
+import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
+import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
+import createCommand from "../../structures/command/createCommand.ts"
 
 const players = getPlayers()
 const tier = (() => {
@@ -45,14 +45,14 @@ const getRandomPlayerByTier = (t: string) => {
 const users: {[key: string]: number} = {}
 const date = Date.now()
 export default createCommand({
-  name: 'claim',
-  category: 'economy',
+  name: "claim",
+  category: "economy",
   nameLocalizations: {
-    'pt-BR': 'obter'
+    "pt-BR": "obter"
   },
-  description: 'Claim a random player',
+  description: "Claim a random player",
   descriptionLocalizations: {
-    'pt-BR': 'Obtenha um jogador aleatório'
+    "pt-BR": "Obtenha um jogador aleatório"
   },
   userInstall: true,
   isThiking: true,
@@ -60,15 +60,15 @@ export default createCommand({
   async run({ ctx, t }) {
     if(ctx.db.user.claim_time > Date.now()) {
       delete users[ctx.interaction.user.id]
-      return await ctx.reply('commands.claim.has_been_claimed', { t: `<t:${((ctx.db.user.claim_time) / 1000).toFixed(0)}:R>` })
+      return await ctx.reply("commands.claim.has_been_claimed", { t: `<t:${((ctx.db.user.claim_time) / 1000).toFixed(0)}:R>` })
     }
     else if(users[ctx.interaction.user.id] && users[ctx.interaction.user.id] > Date.now()) {
-      return await ctx.reply('commands.claim.has_been_claimed', { t: `<t:${((users[ctx.interaction.user.id]) / 1000).toFixed(0)}:R>` })
+      return await ctx.reply("commands.claim.has_been_claimed", { t: `<t:${((users[ctx.interaction.user.id]) / 1000).toFixed(0)}:R>` })
     }
     users[ctx.interaction.user.id] = Date.now() + 600000
     let player: Player
     if(ctx.db.user.pity >= 99) {
-      player = getRandomPlayerByTier('s')
+      player = getRandomPlayerByTier("s")
     }
     else player = getRandomPlayerByOvr()
     const ovr = calcPlayerOvr(player)
@@ -82,15 +82,15 @@ export default createCommand({
     if(ctx.interaction.channel && ctx.db.user.remind) {
       channel = ctx.interaction.channel?.id
     }
-    await ctx.db.user.addPlayerToRoster(player.id.toString(), 'CLAIM_PLAYER_BY_CLAIM_COMMAND', channel)
+    await ctx.db.user.addPlayerToRoster(player.id.toString(), "CLAIM_PLAYER_BY_CLAIM_COMMAND", channel)
     const embed = new EmbedBuilder()
     .setTitle(player.name)
     .setDesc(
       t(
-        'commands.claim.claimed',
+        "commands.claim.claimed",
         {
           player: player.name,
-          price: price.toLocaleString('en-US')
+          price: price.toLocaleString("en-US")
         }
       )
     )
@@ -101,12 +101,12 @@ export default createCommand({
           type: 1,
           components: [
             new ButtonBuilder()
-            .setStyle('green')
-            .setLabel(t('commands.claim.promote'))
+            .setStyle("green")
+            .setLabel(t("commands.claim.promote"))
             .setCustomId(`claim;${ctx.interaction.user.id};promote;${player.id}`),
             new ButtonBuilder()
-            .setStyle('red')
-            .setLabel(t('commands.claim.sell'))
+            .setStyle("red")
+            .setLabel(t("commands.claim.sell"))
             .setCustomId(`claim;${ctx.interaction.user.id};sell;${player.id}`)
           ]
         }
@@ -116,10 +116,10 @@ export default createCommand({
   async createMessageComponentInteraction({ ctx }) {
     ctx.setFlags(64)
     if(!ctx.db.user.roster?.reserve.includes(ctx.args[3])) {
-      return await ctx.reply('commands.sell.player_not_found')
+      return await ctx.reply("commands.sell.player_not_found")
     }
     const i = ctx.db.user.roster?.reserve.findIndex(p => p === ctx.args[3])
-    if(ctx.args[2] === 'promote') {
+    if(ctx.args[2] === "promote") {
       if(ctx.db.user.roster.active.length >= 5 ) {
         ctx.db.user.roster.reserve.push(ctx.db.user.roster.active.at(-1)!)
         ctx.db.user.roster.active.splice(-1, 1)
@@ -127,14 +127,14 @@ export default createCommand({
       ctx.db.user.roster.active.push(ctx.args[3])
       ctx.db.user.roster.reserve.splice(i, 1)
       await ctx.db.user.save()
-      await ctx.reply('commands.promote.player_promoted', { p: players.find(p => p.id.toString() === ctx.args[3])?.name })
+      await ctx.reply("commands.promote.player_promoted", { p: players.find(p => p.id.toString() === ctx.args[3])?.name })
     }
-    else if(ctx.args[2] === 'sell') {
+    else if(ctx.args[2] === "sell") {
       const player = getPlayer(Number(ctx.args[3]))
       if(!player) return
       const price = BigInt(calcPlayerPrice(player, true).toString())
       await ctx.db.user.sellPlayer(player.id.toString(), price, i)
-      await ctx.reply('commands.sell.sold', { p: player.name, price: price.toLocaleString('en-US') })
+      await ctx.reply("commands.sell.sold", { p: player.name, price: price.toLocaleString("en-US") })
     }
   }
 })

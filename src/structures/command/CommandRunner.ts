@@ -1,17 +1,17 @@
-import type { CommandInteraction, Guild, TextChannel } from 'oceanic.js'
-import App, { client } from '../client/App.ts'
-import CommandContext from './CommandContext.ts'
-import locales, { type Args } from '../../locales/index.ts'
-import ButtonBuilder from '../builders/ButtonBuilder.ts'
-import EmbedBuilder from '../builders/EmbedBuilder.ts'
-import { SabineGuild, SabineUser } from '../../database/index.ts'
-import { resolve } from 'node:path'
-import { readFileSync } from 'node:fs'
-import Logger from '../../util/Logger.ts'
+import type { CommandInteraction, Guild, TextChannel } from "oceanic.js"
+import App, { client } from "../client/App.ts"
+import CommandContext from "./CommandContext.ts"
+import locales, { type Args } from "../../locales/index.ts"
+import ButtonBuilder from "../builders/ButtonBuilder.ts"
+import EmbedBuilder from "../builders/EmbedBuilder.ts"
+import { SabineGuild, SabineUser } from "../../database/index.ts"
+import { resolve } from "node:path"
+import { readFileSync } from "node:fs"
+import Logger from "../../util/Logger.ts"
 
 const locale: {[key: string]: string} = {
-  pt: 'br',
-  en: 'us'
+  pt: "br",
+  en: "us"
 }
 const blacklist = await (async() => {
   return (await client.prisma.blacklists.findFirst())!
@@ -38,7 +38,7 @@ export default class CommandRunner {
     }
     if(ban) {
       return await interaction.createMessage({
-        content: locales(guild?.lang ?? 'en', 'helper.banned', {
+        content: locales(guild?.lang ?? "en", "helper.banned", {
           reason: ban.reason,
           ends: ban.endsAt === Infinity ? Infinity : `<t:${ban.endsAt}:F> | <t:${ban.endsAt}:R>`,
           when: `<t:${ban.when}:F> | <t:${ban.when}:R>`
@@ -49,9 +49,9 @@ export default class CommandRunner {
             type: 1,
             components: [
               new ButtonBuilder()
-                .setStyle('link')
-                .setLabel(locales(guild?.lang ?? 'en', 'commands.help.community'))
-                .setURL('https://discord.gg/g5nmc376yh')
+                .setStyle("link")
+                .setLabel(locales(guild?.lang ?? "en", "commands.help.community"))
+                .setURL("https://discord.gg/g5nmc376yh")
             ]
           }
         ]
@@ -64,7 +64,7 @@ export default class CommandRunner {
     const ctx = new CommandContext({
       client,
       interaction,
-      locale: user.lang ?? guild?.lang ?? 'en',
+      locale: user.lang ?? guild?.lang ?? "en",
       guild: g,
       args,
       db: {
@@ -73,15 +73,15 @@ export default class CommandRunner {
       }
     })
     const path = resolve(`src/locales/${ctx.locale}.json`)
-    const raw = readFileSync(path, 'utf-8')
+    const raw = readFileSync(path, "utf-8")
     const { permissions } = JSON.parse(raw)
     if(command.permissions) {
       const perms: string[] = []
       for(const perm of command.permissions) {
         if(!interaction.member?.permissions.has(perm)) perms.push(perm)
       }
-      if(perms[0]) return await ctx.reply('helper.permissions.user', {
-        permissions: perms.map(p => `\`${permissions[p]}\``).join(', ')
+      if(perms[0]) return await ctx.reply("helper.permissions.user", {
+        permissions: perms.map(p => `\`${permissions[p]}\``).join(", ")
       })
     }
     if(command.botPermissions && guild) {
@@ -90,8 +90,8 @@ export default class CommandRunner {
       for(const perm of command.botPermissions) {
         if(!member?.permissions.has(perm as any)) perms.push(perm)
       }
-      if(perms[0]) return await ctx.reply('helper.permissions.bot', {
-        permissions: perms.map(p => `\`${permissions[p]}\``).join(', ')
+      if(perms[0]) return await ctx.reply("helper.permissions.bot", {
+        permissions: perms.map(p => `\`${permissions[p]}\``).join(", ")
       })
     }
     if(command.ephemeral) {
@@ -101,14 +101,14 @@ export default class CommandRunner {
       await interaction.defer()
     }
     const t = (content: string, args?: Args) => {
-      return locales(user.lang ?? guild?.lang ?? 'en', content, args)
+      return locales(user.lang ?? guild?.lang ?? "en", content, args)
     }
     if(user.warn) {
       const button = new ButtonBuilder()
-      .setLabel(t('helper.dont_show_again'))
-      .setStyle('red')
-      .setCustomId('dontshowagain')
-      .build(t('helper.warn', {
+      .setLabel(t("helper.dont_show_again"))
+      .setStyle("red")
+      .setCustomId("dontshowagain")
+      .build(t("helper.warn", {
         link: `https://sabinebot.xyz/${locale[ctx.locale]}/changelog/v${updates[0].id}`
       }))
       await ctx.reply(button)
@@ -116,17 +116,17 @@ export default class CommandRunner {
     command.run({ ctx, client, t, id: interaction.data.id })
       .then(async() => {
         if(process.env.DEVS.includes(interaction.user.id)) return
-        const cmd = (ctx.interaction as CommandInteraction).data.options.getSubCommand() ? `${command.name} ${(ctx.interaction as CommandInteraction).data.options.getSubCommand()?.join(' ')}` : command.name
+        const cmd = (ctx.interaction as CommandInteraction).data.options.getSubCommand() ? `${command.name} ${(ctx.interaction as CommandInteraction).data.options.getSubCommand()?.join(" ")}` : command.name
         const embed = new EmbedBuilder()
           .setAuthor({
             name: ctx.interaction.user.username,
             iconURL: ctx.interaction.user.avatarURL()
           })
-          .setTitle('New slash command executed')
+          .setTitle("New slash command executed")
           .setDesc(`The command \`${cmd}\` has been executed in \`${ctx.guild?.name}\``)
-          .addField('Server ID', `\`${ctx.guild?.id}\``)
-          .addField('Owner', `\`${ctx.guild?.owner?.username}\` (\`${ctx.guild?.ownerID}\`)`)
-          .addField('Command author', `\`${ctx.interaction.user.username}\``)
+          .addField("Server ID", `\`${ctx.guild?.id}\``)
+          .addField("Owner", `\`${ctx.guild?.owner?.username}\` (\`${ctx.guild?.ownerID}\`)`)
+          .addField("Command author", `\`${ctx.interaction.user.username}\``)
         if(ctx.guild) {
           embed.setThumb(ctx.guild.iconURL()!)
         }
@@ -141,7 +141,7 @@ export default class CommandRunner {
       })
       .catch(async e => {
         await new Logger(client).error(e)
-        await ctx.reply('helper.error', { e })
+        await ctx.reply("helper.error", { e })
       })
   }
 }

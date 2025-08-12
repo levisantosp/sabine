@@ -1,27 +1,27 @@
-import { calcPlayerOvr, getPlayer } from 'players'
-import { SabineUser } from '../../database/index.ts'
-import createCommand from '../../structures/command/createCommand.ts'
+import { calcPlayerOvr, getPlayer } from "players"
+import { SabineUser } from "../../database/index.ts"
+import createCommand from "../../structures/command/createCommand.ts"
 
 export default createCommand({
-  name: 'remove',
+  name: "remove",
   nameLocalizations: {
-    'pt-BR': 'remover'
+    "pt-BR": "remover"
   },
-  description: 'Remove a player from active roster!',
+  description: "Remove a player from active roster!",
   descriptionLocalizations: {
-    'pt-BR': 'Remova um jogador do elenco principal'
+    "pt-BR": "Remova um jogador do elenco principal"
   },
-  category: 'economy',
+  category: "economy",
   options: [
     {
       type: 3,
-      name: 'player',
+      name: "player",
       nameLocalizations: {
-        'pt-BR': 'jogador'
+        "pt-BR": "jogador"
       },
-      description: 'Select a player',
+      description: "Select a player",
       descriptionLocalizations: {
-        'pt-BR': 'Selecione um jogador'
+        "pt-BR": "Selecione um jogador"
       },
       autocomplete: true,
       required: true
@@ -31,13 +31,13 @@ export default createCommand({
   async run({ ctx }) {
     const p = getPlayer(Number(ctx.args[0]))
     if(!ctx.db.user.roster!.active.includes(ctx.args[0].toString()) || !p) {
-      return ctx.reply('commands.remove.player_not_found')
+      return ctx.reply("commands.remove.player_not_found")
     }
     const i = ctx.db.user.roster!.active.findIndex(pl => pl === p.id.toString())
     ctx.db.user.roster!.reserve.push(p.id.toString())
     ctx.db.user.roster!.active.splice(i, 1)
     await ctx.db.user.save()
-    return await ctx.reply('commands.remove.player_removed', { p: p.name })
+    return await ctx.reply("commands.remove.player_removed", { p: p.name })
   },
   async createAutocompleteInteraction({ i }) {
     const user = (await SabineUser.fetch(i.user.id))!

@@ -1,20 +1,20 @@
-import { Type, type TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
-import type { FastifyBaseLogger, RawServerDefault, FastifyInstance } from 'fastify'
-import type { IncomingMessage, ServerResponse } from 'http'
-import { TextChannel } from 'oceanic.js'
-import { client } from '../../../structures/client/App.ts'
-import { emojis } from '../../../util/emojis.ts'
-import EmbedBuilder from '../../../structures/builders/EmbedBuilder.ts'
-import locales from '../../../locales/index.ts'
-import ButtonBuilder from '../../../structures/builders/ButtonBuilder.ts'
-import { PrismaClient } from '@prisma/client'
+import { Type, type TypeBoxTypeProvider } from "@fastify/type-provider-typebox"
+import type { FastifyBaseLogger, RawServerDefault, FastifyInstance } from "fastify"
+import type { IncomingMessage, ServerResponse } from "http"
+import { TextChannel } from "oceanic.js"
+import { client } from "../../../structures/client/App.ts"
+import { emojis } from "../../../util/emojis.ts"
+import EmbedBuilder from "../../../structures/builders/EmbedBuilder.ts"
+import locales from "../../../locales/index.ts"
+import ButtonBuilder from "../../../structures/builders/ButtonBuilder.ts"
+import { PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
 export default async function(
   fastify: FastifyInstance<RawServerDefault, IncomingMessage, ServerResponse<IncomingMessage>, FastifyBaseLogger, TypeBoxTypeProvider>
 ) {
-  fastify.post('/webhooks/live/lol', {
+  fastify.post("/webhooks/live/lol", {
     schema: {
       body: Type.Array(
         Type.Object({
@@ -57,7 +57,7 @@ export default async function(
     if(!guilds.length) return
     for(const data of req.body) {
       for(const guild of guilds) {
-        if(!guild.partner && !['PREMIUM'].some(x => x === guild.key?.type)) continue
+        if(!guild.partner && !["PREMIUM"].some(x => x === guild.key?.type)) continue
         const channel = client.getChannel(guild.lol_livefeed_channel!) as TextChannel
         if(!channel) continue
         if(!guild.lol_events.some(e => e.name === data.tournament.name)) continue
@@ -68,15 +68,15 @@ export default async function(
             name: data.tournament.full_name,
             iconURL: data.tournament.image
           })
-          .setTitle(locales(guild.lang ?? 'en', 'helper.live_now'))
+          .setTitle(locales(guild.lang ?? "en", "helper.live_now"))
           .setField(
             `${emoji1} ${data.teams[0].name} \`${data.teams[0].score}\` <:versus:1349105624180330516> \`${data.teams[1].score}\` ${data.teams[1].name} ${emoji2}`,
-            ''
+            ""
           )
         if(data.stage) embed.setFooter({ text: data.stage })
         const button = new ButtonBuilder()
-          .setStyle('blue')
-          .setLabel(locales(guild.lang ?? 'en', 'helper.streams'))
+          .setStyle("blue")
+          .setLabel(locales(guild.lang ?? "en", "helper.streams"))
           .setCustomId(`stream;lol;${data.id}`)
         await channel.createMessage(embed.build(button.build()))
       }

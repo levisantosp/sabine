@@ -1,22 +1,22 @@
-import { Type, type TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
-import type { FastifyBaseLogger, FastifyInstance, RawServerDefault } from 'fastify'
-import calcOdd from '../../../util/calcOdd.ts'
-import ButtonBuilder from '../../../structures/builders/ButtonBuilder.ts'
-import locales from '../../../locales/index.ts'
-import EmbedBuilder from '../../../structures/builders/EmbedBuilder.ts'
-import { emojis } from '../../../util/emojis.ts'
-import { client } from '../../../structures/client/App.ts'
-import type { ResultsData } from '../../../types.ts'
-import type { IncomingMessage, ServerResponse } from 'http'
-import { PrismaClient } from '@prisma/client'
-import { SabineUser } from '../../../database/index.ts'
+import { Type, type TypeBoxTypeProvider } from "@fastify/type-provider-typebox"
+import type { FastifyBaseLogger, FastifyInstance, RawServerDefault } from "fastify"
+import calcOdd from "../../../util/calcOdd.ts"
+import ButtonBuilder from "../../../structures/builders/ButtonBuilder.ts"
+import locales from "../../../locales/index.ts"
+import EmbedBuilder from "../../../structures/builders/EmbedBuilder.ts"
+import { emojis } from "../../../util/emojis.ts"
+import { client } from "../../../structures/client/App.ts"
+import type { ResultsData } from "../../../types.ts"
+import type { IncomingMessage, ServerResponse } from "http"
+import { PrismaClient } from "@prisma/client"
+import { SabineUser } from "../../../database/index.ts"
 
 const prisma = new PrismaClient()
 
 export default async function(
   fastify: FastifyInstance<RawServerDefault, IncomingMessage, ServerResponse<IncomingMessage>, FastifyBaseLogger, TypeBoxTypeProvider>
 ) {
-  fastify.post('/webhooks/results/valorant', {
+  fastify.post("/webhooks/results/valorant", {
     schema: {
       body: Type.Array(
         Type.Object(
@@ -91,13 +91,13 @@ export default async function(
                   type: 1,
                   components: [
                     new ButtonBuilder()
-                      .setLabel(locales(guild.lang ?? 'en', 'helper.stats'))
-                      .setStyle('link')
+                      .setLabel(locales(guild.lang ?? "en", "helper.stats"))
+                      .setStyle("link")
                       .setURL(`https://vlr.gg/${d.id}`),
                     new ButtonBuilder()
-                      .setLabel(locales(guild.lang ?? 'en', 'helper.pickem.label'))
-                      .setStyle('blue')
-                      .setCustomId('pickem')
+                      .setLabel(locales(guild.lang ?? "en", "helper.pickem.label"))
+                      .setStyle("blue")
+                      .setCustomId("pickem")
                   ]
                 }
               ]
@@ -114,10 +114,10 @@ export default async function(
         const pred = usr.valorant_predictions.find(p => p.match === data.id)
         if(!pred) continue
         if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
-          await user.addCorrectPrediction('valorant', data.id)
+          await user.addCorrectPrediction("valorant", data.id)
         }
         else {
-          await user.addWrongPrediction('valorant', data.id)
+          await user.addWrongPrediction("valorant", data.id)
         }
         if(pred.bet) {
           const winnerIndex = data.teams.findIndex(t => t.winner)

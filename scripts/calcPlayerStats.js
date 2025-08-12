@@ -1,17 +1,17 @@
-import clipboard from 'clipboardy'
+import clipboard from "clipboardy"
 
 /**
  * @param {string} stats 
  */
 export default function(stats) {
-  const attr = stats.split('\n')
-  const KPR = Number(attr[attr.findIndex(a => a === 'KPR') + 1])
-  const HS = Number(attr[attr.findIndex(a => a === 'Headshot %') + 1].replace('%', '').trim())
-  const DPR = Number(attr[attr.findIndex(a => a === 'DPR') + 1])
-  const FBPR = Number(attr[attr.findIndex(a => a === 'FBPR') + 1])
-  const ACS = Number(attr[attr.findIndex(a => a === 'ACS') + 1])
-  const APR = Number(attr[attr.findIndex(a => a === 'APR') + 1])
-  const FBSR = Number(attr[attr.findIndex(a => a === 'FBSR') + 1].replace('%', '').trim())
+  const attr = stats.split("\n")
+  const KPR = Number(attr[attr.findIndex(a => a === "KPR") + 1])
+  const HS = Number(attr[attr.findIndex(a => a === "Headshot %") + 1].replace("%", "").trim())
+  const DPR = Number(attr[attr.findIndex(a => a === "DPR") + 1])
+  const FBPR = Number(attr[attr.findIndex(a => a === "FBPR") + 1])
+  const ACS = Number(attr[attr.findIndex(a => a === "ACS") + 1])
+  const APR = Number(attr[attr.findIndex(a => a === "APR") + 1])
+  const FBSR = Number(attr[attr.findIndex(a => a === "FBSR") + 1].replace("%", "").trim())
   const aim = (KPR * 40) + (HS * 1.8)
   const hs = HS * 2.6
   const mov = (1.5 - DPR) * 95

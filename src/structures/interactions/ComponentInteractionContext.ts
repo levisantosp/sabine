@@ -1,7 +1,7 @@
-import type { ComponentInteraction, EditInteractionContent, File, Guild, InteractionContent } from 'oceanic.js'
-import App from '../client/App.ts'
-import locales, { type Args } from '../../locales/index.ts'
-import { SabineGuild, SabineUser } from '../../database/index.ts'
+import type { ComponentInteraction, EditInteractionContent, File, Guild, InteractionContent } from "oceanic.js"
+import App from "../client/App.ts"
+import locales, { type Args } from "../../locales/index.ts"
+import { SabineGuild, SabineUser } from "../../database/index.ts"
 
 type Database = {
   guild?: SabineGuild
@@ -37,7 +37,7 @@ export default class ComponentInteractionContext {
   }
   public async reply(content: string | InteractionContent, options?: Args) {
     switch(typeof content) {
-    case 'string': {
+    case "string": {
       if(options?.files) {
         if(this.interaction.acknowledged) return await this.interaction.createFollowup(
           {
@@ -69,7 +69,7 @@ export default class ComponentInteractionContext {
         )
       }
     }
-    case 'object': {
+    case "object": {
       if(options?.files) {
         if(this.interaction.acknowledged) return await this.interaction.createFollowup(
             Object.assign(
@@ -107,7 +107,7 @@ export default class ComponentInteractionContext {
   }
   public async edit(content: string | EditInteractionContent, options?: Args) {
     switch(typeof content) {
-    case 'string': {
+    case "string": {
       if(options?.files) {
         if(this.interaction.acknowledged) return await this.interaction.editOriginal(
           {
@@ -143,7 +143,7 @@ export default class ComponentInteractionContext {
         )
       }
     }
-    case 'object': {
+    case "object": {
       if(options?.files) {
         if(this.interaction.acknowledged) return await this.interaction.editOriginal(
             Object.assign(

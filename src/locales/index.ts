@@ -1,15 +1,15 @@
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
-import * as Oceanic from 'oceanic.js'
+import { readFileSync } from "node:fs"
+import { resolve } from "node:path"
+import * as Oceanic from "oceanic.js"
 
 export type Args = {
   [key: string]: string | Error | number | Oceanic.File[] | undefined | null | bigint
 }
 export default function t(lang: string, content: string, args?: Args): string {
   const path = resolve(`src/locales/${lang}.json`)
-  const raw = readFileSync(path, 'utf-8')
+  const raw = readFileSync(path, "utf-8")
   let json = JSON.parse(raw)
-  for(const param of content.split('.')) {
+  for(const param of content.split(".")) {
     json = json[param]
     if(!json) return content
   }

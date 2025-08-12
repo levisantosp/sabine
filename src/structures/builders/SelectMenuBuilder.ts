@@ -1,4 +1,4 @@
-import * as Oceanic from 'oceanic.js'
+import * as Oceanic from "oceanic.js"
 
 export default class SelectMenuBuilder {
   public type: number = Oceanic.Constants.ComponentTypes.STRING_SELECT
@@ -54,9 +54,9 @@ export default class SelectMenuBuilder {
       maxValues: this.maxValues,
       disabled: this.disabled,
     }
-    if(typeof content === 'string') {
+    if(typeof content === "string") {
       return {
-        content: content ?? '',
+        content: content ?? "",
         components: [
           {
             type: 1,

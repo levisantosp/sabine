@@ -1,55 +1,55 @@
-import { ApplicationCommandOptionTypes } from 'oceanic.js'
-import createCommand from '../../structures/command/createCommand.ts'
-import { SabineUser } from '../../database/index.ts'
-import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
-import { calcPlayerOvr, getPlayer } from 'players'
+import { ApplicationCommandOptionTypes } from "oceanic.js"
+import createCommand from "../../structures/command/createCommand.ts"
+import { SabineUser } from "../../database/index.ts"
+import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
+import { calcPlayerOvr, getPlayer } from "players"
 
 export default createCommand({
-  name: 'trade',
+  name: "trade",
   nameLocalizations: {
-    'pt-BR': 'negociar'
+    "pt-BR": "negociar"
   },
-  description: 'Trade a player',
+  description: "Trade a player",
   descriptionLocalizations: {
-    'pt-BR': 'Negocie um jogador'
+    "pt-BR": "Negocie um jogador"
   },
-  category: 'economy',
+  category: "economy",
   userInstall: true,
   options: [
     {
       type: ApplicationCommandOptionTypes.USER,
-      name: 'user',
+      name: "user",
       nameLocalizations: {
-        'pt-BR': 'usuário'
+        "pt-BR": "usuário"
       },
-      description: 'Insert a user',
+      description: "Insert a user",
       descriptionLocalizations: {
-        'pt-BR': 'Informe o usuário'
+        "pt-BR": "Informe o usuário"
       },
       required: true
     },
     {
       type: ApplicationCommandOptionTypes.STRING,
-      name: 'player',
+      name: "player",
       nameLocalizations: {
-        'pt-BR': 'jogador'
+        "pt-BR": "jogador"
       },
-      description: 'Insert the player',
+      description: "Insert the player",
       descriptionLocalizations: {
-        'pt-BR': 'Informe o jogador'
+        "pt-BR": "Informe o jogador"
       },
       autocomplete: true,
       required: true
     },
     {
       type: ApplicationCommandOptionTypes.INTEGER,
-      name: 'price',
+      name: "price",
       nameLocalizations: {
-        'pt-BR': 'preço'
+        "pt-BR": "preço"
       },
-      description: 'Insert a price',
+      description: "Insert a price",
       descriptionLocalizations: {
-        'pt-BR': 'Informe o preço'
+        "pt-BR": "Informe o preço"
       },
       required: true
     }
@@ -59,16 +59,16 @@ export default createCommand({
     const user = await SabineUser.fetch(ctx.args[0].toString())
     const player = getPlayer(Number(ctx.args[1]))
     if(!user || user.coins < BigInt(ctx.args[2])) {
-      return await ctx.reply('commands.trade.missing_coins', {
+      return await ctx.reply("commands.trade.missing_coins", {
         coins: (BigInt(ctx.args[2]) - (!user ? 0n : user.coins)).toLocaleString(),
         user: `<@${ctx.args[0]}>`
       })
     }
     if(!player) {
-      return await ctx.reply('commands.trade.player_not_found')
+      return await ctx.reply("commands.trade.player_not_found")
     }
     await ctx.reply({
-      content: t('commands.trade.request', {
+      content: t("commands.trade.request", {
         player: `${player.name} (${parseInt(calcPlayerOvr(player).toString())})`,
         collection: player.collection,
         user: `<@${ctx.args[0]}>`,
@@ -80,12 +80,12 @@ export default createCommand({
           type: 1,
           components: [
             new ButtonBuilder()
-            .setStyle('green')
-            .setLabel(t('commands.trade.make_purchase'))
+            .setStyle("green")
+            .setLabel(t("commands.trade.make_purchase"))
             .setCustomId(`trade;${ctx.args[0]};buy;${ctx.interaction.user.id};${player.id};${ctx.args[2]}`),
             new ButtonBuilder()
-            .setStyle('red')
-            .setLabel(t('commands.trade.cancel'))
+            .setStyle("red")
+            .setLabel(t("commands.trade.cancel"))
             .setCustomId(`trade;${ctx.interaction.user.id};cancel`)
           ]
         }
@@ -115,14 +115,14 @@ export default createCommand({
     )
   },
   async createMessageComponentInteraction({ ctx }) {
-    if(ctx.args[2] === 'buy') {
+    if(ctx.args[2] === "buy") {
       const user = await SabineUser.fetch(ctx.args[3])
       const player = getPlayer(Number(ctx.args[4]))
       if(!user || !player) return
       const i = user.roster?.reserve.findIndex(p => p === ctx.args[4])
       if(i === -1 || i === undefined) return
       if(ctx.db.user.coins < BigInt(ctx.args[5])) {
-        return await ctx.edit('commands.trade.missing_coins', {
+        return await ctx.edit("commands.trade.missing_coins", {
           coins: (BigInt(ctx.args[5]) - ctx.db.user.coins).toLocaleString(),
           user: `<@${ctx.interaction.user.mention}>`          
         })
@@ -130,7 +130,7 @@ export default createCommand({
       user.roster?.reserve.splice(i, 1)
       user.coins += BigInt(ctx.args[5])
       user.transactions.push({
-        type: 'TRADE_PLAYER',
+        type: "TRADE_PLAYER",
         player: player.id.toString(),
         when: Date.now(),
         price: BigInt(ctx.args[5]),
@@ -139,7 +139,7 @@ export default createCommand({
       ctx.db.user.roster?.reserve.push(ctx.args[4])
       ctx.db.user.coins -= BigInt(ctx.args[5])
       ctx.db.user.transactions.push({
-        type: 'TRADE_PLAYER',
+        type: "TRADE_PLAYER",
         player: player.id.toString(),
         when: Date.now(),
         price: BigInt(ctx.args[5]),
@@ -147,7 +147,7 @@ export default createCommand({
       })
       await user.save()
       await ctx.db.user.save()
-      await ctx.edit('commands.trade.res', {
+      await ctx.edit("commands.trade.res", {
         player: `${player.name} (${parseInt(calcPlayerOvr(player).toString())})`,
         collection: player.collection,
         user: ctx.interaction.user.mention,
@@ -155,7 +155,7 @@ export default createCommand({
       })
     }
     else {
-      await ctx.edit('commands.trade.cancelled')
+      await ctx.edit("commands.trade.cancelled")
     }
   }
 })

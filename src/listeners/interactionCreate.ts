@@ -1,11 +1,11 @@
-import { AutocompleteInteraction, CommandInteraction, ComponentInteraction, type Guild, InteractionTypes, type AnyInteractionGateway, ModalSubmitInteraction } from 'oceanic.js'
-import createListener from '../structures/client/createListener.ts'
-import CommandRunner from '../structures/command/CommandRunner.ts'
-import { client } from '../structures/client/App.ts'
-import { SabineGuild, SabineUser } from '../database/index.ts'
-import locales, { type Args } from '../locales/index.ts'
-import ComponentInteractionContext from '../structures/interactions/ComponentInteractionContext.ts'
-import ModalSubmitInteractionContext from '../structures/interactions/ModalSubmitInteractionContext.ts'
+import { AutocompleteInteraction, CommandInteraction, ComponentInteraction, type Guild, InteractionTypes, type AnyInteractionGateway, ModalSubmitInteraction } from "oceanic.js"
+import createListener from "../structures/client/createListener.ts"
+import CommandRunner from "../structures/command/CommandRunner.ts"
+import { client } from "../structures/client/App.ts"
+import { SabineGuild, SabineUser } from "../database/index.ts"
+import locales, { type Args } from "../locales/index.ts"
+import ComponentInteractionContext from "../structures/interactions/ComponentInteractionContext.ts"
+import ModalSubmitInteractionContext from "../structures/interactions/ModalSubmitInteractionContext.ts"
 
 const interactionTypes: Record<number, (i: AnyInteractionGateway) => Promise<any>> = {
   [InteractionTypes.APPLICATION_COMMAND]: async(interaction) => {
@@ -33,7 +33,7 @@ const interactionTypes: Record<number, (i: AnyInteractionGateway) => Promise<any
   },
   [InteractionTypes.MESSAGE_COMPONENT]: async(interaction) => {
     if(!(interaction instanceof ComponentInteraction)) return
-    const args = interaction.data.customID.split(';')
+    const args = interaction.data.customID.split(";")
     const command = client.commands.get(args[0])
     const int = client.interactions.get(args[0])
     if(!command && !int) {
@@ -50,7 +50,7 @@ const interactionTypes: Record<number, (i: AnyInteractionGateway) => Promise<any
         args,
         client,
         guild: g,
-        locale: user.lang ?? guild?.lang ?? 'en',
+        locale: user.lang ?? guild?.lang ?? "en",
         db: {
           user,
           guild
@@ -98,11 +98,11 @@ const interactionTypes: Record<number, (i: AnyInteractionGateway) => Promise<any
           ((new Date(interaction.message.createdAt).getTime() + command.messageComponentInteractionTime) < Date.now())
         ) {
           ctx.setFlags(64)
-          return await ctx.reply('helper.unknown_interaction')
+          return await ctx.reply("helper.unknown_interaction")
         }
-        if(args[1] !== 'all' && args[1] !== interaction.user.id) {
+        if(args[1] !== "all" && args[1] !== interaction.user.id) {
           ctx.setFlags(64)
-          return await ctx.reply('helper.this_isnt_for_you')
+          return await ctx.reply("helper.this_isnt_for_you")
         }
         const t = (content: string, args?: Args) => {
           return locales(ctx.locale, content, args)
@@ -122,7 +122,7 @@ const interactionTypes: Record<number, (i: AnyInteractionGateway) => Promise<any
         args,
         client,
         guild: g,
-        locale: user.lang ?? guild?.lang ?? 'en',
+        locale: user.lang ?? guild?.lang ?? "en",
         db: {
           user,
           guild
@@ -134,11 +134,11 @@ const interactionTypes: Record<number, (i: AnyInteractionGateway) => Promise<any
         ((new Date(interaction.message.createdAt).getTime() + int.time) < Date.now())
       ) {
         ctx.setFlags(64)
-        return await ctx.reply('helper.unknown_interaction')
+        return await ctx.reply("helper.unknown_interaction")
       }
       if(args[1] !== interaction.user.id) {
         ctx.setFlags(64)
-        return await ctx.reply('helper.this_isnt_for_you')
+        return await ctx.reply("helper.this_isnt_for_you")
       }
       const t = (content: string, args?: Args) => {
         return locales(ctx.locale, content, args)
@@ -150,14 +150,14 @@ const interactionTypes: Record<number, (i: AnyInteractionGateway) => Promise<any
         await interaction.defer()
       }
       else if(int.flags) {
-        ctx.setFlags(64)
+        ctx.setFlags(int.flags)
       }
       await int.run({ ctx, t, client })
     }
   },
   [InteractionTypes.MODAL_SUBMIT]: async(interaction) => {
     if(!(interaction instanceof ModalSubmitInteraction)) return
-    const args = interaction.data.customID.split(';')
+    const args = interaction.data.customID.split(";")
     const command = client.commands.get(args[0])
     if(!command) {
       if(!interaction.guild) return
@@ -223,7 +223,7 @@ const interactionTypes: Record<number, (i: AnyInteractionGateway) => Promise<any
   }
 }
 export default createListener({
-  name: 'interactionCreate',
+  name: "interactionCreate",
   async run(client, interaction) {
     await interactionTypes[interaction.type](interaction)
   }

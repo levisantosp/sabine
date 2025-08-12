@@ -1,14 +1,14 @@
-import type { FastifyInstance } from 'fastify'
-import { readdirSync } from 'node:fs'
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
+import type { FastifyInstance } from "fastify"
+import { readdirSync } from "node:fs"
+import path from "node:path"
+import { fileURLToPath } from "node:url"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 export default async function(fastify: FastifyInstance) {
   const commands: any[] = []
-  for(const folder of readdirSync(path.resolve(__dirname, '../../../commands'))) {
+  for(const folder of readdirSync(path.resolve(__dirname, "../../../commands"))) {
     for(const file of readdirSync(path.resolve(__dirname, `../../../commands/${folder}`))) {
       const command = (await import(`../../../commands/${folder}/${file}`)).default.default ?? (await import(`../../../commands/${folder}/${file}`)).default
       commands.push({
@@ -24,7 +24,7 @@ export default async function(fastify: FastifyInstance) {
       })
     }
   }
-  fastify.get('/commands', () => {
+  fastify.get("/commands", () => {
     return commands
   })
 }

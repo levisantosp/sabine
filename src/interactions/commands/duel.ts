@@ -1,9 +1,9 @@
-import { SabineUser } from '../../database/index.ts'
-import Match from '../../simulator/Match.ts'
-import createComponentInteraction from '../../structures/interactions/createComponentInteraction.ts'
+import { SabineUser } from "../../database/index.ts"
+import Match from "../../simulator/Match.ts"
+import createComponentInteraction from "../../structures/interactions/createComponentInteraction.ts"
 
 export default createComponentInteraction({
-  name: 'duel',
+  name: "duel",
   time: 5 * 60 * 1000,
   async run({ ctx, client }) {
     // const match = new Match({
