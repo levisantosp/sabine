@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 import { PrismaClient } from '@prisma/client'
 import Redis from 'redis'
 import Logger from '../../util/Logger.ts'
+import type { CreateInteractionOptions } from '../interactions/createComponentInteraction.ts'
 
 const prisma = new PrismaClient()
 const __filename = fileURLToPath(import.meta.url)
@@ -17,6 +18,7 @@ export default class App extends Oceanic.Client {
   public _uptime: number = Date.now()
   public prisma: typeof prisma
   public redis: typeof redis
+  public interactions: Map<string, CreateInteractionOptions> = new Map()
   public constructor(options?: Oceanic.ClientOptions) {
     super(options)
     this.prisma = prisma
@@ -34,9 +36,13 @@ export default class App extends Oceanic.Client {
     }
     for(const folder of readdirSync(path.resolve(__dirname, '../../commands'))) {
       for(const file of readdirSync(path.resolve(__dirname, `../../commands/${folder}`))) {
-        const command = (await import(`../../commands/${folder}/${file}`)).default.default ?? (await import(`../../commands/${folder}/${file}`)).default
+        const command = (await import(`../../commands/${folder}/${file}`)).default
         this.commands.set(command.name, command)
       }
+    }
+    for(const file of readdirSync(path.resolve(__dirname, '../../interactions/commands'))) {
+      const interaction = (await import(`../../interactions/commands/${file}`)).default
+      this.interactions.set(interaction.name, interaction)
     }
     await super.connect()
   }
