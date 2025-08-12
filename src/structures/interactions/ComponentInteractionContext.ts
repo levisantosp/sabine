@@ -91,8 +91,16 @@ export default class ComponentInteractionContext {
         )
       }
       else {
-        if(this.interaction.acknowledged) return await this.interaction.createFollowup(content)
-        else return await this.interaction.createMessage(content)
+        if(this.interaction.acknowledged) return await this.interaction.createFollowup(
+          {
+            ...content,
+            flags: this.flags
+          }
+        )
+        else return await this.interaction.createMessage({
+          ...content,
+          flags: this.flags
+        })
       }
     }
     }
