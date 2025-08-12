@@ -7,7 +7,7 @@ type CreateInteractionProps = {
   t: (content: string, args?: Args) => string
   client: App
 }
-type CreateInteractionOptions = {
+export type CreateInteractionOptions = {
   name: string
   isThinking?: boolean
   ephemeral?: boolean
