@@ -4,10 +4,10 @@ import CommandContext from './CommandContext.ts'
 import locales, { type Args } from '../../locales/index.ts'
 import ButtonBuilder from '../builders/ButtonBuilder.ts'
 import EmbedBuilder from '../builders/EmbedBuilder.ts'
-import Logger from '../../util/Logger.ts'
 import { SabineGuild, SabineUser } from '../../database/index.ts'
 import { resolve } from 'node:path'
 import { readFileSync } from 'node:fs'
+import Logger from '../../util/Logger.ts'
 
 const locale: {[key: string]: string} = {
   pt: 'br',
@@ -139,8 +139,8 @@ export default class CommandRunner {
           avatarURL: client.user.avatarURL()
         }, webhook.token!)
       })
-      .catch(async e  => {
-        new Logger(client).error(e)
+      .catch(async e => {
+        await new Logger(client).error(e)
         await ctx.reply('helper.error', { e })
       })
   }

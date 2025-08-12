@@ -2,10 +2,10 @@ import * as Oceanic from 'oceanic.js'
 import { readdirSync } from 'fs'
 import path from 'path'
 import type { Command } from '../command/createCommand.ts'
-import Logger from '../../util/Logger.ts'
 import { fileURLToPath } from 'url'
 import { PrismaClient } from '@prisma/client'
 import Redis from 'redis'
+import Logger from '../../util/Logger.ts'
 
 const prisma = new PrismaClient()
 const __filename = fileURLToPath(import.meta.url)

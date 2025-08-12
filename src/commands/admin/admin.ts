@@ -5,8 +5,8 @@ import locales from '../../locales/index.ts'
 import createCommand from '../../structures/command/createCommand.ts'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
 import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
-import { emojis } from '../../util/emojis.ts'
 import { PrismaClient } from '@prisma/client'
+import { emojis } from '../../util/emojis.ts'
 const service = new Service(process.env.AUTH)
 
 const prisma = new PrismaClient()
