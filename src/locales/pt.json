@@ -205,7 +205,12 @@
         "swiftplay;unranked": "Frenético",
         "tournament": "Torneio",
         "unranked": "Sem Classificação"
-      }
+      },
+      "embed": {
+        "title": "Seleção de Agentes",
+        "desc": "Vocês precisam selecionar os agentes que seus jogadores irão usar."
+      },
+      "time": "Vocês têm 5 minutos para selecionar os agentes"
     },
     "career": {
       "no_pages": "Nada pra mostrar aqui.",

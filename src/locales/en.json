@@ -205,7 +205,12 @@
         "swiftplay;unranked": "Swiftplay",
         "tournament": "Tournament",
         "unranked": "Unranked"
-      }
+      },
+      "embed": {
+        "title": "Agents Selection",
+        "desc": "You need to select the agents your players will use."
+      },
+      "time": "You have 5 minutes to select the agents"
     },
     "career": {
       "no_pages": "Nothing to show in this page.",
