@@ -1,6 +1,7 @@
 import { valorant_agents, valorant_maps, valorant_weapons } from "../config.ts"
 import type { Args } from '../locales/index.ts'
 import ComponentInteractionContext from "../structures/interactions/ComponentInteractionContext.ts"
+import { PlayerWeapon } from "./Player.ts"
 
 export type PlayerStats = {
   aim: number
@@ -46,6 +47,8 @@ export type TeamRoster = {
   team: string
   country: string
   purchaseable: boolean
+  life: number
+  weapon?: PlayerWeapon
 }
 export type Team = {
   user: string
@@ -74,6 +77,7 @@ type MatchOptions = {
   t: (content: string, args?: Args) => string
   mode: "unranked" | "ranked" | "swiftplay:unranked" | "swiftplay:ranked" | "tournament"
   map: string
+  content: string
 }
 type PrivateTeam = {
   user: string
@@ -88,7 +92,7 @@ export default class Match {
   private __teams: PrivateTeam[] = []
   public teams: Team[] = []
   public finished: boolean = false
-  private readonly ctx: ComponentInteractionContext
+  public readonly ctx: ComponentInteractionContext
   public content: string = ""
   public t: (content: string, args?: Args) => string
   private readonly mode: "unranked" | "ranked" | "swiftplay:unranked" | "swiftplay:ranked" | "tournament"
@@ -120,10 +124,11 @@ export default class Match {
   }
   public async start() {
     const { default: Round } = await import("./Round.ts")
-    await new Round(this.options).start()
+    await new Round(this.options).setContent(this.content).start()
   }
   public setContent(content: string) {
     this.content = content
+    return this
   }
   public async switchSides() {
     for(const t of this.teams) {
