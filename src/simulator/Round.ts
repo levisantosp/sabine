@@ -55,8 +55,8 @@ export default class Round extends Match {
           stats: p
         })
         player.buy()
-        this.teams[teamIndex].roster[pIndex].credits = p.credits
-        this.teams[teamIndex].roster[pIndex].weapon = p.weapon
+        this.teams[teamIndex].roster[pIndex].credits = player.credits
+        this.teams[teamIndex].roster[pIndex].weapon = player.weapon
       }
     }
   }
