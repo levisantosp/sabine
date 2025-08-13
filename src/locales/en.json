@@ -253,7 +253,9 @@
       "make_purchase": "Make purchase",
       "cancel": "Cancel",
       "cancelled": "Trade cancelled.",
-      "res": "You sold **{player} — {collection}** for {user} for **{coins}** coins succesfully!"
+      "res": "You sold **{player} — {collection}** for {user} for **{coins}** coins succesfully!",
+      "invalid_value": "Enter a value greater than 0.",
+      "cannot_trade": "You cannot trade with yourself."
     },
     "transactions": {
       "type": {
