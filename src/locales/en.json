@@ -288,7 +288,15 @@
     "spike_not_planted": "- The spike was not planted on time\n- **{team}** won the round",
     "spike_detonated": "- Spike detonated\n- **{team}** won the round",
     "spike_defused": "- Spike defused\n- **{team}** won the round",
-    "spike_planted": "- *Spike planted at bomb site {bomb}*"
+    "spike_planted": "- *Spike planted at bomb site {bomb}*",
+    "mode": {
+      "ranked": "Ranked Mode Match",
+      "unranked": "Unranked Mode Match",
+      "swiftplay:ranked": "Ranked Swiftplay Mode Match",
+      "swiftplay:unranked": "Swiftplay Mode Match"
+    },
+    "match_started": "Match Started",
+    "processing": "<a:loading:809221866434199634> Processing the round..."
   },
   "helper": {
     "palpitate": "Predict",
