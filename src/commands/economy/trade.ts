@@ -58,6 +58,12 @@ export default createCommand({
   async run({ ctx, t }) {
     const user = await SabineUser.fetch(ctx.args[0].toString())
     const player = getPlayer(Number(ctx.args[1]))
+    if(BigInt(ctx.args[2]) < 0) {
+      return await ctx.reply("commands.trade.invalid_value")
+    }
+    if(ctx.args[0] === ctx.interaction.user.id) {
+      return await ctx.reply("commands.trade.cannot_trade")
+    }
     if(!user || user.coins < BigInt(ctx.args[2])) {
       return await ctx.reply("commands.trade.missing_coins", {
         coins: (BigInt(ctx.args[2]) - (!user ? 0n : user.coins)).toLocaleString(),
