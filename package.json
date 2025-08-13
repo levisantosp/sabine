@@ -6,10 +6,10 @@
   "type": "module",
   "scripts": {
     "test": "node --experimental-strip-types --env-file=.env test.ts",
-    "start": "npx eslint --fix . && rm -rf dist && tsc && node --env-file=.env .",
+    "start": "npx eslint . && rm -rf dist && tsc && node --env-file=.env .",
     "dev": "node --watch --experimental-strip-types --env-file=.env src/index.ts",
     "dev:watch": "node --experimental-strip-types --env-file=.env src/index.ts",
-    "build": "npx eslint --fix . && rm -rf dist && tsc",
+    "build": "npx eslint . && rm -rf dist && tsc",
     "push": "npx prisma db push",
     "pull": "npx prisma db pull",
     "pull:force": "npx prisma db pull --force",
