@@ -139,104 +139,179 @@ export const valorant_weapons = [
   {
     name: "Classic",
     price: 0,
-    damage: 26
+    damage: {
+      head: 78,
+      chest: 26
+    },
+    magazine: 48
   },
   {
     name: "Shorty",
     price: 200,
-    damage: 12
+    damage: {
+      head: 22,
+      chest: 11
+    },
+    magazine: 8
   },
   {
     name: "Frenzy",
     price: 450,
-    damage: 26
+    damage: {
+      head: 78,
+      chest: 26
+    },
+    magazine: 60
   },
   {
     name: "Ghost",
     price: 500,
-    damage: 30
+    damage: {
+      head: 105,
+      chest: 30
+    },
+    magazine: 52
   },
   {
     name: "Sheriff",
     price: 800,
-    damage: 55
+    damage: {
+      head: 159,
+      chest: 55
+    },
+    magazine: 30
   },
   {
     name: "Stinger",
     price: 950,
-    damage: 27
+    damage: {
+      head: 67,
+      chest: 27
+    },
+    magazine: 80
   },
   {
     name: "Spectre",
     price: 1600,
-    damage: 26
+    damage: {
+      head: 78,
+      chest: 26
+    },
+    magazine: 120
   },
   {
     name: "Bucky",
     price: 850,
-    damage: 22
+    damage: {
+      head: 40,
+      chest: 20
+    },
+    magazine: 15
   },
   {
     name: "Judge",
     price: 1850,
-    damage: 17
+    damage: {
+      head: 34,
+      chest: 17
+    },
+    magazine: 20
   },
   {
     name: "Bulldog",
     price: 2050,
-    damage: 35
+    damage: {
+      head: 115,
+      chest: 35
+    },
+    magazine: 96
   },
   {
     name: "Guardian",
     price: 2250,
-    damage: 65
+    damage: {
+      head: 195,
+      chest: 65
+    },
+    magazine: 48
   },
   {
     name: "Phantom",
     price: 2900,
-    damage: 39
+    damage: {
+      head: 140,
+      chest: 35
+    },
+    magazine: 90
   },
   {
     name: "Vandal",
     price: 2900,
-    damage: 40
+    damage: {
+      head: 160,
+      chest: 40
+    },
+    magazine: 75
   },
   {
     name: "Marshal",
     price: 950,
-    damage: 101
+    damage: {
+      head: 202,
+      chest: 101
+    },
+    magazine: 20
   },
   {
     name: "Operator",
     price: 4700,
-    damage: 150
+    damage: {
+      head: 255,
+      chest: 150
+    },
+    magazine: 15
   },
   {
     name: "Outlaw",
     price: 2400,
-    damage: 140
+    damage: {
+      head: 238,
+      chest: 140
+    },
+    magazine: 12
   },
   {
     name: "Ares",
     price: 1600,
-    damage: 30
+    damage: {
+      head: 75,
+      chest: 30
+    },
+    magazine: 150
   },
   {
     name: "Odin",
     price: 3200,
-    damage: 38
+    damage: {
+      head: 95,
+      chest: 38
+    },
+    magazine: 300
   },
   {
     name: "Melee",
     price: 0,
-    damage: 50
+    damage: {
+      head: 50,
+      chest: 50
+    }
   }
 ] as const
 export const valorant_maps: {
   name: string
   meta_agents: typeof valorant_agents[number]["name"][]
+  image: string,
   current_map_pool?: boolean
-  image: string
 }[] = [
   {
     name: "Ascent",
