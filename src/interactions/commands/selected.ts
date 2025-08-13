@@ -145,7 +145,8 @@ export default createComponentInteraction({
           ctx,
           t,
           mode: data.mode,
-          map: data.map
+          map: data.map,
+          content: ""
         })
         try {
           while(!match.finished) {
