@@ -9,7 +9,7 @@ export default class EmbedBuilder {
   public thumbnail?: Oceanic.EmbedImageOptions
   public timestamp?: string
   public footer?: Oceanic.EmbedFooterOptions
-  public color?: number = 10086557
+  public color?: number = 6719296
   public setAuthor(options: Oceanic.EmbedAuthorOptions) {
     this.author = options
     return this
