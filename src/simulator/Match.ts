@@ -1,9 +1,7 @@
-import { valorant_agents, valorant_weapons } from "../config.ts"
+import { valorant_agents, valorant_maps, valorant_weapons } from "../config.ts"
+import type { Args } from '../locales/index.ts'
 import ComponentInteractionContext from "../structures/interactions/ComponentInteractionContext.ts"
 
-const calcPlayerOvr = (player: TeamPlayer) => {
-  return (player.stats.aim + player.stats.HS + player.stats.movement + player.stats.aggression + player.stats.ACS + player.stats.gamesense) / 4.5
-}
 export type PlayerStats = {
   aim: number
   HS: number
@@ -28,9 +26,30 @@ export type TeamPlayer = {
   credits: number
   weapon?: typeof valorant_weapons[number]["name"]
 }
+export type TeamRoster = {
+  name: string
+  id: number
+  role: string
+  aim: number
+  HS: number
+  movement: number
+  aggression: number
+  ACS: number
+  gamesense: number
+  ovr: number
+  agent: {
+    name: string
+    role: typeof valorant_agents[number]["role"]
+  }
+  credits: number
+  collection: string
+  team: string
+  country: string
+  purchaseable: boolean
+}
 export type Team = {
-  user: TeamUser
-  roster: string[]
+  user: string
+  roster: TeamRoster[]
   side?: "DEFENSE" | "ATTACK"
   name: string
   tag: string
@@ -52,38 +71,67 @@ type RoundResult = {
 type MatchOptions = {
   teams: Team[]
   ctx: ComponentInteractionContext
-  locale: string
+  t: (content: string, args?: Args) => string
   mode: "unranked" | "ranked" | "swiftplay:unranked" | "swiftplay:ranked" | "tournament"
-}
-type TeamUser = {
-  name: string
-  id: string
+  map: string
 }
 type PrivateTeam = {
-  user: TeamUser
+  user: string
   roster: TeamPlayer[]
   side?: "DEFENSE" | "ATTACK"
   lost_round_streak: number
   name: string
   tag: string
 }
-
 export default class Match {
-  private rounds_played: RoundResult[] = []
+  public rounds: RoundResult[] = []
   private __teams: PrivateTeam[] = []
   public teams: Team[] = []
   public finished: boolean = false
-  private ctx: ComponentInteractionContext
-  private content: string = ""
-  private locale: string
-  private mode: "unranked" | "ranked" | "swiftplay:unranked" | "swiftplay:ranked" | "tournament"
+  private readonly ctx: ComponentInteractionContext
+  public content: string = ""
+  public t: (content: string, args?: Args) => string
+  private readonly mode: "unranked" | "ranked" | "swiftplay:unranked" | "swiftplay:ranked" | "tournament"
+  public maxScore?: number
+  public switchSidesAt: number = 12
+  public map: string
+  private readonly options: MatchOptions
   public constructor(options: MatchOptions) {
     this.teams = options.teams
     this.ctx = options.ctx
-    this.locale = options.locale
-    this.mode = options.mode
+    this.t = options.t
+    this.mode = options!.mode
+    this.options = options
+    this.map = options.map
+    if(this.mode === "unranked") {
+      this.maxScore = 13
+    }
+    else if(this.mode === "swiftplay:unranked") {
+      this.maxScore = 5
+      this.switchSidesAt = 4
+    }
+    else if(this.mode === "swiftplay:ranked") {
+      this.maxScore = 7
+      this.switchSidesAt = 6
+    }
   }
   public async wait(time: number) {
     return await new Promise(r => setTimeout(r, time))
+  }
+  public async start() {
+    const { default: Round } = await import("./Round.ts")
+    await new Round(this.options).start()
+  }
+  public setContent(content: string) {
+    this.content = content
+  }
+  public async switchSides() {
+    for(const t of this.teams) {
+      t.side = t.side === "ATTACK" ? "DEFENSE" : "ATTACK"
+      for(let i = 0; i < t.roster.length; i++) {
+        t.roster[i].credits = 800
+      }
+    }
+    const content = this.t("simulator.switch_sides")
   }
 }

@@ -5,6 +5,7 @@ import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
 import { SabineUser } from "../../database/index.ts"
 import { calcPlayerOvr, getPlayer } from "players"
 import Match from "../../simulator/Match.ts"
+import Logger from "../../util/Logger.ts"
 
 export default createComponentInteraction({
   name: "selected",
@@ -138,13 +139,31 @@ export default createComponentInteraction({
         embeds: [embed],
         components: []
       })
-      setTimeout(() => {
+      setTimeout(async() => {
         const match = new Match({
           teams: [],
           ctx,
-          locale: ctx.db.user.lang,
-          mode: data.mode // stopped here
+          t,
+          mode: data.mode,
+          map: data.map
         })
+        try {
+          while(!match.finished) {
+            await client.redis.set(`match:${ctx.db.user.id}`, 1)
+            await client.redis.set(`match:${user.id}`, 1)
+            await match.wait(5000)
+            await match.start()
+          }
+        }
+        catch(e) {
+          await client.redis.del(`match:${ctx.db.user.id}`)
+          await client.redis.del(`match:${user.id}`)
+          await new Logger(client).error(e as Error)
+        }
+        finally {
+          await client.redis.del(`match:${ctx.db.user.id}`)
+          await client.redis.del(`match:${user.id}`)
+        }
       }, timeout)
     }
     else {
