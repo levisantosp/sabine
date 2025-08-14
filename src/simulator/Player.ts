@@ -5,6 +5,7 @@ type WeaponDamage = {
   chest: number
 }
 type Weapon = {
+  name?: string
   damage: WeaponDamage
   magazine?: number
 }
@@ -27,8 +28,6 @@ type PlayerOptions = {
   life: number
   credits: number
   weapon: PlayerWeapon
-  teamIndex: number
-  index: number
   stats: PlayerStats
   teamCredits: number
 }
@@ -37,17 +36,13 @@ export default class Player {
   public life: number
   public credits: number
   public weapon: PlayerWeapon
-  public teamIndex: number
-  public index: number
   public stats: PlayerStats
   public teamCredits: number
   public constructor(options: PlayerOptions) {
     this.name = options.name
     this.life = options.life
-    this.credits = options.credits
+    this.credits = options.teamCredits
     this.weapon = options.weapon
-    this.teamIndex = options.teamIndex
-    this.index = options.index
     this.stats = options.stats
     this.teamCredits = options.teamCredits
   }
@@ -83,7 +78,7 @@ export default class Player {
       }
     }
     else if(this.teamCredits === 800) {
-      const secondary = valorant_weapons.filter(w => w.price > 0 && w.price <= 800)
+      const secondary = valorant_weapons.filter(w => w.price <= 800 && w.name !== "Melee")
       const weapon = this.chooseWeapon(secondary, w => w.price * 5)
       this.credits -= weapon.price
       this.weapon.secondary = weapon
@@ -98,6 +93,7 @@ export default class Player {
     return this
   }
   private chooseWeapon<T>(items: T[], weightFun: (item: T) => number) {
+    console.log(items)
     const weight = items.reduce((sum, i) => sum + weightFun(i), 0)
     let random = Math.random() * weight
     for(const item of items) {
@@ -106,6 +102,42 @@ export default class Player {
         return item
       }
     }
+    console.log(items)
     return items[items.length - 1]
+  }
+  private chooseShoot() {
+    let steepness = 0.05
+    let midpoint = 50
+    let prob = 1 / (1 + Math.exp(-steepness * (this.stats.aim - midpoint)))
+    let random = Math.random()
+    if(random <= prob) {
+      steepness = 0.02
+      midpoint = 75
+      prob = 1 / (1 + Math.exp(-steepness * (this.stats.HS - midpoint)))
+      random = Math.random()
+      if(random <= prob) {
+        return "head"
+      }
+      else return "chest"
+    }
+    return "none"
+  }
+  public shoot() {
+    if(this.weapon.primary && this.weapon.primary.magazine && this.weapon.primary.magazine > 0) {
+      this.weapon.primary.magazine -= 1
+      const choice = this.chooseShoot()
+      if(choice === "head") {
+        return this.weapon.primary.damage.head
+      }
+      else if(choice === "chest") {
+        return this.weapon.primary.damage.chest
+      }
+      else {
+        return 0
+      }
+    }
+    else if(!this.weapon.secondary || this.weapon.secondary) {
+      if(!this.weapon.secondary) this.weapon.secondary = valorant_weapons.find(w => w.name === "Classic")
+    }
   }
 }

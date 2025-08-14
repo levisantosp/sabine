@@ -1,7 +1,7 @@
-import { valorant_agents, valorant_maps, valorant_weapons } from "../config.ts"
+import { valorant_agents, valorant_weapons } from "../config.ts"
 import type { Args } from '../locales/index.ts'
 import ComponentInteractionContext from "../structures/interactions/ComponentInteractionContext.ts"
-import { PlayerWeapon } from "./Player.ts"
+import type { PlayerWeapon } from "./Player.ts"
 
 export type PlayerStats = {
   aim: number
@@ -57,7 +57,7 @@ export type Team = {
   name: string
   tag: string
 }
-type KillEvent = {
+export type KillEvent = {
   killer: Pick<TeamPlayer, "id" | "name">
   killer_index: number
   victim: Pick<TeamPlayer, "id" | "name">
