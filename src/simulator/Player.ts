@@ -8,6 +8,7 @@ type Weapon = {
   name?: string
   damage: WeaponDamage
   magazine?: number
+  rate_fire: number
 }
 export type PlayerWeapon = {
   primary?: Weapon
@@ -24,6 +25,7 @@ type PlayerStats = {
   ovr: number
 }
 type PlayerOptions = {
+  id: number
   name: string
   life: number
   credits: number
@@ -32,6 +34,7 @@ type PlayerOptions = {
   teamCredits: number
 }
 export default class Player {
+  public id: number
   public name: string
   public life: number
   public credits: number
@@ -39,6 +42,7 @@ export default class Player {
   public stats: PlayerStats
   public teamCredits: number
   public constructor(options: PlayerOptions) {
+    this.id = options.id
     this.name = options.name
     this.life = options.life
     this.credits = options.teamCredits
@@ -47,7 +51,7 @@ export default class Player {
     this.teamCredits = options.teamCredits
   }
   public buy() {
-    if(this.teamCredits >= 2700) {
+    if(this.teamCredits >= 2500 && !this.weapon.primary) {
       let primary = valorant_weapons.filter(w => w.price > 800 && w.price + 1000 <= this.credits)
       let secondary = valorant_weapons.filter(w => w.price > 0 && w.price <= 800 && w.price + 1000 <= this.credits)
       if(!primary.length) {
@@ -87,13 +91,9 @@ export default class Player {
         this.credits -= 400
       }
     }
-    else {
-      // not buy
-    }
     return this
   }
   private chooseWeapon<T>(items: T[], weightFun: (item: T) => number) {
-    console.log(items)
     const weight = items.reduce((sum, i) => sum + weightFun(i), 0)
     let random = Math.random() * weight
     for(const item of items) {
@@ -102,7 +102,6 @@ export default class Player {
         return item
       }
     }
-    console.log(items)
     return items[items.length - 1]
   }
   private chooseShoot() {
@@ -127,17 +126,39 @@ export default class Player {
       this.weapon.primary.magazine -= 1
       const choice = this.chooseShoot()
       if(choice === "head") {
-        return this.weapon.primary.damage.head
+        return [this.weapon.primary.damage.head, this.weapon.primary.rate_fire]
       }
       else if(choice === "chest") {
-        return this.weapon.primary.damage.chest
+        return [this.weapon.primary.damage.chest, this.weapon.primary.rate_fire]
       }
       else {
-        return 0
+        return [0, this.weapon.primary.rate_fire]
       }
     }
-    else if(!this.weapon.secondary || this.weapon.secondary) {
-      if(!this.weapon.secondary) this.weapon.secondary = valorant_weapons.find(w => w.name === "Classic")
+    else if(this.weapon.secondary!.magazine && this.weapon.secondary!.magazine > 0) {
+      this.weapon.secondary!.magazine -= 1
+      const choice = this.chooseShoot()
+      if(choice === "head") {
+        return [this.weapon.secondary!.damage.head, this.weapon.secondary!.rate_fire]
+      }
+      else if(choice === "chest") {
+        return [this.weapon.secondary!.damage.chest, this.weapon.secondary!.rate_fire]
+      }
+      else {
+        return [0, this.weapon.secondary!.rate_fire]
+      }
+    }
+    else {
+      const choice = this.chooseShoot()
+      if(choice === "head") {
+        return [this.weapon.melee.damage.head, this.weapon.melee.rate_fire]
+      }
+      else if(choice === "chest") {
+        return [this.weapon.melee.damage.chest, this.weapon.melee.rate_fire]
+      }
+      else {
+        return [0, this.weapon.melee.rate_fire]
+      }
     }
   }
 }

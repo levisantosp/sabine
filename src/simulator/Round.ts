@@ -1,4 +1,4 @@
-import { valorant_agents, valorant_maps } from "../config.ts"
+import { valorant_agents, valorant_maps, valorant_weapons } from "../config.ts"
 import EmbedBuilder from "../structures/builders/EmbedBuilder.ts"
 import Match, { type TeamRoster, type KillEvent } from "./Match.ts"
 import Player from "./Player.ts"
@@ -12,69 +12,558 @@ export default class Round extends Match {
     const score2 = this.rounds.filter(r => r.winning_team === 1).length
     // fazer a logica de terminar a partida aqui
     
-    this.content += this.t("simulator.processing")
+    this.content = this.t("simulator.processing")
     const embed = new EmbedBuilder()
-    .setTitle(this.t("simulator.mode.ranked"))
-    .setDesc(this.content)
-    .setImage(valorant_maps.find(map => map.name === "Ascent")!.image)
+    .setTitle(this.t(`simulator.mode.${this.mode}`))
+    .setDesc(
+      `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n`
+      +
+      this.content
+    )
+    .setImage(this.mapImage)
     .setFields(
       {
-        name: this.teams[0].name,
+        name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
         value: this.teams[0].roster
-          .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())})`)
+          .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
           .join("\n"),
         inline: true
       },
       {
-        name: this.teams[1].name,
+        name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
         value: this.teams[1].roster
-          .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())})`)
+          .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
           .join("\n"),
         inline: true
       }
     )
-    await this.ctx.edit(embed.build())
-    for(let teamIndex = 0; teamIndex < this.teams.length; teamIndex++) {
-      for(let pIndex = 0; pIndex < this.teams[teamIndex].roster.length; pIndex++) {
-        const p = this.teams[teamIndex].roster[pIndex]
-        const player = new Player({
-          name: p.name,
-          life: p.life,
-          credits: p.credits,
-          weapon: {
-            melee: {
-              damage: {
-                head: 50,
-                chest: 50
-              }
-            }
-          },
-          teamCredits: this.teams[teamIndex].roster.reduce((sum, p) => sum + p.credits, 0) / 5,
-          stats: p
-        })
-        player.buy()
-        this.teams[teamIndex].roster[pIndex].credits = player.credits
-        this.teams[teamIndex].roster[pIndex].weapon = player.weapon
+    await this.ctx.edit(embed.build(this.mentions))
+    const teamCredits1 = this.teams[0].roster.reduce((sum, p) => sum + p.credits, 0) / 5
+    const teamCredits2 = this.teams[1].roster.reduce((sum, p) => sum + p.credits, 0) / 5
+    for(let i = 0; i < this.teams[0].roster.length; i++) {
+      if(this.teams[0].roster[i].life <= 0) {
+        this.teams[0].roster[i].weapon = {
+          melee: {
+            damage: {
+              head: 50,
+              chest: 50
+            },
+            rate_fire: 750
+          }
+        }
       }
-      console.log("-------------------------------------------")
+      if(this.teams[0].roster[i].weapon?.primary) {
+        this.teams[0].roster[i].weapon!.primary!.magazine = valorant_weapons.filter(w => w.name === this.teams[0].roster[i].weapon?.primary?.name)[0].magazine
+      }
+      if(this.teams[0].roster[i].weapon?.secondary) {
+        this.teams[0].roster[i].weapon!.secondary!.magazine = valorant_weapons.filter(w => w.name === this.teams[0].roster[i].weapon?.secondary?.name)[0].magazine
+      }
+      this.teams[0].roster[i].life = 100
+    }
+    for(let i = 0; i < this.teams[1].roster.length; i++) {
+      if(this.teams[1].roster[i].life <= 0) {
+        this.teams[1].roster[i].weapon = {
+          melee: {
+            damage: {
+              head: 50,
+              chest: 50
+            },
+            rate_fire: 750
+          }
+        }
+      }
+      if(this.teams[1].roster[i].weapon?.primary) {
+        this.teams[1].roster[i].weapon!.primary!.magazine = valorant_weapons.filter(w => w.name === this.teams[1].roster[i].weapon?.primary?.name)[0].magazine
+      }
+      if(this.teams[1].roster[i].weapon?.secondary) {
+        this.teams[1].roster[i].weapon!.secondary!.magazine = valorant_weapons.filter(w => w.name === this.teams[1].roster[i].weapon?.secondary?.name)[0].magazine
+      }
+      this.teams[1].roster[i].life = 100
+    }
+    for(const p of this.teams[0].roster) {
+      const player = new Player({
+        name: p.name,
+        life: p.life,
+        credits: p.credits,
+        weapon: {
+          melee: {
+            damage: {
+              head: 50,
+              chest: 50
+            },
+            rate_fire: 750
+          }
+        },
+        teamCredits: teamCredits1,
+        stats: p,
+        id: p.id
+      })
+      player.buy()
+      p.credits = player.credits
+      p.weapon = player.weapon
+    }
+    for(const p of this.teams[1].roster) {
+      const player = new Player({
+        name: p.name,
+        life: p.life,
+        credits: p.credits,
+        weapon: {
+          melee: {
+            damage: {
+              head: 50,
+              chest: 50
+            },
+            rate_fire: 750
+          }
+        },
+        teamCredits: teamCredits2,
+        stats: p,
+        id: p.id
+      })
+      player.buy()
+      p.credits = player.credits
+      p.weapon = player.weapon
     }
     await this.wait(5000)
     await this.firstStep(Math.floor(Math.random() * 6))
+    return this
   }
   private async firstStep(duels: number) {
-    this.startPlayerDuel()
-    // const kills: KillEvent[] = []
-    // for(let i = 0; i < duels; i++) {
-    //   this.startPlayerDuel()
-    // }
+    const kills: KillEvent[] = []
+    for(let i = 0; i < duels; i++) {
+      const {
+        winnerIndex,
+        winnerTeamIndex,
+        loserIndex,
+        loserTeamIndex,
+        weapon
+      } = await this.startPlayerDuel()
+      if(winnerIndex === undefined) continue
+      const killer = this.teams[winnerTeamIndex].roster[winnerIndex]
+      const victim = this.teams[loserTeamIndex].roster[loserIndex]
+      kills.push({
+        killer: {
+          name: killer.name,
+          id: killer.id.toString()
+        },
+        killerIndex: winnerTeamIndex,
+        victim: {
+          name: victim.name,
+          id: victim.id.toString()
+        },
+        victimIndex: loserTeamIndex,
+        weapon: weapon as typeof valorant_weapons[number]["name"]
+      })
+    }
+    for(const kill of kills) {
+      const content = this.t(
+        "simulator.kill",
+        {
+          t1: this.teams[kill.killerIndex].tag,
+          p1: kill.killer.name,
+          t2: this.teams[kill.victimIndex].tag,
+          p2: kill.victim.name,
+          w: kill.weapon
+        }
+      )
+      this.content += `- ${content}\n`
+    }
+    const embed = new EmbedBuilder()
+    .setTitle(this.t(`simulator.mode.${this.mode}`))
+    .setDesc(
+      `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n`
+      +
+      this.content
+    )
+    .setImage(this.mapImage)
+    .setFields(
+      {
+        name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
+        value: this.teams[0].roster
+          .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+          .join("\n"),
+        inline: true
+      },
+      {
+        name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
+        value: this.teams[1].roster
+          .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+          .join("\n"),
+        inline: true
+      }
+    )
+    await this.ctx.edit(embed.build(this.mentions))
+    const playersAlive1 = this.teams[0].roster.filter(p => p.life > 0).length > 0
+    const playersAlive2 = this.teams[1].roster.filter(p => p.life > 0).length > 0
+    if(!playersAlive1 || !playersAlive2) {
+      const winningTeam = playersAlive1 ? 0 : 1
+      this.rounds.push({
+        winning_team: winningTeam,
+        kills,
+        win_type: "ELIMINATION"
+      })
+      for(let i = 0; i < this.teams.length; i++) {
+        if(i === winningTeam) {
+          for(const p of this.teams[i].roster) {
+            p.credits += 2900
+          }
+        }
+        else {
+          for(const p of this.teams[i].roster) {
+            p.credits += 1900
+          }
+        }
+      }
+      const content = this.t(
+        "simulator.won_by_elimination",
+        {
+          t: this.teams[winningTeam].name
+        }
+      )
+      this.content = this.content.split("\n").slice(1).join("\n") + `\n${content}\n`
+      const embed = new EmbedBuilder()
+      .setTitle(this.t(`simulator.mode.${this.mode}`))
+      .setDesc(
+        `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n`
+        +
+        this.content
+      )
+      .setImage(this.mapImage)
+      .setFields(
+        {
+          name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
+          value: this.teams[0].roster
+            .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+            .join("\n"),
+          inline: true
+        },
+        {
+          name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
+          value: this.teams[1].roster
+            .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+            .join("\n"),
+          inline: true
+        }
+      )
+      await this.ctx.edit(embed.build(this.mentions))
+      return await this.wait(5000)
+    }
+    else {
+      const playersAlive = this.teams.find(t => t.side === "ATTACK")!.roster.filter(p => p.life > 0).length
+      const minChance = 0.2
+      const maxChance = 0.8
+      const chance = minChance + ((playersAlive - 1) / (5 - 1)) * (maxChance - minChance)
+      const bombPlanted = Math.random() < chance
+      if(bombPlanted) {
+        const bombSites = valorant_maps.find(m => m.name === this.map)!.sides
+        const bombSite = bombSites[Math.floor(Math.random() * bombSites.length)]
+        const content = this.t(
+          "simulator.spike_planted",
+          {
+            bomb: bombSite
+          }
+        )
+        this.content += `${content}\n`
+        const embed = new EmbedBuilder()
+        .setTitle(this.t(`simulator.mode.${this.mode}`))
+        .setDesc(
+          `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n`
+          +
+          this.content
+        )
+        .setImage(this.mapImage)
+        .setFields(
+          {
+            name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
+            value: this.teams[0].roster
+              .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+              .join("\n"),
+            inline: true
+          },
+          {
+            name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
+            value: this.teams[1].roster
+              .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+              .join("\n"),
+            inline: true
+          }
+        )
+        await this.wait(2000)
+        await this.ctx.edit(embed.build(this.mentions))
+        return await this.secondStep(true)
+      }
+      else {
+        return await this.secondStep()
+      }
+    }
   }
-  private startPlayerDuel() {
-    const player1 = this.choosePlayer(this.teams[0].roster, 0, p => p.aggression * 5)
-    const player2 = this.choosePlayer(this.teams[1].roster, 1, p => p.aggression * 5)
-    this.chooseWinner(player1, player2, p => p.aggression)
+  private async secondStep(bombPlanted?: boolean) {
+    const kills: KillEvent[] = []
+    const attacker = this.teams.findIndex(t => t.side === "ATTACK")
+    const defender = this.teams.findIndex(t => t.side === "DEFENSE")
+    const attackerOvr = this.calcTeamOvr(attacker, true)
+    const defenderOvr = this.calcTeamOvr(defender, true)
+    const totalOvr = attackerOvr + defenderOvr
+    const attackerChance = attacker / totalOvr
+    const defenderChance = defender / totalOvr
+    let win_type: "ELIMINATION" | "BOMB" | "DEFUSE" | "TIME"
+    let winner: number
+    if(bombPlanted) {
+      if(Math.random() < defenderChance * 0.5) {
+        win_type = "DEFUSE"
+        winner = defender
+      }
+      else if(Math.random() < attackerChance * 0.7) {
+        win_type = "BOMB"
+        winner = attacker
+      }
+      else {
+        win_type = "ELIMINATION"
+      }
+    }
+    else {
+      if(Math.random() < defenderChance) {
+        winner = defender
+        win_type = "TIME"
+      }
+      else {
+        win_type = "ELIMINATION"
+      }
+    }
+    if(win_type === "ELIMINATION") {
+      let alivePlayers = [
+        ...this.teams[0].roster.filter(p => p.life > 0),
+        ...this.teams[1].roster.filter(p => p.life > 0)
+      ].length
+      while(alivePlayers > 0) {
+        const {
+          winnerIndex,
+          winnerTeamIndex,
+          loserIndex,
+          loserTeamIndex,
+          weapon
+        } = await this.startPlayerDuel()
+        if(winnerIndex === undefined) {
+          alivePlayers--
+          continue
+        }
+        const killer = this.teams[winnerTeamIndex].roster[winnerIndex]
+        const victim = this.teams[loserTeamIndex].roster[loserIndex]
+        kills.push({
+          killer: {
+            name: killer.name,
+            id: killer.id.toString()
+          },
+          killerIndex: winnerTeamIndex,
+          victim: {
+            name: victim.name,
+            id: victim.id.toString()
+          },
+          victimIndex: loserTeamIndex,
+          weapon: weapon as typeof valorant_weapons[number]["name"]
+        })
+        alivePlayers--
+      }
+      for(const kill of kills) {
+        const content = this.t(
+          "simulator.kill",
+          {
+            t1: this.teams[kill.killerIndex].tag,
+            p1: kill.killer.name,
+            t2: this.teams[kill.victimIndex].tag,
+            p2: kill.victim.name,
+            w: kill.weapon
+          }
+        )
+        this.content += `- ${content}\n`
+      }
+      const winning_team = this.teams[0].roster.filter(p => p.life > 0).length > 0 ? 0 : 1
+      this.rounds.push({
+        kills,
+        win_type,
+        winning_team
+      })
+      for(let i = 0; i < this.teams.length; i++) {
+        if(i === winning_team) {
+          for(const p of this.teams[i].roster) {
+            let bonus = 0
+            if(bombPlanted) {
+              bonus += 300 // TODO
+            }
+            p.credits += 2900
+          }
+        }
+        else {
+          for(const p of this.teams[i].roster) {
+            p.credits += 1900
+          }
+        }
+      }
+      const content = this.t(
+        "simulator.won_by_elimination",
+        {
+          t: this.teams[winning_team].name
+        }
+      )
+      this.content = this.content.split("\n").slice(1).join("\n") + `\n${content}\n`
+      const embed = new EmbedBuilder()
+      .setTitle(this.t(`simulator.mode.${this.mode}`))
+      .setDesc(
+        `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n`
+        +
+        this.content
+      )
+      .setImage(this.mapImage)
+      .setFields(
+        {
+          name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
+          value: this.teams[0].roster
+            .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+            .join("\n"),
+          inline: true
+        },
+        {
+          name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
+          value: this.teams[1].roster
+            .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+            .join("\n"),
+          inline: true
+        }
+      )
+      await this.ctx.edit(embed.build(this.mentions))
+      await this.wait(5000)
+    }
   }
-  private chooseWinner(player1: Player, player2: Player, weightFun: (item: TeamRoster) => number) {
-    player1.shoot()
+  private calcTeamOvr(i: number, alivePlayers?: boolean) {
+    if(alivePlayers) {
+      return this.teams[i].roster.filter(p => p.life > 0).reduce((sum, p) => sum + p.ovr, 0)
+    }
+    return this.teams[i].roster.reduce((sum, p) => sum + p.ovr, 0)
+  }
+  private async startPlayerDuel() {
+    const player1 = this.choosePlayer(this.teams[0].roster.filter(p => p.life > 0), 0, p => p.aggression * 5)
+    const player2 = this.choosePlayer(this.teams[1].roster.filter(p => p.life > 0), 1, p => p.aggression * 5)
+    const [winner1, winner2, weapon1, weapon2] = await this.chooseWinner(player1, player2)
+    const i1 = this.teams[0].roster.findIndex(p => p.id === player1?.id)
+    const i2 = this.teams[1].roster.findIndex(p => p.id === player2?.id)
+    if(winner1 && i1 >= 0 && i2 >= 0) {
+      this.teams[0].roster[i1].kills! += 1
+      this.teams[0].roster[i1].life = player1?.life ?? 0
+      this.teams[1].roster[i2].deaths! += 1
+      this.teams[1].roster[i2].life = player2?.life ?? 0
+      return {
+        winnerIndex: i1,
+        loserIndex: i2,
+        winnerTeamIndex: 0,
+        loserTeamIndex: 1,
+        weapon: weapon1
+      }
+    }
+    else if(winner2 && i1 >= 0 && i2 >= 0) {
+      this.teams[1].roster[i2].kills! += 1
+      this.teams[1].roster[i2].life = player2?.life ?? 0
+      this.teams[0].roster[i1].deaths! += 1
+      this.teams[0].roster[i1].life = player1?.life ?? 0
+      return {
+        winnerIndex: i2,
+        loserIndex: i1,
+        winnerTeamIndex: 1,
+        loserTeamIndex: 0,
+        weapon: weapon2
+      }
+    }
+    else {
+      return {
+        winnerIndex: undefined,
+        loserIndex: undefined,
+        winnerTeamIndex: undefined,
+        loserTeamIndex: undefined,
+        weapon: undefined
+      }
+    }
+  }
+  private async chooseWinner(player1: Player | undefined, player2: Player | undefined) {
+    let nextShot1 = 0
+    let nextShot2 = 0
+    let weapon1 = ""
+    let weapon2 = ""
+    if(!player1) {
+      if(player2!.weapon.primary && player2!.weapon.primary.magazine && player2!.weapon.primary.magazine > 0) {
+        nextShot2 = player2!.weapon.primary.rate_fire
+        weapon2 = player2!.weapon.primary.name!
+      }
+      else if(player2!.weapon.secondary?.magazine && player2!.weapon.secondary.magazine > 0) {
+        nextShot2 = player2!.weapon.secondary.rate_fire
+        weapon2 = player2!.weapon.secondary.name!
+      }
+      else {
+        nextShot2 = player2!.weapon.melee.rate_fire
+        weapon2 = "Melee"
+      }
+      return [false, true, weapon1, weapon2]
+    }
+    if(!player2) {
+      if(player1.weapon.primary && player1.weapon.primary.magazine && player1.weapon.primary.magazine > 0) {
+        nextShot1 = player1.weapon.primary.rate_fire
+        weapon1 = player1.weapon.primary.name!
+      }
+      else if(player1!.weapon.secondary?.magazine && player1.weapon.secondary.magazine > 0) {
+        nextShot1 = player1.weapon.secondary.rate_fire
+        weapon1 = player1.weapon.secondary.name!
+      }
+      else {
+        nextShot1 = player1.weapon.melee.rate_fire
+        weapon1 = "Melee"
+      }
+      return [true, false, weapon1, weapon2]
+    }
+    if(!player1.weapon.secondary) {
+      player1.weapon.secondary = valorant_weapons.find(w => w.name === "Classic")!
+    }
+    if(!player2.weapon.secondary) {
+      player2.weapon.secondary = valorant_weapons.find(w => w.name === "Classic")!
+    }
+    if(player1.weapon.primary && player1.weapon.primary.magazine && player1.weapon.primary.magazine > 0) {
+      nextShot1 = player1.weapon.primary.rate_fire
+      weapon1 = player1.weapon.primary.name!
+    }
+    else if(player1.weapon.secondary.magazine && player1.weapon.secondary.magazine > 0) {
+      nextShot1 = player1.weapon.secondary.rate_fire
+      weapon1 = player1.weapon.secondary.name!
+    }
+    else {
+      nextShot1 = player1.weapon.melee.rate_fire
+      weapon1 = "Melee"
+    }
+    if(player2.weapon.primary && player2.weapon.primary.magazine && player2.weapon.primary.magazine > 0) {
+      nextShot2 = player2.weapon.primary.rate_fire
+      weapon2 = player2.weapon.primary.name!
+    }
+    else if(player2.weapon.secondary.magazine && player2.weapon.secondary.magazine > 0) {
+      nextShot2 = player2.weapon.secondary.rate_fire
+      weapon2 = player2.weapon.secondary.name!
+    }
+    else {
+      nextShot2 = player2.weapon.melee.rate_fire
+      weapon2 = "Melee"
+    }
+    while(player1.life > 0 && player2.life > 0) {
+      const wait = Math.min(nextShot1, nextShot2)
+      nextShot1 -= wait
+      nextShot2 -= wait
+      if(nextShot1 <= 0 && player1.life > 0) {
+        const shoot = player1.shoot()
+        player2.life -= shoot[0]
+        nextShot1 = shoot[1]
+      }
+      if(nextShot2 <= 0 && player2.life > 0) {
+        const shoot = player2.shoot()
+        player1.life -= shoot[0]
+        nextShot2 = shoot[1]
+      }
+      await this.wait(wait)
+    }
+    return [player1.life > 0, player2.life > 0, weapon1, weapon2]
   }
   private choosePlayer(items: TeamRoster[], index: number, weightFun: (item: TeamRoster) => number) {
     const weight = items.reduce((sum, i) => sum + weightFun(i), 0)
@@ -88,19 +577,11 @@ export default class Round extends Match {
           credits: item.credits,
           weapon: item.weapon!,
           teamCredits: this.teams[index].roster.reduce((sum, p) => sum + p.credits, 0) / 5,
-          stats: item
+          stats: item,
+          id: item.id
         })
         return player
       }
     }
-    const player = new Player({
-      name: items[items.length -1].name,
-      life: items[items.length -1].life,
-      credits: items[items.length -1].credits,
-      weapon: items[items.length -1].weapon!,
-      teamCredits: this.teams[index].roster.reduce((sum, p) => sum + p.credits, 0) / 5,
-      stats: items[items.length -1]
-    })
-    return player
   }
 }

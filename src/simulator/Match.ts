@@ -1,4 +1,4 @@
-import { valorant_agents, valorant_weapons } from "../config.ts"
+import { valorant_agents, valorant_maps, valorant_weapons } from "../config.ts"
 import type { Args } from '../locales/index.ts'
 import ComponentInteractionContext from "../structures/interactions/ComponentInteractionContext.ts"
 import type { PlayerWeapon } from "./Player.ts"
@@ -49,6 +49,8 @@ export type TeamRoster = {
   purchaseable: boolean
   life: number
   weapon?: PlayerWeapon
+  kills?: number
+  deaths?: number
 }
 export type Team = {
   user: string
@@ -59,9 +61,9 @@ export type Team = {
 }
 export type KillEvent = {
   killer: Pick<TeamPlayer, "id" | "name">
-  killer_index: number
+  killerIndex: number
   victim: Pick<TeamPlayer, "id" | "name">
-  victim_index: number
+  victimIndex: number
   weapon: typeof valorant_weapons[number]["name"]
 }
 type RoundResult = {
@@ -95,18 +97,22 @@ export default class Match {
   public readonly ctx: ComponentInteractionContext
   public content: string = ""
   public t: (content: string, args?: Args) => string
-  private readonly mode: "unranked" | "ranked" | "swiftplay:unranked" | "swiftplay:ranked" | "tournament"
+  public readonly mode: "unranked" | "ranked" | "swiftplay:unranked" | "swiftplay:ranked" | "tournament"
   public maxScore?: number
   public switchSidesAt: number = 12
   public map: string
-  private readonly options: MatchOptions
+  public mapImage: string
+  public mentions: string
+  private options: MatchOptions
   public constructor(options: MatchOptions) {
     this.teams = options.teams
     this.ctx = options.ctx
     this.t = options.t
-    this.mode = options!.mode
+    this.mode = options.mode
     this.options = options
     this.map = options.map
+    this.mapImage = valorant_maps.filter(m => m.name === this.map)[0].image
+    this.mentions = `<@${this.teams[0].user}> <@${this.teams[1].user}>`
     if(this.mode === "unranked") {
       this.maxScore = 13
     }
@@ -118,13 +124,35 @@ export default class Match {
       this.maxScore = 7
       this.switchSidesAt = 6
     }
+    for(const p of this.teams[0].roster) {
+      p.kills = 0
+      p.deaths = 0
+      p.weapon = {
+        melee: {
+          damage: {
+            head: 50,
+            chest: 50
+          },
+          rate_fire: 750
+        },
+        secondary: valorant_weapons.filter(w => w.name === "Classic")[0]
+      }
+    }
+    for(const p of this.teams[1].roster) {
+      p.kills = 0
+      p.deaths = 0
+    }
+    const sides: ("ATTACK" | "DEFENSE")[] = ["ATTACK", "DEFENSE"]
+    const side = sides[Math.floor(Math.random() * sides.length)]
+    this.teams[0].side = side
+    this.teams[1].side = side === "ATTACK" ? "DEFENSE" : "ATTACK"
   }
   public async wait(time: number) {
     return await new Promise(r => setTimeout(r, time))
   }
   public async start() {
     const { default: Round } = await import("./Round.ts")
-    await new Round(this.options).setContent(this.content).start()
+    return await new Round(this.options).setContent(this.content).start()
   }
   public setContent(content: string) {
     this.content = content
@@ -138,5 +166,6 @@ export default class Match {
       }
     }
     const content = this.t("simulator.switch_sides")
+    return this
   }
 }
