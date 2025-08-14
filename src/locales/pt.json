@@ -277,14 +277,14 @@
   },
   "simulator": {
     "sides": {
-      "name": "Lados",
-      "value": "Ataque: {attack}\nDefesa: {defense}"
+      "ATTACK": "Atacante",
+      "DEFENSE": "Defensor"
     },
     "round_started": "*Rodada {n} iniciada*",
     "winner": "{user} venceu a partida!",
     "switch_sides": "Troca de lados",
     "won_by_elimination": "- **{t} venceu a rodada eliminando toda a equipe adversária**",
-    "kill": "{t1} {p1} matou {t2} {p2} com {w}",
+    "kill": "**{t1} {p1}** matou **{t2} {p2}** com {w}",
     "spike_not_planted": "- A spike não foi plantada a tempo\n- **{team}** venceu o round",
     "spike_detonated": "- Spike detonada\n- **{team}** venceu o round",
     "spike_defused": "- Spike desarmada\n- **{team}** venceu o round",
@@ -296,7 +296,7 @@
       "swiftplay:unranked": "Partida Modo Frenético"
     },
     "match_started": "Partida Iniciada",
-    "processing": "<a:loading:809221866434199634> Processando a rodada..."
+    "processing": "<a:loading:809221866434199634> Processando a rodada...\n"
   },
   "helper": {
     "palpitate": "Palpitar",
