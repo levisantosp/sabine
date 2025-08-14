@@ -133,19 +133,6 @@ type Transaction {
   user   String?
 }
 
-enum Elo {
-  UNRANKED
-  IRON
-  BRONZE
-  SILVER
-  GOLD
-  PLATINUM
-  DIAMOND
-  ASCENDANT
-  IMMORTAL
-  RADIANT
-}
-
 enum Packet {
   IRON
   BRONZE
@@ -219,7 +206,17 @@ model users {
   rank_rating          Int           @default(0) @db.Int
   fates                Int           @default(0) @db.Int
   transactions         Transaction[]
-  elo                  Elo           @default(UNRANKED)
+  elo                  Int           @default(0) @db.Int
+  // UNRANKED 0
+  // IRON 1
+  // BRONZE 2
+  // SILVER 3
+  // GOLD 4
+  // PLATINUM 5
+  // DIAMOND 6
+  // ASCENDANT 7
+  // IMMORTAL 8
+  // RADIANT 9
   elo_rating           Int           @default(50) @db.Int
   remind               Boolean       @default(false)
   remindIn             String?
