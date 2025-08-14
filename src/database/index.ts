@@ -40,7 +40,7 @@ export class SabineUser implements users {
   public rank_rating: number = 0
   public fates: number = 0
   public transactions: { type: $Enums.TransactionType; player: string; when: number; price: bigint | null; user: string | null; }[] = []
-  public elo: $Enums.Elo = "UNRANKED"
+  public elo: number = 0
   public elo_rating: number = 50
   public remind: boolean = false
   public remindIn: string | null = null
