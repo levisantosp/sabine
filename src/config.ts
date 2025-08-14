@@ -143,7 +143,8 @@ export const valorant_weapons = [
       head: 78,
       chest: 26
     },
-    magazine: 48
+    magazine: 48,
+    rate_fire: 410
   },
   {
     name: "Shorty",
@@ -152,7 +153,8 @@ export const valorant_weapons = [
       head: 22,
       chest: 11
     },
-    magazine: 8
+    magazine: 8,
+    rate_fire: 850
   },
   {
     name: "Frenzy",
@@ -161,7 +163,8 @@ export const valorant_weapons = [
       head: 78,
       chest: 26
     },
-    magazine: 60
+    magazine: 60,
+    rate_fire: 100
   },
   {
     name: "Ghost",
@@ -170,7 +173,8 @@ export const valorant_weapons = [
       head: 105,
       chest: 30
     },
-    magazine: 52
+    magazine: 52,
+    rate_fire: 150
   },
   {
     name: "Sheriff",
@@ -179,7 +183,8 @@ export const valorant_weapons = [
       head: 159,
       chest: 55
     },
-    magazine: 30
+    magazine: 30,
+    rate_fire: 500
   },
   {
     name: "Stinger",
@@ -188,7 +193,8 @@ export const valorant_weapons = [
       head: 67,
       chest: 27
     },
-    magazine: 80
+    magazine: 80,
+    rate_fire: 160
   },
   {
     name: "Spectre",
@@ -197,7 +203,8 @@ export const valorant_weapons = [
       head: 78,
       chest: 26
     },
-    magazine: 120
+    magazine: 120,
+    rate_fire: 160
   },
   {
     name: "Bucky",
@@ -206,7 +213,8 @@ export const valorant_weapons = [
       head: 40,
       chest: 20
     },
-    magazine: 15
+    magazine: 15,
+    rate_fire: 1100
   },
   {
     name: "Judge",
@@ -215,7 +223,8 @@ export const valorant_weapons = [
       head: 34,
       chest: 17
     },
-    magazine: 20
+    magazine: 20,
+    rate_fire: 350
   },
   {
     name: "Bulldog",
@@ -224,7 +233,8 @@ export const valorant_weapons = [
       head: 115,
       chest: 35
     },
-    magazine: 96
+    magazine: 96,
+    rate_fire: 240
   },
   {
     name: "Guardian",
@@ -233,7 +243,8 @@ export const valorant_weapons = [
       head: 195,
       chest: 65
     },
-    magazine: 48
+    magazine: 48,
+    rate_fire: 475
   },
   {
     name: "Phantom",
@@ -242,7 +253,8 @@ export const valorant_weapons = [
       head: 140,
       chest: 35
     },
-    magazine: 90
+    magazine: 90,
+    rate_fire: 87.5
   },
   {
     name: "Vandal",
@@ -251,7 +263,8 @@ export const valorant_weapons = [
       head: 160,
       chest: 40
     },
-    magazine: 75
+    magazine: 75,
+    rate_fire: 172.5
   },
   {
     name: "Marshal",
@@ -260,7 +273,8 @@ export const valorant_weapons = [
       head: 202,
       chest: 101
     },
-    magazine: 20
+    magazine: 20,
+    rate_fire: 1200
   },
   {
     name: "Operator",
@@ -269,7 +283,8 @@ export const valorant_weapons = [
       head: 255,
       chest: 150
     },
-    magazine: 15
+    magazine: 15,
+    rate_fire: 1500
   },
   {
     name: "Outlaw",
@@ -278,7 +293,8 @@ export const valorant_weapons = [
       head: 238,
       chest: 140
     },
-    magazine: 12
+    magazine: 12,
+    rate_fire: 1000
   },
   {
     name: "Ares",
@@ -287,7 +303,8 @@ export const valorant_weapons = [
       head: 75,
       chest: 30
     },
-    magazine: 150
+    magazine: 150,
+    rate_fire: 120
   },
   {
     name: "Odin",
@@ -296,7 +313,8 @@ export const valorant_weapons = [
       head: 95,
       chest: 38
     },
-    magazine: 300
+    magazine: 300,
+    rate_fire: 80
   },
   {
     name: "Melee",
@@ -304,14 +322,17 @@ export const valorant_weapons = [
     damage: {
       head: 50,
       chest: 50
-    }
+    },
+    rate_fire: 750,
+    magazine: 0
   }
 ] as const
 export const valorant_maps: {
   name: string
   meta_agents: typeof valorant_agents[number]["name"][]
   image: string,
-  current_map_pool?: boolean
+  current_map_pool?: boolean,
+  sides: ("A" | "B" | "C")[]
 }[] = [
   {
     name: "Ascent",
@@ -327,7 +348,8 @@ export const valorant_maps: {
       "Cypher"
     ],
     current_map_pool: true,
-    image: "https://imgur.com/HUdWHux.png"
+    image: "https://imgur.com/HUdWHux.png",
+    sides: ["A", "B"]
   },
   {
     name: "Bind",
@@ -344,7 +366,8 @@ export const valorant_maps: {
       "Omen"
     ],
     current_map_pool: true,
-    image: "https://imgur.com/vSP4vQB.png"
+    image: "https://imgur.com/vSP4vQB.png",
+    sides: ["A", "B"]
   },
   {
     name: "Breeze",
@@ -356,7 +379,8 @@ export const valorant_maps: {
       "Sova",
       "Harbor"
     ],
-    image: "https://imgur.com/p5Bxsca.png"
+    image: "https://imgur.com/p5Bxsca.png",
+    sides: ["A", "B"]
   },
   {
     name: "Fracture",
@@ -371,7 +395,8 @@ export const valorant_maps: {
       "Breach",
       "Skye"
     ],
-    image: "https://imgur.com/Fsas50g.png"
+    image: "https://imgur.com/Fsas50g.png",
+    sides: ["A", "B"]
   },
   {
     name: "Haven",
@@ -391,7 +416,8 @@ export const valorant_maps: {
       "Viper"
     ],
     current_map_pool: true,
-    image: "https://imgur.com/oNm4lD3.png"
+    image: "https://imgur.com/oNm4lD3.png",
+    sides: ["A", "B", "C"]
   },
   {
     name: "Icebox",
@@ -405,7 +431,8 @@ export const valorant_maps: {
       "Gekko"
     ],
     current_map_pool: true,
-    image: "https://imgur.com/aQrhYgx.png"
+    image: "https://imgur.com/aQrhYgx.png",
+    sides: ["A", "B"]
   },
   {
     name: "Pearl",
@@ -421,7 +448,8 @@ export const valorant_maps: {
       "Fade",
       "Sova"
     ],
-    image: "https://imgur.com/P1189zs.png"
+    image: "https://imgur.com/P1189zs.png",
+    sides: ["A", "B"]
   },
   {
     name: "Split",
@@ -437,7 +465,8 @@ export const valorant_maps: {
       "Viper",
       "Cypher"
     ],
-    image: "https://imgur.com/36tar4S.png"
+    image: "https://imgur.com/36tar4S.png",
+    sides: ["A", "B"]
   },
   {
     name: "Lotus",
@@ -455,7 +484,8 @@ export const valorant_maps: {
       "Omen"
     ],
     current_map_pool: true,
-    image: "https://imgur.com/CLq6LKn.png"
+    image: "https://imgur.com/CLq6LKn.png",
+    sides: ["A", "B", "C"]
   },
   {
     name: "Sunset",
@@ -471,7 +501,8 @@ export const valorant_maps: {
       "Cypher"
     ],
     current_map_pool: true,
-    image: "https://imgur.com/MuMwr1F.png"
+    image: "https://imgur.com/MuMwr1F.png",
+    sides: ["A", "B"]
   },
   {
     name: "Abyss",
@@ -486,7 +517,8 @@ export const valorant_maps: {
       "Jett",
       "Yoru"
     ],
-    image: "https://imgur.com/7b8pgQz.png"
+    image: "https://imgur.com/7b8pgQz.png",
+    sides: ["A", "B"]
   },
   {
     name: "Corrode",
@@ -502,6 +534,7 @@ export const valorant_maps: {
       "Chamber"
     ],
     current_map_pool: true,
-    image: "https://imgur.com/2rmdsWE.png"
+    image: "https://imgur.com/2rmdsWE.png",
+    sides: ["A", "B"]
   }
 ] as const
