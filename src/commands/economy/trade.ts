@@ -120,7 +120,7 @@ export default createCommand({
       .map(p => ({ name: p.name, value: p.id }))
     )
   },
-  async createMessageComponentInteraction({ ctx }) {
+  async createMessageComponentInteraction({ ctx, client }) {
     if(ctx.args[2] === "buy") {
       const user = await SabineUser.fetch(ctx.args[3])
       const player = getPlayer(Number(ctx.args[4]))
@@ -135,21 +135,25 @@ export default createCommand({
       }
       user.roster?.reserve.splice(i, 1)
       user.coins += BigInt(ctx.args[5])
-      user.transactions.push({
-        type: "TRADE_PLAYER",
-        player: player.id.toString(),
-        when: Date.now(),
-        price: BigInt(ctx.args[5]),
-        user: ctx.interaction.user.id
-      })
       ctx.db.user.roster?.reserve.push(ctx.args[4])
       ctx.db.user.coins -= BigInt(ctx.args[5])
-      ctx.db.user.transactions.push({
-        type: "TRADE_PLAYER",
-        player: player.id.toString(),
-        when: Date.now(),
-        price: BigInt(ctx.args[5]),
-        user: user.id
+      await client.prisma.transactions.createMany({
+        data: [
+          {
+            type: "TRADE_PLAYER",
+            player: player.id.toString(),
+            price: BigInt(ctx.args[5]),
+            userId: ctx.db.user.id,
+            who: user.id
+          },
+          {
+            type: "TRADE_PLAYER",
+            player: player.id.toString(),
+            price: BigInt(ctx.args[5]),
+            userId: user.id,
+            who: ctx.db.user.id
+          }
+        ]
       })
       await user.save()
       await ctx.db.user.save()

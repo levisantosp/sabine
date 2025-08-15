@@ -1,4 +1,5 @@
 import { valorant_agents, valorant_maps, valorant_weapons } from "../config.ts"
+import { SabineUser } from "../database/index.ts"
 import EmbedBuilder from "../structures/builders/EmbedBuilder.ts"
 import Match, { type TeamRoster, type KillEvent } from "./Match.ts"
 import Player from "./Player.ts"
@@ -6,12 +7,23 @@ import Player from "./Player.ts"
 export default class Round extends Match {
   public override async start() {
     if(this.rounds.length === this.switchSidesAt) {
-      return await this.switchSides()
+      await this.switchSides()
     }
     const score1 = this.rounds.filter(r => r.winning_team === 0).length
     const score2 = this.rounds.filter(r => r.winning_team === 1).length
-    // fazer a logica de terminar a partida aqui
-    
+    if(this.mode === "ranked") {
+      if(score1 === 13 || score2 === 13) {
+        // TODO
+        if(score1 - score2 === 2 || score1 - score2 === -2) {
+          return await this.finish(score1, score2)
+        }
+      }
+      if(score1 > 13 || score2 > 13) {
+        if(score1 - score2 === 2 || score1 - score2 === -2) {
+          return await this.finish(score1, score2)
+        }
+      }
+    }
     this.content = this.t("simulator.processing")
     const embed = new EmbedBuilder()
     .setTitle(this.t(`simulator.mode.${this.mode}`))
@@ -124,8 +136,129 @@ export default class Round extends Match {
       p.credits = player.credits
       p.weapon = player.weapon
     }
-    await this.wait(5000)
+    await this.wait(3000)
     await this.firstStep(Math.floor(Math.random() * 6))
+    return this
+  }
+  private async finish(score1: number, score2: number) {
+    this.finished = true
+    const user1 = await SabineUser.fetch(this.teams[0].user) || new SabineUser(this.teams[0].user)
+    const user2 = await SabineUser.fetch(this.teams[1].user) || new SabineUser(this.teams[1].user)
+    if(this.mode.includes("ranked")) {
+      const max = Math.max(score1, score2)
+      if(score1 === max) {
+        const diff = score1 - score2
+        const maxDiff = 13
+        const minPts = 10
+        const maxPts = 40
+        const pts = Math.round(minPts + (diff - 1) * ((maxPts - minPts) / (maxDiff - 1)))
+        user1.ranked_wins += 1
+        user1.rank_rating += pts
+        user2.ranked_defeats += 1
+        user2.rank_rating -= pts - 5
+        if(user1.rank_rating >= 100) {
+          if(user1.elo < 22) {
+            user1.elo += 1
+            user1.rank_rating = 10
+          }
+          else {
+            if(user1.rank_rating >= 100 && user1.rank_rating <= 199) {
+              user1.elo = 22
+            }
+            else if(user1.rank_rating >= 200 && user1.rank_rating <= 299) {
+              user1.elo = 23
+            }
+            else if(user1.rank_rating >= 300 && user1.rank_rating <= 319) {
+              user1.elo = 24
+            }
+            else {
+              user1.elo = 25
+            }
+          }
+        }
+        user1.carrer.push({
+          teams: [
+            {
+              user: this.teams[0].user,
+              score: score1
+            },
+            {
+              user: this.teams[1].user,
+              score: score2
+            }
+          ]
+        })
+        user2.carrer.push({
+          teams: [
+            {
+              user: this.teams[1].user,
+              score: score2
+            },
+            {
+              user: this.teams[0].user,
+              score: score1
+            }
+          ]
+        })
+        await Promise.all([user1.save(), user2.save()])
+      }
+      else {
+        const diff = score2 - score1
+        const maxDiff = 13
+        const minPts = 10
+        const maxPts = 40
+        const pts = Math.round(minPts + (diff - 1) * ((maxPts - minPts) / (maxDiff - 1)))
+        user2.ranked_wins += 1
+        user2.rank_rating += pts
+        user1.ranked_defeats += 1
+        user1.rank_rating -= pts - 5
+        if(user2.rank_rating >= 100) {
+          if(user2.elo < 22) {
+            user2.elo += 1
+            user2.rank_rating = 10
+          }
+          else {
+            if(user2.rank_rating >= 100 && user2.rank_rating <= 199) {
+              user2.elo = 22
+            }
+            else if(user2.rank_rating >= 200 && user2.rank_rating <= 299) {
+              user2.elo = 23
+            }
+            else if(user2.rank_rating >= 300 && user2.rank_rating <= 319) {
+              user2.elo = 24
+            }
+            else {
+              user2.elo = 25
+            }
+          }
+        }
+        user1.carrer.push({
+          teams: [
+            {
+              user: this.teams[0].user,
+              score: score1
+            },
+            {
+              user: this.teams[1].user,
+              score: score2
+            }
+          ]
+        })
+        user2.carrer.push({
+          teams: [
+            {
+              user: this.teams[1].user,
+              score: score2
+            },
+            {
+              user: this.teams[0].user,
+              score: score1
+            }
+          ]
+        })
+        await Promise.all([user1.save(), user2.save()])
+      }
+    }
     return this
   }
   private async firstStep(duels: number) {
@@ -220,7 +353,7 @@ export default class Round extends Match {
           t: this.teams[winningTeam].name
         }
       )
-      this.content = this.content.split("\n").slice(1).join("\n") + `\n${content}\n`
+      this.content = this.content.split("\n").slice(1).join("\n") + `${content}\n`
       const embed = new EmbedBuilder()
       .setTitle(this.t(`simulator.mode.${this.mode}`))
       .setDesc(
@@ -246,7 +379,7 @@ export default class Round extends Match {
         }
       )
       await this.ctx.edit(embed.build(this.mentions))
-      return await this.wait(5000)
+      return await this.wait(3000)
     }
     else {
       const playersAlive = this.teams.find(t => t.side === "ATTACK")!.roster.filter(p => p.life > 0).length
@@ -288,7 +421,7 @@ export default class Round extends Match {
             inline: true
           }
         )
-        await this.wait(2000)
+        await this.wait(1500)
         await this.ctx.edit(embed.build(this.mentions))
         return await this.secondStep(true)
       }
@@ -304,16 +437,17 @@ export default class Round extends Match {
     const attackerOvr = this.calcTeamOvr(attacker, true)
     const defenderOvr = this.calcTeamOvr(defender, true)
     const totalOvr = attackerOvr + defenderOvr
-    const attackerChance = attacker / totalOvr
-    const defenderChance = defender / totalOvr
+    const attackerChance = attackerOvr / totalOvr
+    const defenderChance = defenderOvr / totalOvr
     let win_type: "ELIMINATION" | "BOMB" | "DEFUSE" | "TIME"
     let winner: number
     if(bombPlanted) {
-      if(Math.random() < defenderChance * 0.5) {
+      const random = Math.random()
+      if(random < defenderChance * 0.5) {
         win_type = "DEFUSE"
         winner = defender
       }
-      else if(Math.random() < attackerChance * 0.7) {
+      else if(random < attackerChance * 0.7) {
         win_type = "BOMB"
         winner = attacker
       }
@@ -322,7 +456,7 @@ export default class Round extends Match {
       }
     }
     else {
-      if(Math.random() < defenderChance) {
+      if(Math.random() < defenderChance * 0.05) {
         winner = defender
         win_type = "TIME"
       }
@@ -388,7 +522,7 @@ export default class Round extends Match {
           for(const p of this.teams[i].roster) {
             let bonus = 0
             if(bombPlanted) {
-              bonus += 300 // TODO
+              bonus += 300
             }
             p.credits += 2900
           }
@@ -405,7 +539,7 @@ export default class Round extends Match {
           t: this.teams[winning_team].name
         }
       )
-      this.content = this.content.split("\n").slice(1).join("\n") + `\n${content}\n`
+      this.content = this.content.split("\n").slice(1).join("\n") + `${content}\n`
       const embed = new EmbedBuilder()
       .setTitle(this.t(`simulator.mode.${this.mode}`))
       .setDesc(
@@ -431,7 +565,316 @@ export default class Round extends Match {
         }
       )
       await this.ctx.edit(embed.build(this.mentions))
-      await this.wait(5000)
+      await this.wait(3000)
+    }
+    else if(win_type === "BOMB") {
+      let alivePlayers = [
+        ...this.teams[0].roster.filter(p => p.life > 0),
+        ...this.teams[1].roster.filter(p => p.life > 0)
+      ].length
+      while(alivePlayers > 0) {
+        const {
+          winnerIndex,
+          winnerTeamIndex,
+          loserIndex,
+          loserTeamIndex,
+          weapon
+        } = await this.startPlayerDuel()
+        if(winnerIndex === undefined) {
+          alivePlayers--
+          continue
+        }
+        const killer = this.teams[winnerTeamIndex].roster[winnerIndex]
+        const victim = this.teams[loserTeamIndex].roster[loserIndex]
+        kills.push({
+          killer: {
+            name: killer.name,
+            id: killer.id.toString()
+          },
+          killerIndex: winnerTeamIndex,
+          victim: {
+            name: victim.name,
+            id: victim.id.toString()
+          },
+          victimIndex: loserTeamIndex,
+          weapon: weapon as typeof valorant_weapons[number]["name"]
+        })
+        alivePlayers--
+      }
+      for(const kill of kills) {
+        const content = this.t(
+          "simulator.kill",
+          {
+            t1: this.teams[kill.killerIndex].tag,
+            p1: kill.killer.name,
+            t2: this.teams[kill.victimIndex].tag,
+            p2: kill.victim.name,
+            w: kill.weapon
+          }
+        )
+        this.content += `- ${content}\n`
+      }
+      const winning_team = this.teams.findIndex(t => t.side === "ATTACK")
+      this.rounds.push({
+        kills,
+        win_type,
+        winning_team
+      })
+      for(let i = 0; i < this.teams.length; i++) {
+        if(i === winning_team) {
+          for(const p of this.teams[i].roster) {
+            let bonus = 0
+            if(bombPlanted) {
+              bonus += 300
+            }
+            p.credits += 2900
+          }
+        }
+        else {
+          for(const p of this.teams[i].roster) {
+            p.credits += 1900
+          }
+        }
+      }
+      const content = this.t(
+        "simulator.spike_detonated",
+        {
+          t: this.teams[winning_team].name
+        }
+      )
+      this.content = this.content.split("\n").slice(1).join("\n") + `${content}\n`
+      const embed = new EmbedBuilder()
+      .setTitle(this.t(`simulator.mode.${this.mode}`))
+      .setDesc(
+        `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n`
+        +
+        this.content
+      )
+      .setImage(this.mapImage)
+      .setFields(
+        {
+          name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
+          value: this.teams[0].roster
+            .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+            .join("\n"),
+          inline: true
+        },
+        {
+          name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
+          value: this.teams[1].roster
+            .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+            .join("\n"),
+          inline: true
+        }
+      )
+      await this.ctx.edit(embed.build(this.mentions))
+      await this.wait(3000)
+    }
+    else if(win_type === "DEFUSE") {
+      let alivePlayers = [
+        ...this.teams[0].roster.filter(p => p.life > 0),
+        ...this.teams[1].roster.filter(p => p.life > 0)
+      ].length
+      while(alivePlayers > 0) {
+        const {
+          winnerIndex,
+          winnerTeamIndex,
+          loserIndex,
+          loserTeamIndex,
+          weapon
+        } = await this.startPlayerDuel()
+        if(winnerIndex === undefined) {
+          alivePlayers--
+          continue
+        }
+        const killer = this.teams[winnerTeamIndex].roster[winnerIndex]
+        const victim = this.teams[loserTeamIndex].roster[loserIndex]
+        kills.push({
+          killer: {
+            name: killer.name,
+            id: killer.id.toString()
+          },
+          killerIndex: winnerTeamIndex,
+          victim: {
+            name: victim.name,
+            id: victim.id.toString()
+          },
+          victimIndex: loserTeamIndex,
+          weapon: weapon as typeof valorant_weapons[number]["name"]
+        })
+        alivePlayers--
+      }
+      for(const kill of kills) {
+        const content = this.t(
+          "simulator.kill",
+          {
+            t1: this.teams[kill.killerIndex].tag,
+            p1: kill.killer.name,
+            t2: this.teams[kill.victimIndex].tag,
+            p2: kill.victim.name,
+            w: kill.weapon
+          }
+        )
+        this.content += `- ${content}\n`
+      }
+      const winning_team = this.teams.findIndex(t => t.side === "DEFENSE")
+      this.rounds.push({
+        kills,
+        win_type,
+        winning_team
+      })
+      for(let i = 0; i < this.teams.length; i++) {
+        if(i === winning_team) {
+          for(const p of this.teams[i].roster) {
+            let bonus = 0
+            if(bombPlanted) {
+              bonus += 300
+            }
+            p.credits += 2900
+          }
+        }
+        else {
+          for(const p of this.teams[i].roster) {
+            p.credits += 1900
+          }
+        }
+      }
+      const content = this.t(
+        "simulator.spike_defused",
+        {
+          t: this.teams[winning_team].name
+        }
+      )
+      this.content = this.content.split("\n").slice(1).join("\n") + `${content}\n`
+      const embed = new EmbedBuilder()
+      .setTitle(this.t(`simulator.mode.${this.mode}`))
+      .setDesc(
+        `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n`
+        +
+        this.content
+      )
+      .setImage(this.mapImage)
+      .setFields(
+        {
+          name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
+          value: this.teams[0].roster
+            .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+            .join("\n"),
+          inline: true
+        },
+        {
+          name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
+          value: this.teams[1].roster
+            .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+            .join("\n"),
+          inline: true
+        }
+      )
+      await this.ctx.edit(embed.build(this.mentions))
+      await this.wait(3000)
+    }
+    else if(win_type === "TIME") {
+      let alivePlayers = [
+        ...this.teams[0].roster.filter(p => p.life > 0),
+        ...this.teams[1].roster.filter(p => p.life > 0)
+      ].length
+      while(alivePlayers > 0) {
+        const {
+          winnerIndex,
+          winnerTeamIndex,
+          loserIndex,
+          loserTeamIndex,
+          weapon
+        } = await this.startPlayerDuel()
+        if(winnerIndex === undefined) {
+          alivePlayers--
+          continue
+        }
+        const killer = this.teams[winnerTeamIndex].roster[winnerIndex]
+        const victim = this.teams[loserTeamIndex].roster[loserIndex]
+        kills.push({
+          killer: {
+            name: killer.name,
+            id: killer.id.toString()
+          },
+          killerIndex: winnerTeamIndex,
+          victim: {
+            name: victim.name,
+            id: victim.id.toString()
+          },
+          victimIndex: loserTeamIndex,
+          weapon: weapon as typeof valorant_weapons[number]["name"]
+        })
+        alivePlayers--
+      }
+      for(const kill of kills) {
+        const content = this.t(
+          "simulator.kill",
+          {
+            t1: this.teams[kill.killerIndex].tag,
+            p1: kill.killer.name,
+            t2: this.teams[kill.victimIndex].tag,
+            p2: kill.victim.name,
+            w: kill.weapon
+          }
+        )
+        this.content += `- ${content}\n`
+      }
+      const winning_team = this.teams.findIndex(t => t.side === "DEFENSE")
+      this.rounds.push({
+        kills,
+        win_type,
+        winning_team
+      })
+      for(let i = 0; i < this.teams.length; i++) {
+        if(i === winning_team) {
+          for(const p of this.teams[i].roster) {
+            let bonus = 0
+            if(bombPlanted) {
+              bonus += 300
+            }
+            p.credits += 2900
+          }
+        }
+        else {
+          for(const p of this.teams[i].roster) {
+            p.credits += 1900
+          }
+        }
+      }
+      const content = this.t(
+        "simulator.spike_not_planted",
+        {
+          t: this.teams[winning_team].name
+        }
+      )
+      this.content = this.content.split("\n").slice(1).join("\n") + `${content}\n`
+      const embed = new EmbedBuilder()
+      .setTitle(this.t(`simulator.mode.${this.mode}`))
+      .setDesc(
+        `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n`
+        +
+        this.content
+      )
+      .setImage(this.mapImage)
+      .setFields(
+        {
+          name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
+          value: this.teams[0].roster
+            .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+            .join("\n"),
+          inline: true
+        },
+        {
+          name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
+          value: this.teams[1].roster
+            .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+            .join("\n"),
+          inline: true
+        }
+      )
+      await this.ctx.edit(embed.build(this.mentions))
+      await this.wait(3000)
     }
   }
   private calcTeamOvr(i: number, alivePlayers?: boolean) {
@@ -561,7 +1004,7 @@ export default class Round extends Match {
         player1.life -= shoot[0]
         nextShot2 = shoot[1]
       }
-      await this.wait(wait)
+      await this.wait(wait / 10)
     }
     return [player1.life > 0, player2.life > 0, weapon1, weapon2]
   }

@@ -1,5 +1,6 @@
 import { valorant_agents, valorant_maps, valorant_weapons } from "../config.ts"
 import type { Args } from '../locales/index.ts'
+import EmbedBuilder from "../structures/builders/EmbedBuilder.ts"
 import ComponentInteractionContext from "../structures/interactions/ComponentInteractionContext.ts"
 import type { PlayerWeapon } from "./Player.ts"
 
@@ -161,11 +162,37 @@ export default class Match {
   public async switchSides() {
     for(const t of this.teams) {
       t.side = t.side === "ATTACK" ? "DEFENSE" : "ATTACK"
-      for(let i = 0; i < t.roster.length; i++) {
-        t.roster[i].credits = 800
+      for(const p of t.roster) {
+        p.credits = 800
       }
     }
     const content = this.t("simulator.switch_sides")
-    return this
+    this.content = content
+    const embed = new EmbedBuilder()
+    .setTitle(this.t(`simulator.mode.${this.mode}`))
+    .setDesc(
+      `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n`
+      +
+      this.content
+    )
+    .setImage(this.mapImage)
+    .setFields(
+      {
+        name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
+        value: this.teams[0].roster
+          .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+          .join("\n"),
+        inline: true
+      },
+      {
+        name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
+        value: this.teams[1].roster
+          .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+          .join("\n"),
+        inline: true
+      }
+    )
+    await this.ctx.edit(embed.build(this.mentions))
+    await this.wait(3000)
   }
 }

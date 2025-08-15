@@ -123,6 +123,7 @@ enum TransactionType {
   CLAIM_PLAYER_BY_COMMAND
   SELL_PLAYER
   TRADE_PLAYER
+  SIGN_PLAYER
 }
 
 type Transaction {
@@ -184,47 +185,81 @@ model keys {
 }
 
 model users {
-  id                   String        @id @map("_id")
-  valorant_predictions Prediction[]
-  lol_predictions      Prediction[]
-  correct_predictions  Int           @default(0) @db.Int
-  wrong_predictions    Int           @default(0) @db.Int
-  lang                 Language      @default(en)
-  plan                 Premium?
-  warned               Boolean?
-  roster               Roster?
-  coins                BigInt        @default(0)
-  team                 Team?
-  carrer               Carrer[]
-  wins                 Int           @default(0) @db.Int
-  defeats              Int           @default(0) @db.Int
-  daily_time           Float         @default(0) @db.Double
-  claim_time           Float         @default(0) @db.Double
-  warn                 Boolean       @default(true)
-  pity                 Int           @default(0) @db.Int
-  claims               Int           @default(0) @db.Int
-  rank_rating          Int           @default(0) @db.Int
-  fates                Int           @default(0) @db.Int
-  transactions         Transaction[]
-  elo                  Int           @default(0) @db.Int
+  id                       String         @id @map("_id")
+  valorant_predictions     Prediction[]
+  lol_predictions          Prediction[]
+  correct_predictions      Int            @default(0) @db.Int
+  wrong_predictions        Int            @default(0) @db.Int
+  lang                     Language       @default(en)
+  plan                     Premium?
+  warned                   Boolean?
+  roster                   Roster?
+  coins                    BigInt         @default(0)
+  team                     Team?
+  carrer                   Carrer[]
+  ranked_wins              Int            @default(0) @db.Int
+  unranked_wins            Int            @default(0) @db.Int
+  swiftplay_wins           Int            @default(0) @db.Int
+  ranked_swiftplay_wins    Int            @default(0) @db.Int
+  ranked_defeats           Int            @default(0) @db.Int
+  unranked_defeats         Int            @default(0) @db.Int
+  swiftplay_defeats        Int            @default(0) @db.Int
+  ranked_swiftplay_defeats Int            @default(0) @db.Int
+  daily_time               Float          @default(0) @db.Double
+  claim_time               Float          @default(0) @db.Double
+  warn                     Boolean        @default(true)
+  pity                     Int            @default(0) @db.Int
+  claims                   Int            @default(0) @db.Int
+  rank_rating              Int            @default(0) @db.Int
+  fates                    Int            @default(0) @db.Int
+  elo                      Int            @default(0) @db.Int
   // UNRANKED 0
   // IRON 1
-  // BRONZE 2
-  // SILVER 3
-  // GOLD 4
-  // PLATINUM 5
-  // DIAMOND 6
-  // ASCENDANT 7
-  // IMMORTAL 8
-  // RADIANT 9
-  elo_rating           Int           @default(50) @db.Int
-  remind               Boolean       @default(false)
-  remindIn             String?
-  reminded             Boolean       @default(true)
-  packets              Packet[]
+  // IRON 2
+  // IRON 3
+  // BRONZE 4
+  // BRONZE 5
+  // BRONZE 6
+  // SILVER 7
+  // SILVER 8
+  // SILVER 9
+  // GOLD 10
+  // GOLD 11
+  // GOLD 12
+  // PLATINUM 13
+  // PLATINUM 14
+  // PLATINUM 15
+  // DIAMOND 16
+  // DIAMOND 17
+  // DIAMOND 18
+  // ASCENDANT 19
+  // ASCENDANT 20
+  // ASCENDANT 21
+  // IMMORTAL 22
+  // IMMORTAL 23
+  // IMMORTAL 24
+  // RADIANT 25
+  elo_rating               Int            @default(50) @db.Int
+  remind                   Boolean        @default(false)
+  remindIn                 String?
+  reminded                 Boolean        @default(true)
+  packets                  Packet[]
+  transactions             transactions[]
 
-  @@index([coins, correct_predictions, lol_predictions, wins, defeats])
+  @@index([coins, correct_predictions, lol_predictions])
+  @@index([ranked_swiftplay_wins, ranked_wins, unranked_wins, swiftplay_wins])
   @@index([valorant_predictions])
+}
+
+model transactions {
+  id     String          @id @default(auto()) @map("_id") @db.ObjectId
+  type   TransactionType
+  player String
+  when   DateTime        @default(now())
+  price  BigInt?         @db.Long
+  user   users           @relation(fields: [userId], references: [id])
+  userId String
+  who    String?
 }
 
 model updates {

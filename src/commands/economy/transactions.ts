@@ -29,9 +29,14 @@ export default createCommand({
   ],
   userInstall: true,
   messageComponentInteractionTime: 5 * 60 * 1000,
-  async run({ ctx, t }) {
+  async run({ ctx, t, client }) {
     const page = Number(ctx.args[0]) || 1
-    let transactions = ctx.db.user.transactions.sort((a, b) => b.when - a.when)
+    let transactions = (await client.prisma.transactions.findMany({
+      where: {
+        userId: ctx.db.user.id
+      }
+    })).sort((a, b) => b.when.getTime() - a.when.getTime())
+    let array = transactions
     if(page === 1) {
       transactions = transactions.slice(0, 10)
     }
@@ -46,15 +51,15 @@ export default createCommand({
         "commands.transactions.embed.footer",
         {
           page,
-          pages: Math.ceil(ctx.db.user.transactions.length / 10)
+          pages: Math.ceil(array.length / 10)
         }
       )
     })
     let description = ""
     for(const transaction of transactions) {
-      const timestamp = (transaction.when / 1000).toFixed(0)
+      const timestamp = (transaction.when.getTime() / 1000).toFixed(0)
       const player = getPlayer(transaction.player)
-      description += `[<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] ${t(`commands.transactions.type.${transaction.type}`, { player: `${player?.name} (${player?.collection})`, price: transaction.price?.toLocaleString(), user: `<@${transaction.user}>` })}\n`
+      description += `[<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] ${t(`commands.transactions.type.${transaction.type}`, { player: `${player?.name} (${player?.collection})`, price: transaction.price?.toLocaleString(), user: `<@${transaction.who}>` })}\n`
     }
     embed.setDesc(description)
     const previous = new ButtonBuilder()
@@ -64,9 +69,9 @@ export default createCommand({
     const next = new ButtonBuilder()
     .setStyle("blue")
     .setEmoji("1404176291829121028")
-    .setCustomId(`transactions;${ctx.interaction.user.id};${page + 1 > Math.ceil(ctx.db.user.transactions.length / 10) ? Math.ceil(ctx.db.user.transactions.length / 10) : page + 1};next`)
+    .setCustomId(`transactions;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next`)
     if(page <= 1) previous.setDisabled()
-    if(page >= Math.ceil(ctx.db.user.transactions.length / 10)) next.setDisabled()
+    if(page >= Math.ceil(array.length / 10)) next.setDisabled()
     await ctx.reply(embed.build({
       components: [
         {
@@ -76,10 +81,15 @@ export default createCommand({
       ]
     }))
   },
-  async createMessageComponentInteraction({ ctx, t }) {
+  async createMessageComponentInteraction({ ctx, t, client }) {
     ctx.setFlags(64)
     const page = Number(ctx.args[2])
-    let transactions = ctx.db.user.transactions.sort((a, b) => b.when - a.when)
+    let transactions = (await client.prisma.transactions.findMany({
+      where: {
+        userId: ctx.db.user.id
+      }
+    })).sort((a, b) => b.when.getTime() - a.when.getTime())
+    let array = transactions
     transactions = transactions.slice(page * 10 - 10, page * 10)
     if(!transactions.length) {
       return await ctx.reply("commands.transactions.none_yet")
@@ -91,15 +101,15 @@ export default createCommand({
         "commands.transactions.embed.footer",
         {
           page,
-          pages: Math.ceil(ctx.db.user.transactions.length / 10)
+          pages: Math.ceil(array.length / 10)
         }
       )
     })
     let description = ""
     for(const transaction of transactions) {
-      const timestamp = (transaction.when / 1000).toFixed(0)
+      const timestamp = (transaction.when.getTime() / 1000).toFixed(0)
       const player = getPlayer(transaction.player)
-      description += `[<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] ${t(`commands.transactions.type.${transaction.type}`, { player: `${player?.name} (${player?.collection})`, price: transaction.price?.toLocaleString(), user: `<@${transaction.user}>` })}\n`
+      description += `[<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] ${t(`commands.transactions.type.${transaction.type}`, { player: `${player?.name} (${player?.collection})`, price: transaction.price?.toLocaleString(), user: `<@${transaction.who}>` })}\n`
     }
     embed.setDesc(description)
     const previous = new ButtonBuilder()
@@ -111,7 +121,7 @@ export default createCommand({
     .setEmoji("1404176291829121028")
     .setCustomId(`transactions;${ctx.interaction.user.id};${page + 1};next`)
     if(page <= 1) previous.setDisabled()
-    if(page >= Math.ceil(ctx.db.user.transactions.length / 10)) next.setDisabled()
+    if(page >= Math.ceil(array.length / 10)) next.setDisabled()
     await ctx.edit(embed.build({
       components: [
         {
