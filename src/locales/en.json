@@ -285,9 +285,9 @@
     "switch_sides": "Switch sides",
     "won_by_elimination": "- **{t} won the round by eliminating the entire opposing team**",
     "kill": "**{t1} {p1}** killed **{t2} {p2}** with a {w}",
-    "spike_not_planted": "- The spike was not planted on time\n- **{team}** won the round",
-    "spike_detonated": "- Spike detonated\n- **{team}** won the round",
-    "spike_defused": "- Spike defused\n- **{team}** won the round",
+    "spike_not_planted": "- The spike was not planted on time\n- **{t}** won the round",
+    "spike_detonated": "- Spike detonated\n- **{t}** won the round",
+    "spike_defused": "- Spike defused\n- **{t}** won the round",
     "spike_planted": "- *Spike planted at bomb site {bomb}*",
     "mode": {
       "ranked": "Ranked Mode Match",

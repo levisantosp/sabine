@@ -265,10 +265,10 @@
         "TRADE_PLAYER": "Negociou **{player}** com {user} por **{price}** coins"
       },
       "embed": {
-        "title": "Your Player Transactions",
-        "footer": "Page {page}/{pages}"
+        "title": "Suas Transações de Jogadores",
+        "footer": "Página {page}/{pages}"
       },
-      "none_yet": "You don't have any transaction to show."
+      "none_yet": "Você não tem nenhuma transação para mostrar."
     },
     "remind": {
       "enabled": "Agora eu irei te notificar quando o seu `/claim` estiver pronto!",
@@ -285,9 +285,9 @@
     "switch_sides": "Troca de lados",
     "won_by_elimination": "- **{t} venceu a rodada eliminando toda a equipe adversária**",
     "kill": "**{t1} {p1}** matou **{t2} {p2}** com {w}",
-    "spike_not_planted": "- A spike não foi plantada a tempo\n- **{team}** venceu o round",
-    "spike_detonated": "- Spike detonada\n- **{team}** venceu o round",
-    "spike_defused": "- Spike desarmada\n- **{team}** venceu o round",
+    "spike_not_planted": "- A spike não foi plantada a tempo\n- **{t}** venceu o round",
+    "spike_detonated": "- Spike detonada\n- **{t}** venceu o round",
+    "spike_defused": "- Spike desarmada\n- **{t}** venceu o round",
     "spike_planted": "- *Spike plantada no bomb site {bomb}*",
     "mode": {
       "ranked": "Partida Modo Ranqueado",
