@@ -281,8 +281,8 @@
       "DEFENSE": "Defensor"
     },
     "round_started": "*Rodada {n} iniciada*",
-    "winner": "{user} venceu a partida!",
-    "switch_sides": "Troca de lados",
+    "winner": "{users}\n**{t}** venceu a partida!",
+    "switch_sides": "<:switch_sides:1406035456897978547> Troca de lados",
     "won_by_elimination": "- **{t} venceu a rodada eliminando toda a equipe adversária**",
     "kill": "**{t1} {p1}** matou **{t2} {p2}** com {w}",
     "spike_not_planted": "- A spike não foi plantada a tempo\n- **{t}** venceu o round",
@@ -296,7 +296,8 @@
       "swiftplay:unranked": "Partida Modo Frenético"
     },
     "match_started": "Partida Iniciada",
-    "processing": "<a:loading:809221866434199634> Processando a rodada...\n"
+    "processing": "<a:loading:809221866434199634> Processando a rodada...\n",
+    "match_finished": "- Partida finalizada"
   },
   "helper": {
     "palpitate": "Palpitar",

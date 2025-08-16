@@ -281,10 +281,10 @@
       "DEFENSE": "Defender"
     },
     "round_started": "*Round {n} started*",
-    "winner": "{user} won the match!",
-    "switch_sides": "Switch sides",
+    "winner": "{users}\n**{t}** won the match!",
+    "switch_sides": "<:switch_sides:1406035456897978547> Switch sides",
     "won_by_elimination": "- **{t} won the round by eliminating the entire opposing team**",
-    "kill": "**{t1} {p1}** killed **{t2} {p2}** with a {w}",
+    "kill": "**{t1} {p1}** killed **{t2} {p2}** with {w}",
     "spike_not_planted": "- The spike was not planted on time\n- **{t}** won the round",
     "spike_detonated": "- Spike detonated\n- **{t}** won the round",
     "spike_defused": "- Spike defused\n- **{t}** won the round",
@@ -296,7 +296,8 @@
       "swiftplay:unranked": "Swiftplay Mode Match"
     },
     "match_started": "Match Started",
-    "processing": "<a:loading:809221866434199634> Processing the round...\n"
+    "processing": "<a:loading:809221866434199634> Processing the round...\n",
+    "match_finished": "- Match finished"
   },
   "helper": {
     "palpitate": "Predict",
