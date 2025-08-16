@@ -29,7 +29,6 @@ export class SabineUser implements users {
   public roster: { active: string[]; reserve: string[]; } | null = { active: [], reserve: [] }
   public coins: bigint = 0n
   public team: { name: string | null; tag: string | null; } | null = null
-  public carrer: { teams: { user: string; score: number; }[]; }[] = []
   public ranked_wins: number = 0
   public unranked_wins: number = 0
   public swiftplay_wins: number = 0
