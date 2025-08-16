@@ -1,9 +1,11 @@
+import { PrismaClient } from "@prisma/client"
 import { valorant_agents, valorant_maps, valorant_weapons } from "../config.ts"
 import { SabineUser } from "../database/index.ts"
 import EmbedBuilder from "../structures/builders/EmbedBuilder.ts"
 import Match, { type TeamRoster, type KillEvent } from "./Match.ts"
 import Player from "./Player.ts"
 
+const prisma = new PrismaClient()
 export default class Round extends Match {
   public override async start() {
     if(this.rounds.length === this.switchSidesAt) {
@@ -12,17 +14,20 @@ export default class Round extends Match {
     const score1 = this.rounds.filter(r => r.winning_team === 0).length
     const score2 = this.rounds.filter(r => r.winning_team === 1).length
     if(this.mode === "ranked") {
-      if(score1 === 13 || score2 === 13) {
-        // TODO
-        if(score1 - score2 === 2 || score1 - score2 === -2) {
-          return await this.finish(score1, score2)
-        }
+      if((score1 === 13 || score2 === 13) && this.rounds.length <= 24) {
+        return await this.finish(score1, score2)
       }
-      if(score1 > 13 || score2 > 13) {
-        if(score1 - score2 === 2 || score1 - score2 === -2) {
-          return await this.finish(score1, score2)
-        }
+      else if(score1 > 13 || score2 > 13 && Math.abs(score1 - score2) === 2) {
+        return await this.finish(score1, score2)
       }
+    }
+    else if(!this.overtime) {
+      if(score1 >= this.maxScore || score2 >= this.maxScore) {
+        return await this.finish(score1, score2)
+      }
+    }
+    else if(this.overtime && (score1 > 13 || score2 > 13) && Math.abs(score1 - score2) === 2) {
+      return await this.finish(score1, score2)
     }
     this.content = this.t("simulator.processing")
     const embed = new EmbedBuilder()
@@ -144,9 +149,9 @@ export default class Round extends Match {
     this.finished = true
     const user1 = await SabineUser.fetch(this.teams[0].user) || new SabineUser(this.teams[0].user)
     const user2 = await SabineUser.fetch(this.teams[1].user) || new SabineUser(this.teams[1].user)
-    if(this.mode.includes("ranked")) {
+    if(this.mode === "ranked") {
       const max = Math.max(score1, score2)
-      if(score1 === max) {
+      if(max === 13 && score1 === max) {
         const diff = score1 - score2
         const maxDiff = 13
         const minPts = 10
@@ -176,33 +181,76 @@ export default class Round extends Match {
             }
           }
         }
-        user1.carrer.push({
-          teams: [
+        await prisma.matches.createMany({
+          data: [
             {
-              user: this.teams[0].user,
-              score: score1
+              mode: "RANKED",
+              points: pts,
+              userId: this.teams[0].user,
+              winner: true,
+              teams: [
+                {
+                  user: this.teams[0].user,
+                  score: score1,
+                },
+                {
+                  user: this.teams[1].user,
+                  score: score2
+                }
+              ]
             },
             {
-              user: this.teams[1].user,
-              score: score2
-            }
-          ]
-        })
-        user2.carrer.push({
-          teams: [
-            {
-              user: this.teams[1].user,
-              score: score2
-            },
-            {
-              user: this.teams[0].user,
-              score: score1
+              mode: "RANKED",
+              points: -pts,
+              userId: this.teams[1].user,
+              winner: false,
+              teams: [
+                {
+                  user: this.teams[1].user,
+                  score: score1,
+                },
+                {
+                  user: this.teams[0].user,
+                  score: score2
+                }
+              ]
             }
           ]
         })
         await Promise.all([user1.save(), user2.save()])
+        const embed = new EmbedBuilder()
+        .setTitle(this.t(`simulator.mode.${this.mode}`))
+        .setDesc(
+          `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n` +
+          this.t("simulator.match_finished")
+        )
+        .setImage(this.mapImage)
+        .setFields(
+          {
+            name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
+            value: this.teams[0].roster
+              .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+              .join("\n"),
+            inline: true
+          },
+          {
+            name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
+            value: this.teams[1].roster
+              .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+              .join("\n"),
+            inline: true
+          }
+        )
+        await this.ctx.edit(embed.build(this.mentions))
+        await this.ctx.reply(
+          "simulator.winner",
+          {
+            t: this.teams[0].name,
+            users: this.mentions
+          }
+        )
       }
-      else {
+      else if(max === 13 && score2 === max) {
         const diff = score2 - score1
         const maxDiff = 13
         const minPts = 10
@@ -232,31 +280,272 @@ export default class Round extends Match {
             }
           }
         }
-        user1.carrer.push({
-          teams: [
+        await prisma.matches.createMany({
+          data: [
             {
-              user: this.teams[0].user,
-              score: score1
+              mode: "RANKED",
+              points: pts,
+              userId: this.teams[1].user,
+              winner: true,
+              teams: [
+                {
+                  user: this.teams[1].user,
+                  score: score1,
+                },
+                {
+                  user: this.teams[0].user,
+                  score: score2
+                }
+              ]
             },
             {
-              user: this.teams[1].user,
-              score: score2
-            }
-          ]
-        })
-        user2.carrer.push({
-          teams: [
-            {
-              user: this.teams[1].user,
-              score: score2
-            },
-            {
-              user: this.teams[0].user,
-              score: score1
+              mode: "RANKED",
+              points: -pts,
+              userId: this.teams[0].user,
+              winner: false,
+              teams: [
+                {
+                  user: this.teams[0].user,
+                  score: score1,
+                },
+                {
+                  user: this.teams[1].user,
+                  score: score2
+                }
+              ]
             }
           ]
         })
         await Promise.all([user1.save(), user2.save()])
+        const embed = new EmbedBuilder()
+        .setTitle(this.t(`simulator.mode.${this.mode}`))
+        .setDesc(
+          `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n` +
+          this.t("simulator.match_finished")
+        )
+        .setImage(this.mapImage)
+        .setFields(
+          {
+            name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
+            value: this.teams[0].roster
+              .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+              .join("\n"),
+            inline: true
+          },
+          {
+            name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
+            value: this.teams[1].roster
+              .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+              .join("\n"),
+            inline: true
+          }
+        )
+        await this.ctx.edit(embed.build(this.mentions))
+        await this.ctx.reply(
+          "simulator.winner",
+          {
+            t: this.teams[1].name,
+            users: this.mentions
+          }
+        )
+      }
+      else if(max > 13 && score1 === max) {
+        const diff = score1 - score2
+        const maxDiff = 13
+        const minPts = 10
+        const maxPts = 40
+        const pts = Math.round(minPts + (diff - 1) * ((maxPts - minPts) / (maxDiff - 1)))
+        user1.ranked_wins += 1
+        user1.rank_rating += pts
+        user2.ranked_defeats += 1
+        user2.rank_rating -= pts - 5
+        if(user1.rank_rating >= 100) {
+          if(user1.elo < 22) {
+            user1.elo += 1
+            user1.rank_rating = 10
+          }
+          else {
+            if(user1.rank_rating >= 100 && user1.rank_rating <= 199) {
+              user1.elo = 22
+            }
+            else if(user1.rank_rating >= 200 && user1.rank_rating <= 299) {
+              user1.elo = 23
+            }
+            else if(user1.rank_rating >= 300 && user1.rank_rating <= 319) {
+              user1.elo = 24
+            }
+            else {
+              user1.elo = 25
+            }
+          }
+        }
+        await prisma.matches.createMany({
+          data: [
+            {
+              mode: "RANKED",
+              points: pts,
+              userId: this.teams[0].user,
+              winner: true,
+              teams: [
+                {
+                  user: this.teams[0].user,
+                  score: score1,
+                },
+                {
+                  user: this.teams[1].user,
+                  score: score2
+                }
+              ]
+            },
+            {
+              mode: "RANKED",
+              points: -pts,
+              userId: this.teams[1].user,
+              winner: false,
+              teams: [
+                {
+                  user: this.teams[1].user,
+                  score: score1,
+                },
+                {
+                  user: this.teams[0].user,
+                  score: score2
+                }
+              ]
+            }
+          ]
+        })
+        await Promise.all([user1.save(), user2.save()])
+        const embed = new EmbedBuilder()
+        .setTitle(this.t(`simulator.mode.${this.mode}`))
+        .setDesc(
+          `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n` +
+          this.t("simulator.match_finished")
+        )
+        .setImage(this.mapImage)
+        .setFields(
+          {
+            name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
+            value: this.teams[0].roster
+              .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+              .join("\n"),
+            inline: true
+          },
+          {
+            name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
+            value: this.teams[1].roster
+              .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+              .join("\n"),
+            inline: true
+          }
+        )
+        await this.ctx.edit(embed.build(this.mentions))
+        await this.ctx.reply(
+          "simulator.winner",
+          {
+            t: this.teams[0].name,
+            users: this.mentions
+          }
+        )
+      }
+      else if(max > 13 && score2 === max) {
+        const diff = score2 - score1
+        const maxDiff = 13
+        const minPts = 10
+        const maxPts = 40
+        const pts = Math.round(minPts + (diff - 1) * ((maxPts - minPts) / (maxDiff - 1)))
+        user2.ranked_wins += 1
+        user2.rank_rating += pts
+        user1.ranked_defeats += 1
+        user1.rank_rating -= pts - 5
+        if(user2.rank_rating >= 100) {
+          if(user2.elo < 22) {
+            user2.elo += 1
+            user2.rank_rating = 10
+          }
+          else {
+            if(user2.rank_rating >= 100 && user2.rank_rating <= 199) {
+              user2.elo = 22
+            }
+            else if(user2.rank_rating >= 200 && user2.rank_rating <= 299) {
+              user2.elo = 23
+            }
+            else if(user2.rank_rating >= 300 && user2.rank_rating <= 319) {
+              user2.elo = 24
+            }
+            else {
+              user2.elo = 25
+            }
+          }
+        }
+        await prisma.matches.createMany({
+          data: [
+            {
+              mode: "RANKED",
+              points: pts,
+              userId: this.teams[1].user,
+              winner: true,
+              teams: [
+                {
+                  user: this.teams[1].user,
+                  score: score1,
+                },
+                {
+                  user: this.teams[0].user,
+                  score: score2
+                }
+              ]
+            },
+            {
+              mode: "RANKED",
+              points: -pts,
+              userId: this.teams[1].user,
+              winner: false,
+              teams: [
+                {
+                  user: this.teams[1].user,
+                  score: score1,
+                },
+                {
+                  user: this.teams[0].user,
+                  score: score2
+                }
+              ]
+            }
+          ]
+        })
+        await Promise.all([user1.save(), user2.save()])
+        const embed = new EmbedBuilder()
+        .setTitle(this.t(`simulator.mode.${this.mode}`))
+        .setDesc(
+          `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n` +
+          this.t("simulator.match_finished")
+        )
+        .setImage(this.mapImage)
+        .setFields(
+          {
+            name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
+            value: this.teams[0].roster
+              .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+              .join("\n"),
+            inline: true
+          },
+          {
+            name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
+            value: this.teams[1].roster
+              .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+              .join("\n"),
+            inline: true
+          }
+        )
+        await this.ctx.edit(embed.build(this.mentions))
+        await this.ctx.reply(
+          "simulator.winner",
+          {
+            t: this.teams[1].name,
+            users: this.mentions
+          }
+        )
       }
     }
     return this
@@ -995,12 +1284,12 @@ export default class Round extends Match {
       nextShot1 -= wait
       nextShot2 -= wait
       if(nextShot1 <= 0 && player1.life > 0) {
-        const shoot = player1.shoot()
+        const shoot = player1.shoot(player2.stats.movement)
         player2.life -= shoot[0]
         nextShot1 = shoot[1]
       }
       if(nextShot2 <= 0 && player2.life > 0) {
-        const shoot = player2.shoot()
+        const shoot = player2.shoot(player2.stats.movement)
         player1.life -= shoot[0]
         nextShot2 = shoot[1]
       }

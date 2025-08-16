@@ -91,6 +91,19 @@ export default class Player {
         this.credits -= 400
       }
     }
+    else {
+      const secondary = valorant_weapons.filter(w => w.price <= 800 && w.name !== "Melee")
+      const weapon = this.chooseWeapon(secondary, w => w.price * 5)
+      if(this.credits - weapon.price + 1900 < 2650) {
+        return this
+      }
+      this.credits -= weapon.price
+      this.weapon.secondary = weapon
+      if(this.credits >= 400) {
+        this.life = 125
+        this.credits -= 400
+      }
+    }
     return this
   }
   private chooseWeapon<T>(items: T[], weightFun: (item: T) => number) {
@@ -104,10 +117,10 @@ export default class Player {
     }
     return items[items.length - 1]
   }
-  private chooseShoot() {
+  private chooseShoot(mov: number) {
     let steepness = 0.05
     let midpoint = 50
-    let prob = 1 / (1 + Math.exp(-steepness * (this.stats.aim - midpoint)))
+    let prob = (1 / (1 + Math.exp(-steepness * (this.stats.aim - midpoint)))) * (1 - (mov / 100) * 0.3)
     let random = Math.random()
     if(random <= prob) {
       steepness = 0.02
@@ -121,10 +134,10 @@ export default class Player {
     }
     return "none"
   }
-  public shoot() {
+  public shoot(mov: number) {
     if(this.weapon.primary && this.weapon.primary.magazine && this.weapon.primary.magazine > 0) {
       this.weapon.primary.magazine -= 1
-      const choice = this.chooseShoot()
+      const choice = this.chooseShoot(mov)
       if(choice === "head") {
         return [this.weapon.primary.damage.head, this.weapon.primary.rate_fire]
       }
@@ -137,7 +150,7 @@ export default class Player {
     }
     else if(this.weapon.secondary!.magazine && this.weapon.secondary!.magazine > 0) {
       this.weapon.secondary!.magazine -= 1
-      const choice = this.chooseShoot()
+      const choice = this.chooseShoot(mov)
       if(choice === "head") {
         return [this.weapon.secondary!.damage.head, this.weapon.secondary!.rate_fire]
       }
@@ -149,7 +162,7 @@ export default class Player {
       }
     }
     else {
-      const choice = this.chooseShoot()
+      const choice = this.chooseShoot(mov)
       if(choice === "head") {
         return [this.weapon.melee.damage.head, this.weapon.melee.rate_fire]
       }

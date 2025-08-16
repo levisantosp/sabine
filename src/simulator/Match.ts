@@ -81,6 +81,7 @@ type MatchOptions = {
   mode: "unranked" | "ranked" | "swiftplay:unranked" | "swiftplay:ranked" | "tournament"
   map: string
   content: string
+  overtime?: boolean
 }
 type PrivateTeam = {
   user: string
@@ -99,12 +100,13 @@ export default class Match {
   public content: string = ""
   public t: (content: string, args?: Args) => string
   public readonly mode: "unranked" | "ranked" | "swiftplay:unranked" | "swiftplay:ranked" | "tournament"
-  public maxScore?: number
+  public maxScore: number = 0
   public switchSidesAt: number = 12
   public map: string
   public mapImage: string
   public mentions: string
   private options: MatchOptions
+  public overtime?: boolean
   public constructor(options: MatchOptions) {
     this.teams = options.teams
     this.ctx = options.ctx
@@ -114,6 +116,7 @@ export default class Match {
     this.map = options.map
     this.mapImage = valorant_maps.filter(m => m.name === this.map)[0].image
     this.mentions = `<@${this.teams[0].user}> <@${this.teams[1].user}>`
+    this.overtime = options.overtime
     if(this.mode === "unranked") {
       this.maxScore = 13
     }
@@ -124,6 +127,9 @@ export default class Match {
     else if(this.mode === "swiftplay:ranked") {
       this.maxScore = 7
       this.switchSidesAt = 6
+    }
+    else if(this.mode === "tournament" && !this.overtime) {
+      this.maxScore = 13
     }
     for(const p of this.teams[0].roster) {
       p.kills = 0
