@@ -57,10 +57,6 @@ type CarrerTeam {
   score Int
 }
 
-type Carrer {
-  teams CarrerTeam[]
-}
-
 type Event {
   name     String
   channel1 String
@@ -196,7 +192,6 @@ model users {
   roster                   Roster?
   coins                    BigInt         @default(0)
   team                     Team?
-  carrer                   Carrer[]
   ranked_wins              Int            @default(0) @db.Int
   unranked_wins            Int            @default(0) @db.Int
   swiftplay_wins           Int            @default(0) @db.Int
@@ -245,6 +240,7 @@ model users {
   reminded                 Boolean        @default(true)
   packets                  Packet[]
   transactions             transactions[]
+  career                   matches[]
 
   @@index([coins, correct_predictions, lol_predictions])
   @@index([ranked_swiftplay_wins, ranked_wins, unranked_wins, swiftplay_wins])
@@ -260,6 +256,29 @@ model transactions {
   user   users           @relation(fields: [userId], references: [id])
   userId String
   who    String?
+
+  @@index([userId])
+}
+
+enum MatchMode {
+  RANKED
+  UNRANKED
+  RANKED_SWIFTPLAY
+  SWIFTPLAY
+  TOURNAMENT
+}
+
+model matches {
+  id     String       @id @default(auto()) @map("_id") @db.ObjectId
+  mode   MatchMode
+  winner Boolean
+  teams  CarrerTeam[]
+  points Int          @db.Int
+  user   users        @relation(fields: [userId], references: [id])
+  userId String
+  when DateTime @default(now())
+
+  @@index([userId])
 }
 
 model updates {
