@@ -1,5 +1,5 @@
 import { valorant_agents, valorant_maps, valorant_weapons } from "../config.ts"
-import type { Args } from '../locales/index.ts'
+import type { Args } from "../locales/index.ts"
 import EmbedBuilder from "../structures/builders/EmbedBuilder.ts"
 import ComponentInteractionContext from "../structures/interactions/ComponentInteractionContext.ts"
 import type { PlayerWeapon } from "./Player.ts"
@@ -82,14 +82,6 @@ type MatchOptions = {
   map: string
   content: string
   overtime?: boolean
-}
-type PrivateTeam = {
-  user: string
-  roster: TeamPlayer[]
-  side?: "DEFENSE" | "ATTACK"
-  lost_round_streak: number
-  name: string
-  tag: string
 }
 export default class Match {
   public rounds: RoundResult[] = []
