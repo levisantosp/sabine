@@ -11,7 +11,7 @@ export default createCommand({
   async run({ ctx, client }) {
     if(
       ctx.db.user.daily_time &&
-      ctx.db.user.daily_time?.getTime() > Date.now()
+      ctx.db.user.daily_time.getTime() > Date.now()
     ) {
       return await ctx.reply("commands.daily.has_been_claimed", { t: `<t:${((ctx.db.user.daily_time.getTime()) / 1000).toFixed(0)}:R>` })
     }

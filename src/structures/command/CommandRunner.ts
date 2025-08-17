@@ -40,8 +40,8 @@ export default class CommandRunner {
       return await interaction.createMessage({
         content: locales(guild?.lang ?? "en", "helper.banned", {
           reason: ban.reason,
-          ends: ban.endsAt === Infinity ? Infinity : `<t:${ban.endsAt}:F> | <t:${ban.endsAt}:R>`,
-          when: `<t:${ban.when}:F> | <t:${ban.when}:R>`
+          ends: ban.endsAt.getTime() === Infinity ? Infinity : `<t:${(ban.endsAt.getTime() / 1000).toFixed(0)}:F> | <t:${(ban.endsAt.getTime() / 1000).toFixed(0)}:R>`,
+          when: `<t:${(ban.when.getTime() / 1000).toFixed(0)}:F> | <t:${(ban.when.getTime() / 1000).toFixed(0)}:R>`
         }),
         flags: 64,
         components: [
@@ -112,6 +112,20 @@ export default class CommandRunner {
         link: `https://sabinebot.xyz/${locale[ctx.locale]}/changelog/v${updates[0].id}`
       }))
       await ctx.reply(button)
+    }
+    if(command.cooldown) {
+      const cooldown = await client.redis.get(`cooldown:${command.name}`)
+      if(cooldown) {
+        return await ctx.reply("helper.cooldown", {
+          cooldown: `<t:${(Number(cooldown) / 1000).toFixed(0)}:R>`
+        })
+      }
+      await client.redis.set(`cooldown:${command.name}`, Date.now() + 5000, {
+        expiration: {
+          type: "EX",
+          value: 5
+        }
+      })
     }
     command.run({ ctx, client, t, id: interaction.data.id })
       .then(async() => {

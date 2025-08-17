@@ -28,6 +28,7 @@ export default createCommand({
     }
   ],
   userInstall: true,
+  cooldown: true,
   async run({ ctx }) {
     const player = getPlayer(Number(ctx.args[0]))
     const i = ctx.db.user.roster!.reserve.findIndex(p => p === ctx.args[0])

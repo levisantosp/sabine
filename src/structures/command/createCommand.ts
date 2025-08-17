@@ -48,6 +48,7 @@ export type Command = {
   isThiking?: boolean
   messageComponentInteractionTime?: number
   modalSubmitInteractionTime?: number
+  cooldown?: boolean
   run: (options: CommandOptions) => Promise<any>
   createAutocompleteInteraction?: (options: CreateAutocompleteInteractionOptions) => Promise<any>
   createMessageComponentInteraction?: (options: CreateComponentInteractionOptions) => Promise<any>

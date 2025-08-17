@@ -55,7 +55,16 @@ export default createCommand({
     }
   ],
   messageComponentInteractionTime: 5 * 60 * 1000,
+  cooldown: true,
   async run({ ctx, t }) {
+    if(
+      ctx.db.user.trade_time &&
+      ctx.db.user.trade_time.getTime() > Date.now()
+    ) {
+      return await ctx.reply("commands.trade.has_been_traded", {
+        t: `<t:${(ctx.db.user.trade_time.getTime() / 1000).toFixed(0)}:R>`
+      })
+    }
     const user = await SabineUser.fetch(ctx.args[0].toString())
     const player = getPlayer(Number(ctx.args[1]))
     if(BigInt(ctx.args[2]) < 0) {
@@ -121,6 +130,15 @@ export default createCommand({
     )
   },
   async createMessageComponentInteraction({ ctx, client }) {
+    if(
+      ctx.db.user.trade_time &&
+      ctx.db.user.trade_time.getTime() > Date.now()
+    ) {
+      ctx.setFlags(64)
+      return await ctx.reply("commands.trade.has_been_traded", {
+        t: `<t:${(ctx.db.user.trade_time.getTime() / 1000).toFixed(0)}:R>`
+      })
+    }
     if(ctx.args[2] === "buy") {
       const user = await SabineUser.fetch(ctx.args[3])
       const player = getPlayer(Number(ctx.args[4]))
@@ -135,8 +153,10 @@ export default createCommand({
       }
       user.roster?.reserve.splice(i, 1)
       user.coins += BigInt(ctx.args[5])
+      user.trade_time = new Date(Date.now() + (60 * 60 * 1000))
       ctx.db.user.roster?.reserve.push(ctx.args[4])
       ctx.db.user.coins -= BigInt(ctx.args[5])
+      ctx.db.user.trade_time = new Date(Date.now() + (60 * 60 * 1000))
       await client.prisma.transactions.createMany({
         data: [
           {
