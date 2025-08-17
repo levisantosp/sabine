@@ -59,7 +59,7 @@ export default createCommand({
     for(const transaction of transactions) {
       const timestamp = (transaction.when.getTime() / 1000).toFixed(0)
       const player = getPlayer(transaction.player)
-      description += `[<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] ${t(`commands.transactions.type.${transaction.type}`, { player: `${player?.name} (${player?.collection})`, price: transaction.price?.toLocaleString(), user: `<@${transaction.who}>` })}\n`
+      description += `- [<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] ${t(`commands.transactions.type.${transaction.type}`, { player: `${player?.name} (${player?.collection})`, price: transaction.price?.toLocaleString(), user: `<@${transaction.who}>` })}\n`
     }
     embed.setDesc(description)
     const previous = new ButtonBuilder()
@@ -109,7 +109,7 @@ export default createCommand({
     for(const transaction of transactions) {
       const timestamp = (transaction.when.getTime() / 1000).toFixed(0)
       const player = getPlayer(transaction.player)
-      description += `[<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] ${t(`commands.transactions.type.${transaction.type}`, { player: `${player?.name} (${player?.collection})`, price: transaction.price?.toLocaleString(), user: `<@${transaction.who}>` })}\n`
+      description += `- [<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] ${t(`commands.transactions.type.${transaction.type}`, { player: `${player?.name} (${player?.collection})`, price: transaction.price?.toLocaleString(), user: `<@${transaction.who}>` })}\n`
     }
     embed.setDesc(description)
     const previous = new ButtonBuilder()

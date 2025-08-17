@@ -89,7 +89,7 @@ export default createCommand({
       if(match.mode.toLowerCase().includes("ranked"))  {
         const timestamp = (match.when.getTime() / 1000).toFixed(0)
         const type = match.winner ? "win" : "defeat"
-        content += `[<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] **[${t(`commands.career.mode.${match.mode}`)}]** ${t(`commands.career.type.ranked_${type}`, {
+        content += `- [<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] **[${t(`commands.career.mode.${match.mode}`)}]** ${t(`commands.career.type.ranked_${type}`, {
           score: `${match.teams[0].score}-${match.teams[1].score}`,
           user: `<@${match.teams[1].user}>`,
           points: match.points > 0 ? `+${match.points}` : match.points
@@ -98,7 +98,7 @@ export default createCommand({
       else {
         const timestamp = (match.when.getTime() / 1000).toFixed(0)
         const type = match.winner ? "win" : "defeat"
-        content += `[<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] **[${t(`commands.career.mode.${match.mode}`)}]** ${t(`commands.career.type.unranked_${type}`, {
+        content += `- [<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] **[${t(`commands.career.mode.${match.mode}`)}]** ${t(`commands.career.type.unranked_${type}`, {
           score: `${match.teams[0].score}-${match.teams[1].score}`,
           user: `<@${match.teams[1].user}>`
         })}\n`
@@ -189,7 +189,7 @@ export default createCommand({
       if(match.mode.toLowerCase().includes("ranked"))  {
         const timestamp = (match.when.getTime() / 1000).toFixed(0)
         const type = match.winner ? "win" : "defeat"
-        content += `[<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] **[${t(`commands.career.mode.${match.mode}`)}]** ${t(`commands.career.type.ranked_${type}`, {
+        content += `- [<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] **[${t(`commands.career.mode.${match.mode}`)}]** ${t(`commands.career.type.ranked_${type}`, {
           score: `${match.teams[0].score}-${match.teams[1].score}`,
           user: `<@${match.teams[1].user}>`,
           points: match.points > 0 ? `+${match.points}` : match.points
@@ -198,7 +198,7 @@ export default createCommand({
       else {
         const timestamp = (match.when.getTime() / 1000).toFixed(0)
         const type = match.winner ? "win" : "defeat"
-        content += `[<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] **[${t(`commands.career.mode.${match.mode}`)}]** ${t(`commands.career.type.unranked_${type}`, {
+        content += `- [<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] **[${t(`commands.career.mode.${match.mode}`)}]** ${t(`commands.career.type.unranked_${type}`, {
           score: `${match.teams[0].score}-${match.teams[1].score}`,
           user: `<@${match.teams[1].user}>`
         })}\n`
