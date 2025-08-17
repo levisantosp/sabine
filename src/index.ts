@@ -9,7 +9,11 @@ const updateRanking = async() => {
     JSON.stringify(
       {
         updated_at: Date.now(),
-        data: users.map(user => ({ id: user.id, coins: user.coins })).filter(user => user.coins > 0)
+        data: users.map(user => ({
+          id: user.id,
+          coins: user.coins
+        }))
+        .filter(user => user.coins > 0)
       },
       (_, value) => typeof value === "bigint" ? value.toString() : value
     )
@@ -19,19 +23,27 @@ const updateRanking = async() => {
     JSON.stringify(
       {
         updated_at: Date.now(),
-        data: users.map(user => ({ id: user.id, correct_predictions: user.correct_predictions })).filter(user => user.correct_predictions > 0)
+        data: users.map(user => ({
+          id: user.id,
+          correct_predictions: user.correct_predictions
+        }))
+        .filter(user => user.correct_predictions > 0)
       }
     )
   )
-  // await client.redis.set(
-  //   "ranking:wins",
-  //   JSON.stringify(
-  //     {
-  //       updated_at: Date.now(),
-  //       data: users.map(user => ({ id: user.id, wins: user.wins })).filter(user => user.wins > 0)
-  //     }
-  //   )
-  // )
+  await client.redis.set(
+    "ranking:rating",
+    JSON.stringify(
+      {
+        updated_at: Date.now(),
+        data: users.map(user => ({
+          id: user.id,
+          elo: user.elo,
+          rank_rating: user.rank_rating
+        }))
+      }
+    )
+  )
   setTimeout(updateRanking, 10 * 60 * 1000)
 }
 await client.redis.flushDb()
