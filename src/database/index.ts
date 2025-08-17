@@ -37,8 +37,8 @@ export class SabineUser implements users {
   public unranked_defeats: number = 0
   public swiftplay_defeats: number = 0
   public ranked_swiftplay_defeats: number = 0
-  public daily_time: number = 0
-  public claim_time: number = 0
+  public daily_time: Date | null = null
+  public claim_time: Date | null = null
   public warn: boolean = true
   public pity: number = 0
   public claims: number = 0
@@ -50,6 +50,7 @@ export class SabineUser implements users {
   public remindIn: string | null = null
   public reminded: boolean = true
   public packets: $Enums.Packet[] = []
+  public trade_time: Date | null = null
   public constructor(id: string) {
     this.id = id
     if(!this.roster) {
@@ -153,7 +154,7 @@ export class SabineUser implements users {
     const user = await this.fetch(this.id) ?? this
     user.roster!.reserve.push(player)
     if(method === "CLAIM_PLAYER_BY_CLAIM_COMMAND") {
-      user.claim_time = Date.now() + 600000
+      user.claim_time = new Date(Date.now() + 600000)
     }
     user.pity += 1
     await prisma.transactions.create({
