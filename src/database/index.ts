@@ -1,6 +1,3 @@
-import * as Oceanic from "oceanic.js"
-import EmbedBuilder from "../structures/builders/EmbedBuilder.ts"
-import { client } from "../structures/client/App.ts"
 import { $Enums, type guilds, Prisma, PrismaClient, type users } from "@prisma/client"
 import { calcPlayerOvr, getPlayer } from "players"
 
