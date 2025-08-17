@@ -103,7 +103,6 @@ export default createCommand({
           user: `<@${match.teams[1].user}>`
         })}\n`
       }
-      // content += `**<@${match.teams[0].user}> ${match.teams[0].score} <:versus:1349105624180330516> ${match.teams[1].score} <@${match.teams[1].user}>**\n`
     }
     embed.setDesc(content)
     const previous = new ButtonBuilder()
@@ -204,7 +203,6 @@ export default createCommand({
           user: `<@${match.teams[1].user}>`
         })}\n`
       }
-      // content += `**<@${match.teams[0].user}> ${match.teams[0].score} <:versus:1349105624180330516> ${match.teams[1].score} <@${match.teams[1].user}>**\n`
     }
     embed.setDesc(content)
     const previous = new ButtonBuilder()
