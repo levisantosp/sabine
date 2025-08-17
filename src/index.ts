@@ -23,15 +23,15 @@ const updateRanking = async() => {
       }
     )
   )
-  await client.redis.set(
-    "ranking:wins",
-    JSON.stringify(
-      {
-        updated_at: Date.now(),
-        data: users.map(user => ({ id: user.id, wins: user.wins })).filter(user => user.wins > 0)
-      }
-    )
-  )
+  // await client.redis.set(
+  //   "ranking:wins",
+  //   JSON.stringify(
+  //     {
+  //       updated_at: Date.now(),
+  //       data: users.map(user => ({ id: user.id, wins: user.wins })).filter(user => user.wins > 0)
+  //     }
+  //   )
+  // )
   setTimeout(updateRanking, 10 * 60 * 1000)
 }
 await client.redis.flushDb()
