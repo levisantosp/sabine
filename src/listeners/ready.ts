@@ -323,7 +323,7 @@ const remindUsers = async(client: App) => {
         not: null
       },
       claim_time: {
-        lte: Date.now()
+        lte: new Date()
       }
     }
   })
