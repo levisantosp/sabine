@@ -213,14 +213,56 @@
       "time": "Vocês têm 5 minutos para selecionar os agentes",
       "agent_selected": "**{p}** jogará de **{agent}**.",
       "duplicated_agent": "Um jogador seu já está usando este agente.",
-      "starting_in": "Partida iniciando {time}"
+      "starting_in": "Partida iniciando {time}",
+      "error": "{users}\nOcorreu um erro inesperado...\n`{e}`"
     },
     "career": {
       "no_pages": "Nada pra mostrar aqui.",
       "embed": {
-        "author": "Histório de partidas",
-        "desc": "Vitórias: `{wins}`\nDerrotas: `{defeats}`\nPartidas jogadas: `{total}`",
+        "author": "Sua Carreira",
+        "desc": "**Classificação:** `{elo}` — `{rr}RR`\n**Vitórias/Derrotas** (modo ranqueado): `{ranked_wins}/{ranked_defeats}`\n**Vitórias/Derrotas** (modo sem classificação): `{unranked_wins}/{unranked_defeats}`\n**Vitórias/Derrotas** (frenético ranqueado): `{ranked_swiftplay_wins}/{ranked_swiftplay_defeats}`\n**Vitórias/Derrotas** (modo frenético): `{swiftplay_wins}/{swiftplay_defeats}`\n**Vitórias Totais:** `{total_wins}`\n**Derrotas Totais:** `{total_defeats}`\n**Partidas Jogadas:** `{total}`",
         "footer": "Página {page}/{pages}"
+      },
+      "type": {
+        "ranked_win": "Venceu {user} por `{score}` **[{points}RR]**",
+        "ranked_defeat": "Perdeu para {user} por `{score}` **[{points}RR]**",
+        "unranked_win": "Venceu {user} por `{score}`",
+        "unranked_defeat": "Perdeu para {user} por `{score}`"
+      },
+      "mode": {
+        "RANKED": "Ranqueada",
+        "UNRANKED": "Sem classificação",
+        "RANKED_SWIFTPLAY": "Frenético Ranqueado",
+        "SWIFTPLAY": "Frenético",
+        "TOURNAMENT": "Torneio"
+      },
+      "elo": {
+        "0": "Sem Classificação",
+        "1": "Ferro 1",
+        "2": "Ferro 2",
+        "3": "Ferro 3",
+        "4": "Bronze 1",
+        "5": "Bronze 2",
+        "6": "Bronze 3",
+        "7": "Prata 1",
+        "8": "Prata 2",
+        "9": "Prata 3",
+        "10": "Ouro 1",
+        "11": "Ouro 2",
+        "12": "Ouro 3",
+        "13": "Platina 1",
+        "14": "Platina 2",
+        "15": "Platina 3",
+        "16": "Diamante 1",
+        "17": "Diamante 2",
+        "18": "Diamante 3",
+        "19": "Ascendente 1",
+        "20": "Ascendente 2",
+        "21": "Ascendente 3",
+        "22": "Imortal 1",
+        "23": "Imortal 2",
+        "24": "Imortal 3",
+        "25": "Radiante"
       }
     },
     "daily": {

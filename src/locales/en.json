@@ -213,14 +213,56 @@
       "time": "You have 5 minutes to select the agents",
       "agent_selected": "**{p}** will play as **{agent}**.",
       "duplicated_agent": "One of your players is already using this agent.",
-      "starting_in": "Match starting {time}"
+      "starting_in": "Match starting {time}",
+      "error": "{users}\nAn unexpected error has occurred...\n`{e}`"
     },
     "career": {
       "no_pages": "Nothing to show in this page.",
       "embed": {
-        "author": "Your matches history",
-        "desc": "Wins: `{wins}`\nDefeats: `{defeats}`\nMatches played: `{total}`",
+        "author": "Your Career",
+        "desc": "**Rank:** `{elo}` — `{rr}RR`\n**Wins/Defeats** (ranked mode): `{ranked_wins}/{ranked_defeats}`\n**Wins/Defeats** (unranked mode): `{unranked_wins}/{unranked_defeats}`\n**Wins/Defeats** (ranked swiftplay mode): `{ranked_swiftplay_wins}/{ranked_swiftplay_defeats}`\n**Wins/Defeats** (swiftplay mode): `{swiftplay_wins}/{swiftplay_defeats}`\n**Total Wins:** `{total_wins}`\n**Total Defeats:** `{total_defeats}`\n**Matches Played:** `{total}`",
         "footer": "Page {page}/{pages}"
+      },
+      "type": {
+        "ranked_win": "Beat {user} for `{score}` **[{points}RR]**",
+        "ranked_defeat": "Lost to {user} for `{score}` **[{points}RR]**",
+        "unranked_win": "Beat {user} for `{score}`",
+        "unranked_defeat": "Lost to {user} for `{score}`"
+      },
+      "mode": {
+        "RANKED": "Ranked",
+        "UNRANKED": "Unranked",
+        "RANKED_SWIFTPLAY": "Ranked Swiftplay",
+        "SWIFTPLAY": "Swiftplay",
+        "TOURNAMENT": "Tournament"
+      },
+      "elo": {
+        "0": "Unranked",
+        "1": "Iron 1",
+        "2": "Iron 2",
+        "3": "Iron 3",
+        "4": "Bronze 1",
+        "5": "Bronze 2",
+        "6": "Bronze 3",
+        "7": "Silver 1",
+        "8": "Silver 2",
+        "9": "Silver 3",
+        "10": "Gold 1",
+        "11": "Gold 2",
+        "12": "Gold 3",
+        "13": "Platinum 1",
+        "14": "Platinum 2",
+        "15": "Platinum 3",
+        "16": "Diamond 1",
+        "17": "Diamond 2",
+        "18": "Diamond 3",
+        "19": "Ascendant 1",
+        "20": "Ascendant 2",
+        "21": "Ascendant 3",
+        "22": "Immortal 1",
+        "23": "Immortal 2",
+        "24": "Immortal 3",
+        "25": "Radiant"
       }
     },
     "daily": {
