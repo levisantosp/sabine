@@ -28,25 +28,50 @@ export default createCommand({
   ],
   userInstall: true,
   messageComponentInteractionTime: 5 * 60 * 1000,
-  async run({ ctx, t }) {
-    let career = ctx.db.user.carrer.reverse()
+  async run({ ctx, t, client }) {
+    const matches = await client.prisma.matches.findMany({
+      where: {
+        userId: ctx.db.user.id
+      }
+    })
+    let career = matches.sort((a, b) => b.when.getTime() - a.when.getTime())
     const page = Number(ctx.args[0] ?? "1")
-    const pages = Math.ceil(career.length / 5)
+    const pages = Math.ceil(career.length / 10)
     if(page === 1 || page < 1) {
-      career = career.slice(0, 5)
+      career = career.slice(0, 10)
     }
     else {
-      career = career.slice(page * 5 - 5, page * 5)
+      career = career.slice(page * 10 - 10, page * 10)
     }
     if(!career.length) {
       return await ctx.reply("commands.career.no_pages")
     }
+    const ranked_wins = ctx.db.user.ranked_wins
+    const unranked_defeats = ctx.db.user.unranked_defeats
+    const unranked_wins = ctx.db.user.unranked_wins
+    const ranked_swiftplay_wins = ctx.db.user.ranked_swiftplay_wins
+    const swiftplay_wins = ctx.db.user.ranked_swiftplay_wins
+    const ranked_defeats = ctx.db.user.ranked_defeats
+    const ranked_swiftplay_defeats = ctx.db.user.ranked_swiftplay_defeats
+    const swiftplay_defeats = ctx.db.user.swiftplay_defeats
+    const total_wins = ranked_wins + unranked_wins + swiftplay_wins + ranked_swiftplay_wins
+    const total_defeats = ranked_defeats + unranked_defeats + swiftplay_defeats + ranked_swiftplay_defeats
     let content = t(
       "commands.career.embed.desc",
       {
-        wins: ctx.db.user.wins,
-        defeats: ctx.db.user.defeats,
-        total: ctx.db.user.carrer.length
+        ranked_wins,
+        unranked_wins,
+        ranked_swiftplay_wins,
+        swiftplay_wins,
+        ranked_defeats,
+        unranked_defeats,
+        ranked_swiftplay_defeats,
+        swiftplay_defeats,
+        total_wins,
+        total_defeats,
+        total: matches.length,
+        elo: t(`commands.career.elo.${ctx.db.user.elo}`),
+        rr: ctx.db.user.rank_rating
       }
     ) + "\n\n"
     const embed = new EmbedBuilder()
@@ -61,7 +86,24 @@ export default createCommand({
       })
     })
     for(const match of career) {
-      content += `**<@${match.teams[0].user}> ${match.teams[0].score} <:versus:1349105624180330516> ${match.teams[1].score} <@${match.teams[1].user}>**\n`
+      if(match.mode.toLowerCase().includes("ranked"))  {
+        const timestamp = (match.when.getTime() / 1000).toFixed(0)
+        const type = match.winner ? "win" : "defeat"
+        content += `[<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] **[${t(`commands.career.mode.${match.mode}`)}]** ${t(`commands.career.type.ranked_${type}`, {
+          score: `${match.teams[0].score}-${match.teams[1].score}`,
+          user: `<@${match.teams[1].user}>`,
+          points: match.points > 0 ? `+${match.points}` : match.points
+        })}\n`
+      }
+      else {
+        const timestamp = (match.when.getTime() / 1000).toFixed(0)
+        const type = match.winner ? "win" : "defeat"
+        content += `[<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] **[${t(`commands.career.mode.${match.mode}`)}]** ${t(`commands.career.type.unranked_${type}`, {
+          score: `${match.teams[0].score}-${match.teams[1].score}`,
+          user: `<@${match.teams[1].user}>`
+        })}\n`
+      }
+      // content += `**<@${match.teams[0].user}> ${match.teams[0].score} <:versus:1349105624180330516> ${match.teams[1].score} <@${match.teams[1].user}>**\n`
     }
     embed.setDesc(content)
     const previous = new ButtonBuilder()
@@ -87,26 +129,50 @@ export default createCommand({
       ]
     }))
   },
-  async createMessageComponentInteraction({ ctx, t }) {
-    await ctx.interaction.deferUpdate()
-    let career = ctx.db.user.carrer.reverse()
+  async createMessageComponentInteraction({ ctx, t, client }) {
+    const matches = await client.prisma.matches.findMany({
+      where: {
+        userId: ctx.db.user.id
+      }
+    })
+    let career = matches.sort((a, b) => b.when.getTime() - a.when.getTime())
     const page = Number(ctx.args[2])
-    const pages = Math.ceil(career.length / 5)
+    const pages = Math.ceil(career.length / 10)
     if(page === 1 || page < 1) {
-      career = career.slice(0, 5)
+      career = career.slice(0, 10)
     }
     else {
-      career = career.slice(page * 5 - 5, page * 5)
+      career = career.slice(page * 10 - 10, page * 10)
     }
     if(!career.length) {
       return await ctx.reply("commands.career.no_pages")
     }
+    const ranked_wins = ctx.db.user.ranked_wins
+    const unranked_defeats = ctx.db.user.unranked_defeats
+    const unranked_wins = ctx.db.user.unranked_wins
+    const ranked_swiftplay_wins = ctx.db.user.ranked_swiftplay_wins
+    const swiftplay_wins = ctx.db.user.ranked_swiftplay_wins
+    const ranked_defeats = ctx.db.user.ranked_defeats
+    const ranked_swiftplay_defeats = ctx.db.user.ranked_swiftplay_defeats
+    const swiftplay_defeats = ctx.db.user.swiftplay_defeats
+    const total_wins = ranked_wins + unranked_wins + swiftplay_wins + ranked_swiftplay_wins
+    const total_defeats = ranked_defeats + unranked_defeats + swiftplay_defeats + ranked_swiftplay_defeats
     let content = t(
       "commands.career.embed.desc",
       {
-        wins: ctx.db.user.wins,
-        defeats: ctx.db.user.defeats,
-        total: ctx.db.user.carrer.length
+        ranked_wins,
+        unranked_wins,
+        ranked_swiftplay_wins,
+        swiftplay_wins,
+        ranked_defeats,
+        unranked_defeats,
+        ranked_swiftplay_defeats,
+        swiftplay_defeats,
+        total_wins,
+        total_defeats,
+        total: matches.length,
+        elo: t(`commands.career.elo.${ctx.db.user.elo}`),
+        rr: ctx.db.user.rank_rating
       }
     ) + "\n\n"
     const embed = new EmbedBuilder()
@@ -121,7 +187,24 @@ export default createCommand({
       })
     })
     for(const match of career) {
-      content += `**<@${match.teams[0].user}> ${match.teams[0].score} <:versus:1349105624180330516> ${match.teams[1].score} <@${match.teams[1].user}>**\n`
+      if(match.mode.toLowerCase().includes("ranked"))  {
+        const timestamp = (match.when.getTime() / 1000).toFixed(0)
+        const type = match.winner ? "win" : "defeat"
+        content += `[<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] **[${t(`commands.career.mode.${match.mode}`)}]** ${t(`commands.career.type.ranked_${type}`, {
+          score: `${match.teams[0].score}-${match.teams[1].score}`,
+          user: `<@${match.teams[1].user}>`,
+          points: match.points > 0 ? `+${match.points}` : match.points
+        })}\n`
+      }
+      else {
+        const timestamp = (match.when.getTime() / 1000).toFixed(0)
+        const type = match.winner ? "win" : "defeat"
+        content += `[<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] **[${t(`commands.career.mode.${match.mode}`)}]** ${t(`commands.career.type.unranked_${type}`, {
+          score: `${match.teams[0].score}-${match.teams[1].score}`,
+          user: `<@${match.teams[1].user}>`
+        })}\n`
+      }
+      // content += `**<@${match.teams[0].user}> ${match.teams[0].score} <:versus:1349105624180330516> ${match.teams[1].score} <@${match.teams[1].user}>**\n`
     }
     embed.setDesc(content)
     const previous = new ButtonBuilder()
