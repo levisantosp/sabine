@@ -32,6 +32,7 @@ type PlayerOptions = {
   weapon: PlayerWeapon
   stats: PlayerStats
   teamCredits: number
+  rounds: number
 }
 export default class Player {
   public id: number
@@ -41,6 +42,7 @@ export default class Player {
   public weapon: PlayerWeapon
   public stats: PlayerStats
   public teamCredits: number
+  public rounds: number
   public constructor(options: PlayerOptions) {
     this.id = options.id
     this.name = options.name
@@ -49,6 +51,7 @@ export default class Player {
     this.weapon = options.weapon
     this.stats = options.stats
     this.teamCredits = options.teamCredits
+    this.rounds = options.rounds
   }
   public buy() {
     if(this.teamCredits >= 2500 && !this.weapon.primary) {
@@ -60,17 +63,31 @@ export default class Player {
       if(!secondary.length) {
         secondary = valorant_weapons.filter(w => w.price > 0 && w.price <= 800 &&  w.price + 400 <= this.credits)
       }
-      const weapon = this.chooseWeapon(
-        primary,
-        w => ["Outlaw", "Operator", "Marshall", "Guardian"]
-        .includes(w.name) ? w.damage.chest * 100 : w.damage.head * 100
-      )
+      let weapon: typeof valorant_weapons[number]
+      if(this.rounds >= 24) {
+        weapon = this.chooseWeapon(
+          primary.filter(w => w.price >= 2900),
+          w => ["Outlaw", "Operator", "Marshall", "Guardian"]
+          .includes(w.name) ? w.damage.chest * 100 : w.damage.head * 100
+        )
+      }
+      else {
+        weapon = this.chooseWeapon(
+          primary,
+          w => ["Outlaw", "Operator", "Marshall", "Guardian"]
+          .includes(w.name) ? w.damage.chest * 100 : w.damage.head * 100
+        )
+      }
       const secondaryWeapon = this.chooseWeapon(secondary, w => w.price)
       this.credits -= weapon.price
-      this.weapon.primary = weapon
+      this.weapon.primary = {
+        ...weapon
+      }
       if(this.credits >= secondaryWeapon.price) {
         this.credits -= secondaryWeapon.price
-        this.weapon.secondary = secondaryWeapon
+        this.weapon.secondary = {
+          ...secondaryWeapon
+        }
       }
       if(this.credits >= 1000) {
         this.credits -= 1000
@@ -85,7 +102,9 @@ export default class Player {
       const secondary = valorant_weapons.filter(w => w.price <= 800 && w.name !== "Melee")
       const weapon = this.chooseWeapon(secondary, w => w.price * 5)
       this.credits -= weapon.price
-      this.weapon.secondary = weapon
+      this.weapon.secondary = {
+        ...weapon
+      }
       if(this.credits >= 400) {
         this.life = 125
         this.credits -= 400
@@ -98,8 +117,13 @@ export default class Player {
         return this
       }
       this.credits -= weapon.price
-      this.weapon.secondary = weapon
-      if(this.credits >= 400) {
+      this.weapon.secondary = {
+        ...weapon
+      }
+      if(
+        this.credits >= 400 &&
+        this.credits - 400 >= 2650
+      ) {
         this.life = 125
         this.credits -= 400
       }

@@ -17,7 +17,7 @@ export default class Round extends Match {
       if((score1 === 13 || score2 === 13) && this.rounds.length <= 24) {
         return await this.finish(score1, score2)
       }
-      else if(score1 > 13 || score2 > 13 && Math.abs(score1 - score2) === 2) {
+      else if((score1 > 13 || score2 > 13) && Math.abs(score1 - score2) === 2) {
         return await this.finish(score1, score2)
       }
     }
@@ -28,6 +28,9 @@ export default class Round extends Match {
     }
     else if(this.overtime && (score1 > 13 || score2 > 13) && Math.abs(score1 - score2) === 2) {
       return await this.finish(score1, score2)
+    }
+    if(this.rounds.length >= 24) {
+      await this.switchSides()
     }
     this.content = this.t("simulator.processing")
     const embed = new EmbedBuilder()
@@ -55,91 +58,44 @@ export default class Round extends Match {
       }
     )
     await this.ctx.edit(embed.build(this.mentions))
-    const teamCredits1 = this.teams[0].roster.reduce((sum, p) => sum + p.credits, 0) / 5
-    const teamCredits2 = this.teams[1].roster.reduce((sum, p) => sum + p.credits, 0) / 5
-    for(let i = 0; i < this.teams[0].roster.length; i++) {
-      if(this.teams[0].roster[i].life <= 0) {
-        this.teams[0].roster[i].weapon = {
-          melee: {
-            damage: {
-              head: 50,
-              chest: 50
+    for(const t of this.teams) {
+      const teamCredits = t.roster.reduce((sum, p) => sum + p.credits, 0) / 5
+      for(const p of t.roster) {
+        if(p.life <= 0) {
+          p.weapon = {
+            melee: {
+              damage: {
+                head: 50,
+                chest: 50
+              },
+              rate_fire: 750
             },
-            rate_fire: 750
+            secondary: valorant_weapons.filter(w => w.name === "Classic")[0]
           }
         }
-      }
-      if(this.teams[0].roster[i].weapon?.primary) {
-        this.teams[0].roster[i].weapon!.primary!.magazine = valorant_weapons.filter(w => w.name === this.teams[0].roster[i].weapon?.primary?.name)[0].magazine
-      }
-      if(this.teams[0].roster[i].weapon?.secondary) {
-        this.teams[0].roster[i].weapon!.secondary!.magazine = valorant_weapons.filter(w => w.name === this.teams[0].roster[i].weapon?.secondary?.name)[0].magazine
-      }
-      this.teams[0].roster[i].life = 100
-    }
-    for(let i = 0; i < this.teams[1].roster.length; i++) {
-      if(this.teams[1].roster[i].life <= 0) {
-        this.teams[1].roster[i].weapon = {
-          melee: {
-            damage: {
-              head: 50,
-              chest: 50
-            },
-            rate_fire: 750
-          }
+        p.life = 100
+        const player = new Player({
+          name: p.name,
+          life: p.life,
+          credits: p.credits,
+          weapon: p.weapon!,
+          teamCredits,
+          stats: p,
+          id: p.id,
+          rounds: this.rounds.length
+        })
+        player.buy()
+        p.credits = player.credits
+        p.weapon = player.weapon
+        if(p.weapon.primary) {
+          const weapon = valorant_weapons.filter(w => w.name === p.weapon?.primary?.name)[0]
+          p.weapon.primary.magazine = weapon.magazine
+        }
+        if(p.weapon.secondary) {
+          const weapon = valorant_weapons.filter(w => w.name === p.weapon?.secondary?.name)[0]
+          p.weapon.secondary.magazine = weapon.magazine
         }
       }
-      if(this.teams[1].roster[i].weapon?.primary) {
-        this.teams[1].roster[i].weapon!.primary!.magazine = valorant_weapons.filter(w => w.name === this.teams[1].roster[i].weapon?.primary?.name)[0].magazine
-      }
-      if(this.teams[1].roster[i].weapon?.secondary) {
-        this.teams[1].roster[i].weapon!.secondary!.magazine = valorant_weapons.filter(w => w.name === this.teams[1].roster[i].weapon?.secondary?.name)[0].magazine
-      }
-      this.teams[1].roster[i].life = 100
-    }
-    for(const p of this.teams[0].roster) {
-      const player = new Player({
-        name: p.name,
-        life: p.life,
-        credits: p.credits,
-        weapon: {
-          melee: {
-            damage: {
-              head: 50,
-              chest: 50
-            },
-            rate_fire: 750
-          }
-        },
-        teamCredits: teamCredits1,
-        stats: p,
-        id: p.id
-      })
-      player.buy()
-      p.credits = player.credits
-      p.weapon = player.weapon
-    }
-    for(const p of this.teams[1].roster) {
-      const player = new Player({
-        name: p.name,
-        life: p.life,
-        credits: p.credits,
-        weapon: {
-          melee: {
-            damage: {
-              head: 50,
-              chest: 50
-            },
-            rate_fire: 750
-          }
-        },
-        teamCredits: teamCredits2,
-        stats: p,
-        id: p.id
-      })
-      player.buy()
-      p.credits = player.credits
-      p.weapon = player.weapon
     }
     await this.wait(3000)
     await this.firstStep(Math.floor(Math.random() * 6))
@@ -161,6 +117,14 @@ export default class Round extends Match {
         user1.rank_rating += pts
         user2.ranked_defeats += 1
         user2.rank_rating -= pts - 5
+        if(user2.rank_rating < 0 && user2.elo > 0) {
+          user2.elo -= 1
+          user2.rank_rating = 80
+        }
+        else if(user2.rank_rating < 0 && user2.elo <= 0) {
+          user2.elo = 0
+          user2.rank_rating = 0
+        }
         if(user1.rank_rating >= 100) {
           if(user1.elo < 22) {
             user1.elo += 1
@@ -207,11 +171,11 @@ export default class Round extends Match {
               teams: [
                 {
                   user: this.teams[1].user,
-                  score: score1,
+                  score: score2,
                 },
                 {
                   user: this.teams[0].user,
-                  score: score2
+                  score: score1
                 }
               ]
             }
@@ -260,6 +224,14 @@ export default class Round extends Match {
         user2.rank_rating += pts
         user1.ranked_defeats += 1
         user1.rank_rating -= pts - 5
+        if(user1.rank_rating < 0 && user1.elo > 0) {
+          user1.elo -= 1
+          user1.rank_rating = 80
+        }
+        else if(user1.rank_rating < 0 && user1.elo <= 0) {
+          user1.elo = 0
+          user1.rank_rating = 0
+        }
         if(user2.rank_rating >= 100) {
           if(user2.elo < 22) {
             user2.elo += 1
@@ -290,11 +262,11 @@ export default class Round extends Match {
               teams: [
                 {
                   user: this.teams[1].user,
-                  score: score1,
+                  score: score2,
                 },
                 {
                   user: this.teams[0].user,
-                  score: score2
+                  score: score1
                 }
               ]
             },
@@ -359,6 +331,14 @@ export default class Round extends Match {
         user1.rank_rating += pts
         user2.ranked_defeats += 1
         user2.rank_rating -= pts - 5
+        if(user2.rank_rating < 0 && user2.elo > 0) {
+          user2.elo -= 1
+          user2.rank_rating = 80
+        }
+        else if(user2.rank_rating < 0 && user2.elo <= 0) {
+          user2.elo = 0
+          user2.rank_rating = 0
+        }
         if(user1.rank_rating >= 100) {
           if(user1.elo < 22) {
             user1.elo += 1
@@ -405,11 +385,11 @@ export default class Round extends Match {
               teams: [
                 {
                   user: this.teams[1].user,
-                  score: score1,
+                  score: score2,
                 },
                 {
                   user: this.teams[0].user,
-                  score: score2
+                  score: score1
                 }
               ]
             }
@@ -458,6 +438,14 @@ export default class Round extends Match {
         user2.rank_rating += pts
         user1.ranked_defeats += 1
         user1.rank_rating -= pts - 5
+        if(user1.rank_rating < 0 && user1.elo > 0) {
+          user1.elo -= 1
+          user1.rank_rating = 80
+        }
+        else if(user1.rank_rating < 0 && user1.elo <= 0) {
+          user1.elo = 0
+          user1.rank_rating = 0
+        }
         if(user2.rank_rating >= 100) {
           if(user2.elo < 22) {
             user2.elo += 1
@@ -488,11 +476,11 @@ export default class Round extends Match {
               teams: [
                 {
                   user: this.teams[1].user,
-                  score: score1,
+                  score: score2,
                 },
                 {
                   user: this.teams[0].user,
-                  score: score2
+                  score: score1
                 }
               ]
             },
@@ -504,11 +492,11 @@ export default class Round extends Match {
               teams: [
                 {
                   user: this.teams[1].user,
-                  score: score1,
+                  score: score2,
                 },
                 {
                   user: this.teams[0].user,
-                  score: score2
+                  score: score1
                 }
               ]
             }
@@ -715,6 +703,7 @@ export default class Round extends Match {
         return await this.secondStep(true)
       }
       else {
+        await this.wait(1500)
         return await this.secondStep()
       }
     }
@@ -729,16 +718,13 @@ export default class Round extends Match {
     const attackerChance = attackerOvr / totalOvr
     const defenderChance = defenderOvr / totalOvr
     let win_type: "ELIMINATION" | "BOMB" | "DEFUSE" | "TIME"
-    let winner: number
     if(bombPlanted) {
       const random = Math.random()
       if(random < defenderChance * 0.5) {
         win_type = "DEFUSE"
-        winner = defender
       }
       else if(random < attackerChance * 0.7) {
         win_type = "BOMB"
-        winner = attacker
       }
       else {
         win_type = "ELIMINATION"
@@ -746,7 +732,6 @@ export default class Round extends Match {
     }
     else {
       if(Math.random() < defenderChance * 0.05) {
-        winner = defender
         win_type = "TIME"
       }
       else {
@@ -1310,7 +1295,8 @@ export default class Round extends Match {
           weapon: item.weapon!,
           teamCredits: this.teams[index].roster.reduce((sum, p) => sum + p.credits, 0) / 5,
           stats: item,
-          id: item.id
+          id: item.id,
+          rounds: this.rounds.length
         })
         return player
       }
