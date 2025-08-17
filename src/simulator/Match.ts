@@ -1,3 +1,4 @@
+import { calcPlayerOvr } from "players"
 import { valorant_agents, valorant_maps, valorant_weapons } from "../config.ts"
 import type { Args } from "../locales/index.ts"
 import EmbedBuilder from "../structures/builders/EmbedBuilder.ts"
@@ -122,32 +123,56 @@ export default class Match {
     else if(this.mode === "tournament" && !this.overtime) {
       this.maxScore = 13
     }
-    for(const p of this.teams[0].roster) {
-      p.kills = 0
-      p.deaths = 0
-      p.weapon = {
-        melee: {
-          damage: {
-            head: 50,
-            chest: 50
-          },
-          rate_fire: 750
-        },
-        secondary: valorant_weapons.filter(w => w.name === "Classic")[0]
+    for(const t of this.teams) {
+      const roles: Record<string, number> = {}
+      for(const p of t.roster) {
+        roles[p.agent.role] = (roles[p.role] || 0) + 1
       }
-    }
-    for(const p of this.teams[1].roster) {
-      p.kills = 0
-      p.deaths = 0
-      p.weapon = {
-        melee: {
-          damage: {
-            head: 50,
-            chest: 50
+      for(const p of t.roster) {
+        const count = roles[p.agent.role]
+        const min = 0.07
+        const increment = 0.015
+        if(p.role !== "flex" && p.agent.role !== p.role) {
+          p.aim *= 0.85
+          p.HS *= 0.85
+          p.movement *= 0.85
+          p.aggression *= 0.85
+          p.ACS *= 0.85
+          p.gamesense *= 0.85
+        }
+        if(count >= 3) {
+          const debuff = 1 - Math.min(min + (count - 3) * increment, 0.10)
+          p.aim *= debuff
+          p.HS *= debuff
+          p.movement *= debuff
+          p.aggression *= debuff
+          p.ACS *= debuff
+          p.gamesense *= debuff
+        }
+        if(
+          !valorant_maps.filter(m => m.name === this.map)[0].meta_agents
+          .includes(p.agent.name as typeof valorant_maps[number]["meta_agents"][number])
+        ) {
+          p.aim *= 0.95
+          p.HS *= 0.95
+          p.movement *= 0.95
+          p.aggression *= 0.95
+          p.ACS *= 0.95
+          p.gamesense *= 0.95
+        }
+        p.ovr = calcPlayerOvr(p)
+        p.kills = 0
+        p.deaths = 0
+        p.weapon = {
+          melee: {
+            damage: {
+              head: 50,
+              chest: 50
+            },
+            rate_fire: 750
           },
-          rate_fire: 750
-        },
-        secondary: valorant_weapons.filter(w => w.name === "Classic")[0]
+          secondary: valorant_weapons.filter(w => w.name === "Classic")[0]
+        }
       }
     }
     const sides: ("ATTACK" | "DEFENSE")[] = ["ATTACK", "DEFENSE"]
