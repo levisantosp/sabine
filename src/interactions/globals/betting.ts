@@ -1,5 +1,5 @@
-import createModalSubmitInteraction from "../structures/interactions/createModalSubmitInteraction.ts"
-import calcOdd from "../structures/util/calcOdd.ts"
+import createModalSubmitInteraction from "../../structures/interactions/createModalSubmitInteraction.ts"
+import calcOdd from "../../util/calcOdd.ts"
 
 export default createModalSubmitInteraction({
   name: "betting",

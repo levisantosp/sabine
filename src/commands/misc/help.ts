@@ -38,8 +38,8 @@ export default createCommand({
   ],
   userInstall: true,
   async run({ ctx, client, t }) {
-    if(ctx.args[0]) {
-      const cmd = client.commands.get(ctx.args[0])
+    if(ctx.args[0].toString()) {
+      const cmd = client.commands.get(ctx.args[0].toString())
       if(!cmd || cmd.onlyDev) {
         return await ctx.reply("commands.help.command_not_found")
       }
@@ -47,7 +47,7 @@ export default createCommand({
       const raw = readFileSync(path, "utf-8")
       const { permissions } = JSON.parse(raw)
       const embed = new EmbedBuilder()
-      .setTitle(ctx.args[0])
+      .setTitle(ctx.args[0].toString())
       .setDesc((await translate(cmd.description, {
         to: ctx.db.guild!.lang
       })).text)

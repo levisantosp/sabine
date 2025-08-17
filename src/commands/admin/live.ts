@@ -118,7 +118,7 @@ export default createCommand({
       const games = {
         valorant: async() => {
           if(!ctx.guild || !ctx.db.guild) return
-          const channel = ctx.guild.channels.get(ctx.args[2])!
+          const channel = ctx.guild.channels.get(ctx.args[2].toString())!
           if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
           ctx.db.guild.valorant_livefeed_channel = channel.id
           await ctx.db.guild.save()
@@ -126,7 +126,7 @@ export default createCommand({
         },
         lol: async() => {
           if(!ctx.guild || !ctx.db.guild) return
-          const channel = ctx.guild.channels.get(ctx.args[2])!
+          const channel = ctx.guild.channels.get(ctx.args[2].toString())!
           if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
           ctx.db.guild.lol_livefeed_channel = channel.id
           await ctx.db.guild.save()

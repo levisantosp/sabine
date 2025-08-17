@@ -1,5 +1,5 @@
-import Service from "../api/index.ts"
-import createModalSubmitInteraction from "../structures/interactions/createModalSubmitInteraction.ts"
+import Service from "../../api/index.ts"
+import createModalSubmitInteraction from "../../structures/interactions/createModalSubmitInteraction.ts"
 
 const service = new Service(process.env.AUTH)
 

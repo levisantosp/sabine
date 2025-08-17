@@ -198,73 +198,73 @@ export default createCommand({
     "tournament remove lol Worlds"
   ],
   async run({ ctx, id, t }) {
-    if(ctx.args[0] === "add") {
+    if(ctx.args[0].toString() === "add") {
       const games = {
         valorant: async() => {
           if(!ctx.db.guild) return
           if(!ctx.guild) return
           if((ctx.db.guild!.lol_events.length + ctx.db.guild!.valorant_events.length) >= ctx.db.guild!.tournamentsLength) return ctx.reply("commands.tournament.limit_reached", { cmd: `</tournament remove valorant:${id}>` })
-          if(ctx.args[3] === ctx.args[4]) return ctx.reply("commands.tournament.channels_must_be_different")
-          if(ctx.guild.channels.get(ctx.args[3])?.type !== 0 || ctx.guild.channels.get(ctx.args[4])?.type !== 0) return ctx.reply("commands.tournament.invalid_channel")
+          if(ctx.args[3].toString() === ctx.args[4].toString()) return ctx.reply("commands.tournament.channels_must_be_different")
+          if(ctx.guild.channels.get(ctx.args[3].toString())?.type !== 0 || ctx.guild.channels.get(ctx.args[4].toString())?.type !== 0) return ctx.reply("commands.tournament.invalid_channel")
           ctx.db.guild!.valorant_events.push({
-            name: ctx.args[2],
-            channel1: ctx.args[3],
-            channel2: ctx.args[4]
+            name: ctx.args[2].toString(),
+            channel1: ctx.args[3].toString(),
+            channel2: ctx.args[4].toString()
           })
           await ctx.db.guild.save()
           await ctx.reply("commands.tournament.tournament_added", {
-            t: ctx.args[2]
+            t: ctx.args[2].toString()
           })
         },
         lol: async() => {
           if(!ctx.db.guild) return
           if(!ctx.guild) return
           if((ctx.db.guild!.lol_events.length + ctx.db.guild!.valorant_events.length) >= ctx.db.guild!.tournamentsLength) return ctx.reply("commands.tournament.limit_reached", { cmd: `</tournament remove lol:${id}>` })
-          if(ctx.args[3] === ctx.args[4]) return ctx.reply("commands.tournament.channels_must_be_different")
-          if(ctx.guild.channels.get(ctx.args[3])?.type !== 0 || ctx.guild.channels.get(ctx.args[4])?.type !== 0) return ctx.reply("commands.tournament.invalid_channel")
+          if(ctx.args[3].toString() === ctx.args[4].toString()) return ctx.reply("commands.tournament.channels_must_be_different")
+          if(ctx.guild.channels.get(ctx.args[3].toString())?.type !== 0 || ctx.guild.channels.get(ctx.args[4].toString())?.type !== 0) return ctx.reply("commands.tournament.invalid_channel")
           ctx.db.guild!.lol_events.push({
-            name: ctx.args[2],
-            channel1: ctx.args[3],
-            channel2: ctx.args[4]
+            name: ctx.args[2].toString(),
+            channel1: ctx.args[3].toString(),
+            channel2: ctx.args[4].toString()
           })
           await ctx.db.guild.save()
           await ctx.reply("commands.tournament.tournament_added", {
-            t: ctx.args[2]
+            t: ctx.args[2].toString()
           })
         }
       }
-      await games[ctx.args[1] as "valorant" | "lol"]()
+      await games[ctx.args[1].toString() as "valorant" | "lol"]()
     }
     else {
       const games = {
         valorant: async() => {
           if(!ctx.db.guild) return
-          if(ctx.args[2] === t("commands.tournament.remove_all") ) {
+          if(ctx.args[2].toString() === t("commands.tournament.remove_all") ) {
             ctx.db.guild.valorant_events = []
             await ctx.db.guild.save()
             return await ctx.reply("commands.tournament.tournament_removed")
           }
-          ctx.db.guild!.valorant_events.splice(ctx.db.guild!.valorant_events.findIndex(e => e.name === ctx.args[2]), 1)
+          ctx.db.guild!.valorant_events.splice(ctx.db.guild!.valorant_events.findIndex(e => e.name === ctx.args[2].toString()), 1)
           await ctx.db.guild.save()
           await ctx.reply("commands.tournament.tournament_removed", {
-            t: ctx.args[2]
+            t: ctx.args[2].toString()
           })
         },
         lol: async() => {
           if(!ctx.db.guild) return
-          if(ctx.args[2] === t("commands.tournament.remove_all")) {
+          if(ctx.args[2].toString() === t("commands.tournament.remove_all")) {
             ctx.db.guild.lol_events = []
             await ctx.db.guild.save()
             return ctx.reply("commands.tournament.tournament_removed")
           }
-          ctx.db.guild!.lol_events.splice(ctx.db.guild!.lol_events.findIndex(e => e.name === ctx.args[2]), 1)
+          ctx.db.guild!.lol_events.splice(ctx.db.guild!.lol_events.findIndex(e => e.name === ctx.args[2].toString()), 1)
           await ctx.db.guild.save()
           ctx.reply("commands.tournament.tournament_removed", {
-            t: ctx.args[2]
+            t: ctx.args[2].toString()
           })
         }
       }
-      await games[ctx.args[1] as "valorant" | "lol"]()
+      await games[ctx.args[1].toString() as "valorant" | "lol"]()
     }
   },
   async createAutocompleteInteraction({ i, t, args }) {

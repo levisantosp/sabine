@@ -1,5 +1,5 @@
-import Service from "../api/index.ts"
-import createComponentInteraction from "../structures/interactions/createComponentInteraction.ts"
+import Service from "../../api/index.ts"
+import createComponentInteraction from "../../structures/interactions/createComponentInteraction.ts"
 
 const service = new Service(process.env.AUTH)
 
