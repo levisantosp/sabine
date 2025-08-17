@@ -1,4 +1,3 @@
-import type { ComponentInteraction } from "oceanic.js"
 import createCommand from "../../structures/command/createCommand.ts"
 import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
 import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
