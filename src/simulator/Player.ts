@@ -68,7 +68,7 @@ export default class Player {
         weapon = this.chooseWeapon(
           primary.filter(w => w.price >= 2900),
           w => ["Outlaw", "Operator", "Marshall", "Guardian"]
-          .includes(w.name) ? w.damage.chest * 100 : w.damage.head * 100
+          .includes(w.name) ? Math.pow(w.damage.chest, 3) : Math.pow(w.damage.head, 3)
         )
       }
       else {
