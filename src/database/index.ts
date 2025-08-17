@@ -12,12 +12,10 @@ type Prediction = {
   teams: PredictionTeam[]
   status: "pending" | "correct" | "wrong"
   bet: bigint | null
-  odd: number | null
+  odd: bigint | null
 }
 export class SabineUser implements users {
   public id: string
-  public valorant_predictions: ({ match: string; status: $Enums.PredictionStatus; bet: bigint | null; odd: number | null; when: number; } & { teams: { name: string; score: string; winner: boolean | null; }[]; })[] = []
-  public lol_predictions: ({ match: string; status: $Enums.PredictionStatus; bet: bigint | null; odd: number | null; when: number; } & { teams: { name: string; score: string; winner: boolean | null; }[]; })[] = []
   public correct_predictions: number = 0
   public wrong_predictions: number = 0
   public lang: $Enums.Language = "en"
@@ -94,57 +92,63 @@ export class SabineUser implements users {
   }
   public async addPrediction(game: "valorant" | "lol", prediction: Prediction) {
     const user = await this.fetch(this.id) ?? this
-    if(game === "valorant") {
-      user.valorant_predictions.push(
-        {
-          ...prediction,
-          when: Date.now()
-        }
-      )
-      await user.save()
-      return user
-    }
-    if(game === "lol") {
-      this.lol_predictions.push(
-        {
-          ...prediction,
-          when: Date.now()
-        }
-      )
-      await this.save()
-      return user
-    }
+    await prisma.predictions.create({
+      data: {
+        ...prediction,
+        game,
+        userId: user.id
+      }
+    })
+    return user
   }
   public async addCorrectPrediction(game: "valorant" | "lol", predictionId: string) {
     const user = await this.fetch(this.id) ?? this
-    if(game === "valorant") {
-      const index = user.valorant_predictions.findIndex(p => p.match === predictionId)
-      user.valorant_predictions[index].status = "correct"
-      user.correct_predictions += 1
-      await user.save()
-    }
-    else {
-      const index = user.lol_predictions.findIndex(p => p.match === predictionId)
-      user.lol_predictions[index].status = "correct"
-      user.correct_predictions += 1
-      await user.save()
-    }
+    const pred = await prisma.predictions.findFirst({
+      where: {
+        match: predictionId,
+        game,
+        userId: user.id
+      }
+    })
+    if(!pred) return user
+    user.correct_predictions += 1
+    await prisma.predictions.update({
+      where: {
+        match: predictionId,
+        game,
+        userId: user.id,
+        id: pred.id
+      },
+      data: {
+        status: "correct"
+      }
+    })
+    await user.save()
     return user
   }
   public async addWrongPrediction(game: "valorant" | "lol", predictionId: string) {
     const user = await this.fetch(this.id) ?? this
-    if(game === "valorant") {
-      const index = user.valorant_predictions.findIndex(p => p.match === predictionId)
-      user.valorant_predictions[index].status = "wrong"
-      user.wrong_predictions += 1
-      await user.save()
-    }
-    else {
-      const index = user.lol_predictions.findIndex(p => p.match === predictionId)
-      user.lol_predictions[index].status = "wrong"
-      user.wrong_predictions += 1
-      await user.save()
-    }
+    const pred = await prisma.predictions.findFirst({
+      where: {
+        match: predictionId,
+        game,
+        userId: user.id
+      }
+    })
+    if(!pred) return user
+    user.correct_predictions += 1
+    await prisma.predictions.update({
+      where: {
+        match: predictionId,
+        game,
+        userId: user.id,
+        id: pred.id
+      },
+      data: {
+        status: "wrong"
+      }
+    })
+    await user.save()
     return user
   }
   public async addPlayerToRoster(player: string, method: "CLAIM_PLAYER_BY_CLAIM_COMMAND" | "CLAIM_PLAYER_BY_COMMAND" = "CLAIM_PLAYER_BY_CLAIM_COMMAND", channel?: string) {
