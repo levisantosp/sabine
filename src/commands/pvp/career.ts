@@ -50,7 +50,7 @@ export default createCommand({
     const unranked_defeats = ctx.db.user.unranked_defeats
     const unranked_wins = ctx.db.user.unranked_wins
     const ranked_swiftplay_wins = ctx.db.user.ranked_swiftplay_wins
-    const swiftplay_wins = ctx.db.user.ranked_swiftplay_wins
+    const swiftplay_wins = ctx.db.user.swiftplay_wins
     const ranked_defeats = ctx.db.user.ranked_defeats
     const ranked_swiftplay_defeats = ctx.db.user.ranked_swiftplay_defeats
     const swiftplay_defeats = ctx.db.user.swiftplay_defeats
@@ -92,7 +92,7 @@ export default createCommand({
         content += `- [<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] **[${t(`commands.career.mode.${match.mode}`)}]** ${t(`commands.career.type.ranked_${type}`, {
           score: `${match.teams[0].score}-${match.teams[1].score}`,
           user: `<@${match.teams[1].user}>`,
-          points: match.points > 0 ? `+${match.points}` : match.points
+          points: match.points! > 0 ? `+${match.points}` : match.points
         })}\n`
       }
       else {
@@ -150,7 +150,7 @@ export default createCommand({
     const unranked_defeats = ctx.db.user.unranked_defeats
     const unranked_wins = ctx.db.user.unranked_wins
     const ranked_swiftplay_wins = ctx.db.user.ranked_swiftplay_wins
-    const swiftplay_wins = ctx.db.user.ranked_swiftplay_wins
+    const swiftplay_wins = ctx.db.user.swiftplay_wins
     const ranked_defeats = ctx.db.user.ranked_defeats
     const ranked_swiftplay_defeats = ctx.db.user.ranked_swiftplay_defeats
     const swiftplay_defeats = ctx.db.user.swiftplay_defeats
@@ -186,13 +186,13 @@ export default createCommand({
       })
     })
     for(const match of career) {
-      if(match.mode.toLowerCase().includes("ranked"))  {
+      if(match.mode.toLowerCase().includes("ranked") && match.mode.toLowerCase() !== "unranked")  {
         const timestamp = (match.when.getTime() / 1000).toFixed(0)
         const type = match.winner ? "win" : "defeat"
         content += `- [<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] **[${t(`commands.career.mode.${match.mode}`)}]** ${t(`commands.career.type.ranked_${type}`, {
           score: `${match.teams[0].score}-${match.teams[1].score}`,
           user: `<@${match.teams[1].user}>`,
-          points: match.points > 0 ? `+${match.points}` : match.points
+          points: match.points! > 0 ? `+${match.points}` : match.points
         })}\n`
       }
       else {
