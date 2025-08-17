@@ -1,3 +1,4 @@
+import { client } from "../../structures/client/App.ts"
 import createModalSubmitInteraction from "../../structures/interactions/createModalSubmitInteraction.ts"
 import calcOdd from "../../util/calcOdd.ts"
 
@@ -7,10 +8,61 @@ export default createModalSubmitInteraction({
   async run({ ctx }) {
     const games = {
       valorant: async() => {
-        const users_vlr = await ctx.client.prisma.users.findMany({
+        const preds = await ctx.client.prisma.predictions.findMany({
           where: {
-            valorant_predictions: {
-              isEmpty: false
+            game: "valorant",
+            match: ctx.args[2]
+          }
+        })
+        const value = BigInt(ctx.args[3])
+        if(isNaN(Number(value))) return await ctx.reply("helper.invalid_coins")
+        if(value < 500) return await ctx.reply("helper.min_value")
+        if(value > ctx.db.user.coins) return await ctx.reply("helper.too_much")
+        let oddA = 0
+        let oddB = 0
+        for(const pred of preds) {
+          if(pred.teams[0].winner && pred.bet) {
+            oddA += 1
+          }
+          else if(pred.teams[1].winner && pred.bet) {
+            oddB += 1
+          }
+        }
+        const index = preds.findIndex(p => p.match === ctx.args[2])
+        let odd: number
+        if(preds[index].teams[0].winner) {
+          odd = calcOdd(oddA)
+        }
+        else {
+          odd = calcOdd(oddB)
+        }
+        ctx.db.user.coins -= value
+        await client.prisma.predictions.update({
+          where: {
+            id: preds[index].id
+          },
+          data: {
+            bet: value + BigInt(preds[index].bet ?? 0)
+          }
+        })
+        await ctx.db.user.save()
+        const winnerIndex = preds[index].teams.findIndex(t => t.winner)
+        await ctx.reply(
+          "helper.bet_res",
+          {
+            team: preds[index].teams[winnerIndex].name,
+            coins: value.toLocaleString("en-US"),
+            odd
+          }
+        )
+      },
+      lol: async() => {
+        const preds = await ctx.client.prisma.predictions.findMany({
+          where: {
+            game: "lol",
+            match: ctx.args[2],
+            bet: {
+              not: null
             }
           }
         })
@@ -20,77 +72,37 @@ export default createModalSubmitInteraction({
         if(value > ctx.db.user.coins) return await ctx.reply("helper.too_much")
         let oddA = 0
         let oddB = 0
-        for(const u of users_vlr) {
-          const index = u.valorant_predictions.findIndex(p => p.match === ctx.args[2])
-          if(!u.valorant_predictions[index]) continue
-          if(u.valorant_predictions[index].teams[0].winner && u.valorant_predictions[index].bet) {
+        for(const pred of preds) {
+          if(pred.teams[0].winner && pred.bet) {
             oddA += 1
           }
-          else if(u.valorant_predictions[index].teams[1].winner && u.valorant_predictions[index].bet) {
+          else if(pred.teams[1].winner && pred.bet) {
             oddB += 1
           }
         }
-        const index = ctx.db.user.valorant_predictions.findIndex(p => p.match === ctx.args[2])
+        const index = preds.findIndex(p => p.match === ctx.args[2])
         let odd: number
-        if(ctx.db.user.valorant_predictions[index].teams[0].winner) {
+        if(preds[index].teams[0].winner) {
           odd = calcOdd(oddA)
         }
         else {
           odd = calcOdd(oddB)
         }
-        ctx.db.user.valorant_predictions[index].bet = value + BigInt(ctx.db.user.valorant_predictions[index].bet ?? 0)
         ctx.db.user.coins -= value
-        await ctx.db.user.save()
-        const winnerIndex = ctx.db.user.valorant_predictions[index].teams.findIndex(t => t.winner)
-        await ctx.reply(
-          "helper.bet_res",
-          {
-            team: ctx.db.user.valorant_predictions[index].teams[winnerIndex].name,
-            coins: value.toLocaleString("en-US"),
-            odd
-          }
-        )
-      },
-      lol: async() => {
-        const users_lol = await ctx.client.prisma.users.findMany({
+        await client.prisma.predictions.update({
           where: {
-            lol_predictions: {
-              isEmpty: false
-            }
+            id: preds[index].id
+          },
+          data: {
+            bet: value + BigInt(preds[index].bet ?? 0)
           }
         })
-        const value = BigInt(ctx.args[0])
-        if(isNaN(Number(value))) return await ctx.reply("helper.invalid_coins")
-        if(value < 500) return await ctx.reply("helper.min_value")
-        if(value > ctx.db.user.coins) return await ctx.reply("helper.too_much")
-        let oddA = 0
-        let oddB = 0
-        for(const u of users_lol) {
-          const index = u.lol_predictions.findIndex(p => p.match === ctx.args[2])
-          if(!u.lol_predictions[index]) continue
-          if(u.lol_predictions[index].teams[0].winner) {
-            oddA += 1
-          }
-          else {
-            oddB += 1
-          }
-        }
-        const index = ctx.db.user.lol_predictions.findIndex(p => p.match === ctx.args[2])
-        let odd: number
-        if(ctx.db.user.lol_predictions[index].teams[0].winner) {
-          odd = calcOdd(oddA)
-        }
-        else {
-          odd = calcOdd(oddB)
-        }
-        ctx.db.user.lol_predictions[index].bet = value + BigInt(ctx.db.user.lol_predictions[index].bet ?? 0)
-        ctx.db.user.coins -= value
         await ctx.db.user.save()
-        const winnerIndex = ctx.db.user.lol_predictions.map(p => p.teams.findIndex(t => t.winner)).join()
+        const winnerIndex = preds[index].teams.findIndex(t => t.winner)
         await ctx.reply(
           "helper.bet_res",
           {
-            team: ctx.db.user.lol_predictions[index].teams[Number(winnerIndex)].name,
+            team: preds[index].teams[winnerIndex].name,
             coins: value.toLocaleString("en-US"),
             odd
           }

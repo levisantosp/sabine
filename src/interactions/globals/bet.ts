@@ -6,21 +6,27 @@ const service = new Service(process.env.AUTH)
 export default createComponentInteraction({
   name: "bet",
   flags: 64,
-  async run({ ctx, t }) {
+  async run({ ctx, t, client }) {
     if(ctx.db.user.coins < 500) return await ctx.reply("helper.coins_needed")
     const options = {
       valorant: async() => {
+        const pred = await client.prisma.predictions.findFirst({
+          where: {
+            match: ctx.args[2],
+            game: "valorant",
+            userId: ctx.db.user.id
+          }
+        })
+        if(!pred) return await ctx.reply("helper.prediction_needed")
         const matches = await service.getMatches("valorant")
         const data = matches.find(m => m.id === ctx.args[2])
-        const index = ctx.db.user.valorant_predictions.findIndex(p => p.match === ctx.args[2])
         if(!data || data.status === "LIVE") {
           return await ctx.reply("helper.started")
         }
-        if(index === -1) return await ctx.reply("helper.prediction_needed")
         let title = t(
           "helper.bet_modal.title",
           {
-            teams: `${ctx.db.user.valorant_predictions[index].teams[0].name} vs ${ctx.db.user.valorant_predictions[index].teams[1].name}`
+            teams: `${pred.teams[0].name} vs ${pred.teams[1].name}`
           }
         )
         if(title.length > 45) {
@@ -48,19 +54,25 @@ export default createComponentInteraction({
         })
       },
       lol: async() => {
+        const pred = await client.prisma.predictions.findFirst({
+          where: {
+            match: ctx.args[2],
+            game: "lol",
+            userId: ctx.db.user.id
+          }
+        })
+        if(!pred) return await ctx.reply("helper.prediction_needed")
         const matches = await service.getMatches("lol")
         const data = matches.find(m => m.id === ctx.args[2])
-        const index = ctx.db.user.lol_predictions.findIndex(p => p.match === ctx.args[2])
         if(!data || data.status === "LIVE") {
           return await ctx.reply("helper.started")
         }
-        if(index === -1) return await ctx.reply("helper.prediction_needed")
         await ctx.interaction.createModal({
           customID: `betting;valorant;${ctx.args[2]}`,
           title: t(
             "helper.bet_modal.title",
             {
-              teams: `${ctx.db.user.lol_predictions[index].teams[0].name} vs ${ctx.db.user.lol_predictions[index].teams[1].name}`
+              teams: `${pred.teams[0].name} vs ${pred.teams[1].name}`
             }
           ),
           components: [

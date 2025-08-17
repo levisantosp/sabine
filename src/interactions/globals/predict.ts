@@ -6,10 +6,17 @@ const service = new Service(process.env.AUTH)
 export default createComponentInteraction({
   name: "predict",
   flags: 64,
-  async run({ ctx, t }) {
+  async run({ ctx, t, client }) {
     const games = {
       valorant: async() => {
-        if(ctx.db.user.valorant_predictions.find(p => p.match === ctx.args[2])) {
+        const pred = await client.prisma.predictions.findFirst({
+          where: {
+            match: ctx.args[2],
+            userId: ctx.db.user.id,
+            game: "valorant"
+          }
+        })
+        if(pred) {
           return await ctx.reply("helper.replied")
         }
         const res = await service.getMatches("valorant")
@@ -55,7 +62,14 @@ export default createComponentInteraction({
         })
       },
       lol: async() => {
-        if(ctx.db.user.lol_predictions.find(p => p.match === ctx.args[2])) {
+        const pred = await client.prisma.predictions.findFirst({
+          where: {
+            match: ctx.args[2],
+            userId: ctx.db.user.id,
+            game: "valorant"
+          }
+        })
+        if(pred) {
           return await ctx.reply("helper.replied")
         }
         const res = await service.getMatches("lol")
