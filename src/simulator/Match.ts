@@ -93,7 +93,6 @@ type PrivateTeam = {
 }
 export default class Match {
   public rounds: RoundResult[] = []
-  private __teams: PrivateTeam[] = []
   public teams: Team[] = []
   public finished: boolean = false
   public readonly ctx: ComponentInteractionContext
@@ -148,6 +147,16 @@ export default class Match {
     for(const p of this.teams[1].roster) {
       p.kills = 0
       p.deaths = 0
+      p.weapon = {
+        melee: {
+          damage: {
+            head: 50,
+            chest: 50
+          },
+          rate_fire: 750
+        },
+        secondary: valorant_weapons.filter(w => w.name === "Classic")[0]
+      }
     }
     const sides: ("ATTACK" | "DEFENSE")[] = ["ATTACK", "DEFENSE"]
     const side = sides[Math.floor(Math.random() * sides.length)]
@@ -169,7 +178,17 @@ export default class Match {
     for(const t of this.teams) {
       t.side = t.side === "ATTACK" ? "DEFENSE" : "ATTACK"
       for(const p of t.roster) {
-        p.credits = 800
+        p.credits = this.rounds.length >= 24 ? 4700 : 800
+        p.weapon = {
+          melee: {
+            damage: {
+              head: 50,
+              chest: 50
+            },
+            rate_fire: 750
+          },
+          secondary: valorant_weapons.filter(w => w.name === "Classic")[0]
+        }
       }
     }
     const content = this.t("simulator.switch_sides")
