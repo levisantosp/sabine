@@ -36,7 +36,7 @@ export default createCommand({
         userId: ctx.db.user.id
       }
     })).sort((a, b) => b.when.getTime() - a.when.getTime())
-    let array = transactions
+    const array = transactions
     if(page === 1) {
       transactions = transactions.slice(0, 10)
     }
@@ -89,7 +89,7 @@ export default createCommand({
         userId: ctx.db.user.id
       }
     })).sort((a, b) => b.when.getTime() - a.when.getTime())
-    let array = transactions
+    const array = transactions
     transactions = transactions.slice(page * 10 - 10, page * 10)
     if(!transactions.length) {
       return await ctx.reply("commands.transactions.none_yet")
