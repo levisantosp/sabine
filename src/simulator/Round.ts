@@ -798,7 +798,7 @@ export default class Round extends Match {
             if(bombPlanted) {
               bonus += 300
             }
-            p.credits += 2900
+            p.credits += 2900 + bonus
           }
         }
         else {
@@ -901,7 +901,7 @@ export default class Round extends Match {
             if(bombPlanted) {
               bonus += 300
             }
-            p.credits += 2900
+            p.credits += 2900 + bonus
           }
         }
         else {
@@ -1004,7 +1004,7 @@ export default class Round extends Match {
             if(bombPlanted) {
               bonus += 300
             }
-            p.credits += 2900
+            p.credits += 2900 + bonus
           }
         }
         else {
@@ -1107,7 +1107,7 @@ export default class Round extends Match {
             if(bombPlanted) {
               bonus += 300
             }
-            p.credits += 2900
+            p.credits += 2900 + bonus
           }
         }
         else {
