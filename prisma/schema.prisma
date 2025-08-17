@@ -24,8 +24,8 @@ type Prediction {
   teams  PredictionTeams[]
   status PredictionStatus
   bet    BigInt?
-  odd    Int?
-  when   Float             @db.Double
+  odd    BigInt?
+  when   DateTime          @default(now())
 }
 
 enum Language {
@@ -104,9 +104,9 @@ type Key {
 type BlacklistProps {
   id     String
   name   String?
-  when   Float   @db.Double
+  when   DateTime @default(now())
   reason String
-  endsAt Float   @db.Double
+  endsAt DateTime
 }
 
 type Content {
@@ -125,7 +125,7 @@ enum TransactionType {
 type Transaction {
   type   TransactionType
   player String
-  when   Float           @db.Double
+  when   DateTime        @default(now())
   price  BigInt?         @db.Long
   user   String?
 }
@@ -172,18 +172,17 @@ model guilds {
 }
 
 model keys {
-  id        String   @id @map("_id")
+  id        String    @id @map("_id")
   active    Boolean
   activeIn  String[]
-  expiresAt Float?   @db.Double
+  expiresAt DateTime?
   type      KeyType
   user      String
 }
 
 model users {
   id                       String         @id @map("_id")
-  valorant_predictions     Prediction[]
-  lol_predictions          Prediction[]
+  predictions              predictions[]
   correct_predictions      Int            @default(0) @db.Int
   wrong_predictions        Int            @default(0) @db.Int
   lang                     Language       @default(en)
@@ -202,7 +201,7 @@ model users {
   ranked_swiftplay_defeats Int            @default(0) @db.Int
   daily_time               DateTime?
   claim_time               DateTime?
-  warn                     Boolean        @default(true)
+  warn                     Boolean        @default(false)
   pity                     Int            @default(0) @db.Int
   claims                   Int            @default(0) @db.Int
   rank_rating              Int            @default(0) @db.Int
@@ -243,9 +242,27 @@ model users {
   career                   matches[]
   trade_time               DateTime?
 
-  @@index([coins, correct_predictions, lol_predictions])
-  @@index([ranked_swiftplay_wins, ranked_wins, unranked_wins, swiftplay_wins])
-  @@index([valorant_predictions])
+  @@index([coins, correct_predictions, ranked_swiftplay_wins, ranked_wins, unranked_wins, swiftplay_wins])
+}
+
+enum Game {
+  valorant
+  lol
+}
+
+model predictions {
+  id     String            @id @default(auto()) @map("_id") @db.ObjectId
+  match  String
+  game   Game
+  teams  PredictionTeams[]
+  status PredictionStatus
+  bet    BigInt?
+  odd    BigInt?
+  when   DateTime          @default(now())
+  user   users             @relation(fields: [userId], references: [id])
+  userId String
+
+  @@index([userId, game, id])
 }
 
 model transactions {
@@ -274,7 +291,7 @@ model matches {
   mode   MatchMode
   winner Boolean
   teams  CarrerTeam[]
-  points Int          @db.Int
+  points Int?         @db.Int
   user   users        @relation(fields: [userId], references: [id])
   userId String
   when   DateTime     @default(now())
