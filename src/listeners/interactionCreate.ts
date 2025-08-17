@@ -69,7 +69,7 @@ const interactionTypes: Record<number, (i: AnyInteractionGateway) => Promise<any
       else if(i.flags) {
         ctx.setFlags(64)
       }
-      await i.run({ ctx, t })
+      await i.run({ ctx, t, client })
     }
     else if(command) {
       const blacklist = (await client.prisma.blacklists.findFirst())!
