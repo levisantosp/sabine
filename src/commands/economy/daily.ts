@@ -9,8 +9,11 @@ export default createCommand({
   category: "economy",
   userInstall: true,
   async run({ ctx, client }) {
-    if(ctx.db.user.daily_time > Date.now()) {
-      return await ctx.reply("commands.daily.has_been_claimed", { t: `<t:${((ctx.db.user.daily_time) / 1000).toFixed(0)}:R>` })
+    if(
+      ctx.db.user.daily_time &&
+      ctx.db.user.daily_time?.getTime() > Date.now()
+    ) {
+      return await ctx.reply("commands.daily.has_been_claimed", { t: `<t:${((ctx.db.user.daily_time.getTime()) / 1000).toFixed(0)}:R>` })
     }
     let coins = BigInt(Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000)
     await ctx.reply("commands.daily.res", { coins: coins.toLocaleString("en-US") })
@@ -21,7 +24,7 @@ export default createCommand({
       await ctx.reply("commands.daily.bonus", { bonus: bonus.toLocaleString("en-us") })
     }
     ctx.db.user.coins += coins
-    ctx.db.user.daily_time = new Date().setHours(24, 0, 0, 0)
+    ctx.db.user.daily_time = new Date(new Date().setHours(24, 0, 0, 0))
     await ctx.db.user.save()
   }
 })

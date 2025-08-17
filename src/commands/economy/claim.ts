@@ -42,7 +42,7 @@ const getRandomPlayerByOvr = () => {
 const getRandomPlayerByTier = (t: string) => {
   return tier[t][Math.floor(Math.random() * tier[t].length)]
 }
-const users: {[key: string]: number} = {}
+const users: {[key: string]: Date} = {}
 const date = Date.now()
 export default createCommand({
   name: "claim",
@@ -58,14 +58,17 @@ export default createCommand({
   isThiking: true,
   messageComponentInteractionTime: 60 * 1000,
   async run({ ctx, t }) {
-    if(ctx.db.user.claim_time > Date.now()) {
+    if(
+      ctx.db.user.claim_time &&
+      ctx.db.user.claim_time.getTime() > Date.now()
+    ) {
       delete users[ctx.interaction.user.id]
-      return await ctx.reply("commands.claim.has_been_claimed", { t: `<t:${((ctx.db.user.claim_time) / 1000).toFixed(0)}:R>` })
+      return await ctx.reply("commands.claim.has_been_claimed", { t: `<t:${((ctx.db.user.claim_time.getTime()) / 1000).toFixed(0)}:R>` })
     }
-    else if(users[ctx.interaction.user.id] && users[ctx.interaction.user.id] > Date.now()) {
-      return await ctx.reply("commands.claim.has_been_claimed", { t: `<t:${((users[ctx.interaction.user.id]) / 1000).toFixed(0)}:R>` })
+    else if(users[ctx.interaction.user.id] && users[ctx.interaction.user.id].getTime() > Date.now()) {
+      return await ctx.reply("commands.claim.has_been_claimed", { t: `<t:${((users[ctx.interaction.user.id].getTime()) / 1000).toFixed(0)}:R>` })
     }
-    users[ctx.interaction.user.id] = Date.now() + 600000
+    users[ctx.interaction.user.id] = new Date(Date.now() + 600000)
     let player: Player
     if(ctx.db.user.pity >= 99) {
       player = getRandomPlayerByTier("s")

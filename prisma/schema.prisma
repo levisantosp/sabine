@@ -200,8 +200,8 @@ model users {
   unranked_defeats         Int            @default(0) @db.Int
   swiftplay_defeats        Int            @default(0) @db.Int
   ranked_swiftplay_defeats Int            @default(0) @db.Int
-  daily_time               Float          @default(0) @db.Double
-  claim_time               Float          @default(0) @db.Double
+  daily_time               DateTime?
+  claim_time               DateTime?
   warn                     Boolean        @default(true)
   pity                     Int            @default(0) @db.Int
   claims                   Int            @default(0) @db.Int
@@ -241,6 +241,7 @@ model users {
   packets                  Packet[]
   transactions             transactions[]
   career                   matches[]
+  trade_time               DateTime?
 
   @@index([coins, correct_predictions, lol_predictions])
   @@index([ranked_swiftplay_wins, ranked_wins, unranked_wins, swiftplay_wins])
@@ -276,7 +277,7 @@ model matches {
   points Int          @db.Int
   user   users        @relation(fields: [userId], references: [id])
   userId String
-  when DateTime @default(now())
+  when   DateTime     @default(now())
 
   @@index([userId])
 }
