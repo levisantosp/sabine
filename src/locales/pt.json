@@ -3,7 +3,7 @@
     "predictions": {
       "embed": {
         "author": "Seus palpites",
-        "field": "Palpite: `{score1}-{score2}`\nEstatísticas: [clique aqui]({link})",
+        "field": "Palpite: `{score1}-{score2}`\nEstatísticas: [clique aqui]({link})\nStatus: {status}",
         "footer": "Página {p1}/{p2}",
         "desc": "Palpites certos: `{correct}`\nPalpites errados: `{wrong}`\nPalpites totais: `{t}`"
       },
@@ -220,7 +220,7 @@
       "no_pages": "Nada pra mostrar aqui.",
       "embed": {
         "author": "Sua Carreira",
-        "desc": "**Classificação:** `{elo}` — `{rr}RR`\n**Vitórias/Derrotas** (modo ranqueado): `{ranked_wins}/{ranked_defeats}`\n**Vitórias/Derrotas** (modo sem classificação): `{unranked_wins}/{unranked_defeats}`\n**Vitórias/Derrotas** (frenético ranqueado): `{ranked_swiftplay_wins}/{ranked_swiftplay_defeats}`\n**Vitórias/Derrotas** (modo frenético): `{swiftplay_wins}/{swiftplay_defeats}`\n**Vitórias Totais:** `{total_wins}`\n**Derrotas Totais:** `{total_defeats}`\n**Partidas Jogadas:** `{total}`",
+        "desc": "**Classificação:** `{elo}` — `{rr}RR`\n**Vitórias/Derrotas** (ranqueado): `{ranked_wins}/{ranked_defeats}`\n**Vitórias/Derrotas** (sem classificação): `{unranked_wins}/{unranked_defeats}`\n**Vitórias/Derrotas** (frenético ranqueado): `{ranked_swiftplay_wins}/{ranked_swiftplay_defeats}`\n**Vitórias/Derrotas** (frenético): `{swiftplay_wins}/{swiftplay_defeats}`\n**Vitórias Totais:** `{total_wins}`\n**Derrotas Totais:** `{total_defeats}`\n**Partidas Jogadas:** `{total}`",
         "footer": "Página {page}/{pages}"
       },
       "type": {
@@ -297,7 +297,8 @@
       "cancelled": "Negociação cancelada.",
       "res": "Você vendeu **{player} — {collection}** para {user} por **{coins}** coins com sucesso!",
       "invalid_value": "Informe um valor maior que 0.",
-      "cannot_trade": "Você não pode negociar consigo mesmo."
+      "cannot_trade": "Você não pode negociar consigo mesmo.",
+      "has_been_traded": "Você já negociou um jogador recentemente. Tente novamente {t}"
     },
     "transactions": {
       "type": {
@@ -390,7 +391,8 @@
     "controllers": "Controladores",
     "duelists": "Duelistas",
     "initiators": "Iniciadores",
-    "sentinels": "Sentinelas"
+    "sentinels": "Sentinelas",
+    "cooldown": "Você está usando este comando rápido demais. Tente novamente {cooldown}"
   },
   "permissions": {
     "CREATE_INSTANT_INVITE": "Criar convite instantâneo",

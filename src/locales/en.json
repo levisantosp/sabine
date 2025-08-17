@@ -3,7 +3,7 @@
     "predictions": {
       "embed": {
         "author": "Your predictions",
-        "field": "Prediction: `{score1}-{score2}`\nStats: [click here]({link})",
+        "field": "Prediction: `{score1}-{score2}`\nStats: [click here]({link})\nStatus: {status}",
         "footer": "Page {p1}/{p2}",
         "desc": "Correct predictions: `{correct}`\nWrong predictions: `{wrong}`\nTotal predictions: `{t}`"
       },
@@ -220,7 +220,7 @@
       "no_pages": "Nothing to show in this page.",
       "embed": {
         "author": "Your Career",
-        "desc": "**Rank:** `{elo}` — `{rr}RR`\n**Wins/Defeats** (ranked mode): `{ranked_wins}/{ranked_defeats}`\n**Wins/Defeats** (unranked mode): `{unranked_wins}/{unranked_defeats}`\n**Wins/Defeats** (ranked swiftplay mode): `{ranked_swiftplay_wins}/{ranked_swiftplay_defeats}`\n**Wins/Defeats** (swiftplay mode): `{swiftplay_wins}/{swiftplay_defeats}`\n**Total Wins:** `{total_wins}`\n**Total Defeats:** `{total_defeats}`\n**Matches Played:** `{total}`",
+        "desc": "**Rank:** `{elo}` — `{rr}RR`\n**Wins/Defeats** (ranked): `{ranked_wins}/{ranked_defeats}`\n**Wins/Defeats** (unranked): `{unranked_wins}/{unranked_defeats}`\n**Wins/Defeats** (ranked swiftplay): `{ranked_swiftplay_wins}/{ranked_swiftplay_defeats}`\n**Wins/Defeats** (swiftplay): `{swiftplay_wins}/{swiftplay_defeats}`\n**Total Wins:** `{total_wins}`\n**Total Defeats:** `{total_defeats}`\n**Matches Played:** `{total}`",
         "footer": "Page {page}/{pages}"
       },
       "type": {
@@ -297,7 +297,8 @@
       "cancelled": "Trade cancelled.",
       "res": "You sold **{player} — {collection}** for {user} for **{coins}** coins succesfully!",
       "invalid_value": "Enter a value greater than 0.",
-      "cannot_trade": "You cannot trade with yourself."
+      "cannot_trade": "You cannot trade with yourself.",
+      "has_been_traded": "You already traded a player recently. Try again {t}"
     },
     "transactions": {
       "type": {
@@ -390,7 +391,8 @@
     "controllers": "Controllers",
     "duelists": "Duelists",
     "initiators": "Initiators",
-    "sentinels": "Sentinels"
+    "sentinels": "Sentinels",
+    "cooldown": "You are using this command too quickly. Try again {cooldown}"
   },
   "permissions": {
     "CREATE_INSTANT_INVITE": "Create Instant Invite",
