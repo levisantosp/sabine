@@ -1,6 +1,6 @@
-import { ComponentTypes } from "oceanic.js"
+import { type AnyTextableChannel, ComponentTypes, Message, TextableChannel } from "oceanic.js"
 import createComponentInteraction from "../../structures/interactions/createComponentInteraction.ts"
-import { valorant_agents } from "../../config.ts"
+import { valorant_agents, valorant_maps } from "../../config.ts"
 import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
 import { SabineUser } from "../../database/index.ts"
 import { calcPlayerOvr, getPlayer } from "players"
@@ -9,7 +9,7 @@ import Logger from "../../util/Logger.ts"
 
 export default createComponentInteraction({
   name: "selected",
-  // time: 7 * 60 * 1000,
+  time: 7 * 60 * 1000,
   flags: 64,
   async run({ ctx, client, t }) {
     if(ctx.interaction.data.componentType !== ComponentTypes.STRING_SELECT) return
@@ -122,7 +122,8 @@ export default createComponentInteraction({
       }
     )
     .setFooter({ text: t("commands.duel.time") })
-    const message = await client.rest.channels.getMessage(data.channelId, data.messageId)
+    const message: Message<AnyTextableChannel> = await client.rest.channels.getMessage(data.channelId, data.messageId)
+    if(!message) return
     await ctx.edit("commands.duel.agent_selected", {
       p: getPlayer(ctx.args[2])!.name,
       agent: agentName
@@ -140,25 +141,50 @@ export default createComponentInteraction({
         components: []
       })
       setTimeout(async() => {
-        const match = new Match({
-          teams: [],
-          ctx,
+        let match = new Match({
+          teams: [
+            {
+              roster: data[ctx.db.user.id],
+              name: ctx.db.user.team!.name!,
+              tag: ctx.db.user.team!.tag!,
+              user: ctx.db.user.id
+            },
+            {
+              roster: data[user.id],
+              name: user.team!.name!,
+              tag: user.team!.tag!,
+              user: user.id
+            }
+          ],
+          ctx: message!,
           t,
           mode: data.mode,
           map: data.map,
           content: ""
         })
+        const embed = new EmbedBuilder()
+        .setTitle(t("simulator.mode.ranked"))
+        .setDesc(
+          `### ${match.teams[0].name} 0 <:versus:1349105624180330516> 0 ${match.teams[1].name}` + "\n" +
+          t("simulator.match_started")
+        )
+        .setImage(valorant_maps.filter(map => map.name === match.map)[0].image)
+        await message.edit(embed.build())
         try {
           while(!match.finished) {
             await client.redis.set(`match:${ctx.db.user.id}`, 1)
             await client.redis.set(`match:${user.id}`, 1)
-            await match.wait(5000)
-            await match.start()
+            await match.wait(2500)
+            match = await match.start()
           }
         }
         catch(e) {
           await client.redis.del(`match:${ctx.db.user.id}`)
           await client.redis.del(`match:${user.id}`)
+          await ctx.reply("commands.duel.error", {
+            users: `${ctx.interaction.user.mention} <@${match.teams[1].user}>`,
+            e: e as Error
+          })
           await new Logger(client).error(e as Error)
         }
         finally {

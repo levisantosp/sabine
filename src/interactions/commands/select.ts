@@ -6,7 +6,7 @@ import SelectMenuBuilder from "../../structures/builders/SelectMenuBuilder.ts"
 
 export default createComponentInteraction({
   name: "select",
-  // time: 6 * 60 * 1000,
+  time: 6 * 60 * 1000,
   flags: 64,
   async run({ ctx, t }) {
     if(ctx.interaction.data.componentType !== ComponentTypes.STRING_SELECT) return
