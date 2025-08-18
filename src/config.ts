@@ -363,7 +363,8 @@ export const valorant_maps: {
       "Neon",
       "Yoru",
       "Cypher",
-      "Omen"
+      "Omen",
+      "KAY/O"
     ],
     current_map_pool: true,
     image: "https://imgur.com/vSP4vQB.png",
@@ -531,7 +532,8 @@ export const valorant_maps: {
       "Sova",
       "Viper",
       "Vyse",
-      "Chamber"
+      "Chamber",
+      "Sage"
     ],
     current_map_pool: true,
     image: "https://imgur.com/2rmdsWE.png",
