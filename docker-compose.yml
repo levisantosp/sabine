@@ -4,6 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     image: sabine
-    restart: always
+    container_name: sabine
+    restart: unless-stopped
     ports:
       - '${PORT}:${PORT}'
