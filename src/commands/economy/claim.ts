@@ -68,7 +68,7 @@ export default createCommand({
       return await ctx.reply("commands.claim.no_fates")
     }
     let player: Player
-    if(ctx.db.user.pity >= 99) {
+    if(ctx.db.user.pity >= 49) {
       player = getRandomPlayerByTier("s")
     }
     else player = getRandomPlayerByOvr()

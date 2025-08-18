@@ -282,7 +282,7 @@
       "signed": "Você contratou **{player}** por **{price}** coins com sucesso!"
     },
     "claims": {
-      "res": "Seus claims: `{claims}`\nSeu pity: `{pity}`\nAo chegar ao pity **100**, uma carta Tier S (85+) é garantida!"
+      "res": "Seus claims: `{claims}`\nSeu pity: `{pity}`\nAo chegar ao pity **50**, uma carta Tier S (85+) é garantida!"
     },
     "card": {
       "name": "Nome",
