@@ -115,6 +115,7 @@ export default class Round extends Match {
         const pts = Math.round(minPts + (diff - 1) * ((maxPts - minPts) / (maxDiff - 1)))
         user1.ranked_wins += 1
         user1.rank_rating += pts
+        user1.fates += 5
         user2.ranked_defeats += 1
         user2.rank_rating -= pts - 5
         if(user2.rank_rating < 0 && user2.elo > 0) {
@@ -222,6 +223,7 @@ export default class Round extends Match {
         const pts = Math.round(minPts + (diff - 1) * ((maxPts - minPts) / (maxDiff - 1)))
         user2.ranked_wins += 1
         user2.rank_rating += pts
+        user2.fates += 5
         user1.ranked_defeats += 1
         user1.rank_rating -= pts - 5
         if(user1.rank_rating < 0 && user1.elo > 0) {
@@ -329,6 +331,7 @@ export default class Round extends Match {
         const pts = Math.round(minPts + (diff - 1) * ((maxPts - minPts) / (maxDiff - 1)))
         user1.ranked_wins += 1
         user1.rank_rating += pts
+        user1.fates += 5
         user2.ranked_defeats += 1
         user2.rank_rating -= pts - 5
         if(user2.rank_rating < 0 && user2.elo > 0) {
@@ -436,6 +439,7 @@ export default class Round extends Match {
         const pts = Math.round(minPts + (diff - 1) * ((maxPts - minPts) / (maxDiff - 1)))
         user2.ranked_wins += 1
         user2.rank_rating += pts
+        user2.fates += 5
         user1.ranked_defeats += 1
         user1.rank_rating -= pts - 5
         if(user1.rank_rating < 0 && user1.elo > 0) {
@@ -546,6 +550,7 @@ export default class Round extends Match {
         const pts = Math.round(minPts + (diff - 1) * ((maxPts - minPts) / (maxDiff - 1)))
         user1.ranked_swiftplay_wins += 1
         user1.rank_rating += pts
+        user1.fates += 1
         user2.ranked_swiftplay_defeats += 1
         user2.rank_rating -= pts - 5
         if(user2.rank_rating < 0 && user2.elo > 0) {
@@ -653,6 +658,7 @@ export default class Round extends Match {
         const pts = Math.round(minPts + (diff - 1) * ((maxPts - minPts) / (maxDiff - 1)))
         user2.ranked_swiftplay_wins += 1
         user2.rank_rating += pts
+        user2.fates += 1
         user1.ranked_swiftplay_defeats += 1
         user1.rank_rating -= pts - 5
         if(user1.rank_rating < 0 && user1.elo > 0) {
