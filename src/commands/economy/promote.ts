@@ -30,7 +30,7 @@ export default createCommand({
     }
   ],
   userInstall: true,
-  messageComponentInteractionTime: 5 * 60 * 1000,
+  // messageComponentInteractionTime: 5 * 60 * 1000,
   async run({ ctx, t }) {
     const p = getPlayer(Number(ctx.args[0]))
     if(!p) {
@@ -45,14 +45,16 @@ export default createCommand({
       await ctx.db.user.save()
       return await ctx.reply("commands.promote.player_promoted", { p: p.name })
     }
+    let i = 0
     for(const p_id of players) {
+      i++
       const p = getPlayer(Number(p_id))
       if(!p) break
       const ovr = parseInt(calcPlayerOvr(p).toString())
       options.push({
         label: `${p.name} (${ovr})`,
         description: p.role,
-        value: p_id
+        value: `${i}_${p_id}`
       })
     }
     const menu = new SelectMenuBuilder()
@@ -84,7 +86,7 @@ export default createCommand({
   },
   async createMessageComponentInteraction({ ctx, i, t }) {
     if(i.data.componentType === 3) {
-      const id = i.data.values.getStrings()[0]
+      const id = i.data.values.getStrings()[0].split("_")[1]
       let index = ctx.db.user.roster!.active.findIndex(p => p === id)
       ctx.db.user.roster!.active.splice(index, 1)
       ctx.db.user.roster!.reserve.push(id)
