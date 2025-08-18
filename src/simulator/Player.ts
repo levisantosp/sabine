@@ -75,8 +75,8 @@ export default class Player {
         weapon = this.chooseWeapon(
           primary,
           w => ["Outlaw", "Operator", "Marshall", "Guardian"]
-          .includes(w.name) ? w.damage.chest * 100 : w.damage.head * 100
-        )
+          .includes(w.name) ? Math.pow(w.damage.chest, 3) : Math.pow(w.damage.head, 3)
+        )        
       }
       const secondaryWeapon = this.chooseWeapon(secondary, w => w.price)
       this.credits -= weapon.price
