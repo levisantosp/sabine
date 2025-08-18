@@ -149,7 +149,6 @@ export default createCommand({
       ]
     }
   ],
-  userInstall: true,
   async run({ ctx, t, client }) {
     const user = await SabineUser.fetch(
       typeof ctx.args.at(-1) === "boolean" ? ctx.args[ctx.args.length - 2].toString() : ctx.args.at(-1)!.toString()
