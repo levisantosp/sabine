@@ -53,11 +53,9 @@ export default async function(
         }
       }
     })
-    const users = await prisma.users.findMany({
+    const preds = await prisma.predictions.findMany({
       where: {
-        valorant_predictions: {
-          isEmpty: false
-        }
+        game: "valorant"
       }
     })
     if(!guilds.length) return
@@ -107,56 +105,54 @@ export default async function(
         }
       }
     }
-    if(!users.length) return
-    for(const usr of users) {
-      const user = new SabineUser(usr.id)
+    if(!preds.length) return
+    for(const pred of preds) {
+      const user = await SabineUser.fetch(pred.id)
+      if(!user) continue
       for(const data of req.body) {
-        const pred = usr.valorant_predictions.find(p => p.match === data.id)
-        if(!pred) continue
         if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
-          await user.addCorrectPrediction("valorant", data.id)
+          await user.addCorrectPrediction("lol", data.id)
         }
         else {
-          await user.addWrongPrediction("valorant", data.id)
+          await user.addWrongPrediction("lol", data.id)
         }
         if(pred.bet) {
           const winnerIndex = data.teams.findIndex(t => t.winner)
-          const i = usr.valorant_predictions.findIndex(p => p.match === data.id)
-          if(usr.valorant_predictions[i].teams[winnerIndex].winner) {
+          if(pred.teams[winnerIndex].winner) {
             let oddA = 0
             let oddB = 0
-            for(const u of users) {
-              const index = u.valorant_predictions.findIndex(p => p.match === data.id)
-              if(!u.valorant_predictions[index]) continue
-              if(u.valorant_predictions[index].teams[0].winner && u.valorant_predictions[index].bet) {
+            for(const p of preds) {
+              if(p.teams[0].winner && p.bet) {
                 oddA += 1
               }
-              else if(u.valorant_predictions[index].teams[1].winner && u.valorant_predictions[index].bet) {
+              else if(p.teams[1].winner && p.bet) {
                 oddB += 1
               }
             }
             let odd: number
-            if(usr.valorant_predictions[i].teams[0].winner) {
+            if(pred.teams[0].winner) {
               odd = calcOdd(oddA)
             }
             else {
               odd = calcOdd(oddB)
             }
             let bonus = 0
-            if(usr.plan) {
+            if(user.plan) {
               bonus = Number(pred.bet) / 2
             }
-            usr.coins += BigInt(Number(pred.bet) * odd) + BigInt(bonus)
-            usr.valorant_predictions[i].odd = odd
-            await prisma.users.update({
-              where: {
-                id: usr.id
-              },
-              data: {
-                coins: usr.coins,
-                valorant_predictions: usr.valorant_predictions
-              }
-            })
+            user.coins += BigInt(Number(pred.bet) * odd) + BigInt(bonus)
+            pred.odd = BigInt(odd)
+            await Promise.all([
+              await prisma.predictions.update({
+                where: {
+                  id: pred.id
+                },
+                data: {
+                  odd: BigInt(odd)
+                }
+              }),
+              user.save()
+            ])
           }
         }
       }

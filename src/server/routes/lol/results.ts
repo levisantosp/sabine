@@ -46,11 +46,9 @@ export default async function(
         }
       }
     })
-    const users = await prisma.users.findMany({
+    const preds = await prisma.predictions.findMany({
       where: {
-        lol_predictions: {
-          isEmpty: false
-        }
+        game: "lol"
       }
     })
     if(!guilds.length) return
@@ -96,12 +94,11 @@ export default async function(
         }
       }
     }
-    if(!users.length) return
-    for(const usr of users) {
-      const user = new SabineUser(usr.id)
+    if(!preds.length) return
+    for(const pred of preds) {
+      const user = await SabineUser.fetch(pred.id)
+      if(!user) continue
       for(const data of req.body) {
-        const pred = usr.lol_predictions.find(p => p.match === data.id)
-        if(!pred) continue
         if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
           await user.addCorrectPrediction("lol", data.id)
         }
@@ -110,42 +107,41 @@ export default async function(
         }
         if(pred.bet) {
           const winnerIndex = data.teams.findIndex(t => t.winner)
-          const i = usr.lol_predictions.findIndex(p => p.match === data.id)
-          if(usr.lol_predictions[i].teams[winnerIndex].winner) {
+          if(pred.teams[winnerIndex].winner) {
             let oddA = 0
             let oddB = 0
-            for(const u of users) {
-              const index = u.lol_predictions.findIndex(p => p.match === data.id)
-              if(!u.lol_predictions[index]) continue
-              if(u.lol_predictions[index].teams[0].winner && u.lol_predictions[index].bet) {
+            for(const p of preds) {
+              if(p.teams[0].winner && p.bet) {
                 oddA += 1
               }
-              else if(u.lol_predictions[index].teams[1].winner && u.lol_predictions[index].bet) {
+              else if(p.teams[1].winner && p.bet) {
                 oddB += 1
               }
             }
             let odd: number
-            if(usr.lol_predictions[i].teams[0].winner) {
+            if(pred.teams[0].winner) {
               odd = calcOdd(oddA)
             }
             else {
               odd = calcOdd(oddB)
             }
             let bonus = 0
-            if(usr.plan) {
+            if(user.plan) {
               bonus = Number(pred.bet) / 2
             }
-            usr.coins += BigInt(Number(pred.bet) * odd) + BigInt(bonus)
-            usr.lol_predictions[i].odd = odd
-            await prisma.users.update({
-              where: {
-                id: usr.id
-              },
-              data: {
-                coins: usr.coins,
-                lol_predictions: usr.lol_predictions
-              }
-            })
+            user.coins += BigInt(Number(pred.bet) * odd) + BigInt(bonus)
+            pred.odd = BigInt(odd)
+            await Promise.all([
+              await prisma.predictions.update({
+                where: {
+                  id: pred.id
+                },
+                data: {
+                  odd: BigInt(odd)
+                }
+              }),
+              user.save()
+            ])
           }
         }
       }
