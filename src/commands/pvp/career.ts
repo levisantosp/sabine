@@ -86,7 +86,7 @@ export default createCommand({
       })
     })
     for(const match of career) {
-      if(match.mode.toLowerCase().includes("ranked"))  {
+      if(match.mode.toLowerCase().includes("ranked") && match.mode.toLowerCase() !== "unranked")  {
         const timestamp = (match.when.getTime() / 1000).toFixed(0)
         const type = match.winner ? "win" : "defeat"
         content += `- [<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] **[${t(`commands.career.mode.${match.mode}`)}]** ${t(`commands.career.type.ranked_${type}`, {
