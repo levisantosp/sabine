@@ -166,7 +166,7 @@ export default class Round extends Match {
             },
             {
               mode: "RANKED",
-              points: -pts,
+              points: -(pts - 5),
               userId: this.teams[1].user,
               winner: false,
               teams: [
@@ -279,7 +279,7 @@ export default class Round extends Match {
             },
             {
               mode: "RANKED",
-              points: -pts,
+              points: -(pts - 5),
               userId: this.teams[0].user,
               winner: false,
               teams: [
@@ -392,7 +392,7 @@ export default class Round extends Match {
             },
             {
               mode: "RANKED",
-              points: -pts,
+              points: -(pts - 5),
               userId: this.teams[1].user,
               winner: false,
               teams: [
@@ -505,7 +505,7 @@ export default class Round extends Match {
             },
             {
               mode: "RANKED",
-              points: -pts,
+              points: -(pts - 5),
               userId: this.teams[1].user,
               winner: false,
               teams: [
@@ -621,7 +621,7 @@ export default class Round extends Match {
             },
             {
               mode: "RANKED_SWIFTPLAY",
-              points: -pts,
+              points: -(pts - 5),
               userId: this.teams[1].user,
               winner: false,
               teams: [
@@ -734,7 +734,7 @@ export default class Round extends Match {
             },
             {
               mode: "RANKED_SWIFTPLAY",
-              points: -pts,
+              points: -(pts - 5),
               userId: this.teams[0].user,
               winner: false,
               teams: [
