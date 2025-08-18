@@ -60,9 +60,12 @@ export default createCommand({
   async run({ ctx, t }) {
     if(
       ctx.db.user.claim_time &&
-      ctx.db.user.claim_time.getTime() > Date.now()
+      ctx.db.user.claim_time > new Date()
     ) {
       return await ctx.reply("commands.claim.has_been_claimed", { t: `<t:${((ctx.db.user.claim_time.getTime()) / 1000).toFixed(0)}:R>` })
+    }
+    if(ctx.db.user.fates <= 0) {
+      return await ctx.reply("commands.claim.no_fates")
     }
     let player: Player
     if(ctx.db.user.pity >= 99) {
