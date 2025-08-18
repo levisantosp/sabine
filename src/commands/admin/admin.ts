@@ -162,7 +162,7 @@ export default createCommand({
 				.setTitle("Premium")
 				.setDesc(t("commands.admin.premium", {
 				  key: ctx.db.guild!.key.type,
-				  expiresAt: `<t:${(ctx.db.guild!.key.expiresAt! / 1000).toFixed(0)}:R>`
+				  expiresAt: `<t:${(ctx.db.guild!.key.expiresAt!.getTime() / 1000).toFixed(0)}:R>`
 				}))
 			ctx.reply(embed.build())
     }
@@ -195,8 +195,11 @@ export default createCommand({
     else if(ctx.args[2] === "resend" && ctx.args[3] === "vlr") {
       await ctx.interaction.defer(64)
       const guild = (await prisma.guilds.findUnique({ where: { id: ctx.interaction.guild!.id } }))!
-      if(guild.valorant_resend_time > Date.now()) {
-        return await ctx.reply("commands.admin.resend_time", { t: `<t:${(guild.valorant_resend_time / 1000).toFixed(0)}:R>` })
+      if(
+        guild.valorant_resend_time &&
+        guild.valorant_resend_time > new Date()
+      ) {
+        return await ctx.reply("commands.admin.resend_time", { t: `<t:${(guild.valorant_resend_time.getTime() / 1000).toFixed(0)}:R>` })
       }
       const button = new ButtonBuilder()
 				.setLabel(t("commands.admin.continue"))
@@ -207,8 +210,11 @@ export default createCommand({
     else if(ctx.args[2] === "resend" && ctx.args[3] === "lol") {
       await ctx.interaction.defer(64)
       const guild = (await prisma.guilds.findUnique({ where: { id: ctx.interaction.guild!.id } }))!
-      if(guild.lol_resend_time > Date.now()) {
-        return await ctx.reply("commands.admin.resend_time", { t: `<t:${(guild.lol_resend_time / 1000).toFixed(0)}:R>` })
+      if(
+        guild.lol_resend_time &&
+        guild.lol_resend_time > new Date()
+      ) {
+        return await ctx.reply("commands.admin.resend_time", { t: `<t:${(guild.lol_resend_time.getTime() / 1000).toFixed(0)}:R>` })
       }
       const button = new ButtonBuilder()
 				.setLabel(t("commands.admin.continue"))
@@ -219,12 +225,15 @@ export default createCommand({
     else if(ctx.args[2] === "continue" && ctx.args[3] === "vlr") {
       await (ctx.interaction as ComponentInteraction).deferUpdate()
       const guild = (await prisma.guilds.findUnique({ where: { id: ctx.interaction.guild!.id } }))!
-      if(guild.valorant_resend_time > Date.now()) {
-        return await ctx.edit("commands.admin.resend_time", { t: `<t:${(guild.valorant_resend_time / 1000).toFixed(0)}:R>` })
+      if(
+        guild.valorant_resend_time &&
+        guild.valorant_resend_time > new Date()
+      ) {
+        return await ctx.edit("commands.admin.resend_time", { t: `<t:${(guild.valorant_resend_time.getTime() / 1000).toFixed(0)}:R>` })
       }
       guild.valorant_matches = []
       guild.valorant_tbd_matches = []
-      guild.valorant_resend_time = Date.now() + 3600000
+      guild.valorant_resend_time = new Date(Date.now() + 3600000)
       await ctx.edit("commands.admin.resending")
       const res = await service.getMatches("valorant")
       if(!res || !res.length) return
@@ -256,7 +265,6 @@ export default createCommand({
               const index = guild.valorant_matches.findIndex((m) => m === d.id)
               if(index > -1) guild.valorant_matches.splice(index, 1)
 							guild.valorant_matches.push(d.id!)
-
 							const embed = new EmbedBuilder()
 								.setAuthor({
 								  iconURL: d.tournament.image,
@@ -266,17 +274,14 @@ export default createCommand({
 								.setFooter({
 								  text: d.stage
 								})
-
 							const button = new ButtonBuilder()
 								.setLabel(locales(guild.lang!, "helper.palpitate"))
 								.setCustomId(`predict;valorant;${d.id}`)
 								.setStyle("green")
-
 							const urlButton = new ButtonBuilder()
 								.setLabel(locales(guild.lang!, "helper.stats"))
 								.setStyle("link")
 								.setURL(`https://vlr.gg/${d.id}`)
-
 							if(d.stage.toLowerCase().includes("showmatch")) continue
 							if(d.teams[0].name !== "TBD" && d.teams[1].name !== "TBD") await ctx.client.rest.channels.createMessage(e.channel1, {
 							  embeds: [embed],
@@ -324,12 +329,15 @@ export default createCommand({
     else if(ctx.args[2] === "continue" && ctx.args[3] === "lol") {
       await (ctx.interaction as ComponentInteraction).deferUpdate()
       const guild = (await prisma.guilds.findUnique({ where: { id: ctx.interaction.guild!.id } }))!
-      if(guild.lol_resend_time > Date.now()) {
-        return await ctx.edit("commands.admin.resend_time", { t: `<t:${(guild.lol_resend_time / 1000).toFixed(0)}:R>` })
+      if(
+        guild.lol_resend_time &&
+        guild.lol_resend_time > new Date()
+      ) {
+        return await ctx.edit("commands.admin.resend_time", { t: `<t:${(guild.lol_resend_time.getTime() / 1000).toFixed(0)}:R>` })
       }
       guild.lol_matches = []
       guild.lol_tbd_matches = []
-      guild.lol_resend_time = Date.now() + 3600000
+      guild.lol_resend_time = new Date(Date.now() + 3600000)
       await ctx.edit("commands.admin.resending")
       const res = await service.getMatches("lol")
       if(!res || !res.length) return
