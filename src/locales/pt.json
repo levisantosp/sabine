@@ -152,7 +152,8 @@
       "claimed": "**{player}** juntou-se ao seu elenco de graça\nValor de mercado: `{price}`",
       "has_been_claimed": "Você já usou este comando recentemente. Tente novamente {t}",
       "sell": "Vender",
-      "promote": "Promover"
+      "promote": "Promover",
+      "no_fates": "Você não tem nenhum destino para gastar!\nConsiga mais usando `/daily`, palpitando e jogando partidas ranqueada."
     },
     "roster": {
       "embed": {
@@ -268,8 +269,8 @@
     },
     "daily": {
       "has_been_claimed": "Você já coletou sua recompensa diária. Tente novamente {t}",
-      "res": "Você recebeu **{coins}** coins hoje!",
-      "bonus": "Você recebeu **{bonus}** coins de bônus por ser um usuário premium"
+      "res": "Você recebeu **{coins}** coins e **{fates}** destinos hoje!",
+      "bonus": "Você recebeu **{coins}** coins de bônus e **{fates}** destinos de bônus por ser um usuário premium."
     },
     "sign": {
       "player_not_found": "Jogador não encontrado!",

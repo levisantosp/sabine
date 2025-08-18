@@ -151,7 +151,8 @@
       "claimed": "**{player}** joined your roster for free\nMarket value: `{price}`",
       "has_been_claimed": "You have already used this command recently. Try again {t}",
       "sell": "Sell",
-      "promote": "Promote"
+      "promote": "Promote",
+      "no_fates": "You don't have any fates to spend!\nGet more using `/daily`, predicting and playing ranked matches."
     },
     "roster": {
       "embed": {
@@ -268,8 +269,8 @@
     },
     "daily": {
       "has_been_claimed": "You have already collected your daily reward. Try again {t}",
-      "res": "You received **{coins}** coins today!",
-      "bonus": "You received **{bonus}** bonus coins for being a premium user"
+      "res": "You received **{coins}** coins and **{fates}** fates today!",
+      "bonus": "You received **{coins}** bonus coins and **{fates}** bonus fates for being a premium user."
     },
     "sign": {
       "player_not_found": "Player not found!",
