@@ -30,7 +30,7 @@ export default createCommand({
     }
   ],
   userInstall: true,
-  // messageComponentInteractionTime: 5 * 60 * 1000,
+  messageComponentInteractionTime: 5 * 60 * 1000,
   async run({ ctx, t }) {
     const p = getPlayer(Number(ctx.args[0]))
     if(!p) {
