@@ -41,16 +41,29 @@ export default createCommand({
     }
     const embed = new EmbedBuilder()
     for(const key of keys) {
-      embed.addField(
-        key.type,
-        t(
-          "commands.premium.embed.field.value",
-          {
-            expiresAt: `<t:${(key.expiresAt! / 1000).toFixed(0)}:R>`,
-            key: key.id
-          }
+      if(key.expiresAt) {
+        embed.addField(
+          key.type,
+          t(
+            "commands.premium.embed.field.value",
+            {
+              expiresAt: `<t:${(key.expiresAt.getTime() / 1000).toFixed(0)}:R>`,
+              key: key.id
+            }
+          )
         )
-      )
+      }
+      else {
+        embed.addField(
+          key.type,
+          t(
+            "commands.premium.embed.field.value2",
+            {
+              key: key.id
+            }
+          )
+        )
+      }
     }
     await ctx.reply(embed.build())
   }
