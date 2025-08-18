@@ -4,9 +4,12 @@ import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
 import { ApplicationCommandOptionTypes } from "oceanic.js"
 
 export default createCommand({
-  name: "ranking",
+  name: "leaderboard",
+  nameLocalizations: {
+    "pt-BR": "tabela"
+  },
   category: "esports",
-  description: "Ranking of users with most correct predictions, most victories and most coins",
+  description: "Leaderboard of users with most correct predictions, most victories and most coins",
   descriptionLocalizations: {
     "pt-BR": "Tabela de usuários com mais palpites corretos"
   },
@@ -14,9 +17,9 @@ export default createCommand({
     {
       type: ApplicationCommandOptionTypes.SUB_COMMAND_GROUP,
       name: "local",
-      description: "Shows the ranking of this server",
+      description: "Shows the leaderboard of this server",
       descriptionLocalizations: {
-        "pt-BR": "Mostra a tabela de classificação desse servidor"
+        "pt-BR": "Mostra a tabela desse servidor"
       },
       options: [
         {
@@ -25,9 +28,9 @@ export default createCommand({
           nameLocalizations: {
             "pt-BR": "palpites"
           },
-          description: "The local ranking of predictions",
+          description: "The local leaderboard of predictions",
           descriptionLocalizations: {
-            "pt-BR": "Classificação local de palpites"
+            "pt-BR": "Tabela local de palpites"
           },
           options: [
             {
@@ -46,9 +49,9 @@ export default createCommand({
         {
           type: ApplicationCommandOptionTypes.SUB_COMMAND,
           name: "coins",
-          description: "The local ranking of coins",
+          description: "The local leaderboard of coins",
           descriptionLocalizations: {
-            "pt-BR": "Classificação local de coins"
+            "pt-BR": "Tabela local de coins"
           },
           options: [
             {
@@ -66,13 +69,13 @@ export default createCommand({
         },
         {
           type: ApplicationCommandOptionTypes.SUB_COMMAND,
-          name: "wins",
+          name: "rating",
           nameLocalizations: {
-            "pt-BR": "vitórias"
+            "pt-BR": "classificação"
           },
-          description: "The local ranking of wins",
+          description: "The local leaderboard of rating",
           descriptionLocalizations: {
-            "pt-BR": "Classificação local de vitórias"
+            "pt-BR": "Tabela local de classificação"
           },
           options: [
             {
@@ -93,9 +96,9 @@ export default createCommand({
     {
       type: ApplicationCommandOptionTypes.SUB_COMMAND_GROUP,
       name: "global",
-      description: "Shows the global ranking",
+      description: "Shows the global leaderboard",
       descriptionLocalizations: {
-        "pt-BR": "Mostra a tabela de classificação global"
+        "pt-BR": "Mostra a tabela global"
       },
       options: [
         {
@@ -104,9 +107,9 @@ export default createCommand({
           nameLocalizations: {
             "pt-BR": "palpites"
           },
-          description: "The global ranking of predictions",
+          description: "The global leaderboard of predictions",
           descriptionLocalizations: {
-            "pt-BR": "Classificação global de palpites"
+            "pt-BR": "Tabela global de palpites"
           },
           options: [
             {
@@ -125,9 +128,9 @@ export default createCommand({
         {
           type: ApplicationCommandOptionTypes.SUB_COMMAND,
           name: "coins",
-          description: "The global ranking of coins",
+          description: "The global leaderboard of coins",
           descriptionLocalizations: {
-            "pt-BR": "Classificação global de coins"
+            "pt-BR": "Tabela global de coins"
           },
           options: [
             {
@@ -145,13 +148,13 @@ export default createCommand({
         },
         {
           type: ApplicationCommandOptionTypes.SUB_COMMAND,
-          name: "wins",
+          name: "rating",
           nameLocalizations: {
-            "pt-BR": "vitórias"
+            "pt-BR": "classificação"
           },
-          description: "The local ranking of wins",
+          description: "The global leaderboard of rating",
           descriptionLocalizations: {
-            "pt-BR": "Classificação global de vitórias"
+            "pt-BR": "Tabela global de classificação"
           },
           options: [
             {
@@ -170,21 +173,21 @@ export default createCommand({
       ]
     }
   ],
-  syntax: "ranking global/local <page>",
+  syntax: "leaderboard global/local <page>",
   examples: [
-    "ranking global",
-    "ranking global 2",
-    "ranking global 5",
-    "ranking local",
-    "ranking local 2",
-    "ranking local 5"
+    "leaderboard global",
+    "leaderboard global 2",
+    "leaderboard global 5",
+    "leaderboard local",
+    "leaderboard local 2",
+    "leaderboard local 5"
   ],
   isThiking: true,
   messageComponentInteractionTime: 10 * 60 * 1000,
   async run({ ctx, t, client }) {
     if(ctx.args[0] === "local" && ctx.guild) {
       if(ctx.args[1] === "predictions") {
-        const value = JSON.parse((await client.redis.get("ranking:predictions"))!)
+        const value = JSON.parse((await client.redis.get("leaderboard:predictions"))!)
         let users = value.data
         .filter((user: any) => ctx.guild!.members.get(user.id)).sort((a: any, b: any) => b.correct_predictions - a.correct_predictions)
         const array = users
@@ -195,18 +198,18 @@ export default createCommand({
         }
         else users = users.slice(page * 10 - 10, page * 10)
         if(!users.length) {
-          return await ctx.reply("commands.ranking.no_users")
+          return await ctx.reply("commands.leaderboard.no_users")
         }
         const embed = new EmbedBuilder()
           .setAuthor({
-            name: t("commands.ranking.predictions.author", {
+            name: t("commands.leaderboard.predictions.author", {
               page,
               pages: Math.ceil(array.length / 10)
             })
           })
-          .setTitle(t("commands.ranking.predictions.title"))
+          .setTitle(t("commands.leaderboard.predictions.title"))
           .setThumb((client.users.get(array[0].id!))!.avatarURL()!)
-          .setDesc(t("commands.ranking.desc", {
+          .setDesc(t("commands.leaderboard.desc", {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
         let pos = 0
@@ -218,22 +221,22 @@ export default createCommand({
           if(pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
           if(pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
           if(pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
-          embed.addField(field, t("commands.ranking.predictions.field", {
+          embed.addField(field, t("commands.leaderboard.predictions.field", {
             t: user.correct_predictions
           }))
         }
         embed.setFooter({
-          text: t("commands.ranking.predictions.footer", {
+          text: t("commands.leaderboard.predictions.footer", {
             pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
           })
         })
         const previous = new ButtonBuilder()
           .setEmoji("1404176223621611572")
-          .setCustomId(`ranking;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;local;predictions`)
+          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;local;predictions`)
           .setStyle("blue")
         const next = new ButtonBuilder()
           .setEmoji("1404176291829121028")
-          .setCustomId(`ranking;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;local;predictions`)
+          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;local;predictions`)
           .setStyle("blue")
         if(page <= 1) previous.setDisabled()
         if(page >= Math.ceil(array.length / 10)) next.setDisabled()
@@ -247,7 +250,7 @@ export default createCommand({
         }))
       }
       else if(ctx.args[1] === "coins") {
-        const value = JSON.parse((await client.redis.get("ranking:coins"))!)
+        const value = JSON.parse((await client.redis.get("leaderboard:coins"))!)
         let users = value.data
         .filter((user: any) => ctx.guild!.members.get(user.id))
         .sort((a: any, b: any) => Number(b.coins - a.coins))
@@ -259,18 +262,18 @@ export default createCommand({
         }
         else users = users.slice(page * 10 - 10, page * 10)
         if(!users.length) {
-          return await ctx.reply("commands.ranking.no_users")
+          return await ctx.reply("commands.leaderboard.no_users")
         }
         const embed = new EmbedBuilder()
           .setAuthor({
-            name: t("commands.ranking.coins.author", {
+            name: t("commands.leaderboard.coins.author", {
               page,
               pages: Math.ceil(array.length / 10)
             })
           })
-          .setTitle(t("commands.ranking.coins.title"))
+          .setTitle(t("commands.leaderboard.coins.title"))
           .setThumb((client.users.get(array[0].id!))!.avatarURL()!)
-          .setDesc(t("commands.ranking.desc", {
+          .setDesc(t("commands.leaderboard.desc", {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
         let pos = 0
@@ -282,22 +285,22 @@ export default createCommand({
           if(pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
           if(pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
           if(pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
-          embed.addField(field, t("commands.ranking.coins.field", {
+          embed.addField(field, t("commands.leaderboard.coins.field", {
             t: BigInt(user.coins).toLocaleString("en")
           }))
         }
         embed.setFooter({
-          text: t("commands.ranking.coins.footer", {
+          text: t("commands.leaderboard.coins.footer", {
             pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
           })
         })
         const previous = new ButtonBuilder()
           .setEmoji("1404176223621611572")
-          .setCustomId(`ranking;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;local;coins`)
+          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;local;coins`)
           .setStyle("blue")
         const next = new ButtonBuilder()
           .setEmoji("1404176291829121028")
-          .setCustomId(`ranking;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;local;coins`)
+          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;local;coins`)
           .setStyle("blue")
         if(page <= 1) previous.setDisabled()
         if(page >= Math.ceil(array.length / 10)) next.setDisabled()
@@ -310,10 +313,16 @@ export default createCommand({
           ]
         }))
       }
-      else if(ctx.args[1] === "wins") {
-        const value = JSON.parse((await client.redis.get("ranking:wins"))!)
+      else if(ctx.args[1] === "rating") {
+        const value = JSON.parse((await client.redis.get("leaderboard:rating"))!)
         let users = value.data
-        .filter((user: any) => ctx.guild!.members.get(user.id)).sort((a: any, b: any) => b.wins - a.wins)
+        .filter((user: any) => ctx.guild!.members.get(user.id))
+        .sort((a: any, b: any) => {
+          if(b.elo !== a.elo) {
+            return b.elo - a.elo
+          }
+          return b.rank_rating - a.rank_rating
+        })
         const array = users
         let page = Number(ctx.args[1])
         if(!page || page === 1 || isNaN(page)) {
@@ -322,18 +331,18 @@ export default createCommand({
         }
         else users = users.slice(page * 10 - 10, page * 10)
         if(!users.length) {
-          return await ctx.reply("commands.wins.no_users")
+          return await ctx.reply("commands.leaderboard.no_users")
         }
         const embed = new EmbedBuilder()
           .setAuthor({
-            name: t("commands.ranking.wins.author", {
+            name: t("commands.leaderboard.rating.author", {
               page,
               pages: Math.ceil(array.length / 10)
             })
           })
-          .setTitle(t("commands.ranking.wins.title"))
+          .setTitle(t("commands.leaderboard.rating.title"))
           .setThumb((client.users.get(array[0].id!))!.avatarURL()!)
-          .setDesc(t("commands.ranking.desc", {
+          .setDesc(t("commands.leaderboard.desc", {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
         let pos = 0
@@ -345,22 +354,23 @@ export default createCommand({
           if(pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
           if(pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
           if(pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
-          embed.addField(field, t("commands.ranking.wins.field", {
-            t: user.wins.toLocaleString("en")
+          embed.addField(field, t("commands.leaderboard.rating.field", {
+            rank: t(`commands.career.elo.${user.elo}`),
+            rr: user.rank_rating
           }))
         }
         embed.setFooter({
-          text: t("commands.ranking.wins.footer", {
+          text: t("commands.leaderboard.rating.footer", {
             pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
           })
         })
         const previous = new ButtonBuilder()
           .setEmoji("1404176223621611572")
-          .setCustomId(`ranking;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;local;wins`)
+          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;local;rating`)
           .setStyle("blue")
         const next = new ButtonBuilder()
           .setEmoji("1404176291829121028")
-          .setCustomId(`ranking;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;local;wins`)
+          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;local;rating`)
           .setStyle("blue")
         if(page <= 1) previous.setDisabled()
         if(page >= Math.ceil(array.length / 10)) next.setDisabled()
@@ -376,7 +386,7 @@ export default createCommand({
     }
     else {
       if(ctx.args[1] === "predictions") {
-        const value = JSON.parse((await client.redis.get("ranking:predictions"))!)
+        const value = JSON.parse((await client.redis.get("leaderboard:predictions"))!)
         let users = value.data
         .sort((a: any, b: any) => b.correct_predictions - a.correct_predictions)
         const array = users
@@ -387,18 +397,18 @@ export default createCommand({
         }
         else users = users.slice(page * 10 - 10, page * 10)
         if(!users.length) {
-          return await ctx.reply("commands.ranking.no_users")
+          return await ctx.reply("commands.leaderboard.no_users")
         }
         const embed = new EmbedBuilder()
           .setAuthor({
-            name: t("commands.ranking.predictions.author", {
+            name: t("commands.leaderboard.predictions.author", {
               page,
               pages: Math.ceil(array.length / 10)
             })
           })
-          .setTitle(t("commands.ranking.predictions.title"))
+          .setTitle(t("commands.leaderboard.predictions.title"))
           .setThumb((client.users.get(array[0].id!))!.avatarURL()!)
-          .setDesc(t("commands.ranking.desc", {
+          .setDesc(t("commands.leaderboard.desc", {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
         let pos = 0
@@ -410,22 +420,22 @@ export default createCommand({
           if(pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
           if(pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
           if(pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
-          embed.addField(field, t("commands.ranking.predictions.field", {
+          embed.addField(field, t("commands.leaderboard.predictions.field", {
             t: user.correct_predictions
           }))
         }
         embed.setFooter({
-          text: t("commands.ranking.predictions.footer", {
+          text: t("commands.leaderboard.predictions.footer", {
             pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
           })
         })
         const previous = new ButtonBuilder()
           .setEmoji("1404176223621611572")
-          .setCustomId(`ranking;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;global;predictions`)
+          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;global;predictions`)
           .setStyle("blue")
         const next = new ButtonBuilder()
           .setEmoji("1404176291829121028")
-          .setCustomId(`ranking;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;global;predictions`)
+          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;global;predictions`)
           .setStyle("blue")
         if(page <= 1) previous.setDisabled()
         if(page >= Math.ceil(array.length / 10)) next.setDisabled()
@@ -439,7 +449,7 @@ export default createCommand({
         }))
       }
       else if(ctx.args[1] === "coins") {
-        const value = JSON.parse((await client.redis.get("ranking:coins"))!)
+        const value = JSON.parse((await client.redis.get("leaderboard:coins"))!)
         let users = value.data
         .sort((a: any, b: any) => Number(b.coins - a.coins))
         const array = users
@@ -450,18 +460,18 @@ export default createCommand({
         }
         else users = users.slice(page * 10 - 10, page * 10)
         if(!users.length) {
-          return await ctx.reply("commands.ranking.no_users")
+          return await ctx.reply("commands.leaderboard.no_users")
         }
         const embed = new EmbedBuilder()
           .setAuthor({
-            name: t("commands.ranking.coins.author", {
+            name: t("commands.leaderboard.coins.author", {
               page,
               pages: Math.ceil(array.length / 10)
             })
           })
-          .setTitle(t("commands.ranking.coins.title"))
+          .setTitle(t("commands.leaderboard.coins.title"))
           .setThumb((client.users.get(array[0].id!))!.avatarURL()!)
-          .setDesc(t("commands.ranking.desc", {
+          .setDesc(t("commands.leaderboard.desc", {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
         let pos = 0
@@ -473,22 +483,22 @@ export default createCommand({
           if(pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
           if(pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
           if(pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
-          embed.addField(field, t("commands.ranking.coins.field", {
+          embed.addField(field, t("commands.leaderboard.coins.field", {
             t: BigInt(user.coins).toLocaleString("en")
           }))
         }
         embed.setFooter({
-          text: t("commands.ranking.coins.footer", {
+          text: t("commands.leaderboard.coins.footer", {
             pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
           })
         })
         const previous = new ButtonBuilder()
           .setEmoji("1404176223621611572")
-          .setCustomId(`ranking;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;global;coins`)
+          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;global;coins`)
           .setStyle("blue")
         const next = new ButtonBuilder()
           .setEmoji("1404176291829121028")
-          .setCustomId(`ranking;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;global;coins`)
+          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;global;coins`)
           .setStyle("blue")
         if(page <= 1) previous.setDisabled()
         if(page >= Math.ceil(array.length / 10)) next.setDisabled()
@@ -501,10 +511,15 @@ export default createCommand({
           ]
         }))
       }
-      else if(ctx.args[1] === "wins") {
-        const value = JSON.parse((await client.redis.get("ranking:wins"))!)
-        let users = value
-        .sort((a: any, b: any) => b.wins - a.wins)
+      else if(ctx.args[1] === "rating") {
+        const value = JSON.parse((await client.redis.get("leaderboard:rating"))!)
+        let users = value.data
+        .sort((a: any, b: any) => {
+          if(b.elo !== a.elo) {
+            return b.elo - a.elo
+          }
+          return b.rank_rating - a.rank_rating
+        })
         const array = users
         let page = Number(ctx.args[1])
         if(!page || page === 1 || isNaN(page)) {
@@ -513,18 +528,18 @@ export default createCommand({
         }
         else users = users.slice(page * 10 - 10, page * 10)
         if(!users.length) {
-          return await ctx.reply("commands.wins.no_users")
+          return await ctx.reply("commands.leaderboard.no_users")
         }
         const embed = new EmbedBuilder()
           .setAuthor({
-            name: t("commands.ranking.wins.author", {
+            name: t("commands.leaderboard.rating.author", {
               page,
               pages: Math.ceil(array.length / 10)
             })
           })
-          .setTitle(t("commands.ranking.wins.title"))
+          .setTitle(t("commands.leaderboard.rating.title"))
           .setThumb((client.users.get(array[0].id!))!.avatarURL()!)
-          .setDesc(t("commands.ranking.desc", {
+          .setDesc(t("commands.leaderboard.desc", {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
         let pos = 0
@@ -536,22 +551,23 @@ export default createCommand({
           if(pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
           if(pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
           if(pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
-          embed.addField(field, t("commands.ranking.wins.field", {
-            t: user.wins.toLocaleString("en")
+          embed.addField(field, t("commands.leaderboard.rating.field", {
+            rank: t(`commands.career.elo.${user.elo}`),
+            rr: user.rank_rating
           }))
         }
         embed.setFooter({
-          text: t("commands.ranking.wins.footer", {
+          text: t("commands.leaderboard.rating.footer", {
             pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
           })
         })
         const previous = new ButtonBuilder()
           .setEmoji("1404176223621611572")
-          .setCustomId(`ranking;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;global;wins`)
+          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;global;rating`)
           .setStyle("blue")
         const next = new ButtonBuilder()
           .setEmoji("1404176291829121028")
-          .setCustomId(`ranking;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;global;wins`)
+          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;global;rating`)
           .setStyle("blue")
         if(page <= 1) previous.setDisabled()
         if(page >= Math.ceil(array.length / 10)) next.setDisabled()
@@ -571,7 +587,7 @@ export default createCommand({
     await ctx.interaction.deferUpdate()
     if(ctx.args[4] === "local" && ctx.guild) {
       if(ctx.args[5] === "predictions") {
-        const value = JSON.parse((await client.redis.get("ranking:predictions"))!)
+        const value = JSON.parse((await client.redis.get("leaderboard:predictions"))!)
         let users = value.data
         .filter((user: any) => ctx.guild!.members.get(user.id))
         .sort((a: any, b: any) => b.correct_predictions - a.correct_predictions)
@@ -580,18 +596,18 @@ export default createCommand({
         const pages = Math.ceil(array.length / 10)
         users = users.slice(page * 10 - 10, page * 10)
         if(!users.length) {
-          return await ctx.reply("commands.ranking.no_users")
+          return await ctx.reply("commands.leaderboard.no_users")
         }
         const embed = new EmbedBuilder()
           .setAuthor({
-            name: t("commands.ranking.predictions.author", {
+            name: t("commands.leaderboard.predictions.author", {
               page,
               pages: Math.ceil(array.length / 10)
             })
           })
-          .setTitle(t("commands.ranking.predictions.title"))
+          .setTitle(t("commands.leaderboard.predictions.title"))
           .setThumb(client.users.get(array[0].id!)!.avatarURL()!)
-          .setDesc(t("commands.ranking.desc", {
+          .setDesc(t("commands.leaderboard.desc", {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
         let pos = 0
@@ -603,22 +619,22 @@ export default createCommand({
           if(pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
           if(pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
           if(pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
-          embed.addField(field, t("commands.ranking.predictions.field", {
+          embed.addField(field, t("commands.leaderboard.predictions.field", {
             t: user.correct_predictions
           }))
         }
         embed.setFooter({
-          text: t("commands.ranking.predictions.footer", {
+          text: t("commands.leaderboard.predictions.footer", {
             pos: array.findIndex((user :any) => user.id === ctx.interaction.user.id) + 1
           })
         })
         const previous = new ButtonBuilder()
           .setEmoji("1404176223621611572")
-          .setCustomId(`ranking;${ctx.interaction.user.id};${page - 1};previous;local;predictions`)
+          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1};previous;local;predictions`)
           .setStyle("blue")
         const next = new ButtonBuilder()
           .setEmoji("1404176291829121028")
-          .setCustomId(`ranking;${ctx.interaction.user.id};${page + 1};next;local;predictions`)
+          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1};next;local;predictions`)
           .setStyle("blue")
         if(page <= 1) previous.setDisabled()
         if(page >= pages) next.setDisabled()
@@ -632,7 +648,7 @@ export default createCommand({
         }))
       }
       else if(ctx.args[5] === "coins") {
-        const value = JSON.parse((await client.redis.get("ranking:coins"))!)
+        const value = JSON.parse((await client.redis.get("leaderboard:coins"))!)
         let users = value.data
         .filter((user: any) => ctx.guild!.members.get(user.id))
         .sort((a: any, b: any) => Number(b.coins - a.coins))
@@ -641,18 +657,18 @@ export default createCommand({
         const pages = Math.ceil(array.length / 10)
         users = users.slice(page * 10 - 10, page * 10)
         if(!users.length) {
-          return await ctx.reply("commands.ranking.no_users")
+          return await ctx.reply("commands.leaderboard.no_users")
         }
         const embed = new EmbedBuilder()
           .setAuthor({
-            name: t("commands.ranking.coins.author", {
+            name: t("commands.leaderboard.coins.author", {
               page,
               pages: Math.ceil(array.length / 10)
             })
           })
-          .setTitle(t("commands.ranking.coins.title"))
+          .setTitle(t("commands.leaderboard.coins.title"))
           .setThumb(client.users.get(array[0].id!)!.avatarURL()!)
-          .setDesc(t("commands.ranking.desc", {
+          .setDesc(t("commands.leaderboard.desc", {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
         let pos = 0
@@ -664,22 +680,22 @@ export default createCommand({
           if(pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
           if(pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
           if(pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
-          embed.addField(field, t("commands.ranking.coins.field", {
+          embed.addField(field, t("commands.leaderboard.coins.field", {
             t: BigInt(user.coins).toLocaleString("en")
           }))
         }
         embed.setFooter({
-          text: t("commands.ranking.coins.footer", {
+          text: t("commands.leaderboard.coins.footer", {
             pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
           })
         })
         const previous = new ButtonBuilder()
           .setEmoji("1404176223621611572")
-          .setCustomId(`ranking;${ctx.interaction.user.id};${page - 1};previous;local;coins`)
+          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1};previous;local;coins`)
           .setStyle("blue")
         const next = new ButtonBuilder()
           .setEmoji("1404176291829121028")
-          .setCustomId(`ranking;${ctx.interaction.user.id};${page + 1};next;local;coins`)
+          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1};next;local;coins`)
           .setStyle("blue")
         if(page <= 1) previous.setDisabled()
         if(page >= pages) next.setDisabled()
@@ -692,28 +708,33 @@ export default createCommand({
           ]
         }))
       }
-      else if(ctx.args[5] === "wins") {
-        const value = JSON.parse((await client.redis.get("ranking:wins"))!)
+      else if(ctx.args[5] === "rating") {
+        const value = JSON.parse((await client.redis.get("leaderboard:rating"))!)
         let users = value.data
         .filter((user: any) => ctx.guild!.members.get(user.id))
-        .sort((a: any, b :any) => b.wins - a.wins)
+        .sort((a: any, b: any) => {
+          if(b.elo !== a.elo) {
+            return b.elo - a.elo
+          }
+          return b.rank_rating - a.rank_rating
+        })
         const array = users
         const page = Number(ctx.args[2]) || 1
         const pages = Math.ceil(array.length / 10)
         users = users.slice(page * 10 - 10, page * 10)
         if(!users.length) {
-          return await ctx.reply("commands.ranking.no_users")
+          return await ctx.reply("commands.leaderboard.no_users")
         }
         const embed = new EmbedBuilder()
           .setAuthor({
-            name: t("commands.ranking.wins.author", {
+            name: t("commands.leaderboard.rating.author", {
               page,
               pages: Math.ceil(array.length / 10)
             })
           })
-          .setTitle(t("commands.ranking.wins.title"))
+          .setTitle(t("commands.leaderboard.rating.title"))
           .setThumb(client.users.get(array[0].id!)!.avatarURL()!)
-          .setDesc(t("commands.ranking.desc", {
+          .setDesc(t("commands.leaderboard.desc", {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
         let pos = 0
@@ -725,22 +746,23 @@ export default createCommand({
           if(pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
           if(pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
           if(pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
-          embed.addField(field, t("commands.ranking.wins.field", {
-            t: user.wins.toLocaleString("en")
+          embed.addField(field, t("commands.leaderboard.rating.field", {
+            rank: t(`commands.career.elo.${user.elo}`),
+            rr: user.rank_rating
           }))
         }
         embed.setFooter({
-          text: t("commands.ranking.wins.footer", {
+          text: t("commands.leaderboard.rating.footer", {
             pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
           })
         })
         const previous = new ButtonBuilder()
           .setEmoji("1404176223621611572")
-          .setCustomId(`ranking;${ctx.interaction.user.id};${page - 1};previous;local;wins`)
+          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1};previous;local;rating`)
           .setStyle("blue")
         const next = new ButtonBuilder()
           .setEmoji("1404176291829121028")
-          .setCustomId(`ranking;${ctx.interaction.user.id};${page + 1};next;local;wins`)
+          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1};next;local;rating`)
           .setStyle("blue")
         if(page <= 1) previous.setDisabled()
         if(page >= pages) next.setDisabled()
@@ -756,25 +778,25 @@ export default createCommand({
     }
     else {
       if(ctx.args[5] === "predictions") {
-        const value = JSON.parse((await client.redis.get("ranking:predictions"))!)
+        const value = JSON.parse((await client.redis.get("leaderboard:predictions"))!)
         let users = value.data.sort((a: any, b: any) => b.correct_predictions - a.correct_predictions)
         const array = users
         const page = Number(ctx.args[2]) || 1
         const pages = Math.ceil(array.length / 10)
         users = users.slice(page * 10 - 10, page * 10)
         if(!users.length) {
-          return await ctx.reply("commands.ranking.no_users")
+          return await ctx.reply("commands.leaderboard.no_users")
         }
         const embed = new EmbedBuilder()
           .setAuthor({
-            name: t("commands.ranking.predictions.author", {
+            name: t("commands.leaderboard.predictions.author", {
               page,
               pages: Math.ceil(array.length / 10)
             })
           })
-          .setTitle(t("commands.ranking.predictions.title"))
+          .setTitle(t("commands.leaderboard.predictions.title"))
           .setThumb(client.users.get(array[0].id!)!.avatarURL()!)
-          .setDesc(t("commands.ranking.desc", {
+          .setDesc(t("commands.leaderboard.desc", {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
         let pos = 0
@@ -786,22 +808,22 @@ export default createCommand({
           if(pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
           if(pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
           if(pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
-          embed.addField(field, t("commands.ranking.predictions.field", {
+          embed.addField(field, t("commands.leaderboard.predictions.field", {
             t: user.correct_predictions
           }))
         }
         embed.setFooter({
-          text: t("commands.ranking.predictions.footer", {
+          text: t("commands.leaderboard.predictions.footer", {
             pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
           })
         })
         const previous = new ButtonBuilder()
           .setEmoji("1404176223621611572")
-          .setCustomId(`ranking;${ctx.interaction.user.id};${page - 1};previous;global;predictions`)
+          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1};previous;global;predictions`)
           .setStyle("blue")
         const next = new ButtonBuilder()
           .setEmoji("1404176291829121028")
-          .setCustomId(`ranking;${ctx.interaction.user.id};${page + 1};next;global;predictions`)
+          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1};next;global;predictions`)
           .setStyle("blue")
         if(page <= 1) previous.setDisabled()
         if(page >= pages) next.setDisabled()
@@ -815,25 +837,25 @@ export default createCommand({
         }))
       }
       else if(ctx.args[5] === "coins") {
-        const value = JSON.parse((await client.redis.get("ranking:coins"))!)
+        const value = JSON.parse((await client.redis.get("leaderboard:coins"))!)
         let users = value.data.sort((a: any, b: any) => Number(b.coins - a.coins))
         const array = users
         const page = Number(ctx.args[2]) || 1
         const pages = Math.ceil(array.length / 10)
         users = users.slice(page * 10 - 10, page * 10)
         if(!users.length) {
-          return await ctx.reply("commands.ranking.no_users")
+          return await ctx.reply("commands.leaderboard.no_users")
         }
         const embed = new EmbedBuilder()
           .setAuthor({
-            name: t("commands.ranking.coins.author", {
+            name: t("commands.leaderboard.coins.author", {
               page,
               pages: Math.ceil(array.length / 10)
             })
           })
-          .setTitle(t("commands.ranking.coins.title"))
+          .setTitle(t("commands.leaderboard.coins.title"))
           .setThumb(client.users.get(array[0].id!)!.avatarURL()!)
-          .setDesc(t("commands.ranking.desc", {
+          .setDesc(t("commands.leaderboard.desc", {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
         let pos = 0
@@ -845,22 +867,22 @@ export default createCommand({
           if(pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
           if(pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
           if(pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
-          embed.addField(field, t("commands.ranking.coins.field", {
+          embed.addField(field, t("commands.leaderboard.coins.field", {
             t: BigInt(user.coins).toLocaleString("en")
           }))
         }
         embed.setFooter({
-          text: t("commands.ranking.coins.footer", {
+          text: t("commands.leaderboard.coins.footer", {
             pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
           })
         })
         const previous = new ButtonBuilder()
           .setEmoji("1404176223621611572")
-          .setCustomId(`ranking;${ctx.interaction.user.id};${page - 1};previous;global;coins`)
+          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1};previous;global;coins`)
           .setStyle("blue")
         const next = new ButtonBuilder()
           .setEmoji("1404176291829121028")
-          .setCustomId(`ranking;${ctx.interaction.user.id};${page + 1};next;global;coins`)
+          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1};next;global;coins`)
           .setStyle("blue")
         if(page <= 1) previous.setDisabled()
         if(page >= pages) next.setDisabled()
@@ -873,26 +895,31 @@ export default createCommand({
           ]
         }))
       }
-      else if(ctx.args[5] === "wins") {
-        const value = JSON.parse((await client.redis.get("ranking:wins"))!)
-        let users = value.data.sort((a: any, b: any) => b.wins - a.wins)
+      else if(ctx.args[5] === "rating") {
+        const value = JSON.parse((await client.redis.get("leaderboard:rating"))!)
+        let users = value.data.sort((a: any, b: any) => {
+          if(b.elo !== a.elo) {
+            return b.elo - a.elo
+          }
+          return b.rank_rating - a.rank_rating
+        })
         const array = users
         const page = Number(ctx.args[2]) || 1
         const pages = Math.ceil(array.length / 10)
         users = users.slice(page * 10 - 10, page * 10)
         if(!users.length) {
-          return await ctx.reply("commands.ranking.no_users")
+          return await ctx.reply("commands.leaderboard.no_users")
         }
         const embed = new EmbedBuilder()
           .setAuthor({
-            name: t("commands.ranking.wins.author", {
+            name: t("commands.leaderboard.rating.author", {
               page,
               pages: Math.ceil(array.length / 10)
             })
           })
-          .setTitle(t("commands.ranking.wins.title"))
+          .setTitle(t("commands.leaderboard.rating.title"))
           .setThumb(client.users.get(array[0].id!)!.avatarURL()!)
-          .setDesc(t("commands.ranking.desc", {
+          .setDesc(t("commands.leaderboard.desc", {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
         let pos = 0
@@ -904,22 +931,23 @@ export default createCommand({
           if(pos === 1) field = `🥇 - ${!u ? "*unknown*" : u.username}`
           if(pos === 2) field = `🥈 - ${!u ? "*unknown*" : u.username}`
           if(pos === 3) field = `🥉 - ${!u ? "*unknown*" : u.username}`
-          embed.addField(field, t("commands.ranking.wins.field", {
-            t: user.wins.toLocaleString("en")
+          embed.addField(field, t("commands.leaderboard.rating.field", {
+            rank: t(`commands.career.elo.${user.elo}`),
+            rr: user.rank_rating
           }))
         }
         embed.setFooter({
-          text: t("commands.ranking.wins.footer", {
+          text: t("commands.leaderboard.rating.footer", {
             pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
           })
         })
         const previous = new ButtonBuilder()
           .setEmoji("1404176223621611572")
-          .setCustomId(`ranking;${ctx.interaction.user.id};${page - 1};previous;global;wins`)
+          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1};previous;global;rating`)
           .setStyle("blue")
         const next = new ButtonBuilder()
           .setEmoji("1404176291829121028")
-          .setCustomId(`ranking;${ctx.interaction.user.id};${page + 1};next;global;wins`)
+          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1};next;global;rating`)
           .setStyle("blue")
         if(page <= 1) previous.setDisabled()
         if(page >= pages) next.setDisabled()
