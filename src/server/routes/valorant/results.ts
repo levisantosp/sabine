@@ -106,16 +106,13 @@ export default async function(
       }
     }
     if(!preds.length) return
-    for(const pred of preds) {
-      const user = await SabineUser.fetch(pred.id)
+    for(const data of req.body) {
+      const pred = preds.find(p => p.match === data.id)
+      if(!pred) continue
+      const user = await SabineUser.fetch(pred.userId)
       if(!user) continue
-      for(const data of req.body) {
-        if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
-          await user.addCorrectPrediction("lol", data.id)
-        }
-        else {
-          await user.addWrongPrediction("lol", data.id)
-        }
+      if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
+        await user.addCorrectPrediction("valorant", data.id)
         if(pred.bet) {
           const winnerIndex = data.teams.findIndex(t => t.winner)
           if(pred.teams[winnerIndex].winner) {
@@ -156,6 +153,9 @@ export default async function(
             ])
           }
         }
+      }
+      else {
+        await user.addWrongPrediction("valorant", data.id)
       }
     }
   })
