@@ -207,11 +207,16 @@ export default class Round extends Match {
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.reply(
-          "simulator.winner",
+        await this.ctx.channel.createMessage(
           {
-            t: this.teams[0].name,
-            users: this.mentions
+            content: this.t("simulator.winner",
+              {
+                t: this.teams[0].name,
+                users: this.mentions
+              }),
+            messageReference: {
+              messageID: this.ctx.id
+            }
           }
         )
       }
@@ -315,11 +320,16 @@ export default class Round extends Match {
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.reply(
-          "simulator.winner",
+        await this.ctx.channel.createMessage(
           {
-            t: this.teams[1].name,
-            users: this.mentions
+            content: this.t("simulator.winner",
+              {
+                t: this.teams[1].name,
+                users: this.mentions
+              }),
+            messageReference: {
+              messageID: this.ctx.id
+            }
           }
         )
       }
@@ -423,11 +433,16 @@ export default class Round extends Match {
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.reply(
-          "simulator.winner",
+        await this.ctx.channel.createMessage(
           {
-            t: this.teams[0].name,
-            users: this.mentions
+            content: this.t("simulator.winner",
+              {
+                t: this.teams[0].name,
+                users: this.mentions
+              }),
+            messageReference: {
+              messageID: this.ctx.id
+            }
           }
         )
       }
@@ -531,11 +546,16 @@ export default class Round extends Match {
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.reply(
-          "simulator.winner",
+        await this.ctx.channel.createMessage(
           {
-            t: this.teams[1].name,
-            users: this.mentions
+            content: this.t("simulator.winner",
+              {
+                t: this.teams[1].name,
+                users: this.mentions
+              }),
+            messageReference: {
+              messageID: this.ctx.id
+            }
           }
         )
       }
@@ -642,11 +662,16 @@ export default class Round extends Match {
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.reply(
-          "simulator.winner",
+        await this.ctx.channel.createMessage(
           {
-            t: this.teams[0].name,
-            users: this.mentions
+            content: this.t("simulator.winner",
+              {
+                t: this.teams[0].name,
+                users: this.mentions
+              }),
+            messageReference: {
+              messageID: this.ctx.id
+            }
           }
         )
       }
@@ -750,11 +775,16 @@ export default class Round extends Match {
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.reply(
-          "simulator.winner",
+        await this.ctx.channel.createMessage(
           {
-            t: this.teams[1].name,
-            users: this.mentions
+            content: this.t("simulator.winner",
+              {
+                t: this.teams[1].name,
+                users: this.mentions
+              }),
+            messageReference: {
+              messageID: this.ctx.id
+            }
           }
         )
       }
@@ -823,11 +853,16 @@ export default class Round extends Match {
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.reply(
-          "simulator.winner",
+        await this.ctx.channel.createMessage(
           {
-            t: this.teams[0].name,
-            users: this.mentions
+            content: this.t("simulator.winner",
+              {
+                t: this.teams[0].name,
+                users: this.mentions
+              }),
+            messageReference: {
+              messageID: this.ctx.id
+            }
           }
         )
       }
@@ -893,11 +928,16 @@ export default class Round extends Match {
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.reply(
-          "simulator.winner",
+        await this.ctx.channel.createMessage(
           {
-            t: this.teams[1].name,
-            users: this.mentions
+            content: this.t("simulator.winner",
+              {
+                t: this.teams[1].name,
+                users: this.mentions
+              }),
+            messageReference: {
+              messageID: this.ctx.id
+            }
           }
         )
       }
@@ -966,11 +1006,16 @@ export default class Round extends Match {
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.reply(
-          "simulator.winner",
+        await this.ctx.channel.createMessage(
           {
-            t: this.teams[0].name,
-            users: this.mentions
+            content: this.t("simulator.winner",
+              {
+                t: this.teams[0].name,
+                users: this.mentions
+              }),
+            messageReference: {
+              messageID: this.ctx.id
+            }
           }
         )
       }
@@ -1036,11 +1081,16 @@ export default class Round extends Match {
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.reply(
-          "simulator.winner",
+        await this.ctx.channel.createMessage(
           {
-            t: this.teams[1].name,
-            users: this.mentions
+            content: this.t("simulator.winner",
+              {
+                t: this.teams[1].name,
+                users: this.mentions
+              }),
+            messageReference: {
+              messageID: this.ctx.id
+            }
           }
         )
       }
@@ -1107,11 +1157,16 @@ export default class Round extends Match {
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.reply(
-          "simulator.winner",
+        await this.ctx.channel.createMessage(
           {
-            t: this.teams[0].name,
-            users: this.mentions
+            content: this.t("simulator.winner",
+              {
+                t: this.teams[0].name,
+                users: this.mentions
+              }),
+            messageReference: {
+              messageID: this.ctx.id
+            }
           }
         )
       }
@@ -1175,11 +1230,16 @@ export default class Round extends Match {
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.reply(
-          "simulator.winner",
+        await this.ctx.channel.createMessage(
           {
-            t: this.teams[1].name,
-            users: this.mentions
+            content: this.t("simulator.winner",
+              {
+                t: this.teams[1].name,
+                users: this.mentions
+              }),
+            messageReference: {
+              messageID: this.ctx.id
+            }
           }
         )
       }
@@ -1246,11 +1306,16 @@ export default class Round extends Match {
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.reply(
-          "simulator.winner",
+        await this.ctx.channel.createMessage(
           {
-            t: this.teams[0].name,
-            users: this.mentions
+            content: this.t("simulator.winner",
+              {
+                t: this.teams[0].name,
+                users: this.mentions
+              }),
+            messageReference: {
+              messageID: this.ctx.id
+            }
           }
         )
       }
@@ -1314,11 +1379,16 @@ export default class Round extends Match {
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.reply(
-          "simulator.winner",
+        await this.ctx.channel.createMessage(
           {
-            t: this.teams[1].name,
-            users: this.mentions
+            content: this.t("simulator.winner",
+              {
+                t: this.teams[1].name,
+                users: this.mentions
+              }),
+            messageReference: {
+              messageID: this.ctx.id
+            }
           }
         )
       }
@@ -1382,11 +1452,16 @@ export default class Round extends Match {
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.reply(
-          "simulator.winner",
+        await this.ctx.channel.createMessage(
           {
-            t: this.teams[0].name,
-            users: this.mentions
+            content: this.t("simulator.winner",
+              {
+                t: this.teams[0].name,
+                users: this.mentions
+              }),
+            messageReference: {
+              messageID: this.ctx.id
+            }
           }
         )
       }
@@ -1450,13 +1525,16 @@ export default class Round extends Match {
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.reply(
-          "simulator.winner",
-          {
-            t: this.teams[1].name,
-            users: this.mentions
+        await this.ctx.channel.createMessage({
+          content: this.t("simulator.winner",
+            {
+              t: this.teams[1].name,
+              users: this.mentions
+            }),
+          messageReference: {
+            messageID: this.ctx.id
           }
-        )
+        })
       }
     }
     return this

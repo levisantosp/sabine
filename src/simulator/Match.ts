@@ -2,8 +2,8 @@ import { calcPlayerOvr } from "players"
 import { valorant_agents, valorant_maps, valorant_weapons } from "../config.ts"
 import type { Args } from "../locales/index.ts"
 import EmbedBuilder from "../structures/builders/EmbedBuilder.ts"
-import ComponentInteractionContext from "../structures/interactions/ComponentInteractionContext.ts"
 import type { PlayerWeapon } from "./Player.ts"
+import type { AnyTextableChannel, Message } from "oceanic.js"
 
 export type PlayerStats = {
   aim: number
@@ -77,7 +77,7 @@ type RoundResult = {
 }
 type MatchOptions = {
   teams: Team[]
-  ctx: ComponentInteractionContext
+  ctx: Message<AnyTextableChannel>
   t: (content: string, args?: Args) => string
   mode: "unranked" | "ranked" | "swiftplay:unranked" | "swiftplay:ranked" | "tournament"
   map: string
@@ -88,7 +88,7 @@ export default class Match {
   public rounds: RoundResult[] = []
   public teams: Team[] = []
   public finished: boolean = false
-  public readonly ctx: ComponentInteractionContext
+  public readonly ctx: Message<AnyTextableChannel>
   public content: string = ""
   public t: (content: string, args?: Args) => string
   public readonly mode: "unranked" | "ranked" | "swiftplay:unranked" | "swiftplay:ranked" | "tournament"
@@ -132,7 +132,10 @@ export default class Match {
         const count = roles[p.agent.role]
         const min = 0.07
         const increment = 0.015
-        if(p.role !== "flex" && p.agent.role !== p.role) {
+        if(
+          (p.role !== "flex" && p.agent.role !== p.role) &&
+          (p.role !== "sentinel" && p.agent.name !== "Viper")
+        ) {
           p.aim *= 0.85
           p.HS *= 0.85
           p.movement *= 0.85
@@ -161,6 +164,8 @@ export default class Match {
           p.gamesense *= 0.95
         }
         p.ovr = calcPlayerOvr(p)
+        p.credits = 800
+        p.life = 100
         p.kills = 0
         p.deaths = 0
         p.weapon = {
