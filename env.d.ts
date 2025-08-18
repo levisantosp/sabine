@@ -15,6 +15,7 @@ declare global {
       CDN_URL: string
       DEVS: string[]
       HOST: string
+      REDIS_URL: string
     }
   }
 }

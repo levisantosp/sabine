@@ -11,7 +11,9 @@ import type { CreateInteractionOptions } from "../interactions/createComponentIn
 const prisma = new PrismaClient()
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const redis = Redis.createClient()
+const redis = Redis.createClient({
+  url: process.env.REDIS_URL
+})
 
 export default class App extends Oceanic.Client {
   public commands: Map<string, Command> = new Map()

@@ -1,6 +1,7 @@
 import { client } from "./structures/client/App.ts"
 import { server } from "./server/index.ts"
 
+await new Promise(r => setTimeout(r, 10000))
 await client.redis.connect()
 const updateLeaderboard = async() => {
   const users = await client.prisma.users.findMany()
