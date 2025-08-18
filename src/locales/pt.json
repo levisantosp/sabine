@@ -111,7 +111,8 @@
       "embed": {
         "description": "Obrigado por apoiar o bot assinando o premium!\nSeu plano expira {expiresAt}",
         "field": {
-          "value": "Chave: `{key}`\nExpira {expiresAt}"
+          "value": "Chave: `{key}`\nExpira {expiresAt}",
+          "value2": "Chave: `{key}`"
         }
       },
       "button": {
