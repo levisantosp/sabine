@@ -45,7 +45,7 @@
         "desc": "[Add Sabine to your server](https://api.sabinebot.xyz/invite)\n[Get premium](https://discord.com/invite/FaqYcpA84r)"
       }
     },
-    "ranking": {
+    "leaderboard": {
       "no_users": "No users to show in this page.",
       "predictions": {
         "title": "Users with the most correct predictions",
@@ -59,13 +59,13 @@
         "footer": "Your position: #{pos}",
         "field": "`{t}` coins"
       },
-      "wins": {
-        "title": "Users with most wins",
+      "rating": {
+        "title": "Users with most rating",
         "author": "Page {page}/{pages}",
         "footer": "Your position: #{pos}",
-        "field": "`{t}` wins"
+        "field": "`{rank}` — `{rr}RR`"
       },
-      "desc": "The ranking is updated every 10 minutes\nLast update: {last}"
+      "desc": "The leaderboard is updated every 10 minutes\nLast update: {last}"
     },
     "admin": {
       "tournament_has_been_added": "This tournament already has been added.",

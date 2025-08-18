@@ -45,7 +45,7 @@
         "desc": "[Me adicione em seu servidor](https://api.sabinebot.xyz/invite)\n[Obter o premium](https://discord.com/invite/FaqYcpA84r)"
       }
     },
-    "ranking": {
+    "leaderboard": {
       "no_users": "Sem usuários para mostrar nesta página.",
       "predictions": {
         "author": "Página {page}/{pages}",
@@ -59,11 +59,11 @@
         "footer": "Sua posição: #{pos}",
         "field": "`{t}` coins"
       },
-      "wins": {
-        "title": "Usuários com mais vitórias",
+      "rating": {
+        "title": "Usuários com mais classificação",
         "author": "Página {page}/{pages}",
         "footer": "Sua posição: #{pos}",
-        "field": "`{t}` vitórias"
+        "field": "`{rank}` — `{rr}RR`"
       },
       "desc": "A tabela é atualizada a cada 10 minutos\nÚltima atualização: {last}"
     },
