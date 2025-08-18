@@ -155,7 +155,8 @@ export class SabineUser implements users {
     const user = await this.fetch(this.id) ?? this
     user.roster!.reserve.push(player)
     if(method === "CLAIM_PLAYER_BY_CLAIM_COMMAND") {
-      user.claim_time = new Date(Date.now() + 600000)
+      user.claim_time = new Date(Date.now() + 5 * 60 * 1000)
+      user.fates -= 1
     }
     user.pity += 1
     await prisma.transactions.create({
