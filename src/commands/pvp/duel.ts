@@ -114,39 +114,6 @@ export default createCommand({
           ]
         }
       ]
-    },
-    {
-      type: ApplicationCommandOptionTypes.SUB_COMMAND,
-      name: "tournament",
-      description: "Start a duel in tournament mode",
-      descriptionLocalizations: {
-        "pt-BR": "Inicia um confronto no modo torneio"
-      },
-      options: [
-        {
-          type: ApplicationCommandOptionTypes.USER,
-          name: "user",
-          nameLocalizations: {
-            "pt-BR": "usuário"
-          },
-          description: "Provide a user",
-          descriptionLocalizations: {
-            "pt-BR": "Informe o usuário"
-          },
-          required: true
-        },
-        {
-          type: ApplicationCommandOptionTypes.BOOLEAN,
-          name: "overtime",
-          nameLocalizations: {
-            "pt-BR": "prorrogação"
-          },
-          description: "Select a value",
-          descriptionLocalizations: {
-            "pt-BR": "Selecione um valor"
-          }
-        }
-      ]
     }
   ],
   async run({ ctx, t, client }) {
