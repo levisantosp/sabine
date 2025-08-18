@@ -2,10 +2,10 @@ import { client } from "./structures/client/App.ts"
 import { server } from "./server/index.ts"
 
 await client.redis.connect()
-const updateRanking = async() => {
+const updateLeaderboard = async() => {
   const users = await client.prisma.users.findMany()
   await client.redis.set(
-    "ranking:coins",
+    "leaderboard:coins",
     JSON.stringify(
       {
         updated_at: Date.now(),
@@ -19,7 +19,7 @@ const updateRanking = async() => {
     )
   )
   await client.redis.set(
-    "ranking:predictions",
+    "leaderboard:predictions",
     JSON.stringify(
       {
         updated_at: Date.now(),
@@ -32,7 +32,7 @@ const updateRanking = async() => {
     )
   )
   await client.redis.set(
-    "ranking:rating",
+    "leaderboard:rating",
     JSON.stringify(
       {
         updated_at: Date.now(),
@@ -44,10 +44,10 @@ const updateRanking = async() => {
       }
     )
   )
-  setTimeout(updateRanking, 10 * 60 * 1000)
+  setTimeout(updateLeaderboard, 10 * 60 * 1000)
 }
 await client.redis.flushDb()
-await updateRanking()
+await updateLeaderboard()
 await client.connect()
 server.listen({
   host: process.env.HOST,
