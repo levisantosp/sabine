@@ -97,7 +97,7 @@ enum KeyType {
 
 type Key {
   type      KeyType
-  expiresAt Int?    @db.Long
+  expiresAt DateTime?
   id        String
 }
 
@@ -152,14 +152,14 @@ model guilds {
   id                        String      @id @map("_id")
   lang                      Language    @default(en)
   valorant_events           Event[]
-  valorant_resend_time      Int         @default(0) @db.Long
+  valorant_resend_time      DateTime?
   valorant_matches          String[]    @default([])
   valorant_tbd_matches      TBDMatch[]
   valorant_news_channel     String?
   valorant_livefeed_channel String?
   valorant_live_matches     LiveMatch[]
   lol_events                Event[]
-  lol_resend_time           Int         @default(0) @db.Long
+  lol_resend_time           DateTime?
   lol_matches               String[]    @default([])
   lol_tbd_matches           TBDMatch[]
   lol_news_channel          String?
