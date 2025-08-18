@@ -136,7 +136,7 @@ export class SabineUser implements users {
       }
     })
     if(!pred) return user
-    user.correct_predictions += 1
+    user.wrong_predictions += 1
     await prisma.predictions.update({
       where: {
         match: predictionId,
