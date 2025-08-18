@@ -1,4 +1,4 @@
-import { type AnyTextableChannel, ComponentTypes, Message, TextableChannel } from "oceanic.js"
+import { type AnyTextableChannel, ComponentTypes, Message } from "oceanic.js"
 import createComponentInteraction from "../../structures/interactions/createComponentInteraction.ts"
 import { valorant_agents, valorant_maps } from "../../config.ts"
 import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
