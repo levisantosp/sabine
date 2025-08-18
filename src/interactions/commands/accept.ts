@@ -133,7 +133,6 @@ export default createComponentInteraction({
         agent: null
       }
     })
-    console.log(data)
     await client.redis.set(`agent_selection:${user.id}:${ctx.interaction.user.id}`, JSON.stringify(
       {
         ...data,
