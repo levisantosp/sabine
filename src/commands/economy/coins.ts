@@ -8,10 +8,14 @@ export default createCommand({
   },
   category: "economy",
   userInstall: true,
-  async run({ ctx }) {
+  async run({ ctx, client }) {
+    const value = await client.redis.get("leaderboard:coins")
+    const users = JSON.parse(value!)
+    const p = users.data.findIndex((p: any) => p.id === ctx.db.user.id) + 1
     await ctx.reply("commands.coins.res", {
       c: ctx.db.user.coins.toLocaleString(),
-      f: ctx.db.user.fates.toLocaleString()
+      f: ctx.db.user.fates.toLocaleString(),
+      p
     })
   }
 })
