@@ -14,7 +14,7 @@ const locale: {[key: string]: string} = {
   en: "us"
 }
 const blacklist = await (async() => {
-  return (await client.prisma.blacklists.findFirst())!
+  return (await client.prisma.blacklist.findMany())
 })()
 const updates = await (async() => {
   return (await client.prisma.updates.findMany()).sort((a, b) => b.published_at - a.published_at)
@@ -32,15 +32,15 @@ export default class CommandRunner {
       g = client.guilds.get(interaction.guildID)
     }
     const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
-    const ban = blacklist.users.find(user => user.id === interaction.user.id)
-    if(blacklist.guilds.find(guild => guild.id === interaction.guildID)) {
+    const ban = blacklist.find(user => user.id === interaction.user.id)
+    if(blacklist.find(guild => guild.id === interaction.guildID)) {
       return await interaction.guild?.leave()
     }
     if(ban) {
       return await interaction.createMessage({
         content: locales(guild?.lang ?? "en", "helper.banned", {
           reason: ban.reason,
-          ends: ban.endsAt.getTime() === Infinity ? Infinity : `<t:${(ban.endsAt.getTime() / 1000).toFixed(0)}:F> | <t:${(ban.endsAt.getTime() / 1000).toFixed(0)}:R>`,
+          ends: !ban.endsAt ? Infinity : `<t:${(ban.endsAt.getTime() / 1000).toFixed(0)}:F> | <t:${(ban.endsAt.getTime() / 1000).toFixed(0)}:R>`,
           when: `<t:${(ban.when.getTime() / 1000).toFixed(0)}:F> | <t:${(ban.when.getTime() / 1000).toFixed(0)}:R>`
         }),
         flags: 64,
