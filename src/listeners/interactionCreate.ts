@@ -7,6 +7,9 @@ import locales, { type Args } from "../locales/index.ts"
 import ComponentInteractionContext from "../structures/interactions/ComponentInteractionContext.ts"
 import ModalSubmitInteractionContext from "../structures/interactions/ModalSubmitInteractionContext.ts"
 
+const blacklist = await (async() => {
+  return (await client.prisma.blacklist.findMany())
+})()
 const interactionTypes: Record<number, (i: AnyInteractionGateway) => Promise<any>> = {
   [InteractionTypes.APPLICATION_COMMAND]: async(interaction) => {
     if(!(interaction instanceof CommandInteraction)) return
@@ -72,8 +75,7 @@ const interactionTypes: Record<number, (i: AnyInteractionGateway) => Promise<any
       await i.run({ ctx, t, client })
     }
     else if(command) {
-      const blacklist = (await client.prisma.blacklists.findFirst())!
-      if(blacklist.users.find(user => user.id === interaction.user.id)) return
+      if(blacklist.find(user => user.id === interaction.user.id)) return
       if(command.createMessageComponentInteraction) {
         const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
         let guild: SabineGuild | undefined
