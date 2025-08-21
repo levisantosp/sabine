@@ -39,7 +39,7 @@ enum PremiumType {
 
 type Premium {
   type      PremiumType
-  expiresAt Int         @db.Long
+  expiresAt DateTime
 }
 
 type Roster {
@@ -142,10 +142,18 @@ enum Packet {
   RADIANT
 }
 
-model blacklists {
-  id     String           @id @map("_id")
-  guilds BlacklistProps[]
-  users  BlacklistProps[]
+enum BlacklistType {
+  GUILD
+  USER
+}
+
+model blacklist {
+  id     String        @id @map("_id")
+  type   BlacklistType
+  name   String?
+  when   DateTime      @default(now())
+  reason String
+  endsAt DateTime?
 }
 
 model guilds {
@@ -173,7 +181,7 @@ model guilds {
 
 model keys {
   id        String    @id @map("_id")
-  active    Boolean
+  active    Boolean   @default(false)
   activeIn  String[]
   expiresAt DateTime?
   type      KeyType

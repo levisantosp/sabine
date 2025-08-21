@@ -19,7 +19,7 @@ export class SabineUser implements users {
   public correct_predictions: number = 0
   public wrong_predictions: number = 0
   public lang: $Enums.Language = "en"
-  public plan: { type: $Enums.PremiumType; expiresAt: number; } | null = null
+  public plan: { type: $Enums.PremiumType; expiresAt: Date; } | null = null
   public warned: boolean | null = null
   public roster: { active: string[]; reserve: string[]; } | null = { active: [], reserve: [] }
   public coins: bigint = 0n
