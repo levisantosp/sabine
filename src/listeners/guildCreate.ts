@@ -8,8 +8,8 @@ const prisma = new PrismaClient()
 export default createListener({
   name: "guildCreate",
   async run(client, guild) {
-    const blacklist = (await prisma.blacklists.findFirst())!
-    const ban = blacklist.guilds.find(g => g.id === guild.id)
+    const blacklist = await prisma.blacklist.findMany()
+    const ban = blacklist.find(g => g.id === guild.id)
     if(ban) return await guild.leave()
     const embed = new EmbedBuilder()
       .setTitle(`I've been added to \`${guild.name} (${guild.id})\``)

@@ -24,7 +24,7 @@ export default createCommand({
       .setDesc(t(
         "commands.premium.embed.description",
         {
-          expiresAt: `<t:${(ctx.db.user.plan.expiresAt / 1000).toFixed(0)}:R>`
+          expiresAt: `<t:${(ctx.db.user.plan.expiresAt.getTime() / 1000).toFixed(0)}:R>`
         }
       ))
     await ctx.reply(button.build({ embeds: [embed] }))
