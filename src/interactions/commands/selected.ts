@@ -163,7 +163,7 @@ export default createComponentInteraction({
           content: ""
         })
         const embed = new EmbedBuilder()
-        .setTitle(t("simulator.mode.ranked"))
+        .setTitle(t(`simulator.mode.${match.mode}`))
         .setDesc(
           `### ${match.teams[0].name} 0 <:versus:1349105624180330516> 0 ${match.teams[1].name}` + "\n" +
           t("simulator.match_started")
