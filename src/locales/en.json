@@ -48,19 +48,19 @@
     "leaderboard": {
       "no_users": "No users to show in this page.",
       "predictions": {
-        "title": "Users with the most correct predictions",
+        "title": "Predictions Leaderboard",
         "author": "Page {page}/{pages}",
         "footer": "Your position: #{pos}",
         "field": "`{t}` correct predictions"
       },
       "coins": {
-        "title": "Users with most coins",
+        "title": "Coins Leaderboard",
         "author": "Page {page}/{pages}",
         "footer": "Your position: #{pos}",
         "field": "`{t}` coins"
       },
       "rating": {
-        "title": "Users with most rating",
+        "title": "Rating Leaderboard",
         "author": "Page {page}/{pages}",
         "footer": "Your position: #{pos}",
         "field": "`{rank}` — `{rr}RR`"
