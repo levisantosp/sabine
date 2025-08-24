@@ -34,7 +34,7 @@ export class SabineUser implements users {
   public ranked_swiftplay_defeats: number = 0
   public daily_time: Date | null = null
   public claim_time: Date | null = null
-  public warn: boolean = false
+  public warn: boolean = true
   public pity: number = 0
   public claims: number = 0
   public rank_rating: number = 0
