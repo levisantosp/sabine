@@ -192,7 +192,7 @@ model users {
   id                       String         @id @map("_id")
   predictions              predictions[]
   correct_predictions      Int            @default(0) @db.Int
-  wrong_predictions        Int            @default(0) @db.Int
+  incorrect_predictions    Int            @default(0) @db.Int
   lang                     Language       @default(en)
   plan                     Premium?
   warned                   Boolean?

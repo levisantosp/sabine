@@ -91,7 +91,7 @@ export default createCommand({
         })
         .setDesc(t("commands.predictions.embed.desc", {
           correct: ctx.db.user.correct_predictions,
-          wrong: ctx.db.user.wrong_predictions,
+          wrong: ctx.db.user.incorrect_predictions,
           t: preds.length
         }))
         .setFooter({
@@ -167,7 +167,7 @@ export default createCommand({
         })
         .setDesc(t("commands.predictions.embed.desc", {
           correct: ctx.db.user.correct_predictions,
-          wrong: ctx.db.user.wrong_predictions,
+          wrong: ctx.db.user.incorrect_predictions,
           t: predictions.length
         }))
         .setFooter({
@@ -244,7 +244,7 @@ export default createCommand({
         })
         .setDesc(t("commands.predictions.embed.desc", {
           correct: ctx.db.user.correct_predictions,
-          wrong: ctx.db.user.wrong_predictions,
+          wrong: ctx.db.user.incorrect_predictions,
           t: predictions.length
         }))
         .setFooter({
@@ -319,7 +319,7 @@ export default createCommand({
         })
         .setDesc(t("commands.predictions.embed.desc", {
           correct: ctx.db.user.correct_predictions,
-          wrong: ctx.db.user.wrong_predictions,
+          wrong: ctx.db.user.incorrect_predictions,
           t: predictions.length
         }))
         .setFooter({

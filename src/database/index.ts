@@ -17,7 +17,7 @@ type Prediction = {
 export class SabineUser implements users {
   public id: string
   public correct_predictions: number = 0
-  public wrong_predictions: number = 0
+  public incorrect_predictions: number = 0
   public lang: $Enums.Language = "en"
   public plan: { type: $Enums.PremiumType; expiresAt: Date; } | null = null
   public warned: boolean | null = null
@@ -136,7 +136,7 @@ export class SabineUser implements users {
       }
     })
     if(!pred) return user
-    user.wrong_predictions += 1
+    user.incorrect_predictions += 1
     await prisma.predictions.update({
       where: {
         match: predictionId,
