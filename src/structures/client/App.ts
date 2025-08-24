@@ -12,7 +12,10 @@ const prisma = new PrismaClient()
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const redis = Redis.createClient({
-  url: process.env.REDIS_URL
+  url: process.env.REDIS_URL,
+  socket: {
+    reconnectStrategy: retries => Math.min(retries * 50, 1000)
+  }
 })
 
 export default class App extends Oceanic.Client {
