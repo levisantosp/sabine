@@ -10,7 +10,7 @@ export default createCommand({
   userInstall: true,
   async run({ ctx, client }) {
     const value = await client.redis.get("leaderboard:coins")
-    const users = JSON.parse(value!)
+    const users = JSON.parse(value!).sort((a: any, b: any) => Number(b.coins - a.coins))
     const p = users.data.findIndex((p: any) => p.id === ctx.db.user.id) + 1
     await ctx.reply("commands.coins.res", {
       c: ctx.db.user.coins.toLocaleString(),
