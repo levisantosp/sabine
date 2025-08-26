@@ -145,7 +145,7 @@ export default createComponentInteraction({
     ), {
       expiration: {
         type: "EX",
-        value: 480
+        value: 300
       }
     })
   }

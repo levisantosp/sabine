@@ -170,6 +170,9 @@ export default createComponentInteraction({
         )
         .setImage(valorant_maps.filter(map => map.name === match.map)[0].image)
         await message.edit(embed.build())
+        const keys = await client.redis.keys("agent_selection*")
+        const key = keys.filter(k => k.includes(ctx.interaction.user.id))[0]
+        await client.redis.del(key)
         try {
           while(!match.finished) {
             await client.redis.set(`match:${ctx.db.user.id}`, 1)
