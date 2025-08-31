@@ -584,7 +584,6 @@ export default createCommand({
   },
   userInstall: true,
   async createMessageComponentInteraction({ ctx, t, client }) {
-    await ctx.interaction.deferUpdate()
     if(ctx.args[4] === "local" && ctx.guild) {
       if(ctx.args[5] === "predictions") {
         const value = JSON.parse((await client.redis.get("leaderboard:predictions"))!)
