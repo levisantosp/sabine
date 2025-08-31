@@ -114,13 +114,13 @@ export default class CommandRunner {
       await ctx.reply(button)
     }
     if(command.cooldown) {
-      const cooldown = await client.redis.get(`cooldown:${command.name}`)
+      const cooldown = await client.redis.get(`cooldown:${interaction.user.id}`)
       if(cooldown) {
         return await ctx.reply("helper.cooldown", {
           cooldown: `<t:${(Number(cooldown) / 1000).toFixed(0)}:R>`
         })
       }
-      await client.redis.set(`cooldown:${command.name}`, Date.now() + 5000, {
+      await client.redis.set(`cooldown:${interaction.user.id}`, Date.now() + 5000, {
         expiration: {
           type: "EX",
           value: 5
