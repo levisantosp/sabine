@@ -38,7 +38,7 @@ export default createCommand({
   ],
   userInstall: true,
   async run({ ctx, client, t }) {
-    if(ctx.args[0].toString()) {
+    if(ctx.args[0]?.toString()) {
       const cmd = client.commands.get(ctx.args[0].toString())
       if(!cmd || cmd.onlyDev) {
         return await ctx.reply("commands.help.command_not_found")
