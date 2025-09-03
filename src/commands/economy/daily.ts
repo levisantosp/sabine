@@ -16,21 +16,34 @@ export default createCommand({
       return await ctx.reply("commands.daily.has_been_claimed", { t: `<t:${((ctx.db.user.daily_time.getTime()) / 1000).toFixed(0)}:R>` })
     }
     let coins = BigInt(Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000)
-    let fates = Math.floor(Math.random() * (15 - 10 + 1)) + 10
+    let fates = Math.floor(Math.random() * (30 - 20 + 1)) + 20
     const member = client.guilds.get("1233965003850125433")!.members.get(ctx.interaction.user.id)
     let content = t("commands.daily.res", {
       coins: coins.toLocaleString("en-US"),
       fates
     }) + "\n"
-    if(ctx.db.user.plan || member?.premiumSince) {
-      const bonusCoins = coins * 10n
-      const bonusFates = fates + 5
-      coins += bonusCoins
-      fates += bonusFates
-      content += t("commands.daily.bonus", {
-        coins: bonusCoins.toLocaleString("en-us"),
-        fates: bonusFates
+    let bonus = ""
+    if(ctx.db.user.plan) {
+      coins *= 5n
+      fates = Number((fates * 1.5).toFixed(0))
+      bonus += t("commands.daily.bonus", {
+        coins: "5x",
+        fates: "1.5x"
       })
+    }
+    if(member?.premiumSince) {
+      coins *= 2n
+      fates = Number((fates * 1.25).toFixed(0))
+      bonus += "\n" + t("commands.daily.bonus2", {
+        coins: "2x",
+        fates: "1.25x"
+      })
+    }
+    if(bonus.length) {
+      content = t("commands.daily.res", {
+        coins: coins.toLocaleString("en-US"),
+        fates
+      }) + "\n" + bonus
     }
     ctx.db.user.coins += coins
     ctx.db.user.fates += fates
