@@ -140,7 +140,7 @@ export default class CommandRunner {
           .setDesc(`The command \`${cmd}\` has been executed in \`${ctx.guild?.name}\``)
           .addField("Server ID", `\`${ctx.guild?.id}\``)
           .addField("Owner", `\`${ctx.guild?.owner?.username}\` (\`${ctx.guild?.ownerID}\`)`)
-          .addField("Command author", `\`${ctx.interaction.user.username}\``)
+          .addField("Command author", `\`${ctx.interaction.user.username}\` (\`${ctx.interaction.user.id}\`)`)
         if(ctx.guild) {
           embed.setThumb(ctx.guild.iconURL()!)
         }
