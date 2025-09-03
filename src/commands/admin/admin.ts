@@ -84,6 +84,7 @@ export default createCommand({
   ],
   messageComponentInteractionTime: 5 * 60 * 1000,
   async run({ ctx, t, id }) {
+    if(!ctx.db.guild) return
     if(ctx.args[0] === "dashboard") {
       const embed = new EmbedBuilder()
 				.setTitle(t("commands.admin.dashboard"))
@@ -130,25 +131,13 @@ export default createCommand({
     else if(ctx.args[0] === "language") {
       const options = {
         en: async() => {
-          await prisma.guilds.update({
-            where: {
-              id: ctx.db.guild!.id
-            },
-            data: {
-              lang: "en"
-            }
-          })
+          ctx.db.guild!.lang = "en"
+          await ctx.db.guild?.save()
           await ctx.reply("Now I will interact in English on this server!")
         },
         pt: async() => {
-          await prisma.guilds.update({
-            where: {
-              id: ctx.db.guild!.id
-            },
-            data: {
-              lang: "pt"
-            }
-          })
+          ctx.db.guild!.lang = "pt"
+          await ctx.db.guild?.save()
           await ctx.reply("Agora eu irei interagir em português neste servidor!")
         }
       }
