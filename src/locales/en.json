@@ -270,7 +270,8 @@
     "daily": {
       "has_been_claimed": "You have already collected your daily reward. Try again {t}",
       "res": "You received **{coins}** coins and **{fates}** fates today!",
-      "bonus": "You received **{coins}** bonus coins and **{fates}** bonus fates for being a premium user."
+      "bonus": "You received **{coins}** bonus coins and **{fates}** bonus fates for being a Premium user.",
+      "bonus2": "You received **{coins}** bonus coins and **{fates}** bonus fates for being a Premium Booster user."
     },
     "sign": {
       "player_not_found": "Player not found!",

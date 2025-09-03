@@ -270,7 +270,8 @@
     "daily": {
       "has_been_claimed": "Você já coletou sua recompensa diária. Tente novamente {t}",
       "res": "Você recebeu **{coins}** coins e **{fates}** destinos hoje!",
-      "bonus": "Você recebeu **{coins}** coins de bônus e **{fates}** destinos de bônus por ser um usuário premium."
+      "bonus": "Você recebeu **{coins}** coins de bônus e **{fates}** destinos de bônus por ser um usuário Premium.",
+      "bonus2": "Você recebeu **{coins}** coins de bônus e **{fates}** destinos de bônus por ser um usuário Premium Booster."
     },
     "sign": {
       "player_not_found": "Jogador não encontrado!",
