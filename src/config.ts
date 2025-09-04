@@ -135,6 +135,7 @@ export const valorant_agents = [
     emoji: "<:waylay:1404834635531161811>"
   }
 ] as const
+const n = 100
 export const valorant_weapons = [
   {
     name: "Classic",
@@ -144,7 +145,7 @@ export const valorant_weapons = [
       chest: 26
     },
     magazine: 48,
-    rate_fire: 635
+    rate_fire: 410 + n
   },
   {
     name: "Shorty",
@@ -154,7 +155,7 @@ export const valorant_weapons = [
       chest: 11
     },
     magazine: 8,
-    rate_fire: 1075
+    rate_fire: 850 + n
   },
   {
     name: "Frenzy",
@@ -164,7 +165,7 @@ export const valorant_weapons = [
       chest: 26
     },
     magazine: 60,
-    rate_fire: 325
+    rate_fire: 100 + n
   },
   {
     name: "Ghost",
@@ -174,7 +175,7 @@ export const valorant_weapons = [
       chest: 30
     },
     magazine: 52,
-    rate_fire: 375
+    rate_fire: 150 + n
   },
   {
     name: "Sheriff",
@@ -184,7 +185,7 @@ export const valorant_weapons = [
       chest: 55
     },
     magazine: 30,
-    rate_fire: 725
+    rate_fire: 500 + n
   },
   {
     name: "Stinger",
