@@ -144,7 +144,7 @@ export const valorant_weapons = [
       chest: 26
     },
     magazine: 48,
-    rate_fire: 710
+    rate_fire: 635
   },
   {
     name: "Shorty",
@@ -154,7 +154,7 @@ export const valorant_weapons = [
       chest: 11
     },
     magazine: 8,
-    rate_fire: 1150
+    rate_fire: 1075
   },
   {
     name: "Frenzy",
@@ -164,7 +164,7 @@ export const valorant_weapons = [
       chest: 26
     },
     magazine: 60,
-    rate_fire: 400
+    rate_fire: 325
   },
   {
     name: "Ghost",
@@ -174,7 +174,7 @@ export const valorant_weapons = [
       chest: 30
     },
     magazine: 52,
-    rate_fire: 450
+    rate_fire: 375
   },
   {
     name: "Sheriff",
@@ -184,7 +184,7 @@ export const valorant_weapons = [
       chest: 55
     },
     magazine: 30,
-    rate_fire: 800
+    rate_fire: 725
   },
   {
     name: "Stinger",
