@@ -2,7 +2,7 @@ import { client } from "./structures/client/App.ts"
 import { server } from "./server/index.ts"
 
 await client.redis.connect()
-const updateLeaderboard = async() => {
+const updateRedis = async() => {
   const users = await client.prisma.users.findMany()
   const blacklist = await client.prisma.blacklist.findMany()
   await client.redis.set("blacklist", JSON.stringify(blacklist))
@@ -46,10 +46,10 @@ const updateLeaderboard = async() => {
       }
     )
   )
-  setTimeout(updateLeaderboard, 10 * 60 * 1000)
+  setTimeout(updateRedis, 10 * 60 * 1000)
 }
 await client.redis.flushDb()
-await updateLeaderboard()
+await updateRedis()
 await client.connect()
 server.listen({
   host: process.env.HOST,
