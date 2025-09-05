@@ -26,14 +26,14 @@ export default createCommand({
       const player = getPlayer(Number(p))
       if(!player) break
       ovr += o
-      value += calcPlayerPrice(player, true)
+      value += calcPlayerPrice(player)
     }
     for(const p of reserve_players) {
       const o = calcPlayerOvr(getPlayer(Number(p))!)
       const player = getPlayer(Number(p))
       if(!player) break
       ovr += o
-      value += calcPlayerPrice(player, true)
+      value += calcPlayerPrice(player)
     }
     const embed = new EmbedBuilder()
     .setTitle(t("commands.roster.embed.title"))
