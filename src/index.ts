@@ -4,6 +4,8 @@ import { server } from "./server/index.ts"
 await client.redis.connect()
 const updateLeaderboard = async() => {
   const users = await client.prisma.users.findMany()
+  const blacklist = await client.prisma.blacklist.findMany()
+  await client.redis.set("blacklist", JSON.stringify(blacklist))
   await client.redis.set(
     "leaderboard:coins",
     JSON.stringify(
