@@ -1,5 +1,5 @@
 import type { CommandInteraction, Guild, TextChannel } from "oceanic.js"
-import App, { client } from "../client/App.ts"
+import App from "../client/App.ts"
 import CommandContext from "./CommandContext.ts"
 import locales, { type Args } from "../../locales/index.ts"
 import ButtonBuilder from "../builders/ButtonBuilder.ts"
@@ -8,17 +8,12 @@ import { SabineGuild, SabineUser } from "../../database/index.ts"
 import { resolve } from "node:path"
 import { readFileSync } from "node:fs"
 import Logger from "../../util/Logger.ts"
+import type { blacklist } from "@prisma/client"
 
 const locale: {[key: string]: string} = {
   pt: "br",
   en: "us"
 }
-const blacklist = await (async() => {
-  return (await client.prisma.blacklist.findMany())
-})()
-const updates = await (async() => {
-  return (await client.prisma.updates.findMany()).sort((a, b) => b.published_at - a.published_at)
-})()
 export default class CommandRunner {
   public async run(
     client: App, interaction: CommandInteraction
@@ -31,6 +26,7 @@ export default class CommandRunner {
       guild = await SabineGuild.fetch(interaction.guildID) ?? new SabineGuild(interaction.guildID)
       g = client.guilds.get(interaction.guildID)
     }
+    const blacklist: blacklist[] = JSON.parse((await client.redis.get("blacklist"))!)
     const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
     const ban = blacklist.find(user => user.id === interaction.user.id)
     if(blacklist.find(guild => guild.id === interaction.guildID)) {
@@ -104,6 +100,7 @@ export default class CommandRunner {
       return locales(user.lang ?? guild?.lang ?? "en", content, args)
     }
     if(user.warn) {
+      const updates = (await client.prisma.updates.findMany()).sort((a, b) => b.published_at - a.published_at)
       const button = new ButtonBuilder()
       .setLabel(t("helper.dont_show_again"))
       .setStyle("red")
