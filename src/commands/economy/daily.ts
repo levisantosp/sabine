@@ -48,7 +48,7 @@ export default createCommand({
     }
     ctx.db.user.coins += coins
     ctx.db.user.fates += fates
-    // ctx.db.user.daily_time = new Date(new Date().setHours(24, 0, 0, 0))
+    ctx.db.user.daily_time = new Date(new Date().setHours(24, 0, 0, 0))
     await ctx.db.user.save()
     await ctx.reply(content)
   }
