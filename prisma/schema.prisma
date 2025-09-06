@@ -300,7 +300,7 @@ model matches {
   winner Boolean
   teams  CarrerTeam[]
   points Int?         @db.Int
-  user   users        @relation(fields: [userId], references: [id])
+  user   users        @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
   when   DateTime     @default(now())
 
