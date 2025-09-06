@@ -267,7 +267,7 @@ model predictions {
   bet    BigInt?
   odd    BigInt?
   when   DateTime          @default(now())
-  user   users             @relation(fields: [userId], references: [id])
+  user   users             @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
   @@index([userId, game, id])
@@ -279,7 +279,7 @@ model transactions {
   player String
   when   DateTime        @default(now())
   price  BigInt?         @db.Long
-  user   users           @relation(fields: [userId], references: [id])
+  user   users           @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
   who    String?
 
