@@ -36,8 +36,8 @@ export default class CommandRunner {
       return await interaction.createMessage({
         content: locales(guild?.lang ?? "en", "helper.banned", {
           reason: ban.reason,
-          ends: !ban.endsAt ? Infinity : `<t:${(ban.endsAt.getTime() / 1000).toFixed(0)}:F> | <t:${(ban.endsAt.getTime() / 1000).toFixed(0)}:R>`,
-          when: `<t:${(ban.when.getTime() / 1000).toFixed(0)}:F> | <t:${(ban.when.getTime() / 1000).toFixed(0)}:R>`
+          ends: !ban.endsAt ? Infinity : `<t:${(new Date(ban.endsAt).getTime() / 1000).toFixed(0)}:F> | <t:${(new Date(ban.endsAt).getTime() / 1000).toFixed(0)}:R>`,
+          when: `<t:${(new Date(ban.when).getTime() / 1000).toFixed(0)}:F> | <t:${(new Date(ban.when).getTime() / 1000).toFixed(0)}:R>`
         }),
         flags: 64,
         components: [
