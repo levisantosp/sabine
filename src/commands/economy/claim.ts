@@ -1,9 +1,24 @@
-import { calcPlayerOvr, calcPlayerPrice, getPlayer, getPlayers, type Player } from "players"
+import {
+  calcPlayerOvr,
+  calcPlayerPrice,
+  getPlayer,
+  getPlayers,
+  type Player
+} from "players"
 import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
 import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
 import createCommand from "../../structures/command/createCommand.ts"
 
-const players = getPlayers()
+const players = new Map<string, Player>(
+  getPlayers().map(p => [
+    p.id.toString(),
+    {
+      ...p,
+      ovr: calcPlayerOvr(p),
+      price: calcPlayerPrice(p)
+    }
+  ])
+)
 const tier = (() => {
   const tier: {[key: string]: Player[]} = {
     s: [] as Player[], // ovr 85+ (0.1%)
@@ -11,7 +26,7 @@ const tier = (() => {
     b: [] as Player[], // ovr 70-79 (14%)
     c: [] as Player[] // ovr 69- (85%)
   }
-  for(const p of players) {
+  for(const p of players.values()) {
     const ovr = calcPlayerOvr(p)
     if(ovr >= 85) tier.s.push(p)
     else if(ovr >= 80) tier.a.push(p)
@@ -43,6 +58,7 @@ const getRandomPlayerByTier = (t: string) => {
   return tier[t][Math.floor(Math.random() * tier[t].length)]
 }
 const date = Date.now()
+
 export default createCommand({
   name: "claim",
   category: "economy",
@@ -72,13 +88,6 @@ export default createCommand({
       player = getRandomPlayerByTier("s")
     }
     else player = getRandomPlayerByOvr()
-    const ovr = calcPlayerOvr(player)
-    const price = calcPlayerPrice(player)
-    player = {
-      ...player,
-      ovr: parseInt(ovr.toString()),
-      price
-    }
     let channel: string | undefined = undefined
     if(ctx.interaction.channel && ctx.db.user.remind) {
       channel = ctx.interaction.channel?.id
@@ -91,7 +100,7 @@ export default createCommand({
         "commands.claim.claimed",
         {
           player: player.name,
-          price: price.toLocaleString("en-US")
+          price: player.price?.toLocaleString("en-US")
         }
       )
     )
@@ -128,7 +137,7 @@ export default createCommand({
       ctx.db.user.roster.active.push(ctx.args[3])
       ctx.db.user.roster.reserve.splice(i, 1)
       await ctx.db.user.save()
-      await ctx.reply("commands.promote.player_promoted", { p: players.find(p => p.id.toString() === ctx.args[3])?.name })
+      await ctx.reply("commands.promote.player_promoted", { p: players.get(ctx.args[3])?.name })
     }
     else if(ctx.args[2] === "sell") {
       const player = getPlayer(Number(ctx.args[3]))
