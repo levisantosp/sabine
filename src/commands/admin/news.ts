@@ -99,24 +99,8 @@ export default createCommand({
       ]
     }
   ],
-  async run({ ctx, t, client }) {
+  async run({ ctx }) {
     if(ctx.args[0] === "enable") {
-      if(!ctx.db.guild!.partner && !["PREMIUM"].some(k => k === ctx.db.guild!.key?.type)) {
-        const button = new ButtonBuilder()
-          .setLabel(t("commands.news.buy_premium"))
-          .setStyle("link")
-          .setURL("https://discord.com/invite/FaqYcpA84r")
-        await ctx.reply({
-          content: t("helper.premium_feature"),
-          components: [
-            {
-              type: 1,
-              components: [button]
-            }
-          ]
-        })
-        return
-      }
       const games = {
         valorant: async() => {
           if(!ctx.guild || !ctx.db.guild) return
@@ -140,29 +124,15 @@ export default createCommand({
     else {
       const games = {
         valorant: async() => {
-          await client.prisma.guilds.update({
-            where: {
-              id: ctx.db.guild!.id
-            },
-            data: {
-              valorant_news_channel: {
-                unset: true
-              }
-            }
-          })
+          if(!ctx.db.guild) return
+          ctx.db.guild.valorant_news_channel = null
+          await ctx.db.guild.save()
           await ctx.reply("commands.news.news_disabled")
         },
         lol: async() => {
-          await client.prisma.guilds.update({
-            where: {
-              id: ctx.db.guild!.id
-            },
-            data: {
-              lol_news_channel: {
-                unset: true
-              }
-            }
-          })
+          if(!ctx.db.guild) return
+          ctx.db.guild.lol_news_channel = null
+          await ctx.db.guild.save()
           await ctx.reply("commands.news.news_disabled")
         }
       }
