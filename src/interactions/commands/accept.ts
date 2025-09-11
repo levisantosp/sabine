@@ -28,7 +28,7 @@ export default createComponentInteraction({
       return await ctx.reply("commands.duel.already_in_match")
     }
     if(await client.redis.get(`match:${user.id}`) || keys.some(key => key.includes(user.id))) {
-      return await ctx.reply("commands.already_in_match_2")
+      return await ctx.reply("commands.duel.already_in_match_2")
     }
     let maps = valorant_maps
     if(ctx.args.includes("ranked")) {

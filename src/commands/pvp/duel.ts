@@ -146,7 +146,7 @@ export default createCommand({
       return await ctx.reply("commands.duel.already_in_match")
     }
     if(await client.redis.get(`match:${user.id}`) || keys.some(key => key.includes(user.id))) {
-      return await ctx.reply("commands.already_in_match_2")
+      return await ctx.reply("commands.duel.already_in_match_2")
     }
     if(ctx.args.at(-1) === ctx.interaction.user.id) {
       return await ctx.reply("commands.duel.cannot_duel")
