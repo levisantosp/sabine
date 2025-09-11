@@ -26,10 +26,11 @@ export default class CommandRunner {
       guild = await SabineGuild.fetch(interaction.guildID) ?? new SabineGuild(interaction.guildID)
       g = client.guilds.get(interaction.guildID)
     }
-    const blacklist: blacklist[] = JSON.parse((await client.redis.get("blacklist"))!)
+    const value: blacklist[] = JSON.parse((await client.redis.get("blacklist"))!)
+    const blacklist = new Map<string | null, blacklist>(value.map(b => [b.id, b]))
     const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
-    const ban = blacklist.find(user => user.id === interaction.user.id)
-    if(blacklist.find(guild => guild.id === interaction.guildID)) {
+    const ban = blacklist.get(interaction.user.id)
+    if(blacklist.get(interaction.guildID)) {
       return await interaction.guild?.leave()
     }
     if(ban) {
