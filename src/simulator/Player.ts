@@ -67,15 +67,13 @@ export default class Player {
       if(this.rounds >= 24) {
         weapon = this.chooseWeapon(
           primary.filter(w => w.price >= 2900),
-          w => ["Outlaw", "Operator", "Marshall", "Guardian"]
-          .includes(w.name) ? Math.pow(w.damage.chest, 3) : Math.pow(w.damage.head, 3)
+          w => Math.pow(w.damage.head, 3)
         )
       }
       else {
         weapon = this.chooseWeapon(
           primary,
-          w => ["Outlaw", "Operator", "Marshall", "Guardian"]
-          .includes(w.name) ? Math.pow(w.damage.chest, 3) : Math.pow(w.damage.head, 3)
+          w => Math.pow(w.damage.head, 3)
         )        
       }
       const secondaryWeapon = this.chooseWeapon(secondary, w => w.price)
@@ -142,9 +140,9 @@ export default class Player {
     return items[items.length - 1]
   }
   private chooseShoot(mov: number) {
-    let steepness = 0.05
-    let midpoint = 50
-    let prob = (1 / (1 + Math.exp(-steepness * (this.stats.aim - midpoint)))) * (1 - (mov / 100) * 0.3)
+    let steepness = 0.12
+    let midpoint = 70
+    let prob = (1 / (1 + Math.exp(-steepness * (this.stats.aim - midpoint)))) * (1 - (mov / 100) * 0.2)
     let random = Math.random()
     if(random <= prob) {
       steepness = 0.02
