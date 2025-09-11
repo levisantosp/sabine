@@ -1,6 +1,7 @@
 import createCommand from "../../structures/command/createCommand.ts"
 import Service from "../../api/index.ts"
 import { PrismaClient } from "@prisma/client"
+import { SabineGuild } from "../../database/index.ts"
 const service = new Service(process.env.AUTH)
 
 const prisma = new PrismaClient()
@@ -272,10 +273,19 @@ export default createCommand({
     if(!i.guild) return
     if(args[1] === "valorant") {
       const res = await service.getEvents("valorant")
+      res.unshift({
+        name: "Valorant Game Changers"
+      })
+      res.unshift({
+        name: "Valorant Challengers League"
+      })
+      res.unshift({
+        name: "Valorant Champions Tour"
+      })
       const events = res.filter(e => e.status !== "completed")
         .map(e => e.name)
         .filter(e => {
-          if(e.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e
+          if(e.toLowerCase().includes(i.data.options.getOptions()[0].value.toString().toLowerCase())) return e
         })
         .slice(0, 25)
       const actions = {
@@ -283,10 +293,11 @@ export default createCommand({
           await i.result(events.map(e => ({ name: e, value: e })))
         },
         remove: async() => {
-          const guild = (await prisma.guilds.findUnique({ where: { id: i.guild!.id } }))!
+          const guild = await SabineGuild.fetch(i.guild!.id)
+          if(!guild) return
           const events = guild.valorant_events.map(e => e.name)
             .filter(e => {
-              if(e.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e
+              if(e.toLowerCase().includes(i.data.options.getOptions()[0].value.toString().toLowerCase())) return e
             })
           events.unshift(t("commands.tournament.remove_all"))
           await i.result(events.map(e => ({ name: e, value: e })))
