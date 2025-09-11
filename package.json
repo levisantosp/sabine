@@ -18,26 +18,26 @@
   "author": "levisantosp",
   "license": "ISC",
   "dependencies": {
-    "@fastify/type-provider-typebox": "^5.1.0",
+    "@fastify/type-provider-typebox": "^5.2.0",
     "@iamtraction/google-translate": "^2.0.1",
-    "@prisma/client": "^6.10.1",
+    "@prisma/client": "^6.16.1",
     "clipboardy": "^4.0.0",
     "colors": "^1.4.0",
-    "fastify": "^5.3.3",
-    "humanize-duration": "^3.32.2",
+    "fastify": "^5.6.0",
+    "humanize-duration": "^3.33.0",
     "moment": "^2.30.1",
     "oceanic.js": "^1.12.0",
     "players": "github:levisantosp/players",
-    "redis": "^5.8.0"
+    "redis": "^5.8.2"
   },
   "devDependencies": {
-    "@eslint/js": "^9.30.1",
+    "@eslint/js": "^9.35.0",
     "@types/humanize-duration": "^3.27.4",
-    "@types/node": "^24.0.7",
-    "eslint": "^9.30.1",
-    "globals": "^16.3.0",
-    "prisma": "^6.13.0",
-    "typescript": "^5.8.3",
-    "typescript-eslint": "^8.35.1"
+    "@types/node": "^24.3.1",
+    "eslint": "^9.35.0",
+    "globals": "^16.4.0",
+    "prisma": "^6.16.1",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.43.0"
   }
 }
