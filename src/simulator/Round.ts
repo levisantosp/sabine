@@ -2279,7 +2279,7 @@ export default class Round extends Match {
         player1.life -= shoot[0]
         nextShot2 = shoot[1]
       }
-      await this.wait(wait / 10)
+      await this.wait(wait)
     }
     return [player1.life > 0, player2.life > 0, weapon1, weapon2]
   }
