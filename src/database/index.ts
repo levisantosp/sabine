@@ -61,7 +61,7 @@ export class SabineUser implements users {
     return await prisma.users.upsert({
       where: { id: this.id },
       update: data,
-      create: { id: this.id, ...data } as Prisma.usersCreateInput
+      create: { id: this.id, ...data }
     })
   }
   public static async fetch(id: string) {
