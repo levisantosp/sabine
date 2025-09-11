@@ -52,19 +52,6 @@ export class SabineUser implements users {
       this.roster = { active: [], reserve: [] }
     }
   }
-  private async fetch(id: string) {
-    const data = await prisma.users.findUnique({ where: { id } })
-    if(!data) return data
-    let user = new SabineUser(data.id)
-    user = Object.assign(user, data)
-    if(!this.roster) {
-      this.roster = {
-        active: [],
-        reserve: []
-      }
-    }
-    return this
-  }
   public async save() {
     const data: Partial<users> = {}
     for(const key in this) {
