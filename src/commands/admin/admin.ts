@@ -141,7 +141,7 @@ export default createCommand({
           await ctx.reply("Agora eu irei interagir em português neste servidor!")
         }
       }
-      await options[(ctx.interaction as CommandInteraction).data.options.getStringOption("lang")?.value as "pt" | "en"]()
+      await options[ctx.args[1] as "pt" | "en"]()
     }
     else if(ctx.args[0] === "premium") {
       if(!ctx.db.guild!.key) {
