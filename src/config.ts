@@ -144,7 +144,7 @@ export const valorant_weapons = [
       chest: 26
     },
     magazine: 48,
-    rate_fire: 410
+    rate_fire: 148.15 / 10
   },
   {
     name: "Shorty",
@@ -154,7 +154,7 @@ export const valorant_weapons = [
       chest: 11
     },
     magazine: 8,
-    rate_fire: 850
+    rate_fire: 303.03 / 10
   },
   {
     name: "Frenzy",
@@ -164,7 +164,7 @@ export const valorant_weapons = [
       chest: 26
     },
     magazine: 60,
-    rate_fire: 100
+    rate_fire: 100 / 10
   },
   {
     name: "Ghost",
@@ -174,7 +174,7 @@ export const valorant_weapons = [
       chest: 30
     },
     magazine: 52,
-    rate_fire: 150
+    rate_fire: 148.15 / 10
   },
   {
     name: "Sheriff",
@@ -184,7 +184,7 @@ export const valorant_weapons = [
       chest: 55
     },
     magazine: 30,
-    rate_fire: 500
+    rate_fire: 250 / 10
   },
   {
     name: "Stinger",
@@ -194,7 +194,7 @@ export const valorant_weapons = [
       chest: 27
     },
     magazine: 80,
-    rate_fire: 160
+    rate_fire: 55.56 / 10
   },
   {
     name: "Spectre",
@@ -204,7 +204,7 @@ export const valorant_weapons = [
       chest: 26
     },
     magazine: 120,
-    rate_fire: 160
+    rate_fire: 75 / 10
   },
   {
     name: "Bucky",
@@ -214,7 +214,7 @@ export const valorant_weapons = [
       chest: 20
     },
     magazine: 15,
-    rate_fire: 1100
+    rate_fire: 909.09 / 10
   },
   {
     name: "Judge",
@@ -224,7 +224,7 @@ export const valorant_weapons = [
       chest: 17
     },
     magazine: 20,
-    rate_fire: 350
+    rate_fire: 285.71 / 10
   },
   {
     name: "Bulldog",
@@ -234,7 +234,7 @@ export const valorant_weapons = [
       chest: 35
     },
     magazine: 96,
-    rate_fire: 240
+    rate_fire: 109.29 / 10
   },
   {
     name: "Guardian",
@@ -244,7 +244,7 @@ export const valorant_weapons = [
       chest: 65
     },
     magazine: 48,
-    rate_fire: 475
+    rate_fire: 153.85 / 10
   },
   {
     name: "Phantom",
@@ -254,7 +254,7 @@ export const valorant_weapons = [
       chest: 35
     },
     magazine: 90,
-    rate_fire: 87.5
+    rate_fire: 90.91 / 10
   },
   {
     name: "Vandal",
@@ -264,7 +264,7 @@ export const valorant_weapons = [
       chest: 40
     },
     magazine: 75,
-    rate_fire: 172.5
+    rate_fire: 108.11 / 10
   },
   {
     name: "Marshal",
@@ -274,7 +274,7 @@ export const valorant_weapons = [
       chest: 101
     },
     magazine: 20,
-    rate_fire: 1200
+    rate_fire: 666.67 / 10
   },
   {
     name: "Operator",
@@ -284,7 +284,7 @@ export const valorant_weapons = [
       chest: 150
     },
     magazine: 15,
-    rate_fire: 1500
+    rate_fire: 1333.33 / 10
   },
   {
     name: "Outlaw",
@@ -294,7 +294,7 @@ export const valorant_weapons = [
       chest: 140
     },
     magazine: 12,
-    rate_fire: 1000
+    rate_fire: 666.67 / 10
   },
   {
     name: "Ares",
@@ -304,7 +304,7 @@ export const valorant_weapons = [
       chest: 30
     },
     magazine: 150,
-    rate_fire: 120
+    rate_fire: 100 / 10
   },
   {
     name: "Odin",
@@ -314,7 +314,7 @@ export const valorant_weapons = [
       chest: 38
     },
     magazine: 300,
-    rate_fire: 80
+    rate_fire: 83.33 / 10
   },
   {
     name: "Melee",
@@ -323,8 +323,8 @@ export const valorant_weapons = [
       head: 50,
       chest: 50
     },
-    rate_fire: 750,
-    magazine: 0
+    magazine: 0,
+    rate_fire: 750 / 10
   }
 ] as const
 export const valorant_maps: {
