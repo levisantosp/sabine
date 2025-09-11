@@ -57,13 +57,13 @@ export class SabineUser implements users {
     if(!data) return data
     let user = new SabineUser(data.id)
     user = Object.assign(user, data)
-    if(!user.roster) {
-      user.roster = {
+    if(!this.roster) {
+      this.roster = {
         active: [],
         reserve: []
       }
     }
-    return user
+    return this
   }
   public async save() {
     const data: Partial<users> = {}
@@ -91,77 +91,73 @@ export class SabineUser implements users {
     return user
   }
   public async addPrediction(game: "valorant" | "lol", prediction: Prediction) {
-    const user = await this.fetch(this.id) ?? this
     await prisma.predictions.create({
       data: {
         ...prediction,
         game,
-        userId: user.id
+        userId: this.id
       }
     })
-    return user
+    return this
   }
   public async addCorrectPrediction(game: "valorant" | "lol", predictionId: string) {
-    const user = await this.fetch(this.id) ?? this
     const pred = await prisma.predictions.findFirst({
       where: {
         match: predictionId,
         game,
-        userId: user.id
+        userId: this.id
       }
     })
-    if(!pred) return user
-    user.correct_predictions += 1
+    if(!pred) return this
+    this.correct_predictions += 1
     await prisma.predictions.update({
       where: {
         match: predictionId,
         game,
-        userId: user.id,
+        userId: this.id,
         id: pred.id
       },
       data: {
         status: "correct"
       }
     })
-    await user.save()
-    return user
+    await this.save()
+    return this
   }
   public async addWrongPrediction(game: "valorant" | "lol", predictionId: string) {
-    const user = await this.fetch(this.id) ?? this
     const pred = await prisma.predictions.findFirst({
       where: {
         match: predictionId,
         game,
-        userId: user.id
+        userId: this.id
       }
     })
-    if(!pred) return user
-    user.incorrect_predictions += 1
+    if(!pred) return this
+    this.incorrect_predictions += 1
     await prisma.predictions.update({
       where: {
         match: predictionId,
         game,
-        userId: user.id,
+        userId: this.id,
         id: pred.id
       },
       data: {
         status: "wrong"
       }
     })
-    await user.save()
-    return user
+    await this.save()
+    return this
   }
   public async addPlayerToRoster(player: string, method: "CLAIM_PLAYER_BY_CLAIM_COMMAND" | "CLAIM_PLAYER_BY_COMMAND" = "CLAIM_PLAYER_BY_CLAIM_COMMAND", channel?: string) {
-    const user = await this.fetch(this.id) ?? this
-    user.roster!.reserve.push(player)
+    this.roster!.reserve.push(player)
     if(method === "CLAIM_PLAYER_BY_CLAIM_COMMAND") {
-      if(user.plan) {
-        user.claim_time = new Date(Date.now() + 5 * 60 * 1000)
+      if(this.plan) {
+        this.claim_time = new Date(Date.now() + 5 * 60 * 1000)
       }
-      else user.claim_time = new Date(Date.now() + 10 * 60 * 1000)
-      user.fates -= 1
+      else this.claim_time = new Date(Date.now() + 10 * 60 * 1000)
+      this.fates -= 1
     }
-    user.pity += 1
+    this.pity += 1
     await prisma.transactions.create({
       data: {
         type: method,
@@ -169,21 +165,20 @@ export class SabineUser implements users {
         userId: this.id
       }
     })
-    user.claims += 1
-    user.reminded = false
+    this.claims += 1
+    this.reminded = false
     if(channel) {
-      user.remindIn = channel
+      this.remindIn = channel
     }
     if(calcPlayerOvr(getPlayer(Number(player))!) >= 85) {
-      user.pity = 0
+      this.pity = 0
     }
-    await user.save()
-    return user
+    await this.save()
+    return this
   }
   public async sellPlayer(id: string, price: bigint, i: number) {
-    const user = await this.fetch(this.id) ?? this
-    user.roster!.reserve.splice(i, 1)
-    user.coins += price
+    this.roster!.reserve.splice(i, 1)
+    this.coins += price
     await prisma.transactions.create({
       data: {
         type: "SELL_PLAYER",
@@ -192,8 +187,8 @@ export class SabineUser implements users {
         userId: this.id
       }
     })
-    await user.save()
-    return user
+    await this.save()
+    return this
   }
 }
 export class SabineGuild implements guilds {
