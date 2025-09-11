@@ -100,7 +100,7 @@ export default class CommandRunner {
       return locales(user.lang ?? guild?.lang ?? "en", content, args)
     }
     if(user.warn) {
-      const updates = (await client.prisma.updates.findMany()).sort((a, b) => b.published_at - a.published_at)
+      const updates = (await client.prisma.updates.findMany()).sort((a, b) => b.published_at.getTime() - a.published_at.getTime())
       const button = new ButtonBuilder()
       .setLabel(t("helper.dont_show_again"))
       .setStyle("red")
