@@ -309,6 +309,6 @@ model matches {
 
 model updates {
   id           String    @id @map("_id")
-  published_at Int       @default(0)
+  published_at DateTime  @default(now())
   content      Content[]
 }
