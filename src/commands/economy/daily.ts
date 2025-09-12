@@ -22,28 +22,46 @@ export default createCommand({
       coins: coins.toLocaleString(),
       fates
     }) + "\n"
-    let bonus = ""
+    let bonus: string[] = []
     if(ctx.db.user.plan) {
       coins *= 5n
-      fates = Number((fates * 1.5).toFixed(0))
-      bonus += t("commands.daily.bonus", {
+      fates = Math.round(fates * 1.5)
+      bonus.push(t("commands.daily.bonus", {
         coins: "5x",
         fates: "1.5x"
-      }) + "\n"
+      }))
     }
     if(member?.premiumSince) {
       coins *= 2n
-      fates = Number((fates * 1.25).toFixed(0))
-      bonus += t("commands.daily.bonus2", {
+      fates = Math.round(fates * 1.25)
+      bonus.push(t("commands.daily.bonus2", {
         coins: "2x",
         fates: "1.25x"
-      })
+      }))
+    }
+    if(
+      (ctx.guild && ctx.db.guild) &&
+      ctx.db.guild.key?.type === "PREMIUM"
+    ) {
+      coins = BigInt(Math.round(Number(coins) * 1.5))
+      bonus.push(t("commands.daily.bonus3", {
+        coins: "1.5x"
+      }))
+    }
+    if(
+      (ctx.guild && ctx.db.guild) &&
+      ctx.db.guild.key?.type === "BOOSTER"
+    ) {
+      coins = BigInt(Math.round(Number(coins) * 1.25))
+      bonus.push(t("commands.daily.bonus4", {
+        coins: "1.25x"
+      }))
     }
     if(bonus.length) {
       content = t("commands.daily.res", {
         coins: coins.toLocaleString(),
         fates
-      }) + "\n" + bonus
+      }) + "\n" + bonus.join("\n")
     }
     ctx.db.user.coins += coins
     ctx.db.user.fates += fates
