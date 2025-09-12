@@ -143,7 +143,7 @@ export default createCommand({
       const user = await SabineUser.fetch(ctx.args[3])
       const player = getPlayer(Number(ctx.args[4]))
       if(!user || !player) return
-      const i = user.roster?.reserve.findIndex(p => p === ctx.args[4])
+      const i = user.roster.reserve.findIndex(p => p === ctx.args[4])
       if(i === -1 || i === undefined) return
       if(ctx.db.user.coins < BigInt(ctx.args[5])) {
         return await ctx.edit("commands.trade.missing_coins", {
@@ -151,10 +151,10 @@ export default createCommand({
           user: `<@${ctx.interaction.user.mention}>`          
         })
       }
-      user.roster?.reserve.splice(i, 1)
+      user.roster.reserve.splice(i, 1)
       user.coins += BigInt(ctx.args[5])
       user.trade_time = new Date(Date.now() + (60 * 60 * 1000))
-      ctx.db.user.roster?.reserve.push(ctx.args[4])
+      ctx.db.user.roster.reserve.push(ctx.args[4])
       ctx.db.user.coins -= BigInt(ctx.args[5])
       ctx.db.user.trade_time = new Date(Date.now() + (60 * 60 * 1000))
       await client.prisma.transactions.createMany({

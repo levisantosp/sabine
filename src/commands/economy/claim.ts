@@ -125,10 +125,10 @@ export default createCommand({
   },
   async createMessageComponentInteraction({ ctx }) {
     ctx.setFlags(64)
-    if(!ctx.db.user.roster?.reserve.includes(ctx.args[3])) {
+    if(!ctx.db.user.roster.reserve.includes(ctx.args[3])) {
       return await ctx.reply("commands.sell.player_not_found")
     }
-    const i = ctx.db.user.roster?.reserve.findIndex(p => p === ctx.args[3])
+    const i = ctx.db.user.roster.reserve.findIndex(p => p === ctx.args[3])
     if(ctx.args[2] === "promote") {
       if(ctx.db.user.roster.active.length >= 5 ) {
         ctx.db.user.roster.reserve.push(ctx.db.user.roster.active.at(-1)!)

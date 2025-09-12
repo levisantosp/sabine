@@ -122,7 +122,7 @@ export default createCommand({
     )
     const authorCounts: {[key: string]: number} = {}
     const userCounts: {[key: string]: number} = {}
-    for(const p of ctx.db.user.roster?.active ?? []) {
+    for(const p of ctx.db.user.roster.active ?? []) {
       authorCounts[p] = (authorCounts[p] || 0) + 1
     }
     const authorDuplicates = Object.values(authorCounts).filter(count => count > 1).length
@@ -151,7 +151,7 @@ export default createCommand({
     if(ctx.args.at(-1) === ctx.interaction.user.id) {
       return await ctx.reply("commands.duel.cannot_duel")
     }
-    for(const p of user.roster?.active ?? []) {
+    for(const p of user.roster.active ?? []) {
       userCounts[p] = (userCounts[p] || 0) + 1
     }
     const userDuplicates = Object.values(userCounts).filter(count => count > 1).length
