@@ -338,11 +338,11 @@
     "spike_defused": "- Spike desarmada\n- **{t}** venceu o round",
     "spike_planted": "- *Spike plantada no bomb site {bomb}*",
     "mode": {
-      "ranked": "Partida Modo Ranqueado",
-      "unranked": "Partida Modo Sem Classificação",
-      "swiftplay:ranked": "Partida Modo Frenético Ranqueado",
-      "swiftplay:unranked": "Partida Modo Frenético",
-      "tournament": "Partida Modo Torneio"
+      "ranked": "Modo de Jogo: Ranqueado",
+      "unranked": "Modo de Jogo: Sem Classificação",
+      "swiftplay:ranked": "Modo de Jogo: Frenético Ranqueado",
+      "swiftplay:unranked": "Modo de Jogo: Frenético",
+      "tournament": "Modo de Jogo: Torneio"
     },
     "match_started": "Partida Iniciada",
     "processing": "<a:loading:809221866434199634> Processando a rodada...\n",

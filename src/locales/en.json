@@ -338,11 +338,11 @@
     "spike_defused": "- Spike defused\n- **{t}** won the round",
     "spike_planted": "- *Spike planted at bomb site {bomb}*",
     "mode": {
-      "ranked": "Ranked Mode Match",
-      "unranked": "Unranked Mode Match",
-      "swiftplay:ranked": "Ranked Swiftplay Mode Match",
-      "swiftplay:unranked": "Swiftplay Mode Match",
-      "tournament": "Tournament Mode Match"
+      "ranked": "Game Mode: Ranked",
+      "unranked": "Game Mode: Unranked",
+      "swiftplay:ranked": "Game Mode: Ranked Swiftplay",
+      "swiftplay:unranked": "Game Mode: Swiftplay",
+      "tournament": "Game Mode: Tournament"
     },
     "match_started": "Match Started",
     "processing": "<a:loading:809221866434199634> Processing the round...\n",
