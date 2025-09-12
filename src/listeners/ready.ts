@@ -12,6 +12,19 @@ import { PrismaClient } from "@prisma/client"
 const service = new Service(process.env.AUTH)
 
 const prisma = new PrismaClient()
+const tournaments: {[key: string]: RegExp[]} = {
+  "Valorant Champions Tour": [
+    /valorant champions/,
+    /valorant masters/,
+    /vct \d{4}/
+  ],
+  "Valorant Challengers League": [
+    /challengers \d{4}/
+  ],
+  "Valorant Game Changers": [
+    /game changers \d{4}/
+  ]
+}
 const sendValorantMatches = async(client: App) => {
   const res = await service.getMatches("valorant")
   if(!res || !res.length) return
@@ -19,13 +32,42 @@ const sendValorantMatches = async(client: App) => {
   if(!guilds.length) return
   const res2 = await service.getResults("valorant")
   for(const guild of guilds) {
-    if(guild.valorant_matches.length && !res2.some(d => d.id === guild.valorant_matches[guild.valorant_matches.length - 1])) continue
+    if(
+      guild.valorant_matches.length &&
+      !res2.some(d => d.id === guild.valorant_matches[guild.valorant_matches.length - 1]) &&
+      !guild.valorant_events.some(e => Object.keys(tournaments).includes(e.name))
+    ) continue
     guild.valorant_matches = []
     let data: MatchesData[]
     if(guild.valorant_events.length > 5 && !guild.key) {
-      data = res.filter(d => guild.valorant_events.reverse().slice(0, 5).some(e => e.name === d.tournament.name))
+      if(guild.valorant_events.slice().reverse().slice(0, 5).some(e => Object.keys(tournaments).includes(e.name))) {
+        data = res.filter(d =>
+          guild.valorant_events.some(e => {
+            const tour = tournaments[e.name]
+            if(!tour) return false
+            return tour.some(regex => {
+              return regex.test(d.tournament.name.replace(/\s+/g, " ").trim().toLowerCase())
+            })
+          })
+        )
+      }
+      else data = res.filter(d => guild.valorant_events.slice().reverse().slice(0, 5).some(e => e.name === d.tournament.name))
     }
-    else data = res.filter(d => guild.valorant_events.some(e => e.name === d.tournament.name))
+    else {
+      if(guild.valorant_events.some(e => Object.keys(tournaments).includes(e.name))) {
+        data = res.filter(d =>
+          guild.valorant_events.some(e => {
+            const tour = tournaments[e.name]
+            if(!tour) return false
+            return tour.some(regex => {
+              return regex.test(d.tournament.name.replace(/\s+/g, " ").trim().toLowerCase())
+            })
+          })
+        )
+      }
+      else data = res.filter(d => guild.valorant_events.some(e => e.name === d.tournament.name))
+    }
+    if(!data.length) continue
     for(const e of guild.valorant_events) {
       if(!client.getChannel(e.channel1)) continue
       try {
@@ -47,7 +89,6 @@ const sendValorantMatches = async(client: App) => {
             const index = guild.valorant_matches.findIndex((m) => m === d.id)
             if(index > -1) guild.valorant_matches.splice(index, 1)
             if(!d.stage.toLowerCase().includes("showmatch")) guild.valorant_matches.push(d.id!)
-
             const embed = new EmbedBuilder()
               .setAuthor({
                 iconURL: d.tournament.image,
@@ -92,6 +133,13 @@ const sendValorantMatches = async(client: App) => {
                 channel: e.channel1
               })
             }
+          }
+          else if(
+            guild.valorant_events.slice()
+            .reverse().slice(0, 5)
+            .some(e => Object.keys(tournaments).includes(e.name))
+          ) {
+            
           }
         }
       }
