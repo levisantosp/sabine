@@ -16,7 +16,6 @@ export default createCommand({
       return await ctx.reply("commands.daily.has_been_claimed", { t: `<t:${((ctx.db.user.daily_time.getTime()) / 1000).toFixed(0)}:R>` })
     }
     let coins = BigInt(Math.floor(Math.random() * (25000 - 10000 + 1)) + 10000)
-    console.log(coins)
     let fates = Math.floor(Math.random() * (30 - 20 + 1)) + 20
     const member = client.guilds.get("1233965003850125433")!.members.get(ctx.interaction.user.id)
     let content = t("commands.daily.res", {
