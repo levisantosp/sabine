@@ -129,7 +129,6 @@ export default class Match {
         roles[p.agent.role] = (roles[p.role] || 0) + 1
       }
       for(const p of t.roster) {
-        const count = roles[p.agent.role]
         const min = 0.07
         const increment = 0.015
         if(
@@ -143,7 +142,8 @@ export default class Match {
           p.ACS *= 0.85
           p.gamesense *= 0.85
         }
-        if(count >= 3) {
+        if(roles["initiator"] >= 3) {
+          const count = roles["initiator"]
           const debuff = 1 - Math.min(min + (count - 3) * increment, 0.10)
           p.aim *= debuff
           p.HS *= debuff
@@ -151,6 +151,44 @@ export default class Match {
           p.aggression *= debuff
           p.ACS *= debuff
           p.gamesense *= debuff
+        }
+        if(roles["sentinel"] >= 3) {
+          const count = roles["sentinel"]
+          const debuff = 1 - Math.min(min + (count - 3) * increment, 0.10)
+          p.aim *= debuff
+          p.HS *= debuff
+          p.movement *= debuff
+          p.aggression *= debuff
+          p.ACS *= debuff
+          p.gamesense *= debuff
+        }
+        if(roles["duelist"] >= 3) {
+          const count = roles["duelist"]
+          const debuff = 1 - Math.min(min + (count - 3) * increment, 0.10)
+          p.aim *= debuff
+          p.HS *= debuff
+          p.movement *= debuff
+          p.aggression *= debuff
+          p.ACS *= debuff
+          p.gamesense *= debuff
+        }
+        if(roles["controller"] >= 3) {
+          const count = roles["controller"]
+          const debuff = 1 - Math.min(min + (count - 3) * increment, 0.10)
+          p.aim *= debuff
+          p.HS *= debuff
+          p.movement *= debuff
+          p.aggression *= debuff
+          p.ACS *= debuff
+          p.gamesense *= debuff
+        }
+        if(!roles["controller"]) {
+          p.aim *= 0.95
+          p.HS *= 0.95
+          p.movement *= 0.95
+          p.aggression *= 0.95
+          p.ACS *= 0.95
+          p.gamesense *= 0.95
         }
         if(
           !valorant_maps.filter(m => m.name === this.map)[0].meta_agents
