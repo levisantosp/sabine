@@ -27,15 +27,14 @@ const tournaments: {[key: string]: RegExp[]} = {
 }
 const sendValorantMatches = async(client: App) => {
   const res = await service.getMatches("valorant")
+  const res2 = await service.getResults("valorant")
   if(!res || !res.length) return
   const guilds = await prisma.guilds.findMany()
   if(!guilds.length) return
-  const res2 = await service.getResults("valorant")
   for(const guild of guilds) {
     if(
       guild.valorant_matches.length &&
-      !res2.some(d => d.id === guild.valorant_matches[guild.valorant_matches.length - 1]) &&
-      !guild.valorant_events.some(e => Object.keys(tournaments).includes(e.name))
+      !res2.some(d => d.id === guild.valorant_matches[guild.valorant_matches.length - 1])
     ) continue
     guild.valorant_matches = []
     let data: MatchesData[]
@@ -45,9 +44,9 @@ const sendValorantMatches = async(client: App) => {
           guild.valorant_events.some(e => {
             const tour = tournaments[e.name]
             if(!tour) return false
-            return tour.some(regex => {
-              return regex.test(d.tournament.name.replace(/\s+/g, " ").trim().toLowerCase())
-            })
+            return tour.some(regex =>
+              regex.test(d.tournament.name.replace(/\s+/g, " ").trim().toLowerCase())
+            )
           })
         )
       }
@@ -59,9 +58,9 @@ const sendValorantMatches = async(client: App) => {
           guild.valorant_events.some(e => {
             const tour = tournaments[e.name]
             if(!tour) return false
-            return tour.some(regex => {
-              return regex.test(d.tournament.name.replace(/\s+/g, " ").trim().toLowerCase())
-            })
+            return tour.some(regex =>
+              regex.test(d.tournament.name.replace(/\s+/g, " ").trim().toLowerCase())
+            )
           })
         )
       }
@@ -135,11 +134,60 @@ const sendValorantMatches = async(client: App) => {
             }
           }
           else if(
-            guild.valorant_events.slice()
-            .reverse().slice(0, 5)
-            .some(e => Object.keys(tournaments).includes(e.name))
+            tournaments[e.name] &&
+            tournaments[e.name].some(regex =>
+              regex.test(d.tournament.name.replace(/\s+/g, " ").trim().toLowerCase())
+            )
           ) {
-            
+            const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
+            const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
+            const index = guild.valorant_matches.findIndex((m) => m === d.id)
+            if(index > -1) guild.valorant_matches.splice(index, 1)
+            if(!d.stage.toLowerCase().includes("showmatch")) guild.valorant_matches.push(d.id!)
+            const embed = new EmbedBuilder()
+              .setAuthor({
+                iconURL: d.tournament.image,
+                name: d.tournament.name
+              })
+              .setField(`${emoji1} ${d.teams[0].name} <:versus:1349105624180330516> ${d.teams[1].name} ${emoji2}`, `<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`, true)
+              .setFooter({
+                text: d.stage
+              })
+            const button = new ButtonBuilder()
+              .setLabel(t(guild.lang ?? "en", "helper.palpitate"))
+              .setCustomId(`predict;valorant;${d.id}`)
+              .setStyle("green")
+            const urlButton = new ButtonBuilder()
+              .setLabel(t(guild.lang ?? "en", "helper.stats"))
+              .setStyle("link")
+              .setURL(`https://vlr.gg/${d.id}`)
+            if(d.stage.toLowerCase().includes("showmatch")) continue
+            if(d.teams[0].name !== "TBD" && d.teams[1].name !== "TBD") await client.rest.channels.createMessage(e.channel1, {
+              embeds: [embed],
+              components: [
+                {
+                  type: 1,
+                  components: [
+                    button,
+                    new ButtonBuilder()
+                      .setLabel(t(guild.lang ?? "en", "helper.bet"))
+                      .setCustomId(`bet;valorant;${d.id}`)
+                      .setStyle("gray"),
+                    urlButton,
+                    new ButtonBuilder()
+                      .setLabel(t(guild.lang ?? "en", "helper.pickem.label"))
+                      .setStyle("blue")
+                      .setCustomId("pickem")
+                  ]
+                }
+              ]
+            }).catch(() => { })
+            else {
+              guild.valorant_tbd_matches.push({
+                id: d.id!,
+                channel: e.channel1
+              })
+            }
           }
         }
       }
