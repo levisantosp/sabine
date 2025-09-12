@@ -1,4 +1,4 @@
-import type { CommandInteraction, ComponentInteraction } from "oceanic.js"
+import type { ComponentInteraction } from "oceanic.js"
 import type { MatchesData } from "../../types.ts"
 import Service from "../../api/index.ts"
 import locales from "../../locales/index.ts"
