@@ -21,7 +21,7 @@ export class SabineUser implements users {
   public lang: $Enums.Language = "en"
   public plan: { type: $Enums.PremiumType; expiresAt: Date; } | null = null
   public warned: boolean | null = null
-  public roster: { active: string[]; reserve: string[]; } | null = { active: [], reserve: [] }
+  public roster: { active: string[]; reserve: string[]; } = { active: [], reserve: [] }
   public coins: bigint = 0n
   public team: { name: string | null; tag: string | null; } | null = null
   public ranked_wins: number = 0
@@ -143,8 +143,17 @@ export class SabineUser implements users {
       }
       else this.claim_time = new Date(Date.now() + 10 * 60 * 1000)
       this.fates -= 1
+      this.claims += 1
+      this.reminded = false
+      this.pity += 1
+      this.claims += 1
+      if(channel) {
+        this.remindIn = channel
+      }
+      if(calcPlayerOvr(getPlayer(Number(player))!) >= 85) {
+        this.pity = 0
+      }
     }
-    this.pity += 1
     await prisma.transactions.create({
       data: {
         type: method,
@@ -152,7 +161,6 @@ export class SabineUser implements users {
         userId: this.id
       }
     })
-    this.claims += 1
     this.reminded = false
     if(channel) {
       this.remindIn = channel
