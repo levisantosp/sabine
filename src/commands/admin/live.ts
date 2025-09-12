@@ -1,4 +1,3 @@
-import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
 import createCommand from "../../structures/command/createCommand.ts"
 
 export default createCommand({
