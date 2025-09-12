@@ -10,9 +10,28 @@ import ButtonBuilder from "../../../structures/builders/ButtonBuilder.ts"
 import { PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient()
+const tournaments: {[key: string]: RegExp[]} = {
+  "Valorant Champions Tour": [
+    /valorant champions/,
+    /valorant masters/,
+    /vct \d{4}/
+  ],
+  "Valorant Challengers League": [
+    /challengers \d{4}/
+  ],
+  "Valorant Game Changers": [
+    /game changers \d{4}/
+  ]
+}
 
 export default async function(
-  fastify: FastifyInstance<RawServerDefault, IncomingMessage, ServerResponse<IncomingMessage>, FastifyBaseLogger, TypeBoxTypeProvider>
+  fastify: FastifyInstance<
+    RawServerDefault,
+    IncomingMessage,
+    ServerResponse<IncomingMessage>,
+    FastifyBaseLogger,
+    TypeBoxTypeProvider
+  >
 ) {
   fastify.post("/webhooks/live/valorant", {
     schema: {
@@ -48,10 +67,16 @@ export default async function(
     if(!guilds.length) return
     for(const data of req.body) {
       for(const guild of guilds) {
-        if(!guild.partner && !["PREMIUM"].some(x => x === guild.key?.type)) continue
         const channel = client.getChannel(guild.valorant_livefeed_channel!) as TextChannel
         if(!channel) continue
-        if(!guild.valorant_events.some(e => e.name === data.tournament.name)) continue
+        if(
+          !guild.valorant_events.some(e => e.name === data.tournament.name) &&
+          !guild.valorant_events.some(e =>
+            tournaments[e.name]?.some(regex =>
+              regex.test(data.tournament.name.replace(/\s+/g, " ").trim().toLowerCase())
+            )
+          )
+        ) continue
         const emoji1 = emojis.find(e => e?.name === data.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
         const emoji2 = emojis.find(e => e?.name === data.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
         const embed = new EmbedBuilder()

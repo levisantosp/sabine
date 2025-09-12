@@ -34,7 +34,6 @@ export default async function(
     })
     if(!guilds.length) return
     for(const guild of guilds) {
-      if(!guild.partner && !["PREMIUM"].some(x => x === guild.key?.type)) continue
       const channel = client.getChannel(guild.valorant_news_channel!) as TextChannel
       if(!channel) continue
       for(const data of req.body) {

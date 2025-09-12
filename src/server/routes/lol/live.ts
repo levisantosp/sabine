@@ -57,7 +57,6 @@ export default async function(
     if(!guilds.length) return
     for(const data of req.body) {
       for(const guild of guilds) {
-        if(!guild.partner && !["PREMIUM"].some(x => x === guild.key?.type)) continue
         const channel = client.getChannel(guild.lol_livefeed_channel!) as TextChannel
         if(!channel) continue
         if(!guild.lol_events.some(e => e.name === data.tournament.name)) continue
