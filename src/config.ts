@@ -431,7 +431,6 @@ export const valorant_maps: {
       "KAY/O",
       "Gekko"
     ],
-    current_map_pool: true,
     image: "https://imgur.com/aQrhYgx.png",
     sides: ["A", "B"]
   },
@@ -518,6 +517,7 @@ export const valorant_maps: {
       "Jett",
       "Yoru"
     ],
+    current_map_pool: true,
     image: "https://imgur.com/7b8pgQz.png",
     sides: ["A", "B"]
   },
