@@ -341,7 +341,8 @@
       "ranked": "Partida Modo Ranqueado",
       "unranked": "Partida Modo Sem Classificação",
       "swiftplay:ranked": "Partida Modo Frenético Ranqueado",
-      "swiftplay:unranked": "Partida Modo Frenético"
+      "swiftplay:unranked": "Partida Modo Frenético",
+      "tournament": "Partida Modo Torneio"
     },
     "match_started": "Partida Iniciada",
     "processing": "<a:loading:809221866434199634> Processando a rodada...\n",

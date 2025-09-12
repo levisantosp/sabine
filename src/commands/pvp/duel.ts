@@ -2,6 +2,7 @@ import { ApplicationCommandOptionTypes } from "oceanic.js"
 import createCommand from "../../structures/command/createCommand.ts"
 import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
 import { SabineUser } from "../../database/index.ts"
+import { valorant_maps } from "../../config.ts"
 
 export default createCommand({
   name: "duel",
@@ -114,12 +115,59 @@ export default createCommand({
           ]
         }
       ]
+    },
+    {
+      type: ApplicationCommandOptionTypes.SUB_COMMAND,
+      name: "tournament",
+      nameLocalizations: {
+        "pt-BR": "torneio"
+      },
+      description: "Start a tournament duel",
+      descriptionLocalizations: {
+        "pt-BR": "Inicia um confronto em torneio"
+      },
+      options: [
+        {
+          type: ApplicationCommandOptionTypes.USER,
+          name: "user",
+          nameLocalizations: {
+            "pt-BR": "usuário"
+          },
+          description: "Provide a user",
+          descriptionLocalizations: {
+            "pt-BR": "Informe o usuário"
+          },
+          required: true
+        },
+        {
+          type: ApplicationCommandOptionTypes.STRING,
+          name: "map",
+          nameLocalizations: {
+            "pt-BR": "mapa"
+          },
+          description: "Select the map",
+          descriptionLocalizations: {
+            "pt-BR": "Selecione o mapa"
+          },
+          choices: valorant_maps.filter(m => m.current_map_pool).map(m => ({
+            name: m.name,
+            value: m.name
+          })),
+          required: true
+        }
+      ]
     }
   ],
   async run({ ctx, t, client }) {
-    const user = await SabineUser.fetch(
-      typeof ctx.args.at(-1) === "boolean" ? ctx.args[ctx.args.length - 2].toString() : ctx.args.at(-1)!.toString()
-    )
+    let id: string
+    if(ctx.args.length === 2) {
+      id = ctx.args[1].toString()
+    }
+    else if(ctx.args.length === 3 && ctx.args[0] === "tournament") {
+      id = ctx.args[1].toString()
+    }
+    else id = ctx.args[2].toString()
+    const user = await SabineUser.fetch(id)
     const authorCounts: {[key: string]: number} = {}
     const userCounts: {[key: string]: number} = {}
     for(const p of ctx.db.user.roster.active ?? []) {
@@ -159,17 +207,27 @@ export default createCommand({
       return await ctx.reply("commands.duel.duplicated_cards2")
     }
     let mode: string
+    let map = ""
     if(ctx.args.length === 2) {
       mode = ctx.args.slice(0, 1).join(";")
+      id = ctx.args[1].toString()
     }
-    else mode = ctx.args.slice(0, 2).join(";")
+    else if(ctx.args.length === 3 && ctx.args[0] === "tournament") {
+      mode = ctx.args.slice(0, 1).join(";")
+      id = ctx.args[1].toString()
+      map = `;${ctx.args[2].toString()}`
+    }
+    else {
+      mode = ctx.args.slice(0, 2).join(";")
+      id = ctx.args[2].toString()
+    }
     const button = new ButtonBuilder()
     .setStyle("green")
     .setLabel(t("commands.duel.button"))
-    .setCustomId(`accept;${ctx.args.at(-1)};${ctx.interaction.user.id};${mode}`)
+    .setCustomId(`accept;${id};${ctx.interaction.user.id};${mode}${map}`)
     await ctx.reply(button.build(t("commands.duel.request", {
       author: ctx.interaction.user.mention,
-      opponent: `<@${ctx.args.at(-1)}>`,
+      opponent: `<@${id}>`,
       mode: t(`commands.duel.mode.${mode}`)
     })))
   }

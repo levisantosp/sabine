@@ -34,7 +34,10 @@ export default createComponentInteraction({
     if(ctx.args.includes("ranked")) {
       maps = maps.filter(map => map.current_map_pool)
     }
-    const map = maps[Math.floor(Math.random() * maps.length)]
+    let map = maps[Math.floor(Math.random() * maps.length)]
+    if(ctx.args.includes("tournament")) {
+      map = valorant_maps.filter(m => m.name === ctx.args[4])[0]
+    }
     const embed = new EmbedBuilder()
     .setTitle(t("commands.duel.embed.title"))
     .setDesc(t("commands.duel.embed.desc"))
@@ -140,7 +143,7 @@ export default createComponentInteraction({
         channelId: msg.resource.message.channelID,
         map: map.name,
         image: map.image,
-        mode: ctx.args.slice(3).join(":")
+        mode: ctx.args[3] === "tournament" ? "tournament" : ctx.args.slice(3).join(":")
       }
     ), {
       expiration: {

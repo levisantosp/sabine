@@ -160,7 +160,8 @@ export default createComponentInteraction({
           t,
           mode: data.mode,
           map: data.map,
-          content: ""
+          content: "",
+          overtime: data.mode === "tournament" ? true : false
         })
         const embed = new EmbedBuilder()
         .setTitle(t(`simulator.mode.${match.mode}`))

@@ -21,13 +21,18 @@ export default class Round extends Match {
         return await this.finish(score1, score2)
       }
     }
+    else if(this.mode === "tournament") {
+      if((score1 === 13 || score2 === 13) && this.rounds.length <= 24) {
+        return await this.finish(score1, score2)
+      }
+      else if((score1 > 13 || score2 > 13) && Math.abs(score1 - score2) === 2) {
+        return await this.finish(score1, score2)
+      }
+    }
     else if(!this.overtime) {
       if(score1 >= this.maxScore || score2 >= this.maxScore) {
         return await this.finish(score1, score2)
       }
-    }
-    else if(this.overtime && (score1 > 13 || score2 > 13) && Math.abs(score1 - score2) === 2) {
-      return await this.finish(score1, score2)
     }
     if(this.rounds.length >= 24) {
       await this.switchSides()
