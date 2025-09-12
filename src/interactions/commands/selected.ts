@@ -55,7 +55,7 @@ export default createComponentInteraction({
               ctx.db.user.team!.name! :
               user.team!.name!,
         value: key.split(":")[1] === ctx.interaction.user.id ?
-          ctx.db.user.roster!.active.map(id => {
+          ctx.db.user.roster.active.map(id => {
             const player = getPlayer(id)!
             let emoji: string | undefined = "<a:loading:809221866434199634>"
             const i = data[ctx.interaction.user.id].findIndex((p: any) => p.id.toString() === id)
@@ -69,7 +69,7 @@ export default createComponentInteraction({
             const ovr = parseInt(calcPlayerOvr(player).toString())
             return `${emoji} ${player.name} (${ovr})`
           }).join("\n") :
-          user.roster!.active.map(id => {
+          user.roster.active.map(id => {
             const player = getPlayer(id)!
             let emoji: string | undefined = "<a:loading:809221866434199634>"
             const i = data[user.id].findIndex((p: any) => p.id.toString() === id)
@@ -90,7 +90,7 @@ export default createComponentInteraction({
               ctx.db.user.team!.name! :
               user.team!.name!,
         value: key.split(":")[1] !== ctx.interaction.user.id ?
-          ctx.db.user.roster!.active.map(id => {
+          ctx.db.user.roster.active.map(id => {
             const player = getPlayer(id)!
             let emoji: string | undefined = "<a:loading:809221866434199634>"
             const i = data[ctx.interaction.user.id].findIndex((p: any) => p.id.toString() === id)
@@ -104,7 +104,7 @@ export default createComponentInteraction({
             const ovr = parseInt(calcPlayerOvr(player).toString())
             return `${emoji} ${player.name} (${ovr})`
           }).join("\n") :
-          user.roster!.active.map(id => {
+          user.roster.active.map(id => {
             const player = getPlayer(id)!
             let emoji: string | undefined = "<a:loading:809221866434199634>"
             const i = data[user.id].findIndex((p: any) => p.id.toString() === id)

@@ -136,7 +136,7 @@ export class SabineUser implements users {
     return this
   }
   public async addPlayerToRoster(player: string, method: "CLAIM_PLAYER_BY_CLAIM_COMMAND" | "CLAIM_PLAYER_BY_COMMAND" = "CLAIM_PLAYER_BY_CLAIM_COMMAND", channel?: string) {
-    this.roster!.reserve.push(player)
+    this.roster.reserve.push(player)
     if(method === "CLAIM_PLAYER_BY_CLAIM_COMMAND") {
       if(this.plan) {
         this.claim_time = new Date(Date.now() + 5 * 60 * 1000)
@@ -172,7 +172,7 @@ export class SabineUser implements users {
     return this
   }
   public async sellPlayer(id: string, price: bigint, i: number) {
-    this.roster!.reserve.splice(i, 1)
+    this.roster.reserve.splice(i, 1)
     this.coins += price
     await prisma.transactions.create({
       data: {

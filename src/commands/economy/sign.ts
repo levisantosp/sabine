@@ -76,7 +76,7 @@ export default createCommand({
     const ovr = parseInt(calcPlayerOvr(player).toString())
     if(price > ctx.db.user.coins) return ctx.reply("commands.sign.coins_needed")
     ctx.db.user.coins -= BigInt(price)
-    ctx.db.user.roster!.reserve.push(player.id.toString())
+    ctx.db.user.roster.reserve.push(player.id.toString())
     await client.prisma.transactions.create({
       data: {
         userId: ctx.db.user.id,

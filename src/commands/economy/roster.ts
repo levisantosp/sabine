@@ -17,8 +17,8 @@ export default createCommand({
   userInstall: true,
   messageComponentInteractionTime: 5 * 60 * 1000,
   async run({ ctx, t }) {
-    const active_players = ctx.db.user.roster!.active
-    const reserve_players = ctx.db.user.roster!.reserve
+    const active_players = ctx.db.user.roster.active
+    const reserve_players = ctx.db.user.roster.reserve
     let value = 0
     let ovr = 0
     for(const p of active_players) {
@@ -113,8 +113,8 @@ export default createCommand({
     if(ctx.args[2] === "file") {
       await ctx.interaction.defer(64)
       let players = ""
-      const active_players = ctx.db.user.roster!.active
-      const reserve_players = ctx.db.user.roster!.reserve
+      const active_players = ctx.db.user.roster.active
+      const reserve_players = ctx.db.user.roster.reserve
       for(const p of active_players) {
         if(!active_players.length) break
         const player = getPlayer(Number(p))

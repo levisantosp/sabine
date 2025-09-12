@@ -110,7 +110,7 @@ export default createCommand({
   async createAutocompleteInteraction({ i }) {
     const user = (await SabineUser.fetch(i.user.id)) ?? new SabineUser(i.user.id)
     const players: Array<{ name: string, ovr: number, id: string }> = []
-    for(const p_id of user.roster!.reserve) {
+    for(const p_id of user.roster.reserve) {
       const p = getPlayer(Number(p_id))
       if(!p) break
       const ovr = parseInt(calcPlayerOvr(p).toString())
