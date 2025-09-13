@@ -22,7 +22,7 @@ export default createCommand({
       coins: coins.toLocaleString(),
       fates
     }) + "\n"
-    let bonus: string[] = []
+    const bonus: string[] = []
     if(ctx.db.user.plan) {
       coins *= 5n
       fates = Math.round(fates * 1.5)
