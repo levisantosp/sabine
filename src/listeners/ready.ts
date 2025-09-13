@@ -441,7 +441,7 @@ export default createListener({
       ])
     }
     await client.bulkEditGlobalCommands()
-    client.queue.process("reminder", async job => {
+    await client.queue.process("reminder", async job => {
       const user = await SabineUser.fetch(job.data.user)
       if(!user) return
       if(
