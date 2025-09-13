@@ -133,7 +133,8 @@ export default class Match {
         const increment = 0.015
         if(
           (p.role !== "flex" && p.agent.role !== p.role) &&
-          (p.role !== "sentinel" && p.agent.name !== "Viper")
+          (p.role !== "sentinel" && p.agent.name !== "Viper") &&
+          (p.role !== "duelist") && p.agent.name === "Chamber"
         ) {
           p.aim *= 0.85
           p.HS *= 0.85
