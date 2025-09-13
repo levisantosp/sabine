@@ -320,7 +320,7 @@
     },
     "remind": {
       "enabled": "Now I'll notify you when your `/claim` is ready!",
-      "disabled": "Now I won't nofify you when your `/claim` is ready!"
+      "disabled": "Now I won't notify you when your `/claim` is ready!"
     }
   },
   "simulator": {
