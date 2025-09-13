@@ -1,9 +1,24 @@
-import { calcPlayerOvr, calcPlayerPrice, getPlayer } from "players"
+import {
+  calcPlayerOvr,
+  calcPlayerPrice,
+  getPlayers,
+  type Player
+} from "players"
 import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
 import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
 import createCommand from "../../structures/command/createCommand.ts"
 import { emojis } from "../../util/emojis.ts"
 
+const players = new Map<string, Player>(
+  getPlayers().map(p => [
+    p.id.toString(),
+    {
+      ...p,
+      ovr: calcPlayerOvr(p),
+      price: calcPlayerPrice(p)
+    }
+  ])
+)
 export default createCommand({
   name: "roster",
   category: "economy",
@@ -19,29 +34,27 @@ export default createCommand({
   async run({ ctx, t }) {
     const active_players = ctx.db.user.roster.active
     const reserve_players = ctx.db.user.roster.reserve
-    let value = 0
+    let value = 0n
     let ovr = 0
     for(const p of active_players) {
-      const o = calcPlayerOvr(getPlayer(Number(p))!)
-      const player = getPlayer(Number(p))
-      if(!player) break
-      ovr += o
-      value += calcPlayerPrice(player)
+      const player = players.get(p)
+      if(!player || !player.ovr || !player.price) break
+      ovr += player.ovr
+      value += player.price
     }
     for(const p of reserve_players) {
-      const o = calcPlayerOvr(getPlayer(Number(p))!)
-      const player = getPlayer(Number(p))
-      if(!player) break
-      ovr += o
-      value += calcPlayerPrice(player)
+      const player = players.get(p)
+      if(!player || !player.ovr || !player.price) break
+      ovr += player.ovr
+      value += player.price
     }
     const embed = new EmbedBuilder()
     .setTitle(t("commands.roster.embed.title"))
     .setDesc(t(
       "commands.roster.embed.desc",
       {
-        value: parseInt(value.toString()).toLocaleString("en-US"),
-        ovr: (ovr / (active_players.length + reserve_players.length)).toFixed(0),
+        value: parseInt(value.toString()).toLocaleString(),
+        ovr: Math.floor(ovr / (active_players.length + reserve_players.length)),
         name: ctx.db.user.team?.name ? `${ctx.db.user.team.name} (${ctx.db.user.team.tag})` : "`undefined`"
       }
     ))
@@ -49,17 +62,17 @@ export default createCommand({
     let active_content = ""
     let reserve_content = ""
     for(const p_id of active_players) {
-      const player = getPlayer(Number(p_id))!
-      const ovr = parseInt(calcPlayerOvr(player).toString())
-      active_content += `${emojis.find(e => e.name === player.role)?.emoji} ${player.name} (${ovr}) — ${player.collection}\n`
+      const player = players.get(p_id)
+      if(!player || !player.ovr) break
+      active_content += `${emojis.find(e => e.name === player.role)?.emoji} ${player.name} (${Math.floor(player.ovr)}) — ${player.collection}\n`
     }
     let i = 0
     for(const p_id of reserve_players) {
       i++
       if(i >= 10) break
-      const player = getPlayer(Number(p_id))!
-      const ovr = parseInt(calcPlayerOvr(player).toString())
-      reserve_content += `${emojis.find(e => e.name === player.role)?.emoji} ${player.name} (${ovr}) — ${player.collection}\n`
+      const player = players.get(p_id)
+      if(!player || !player.ovr) break
+      reserve_content += `${emojis.find(e => e.name === player.role)?.emoji} ${player.name} (${Math.floor(player.ovr)}) — ${player.collection}\n`
     }
     if(reserve_players.length > 10) {
       reserve_content += `- +${reserve_players.length - 10}...`
@@ -112,24 +125,22 @@ export default createCommand({
   async createMessageComponentInteraction({ ctx, i, t }) {
     if(ctx.args[2] === "file") {
       await ctx.interaction.defer(64)
-      let players = ""
+      let playersContent = ""
       const active_players = ctx.db.user.roster.active
       const reserve_players = ctx.db.user.roster.reserve
       for(const p of active_players) {
         if(!active_players.length) break
-        const player = getPlayer(Number(p))
-        if(!player) continue
-        const ovr = calcPlayerOvr(player)
-        players += `${player.name} (${parseInt(ovr.toString())}) — ${player.collection}\n`
+        const player = players.get(p)
+        if(!player || !player.ovr) continue
+        playersContent += `${player.name} (${parseInt(player.ovr.toString())}) — ${player.collection}\n`
       }
       for(const p of reserve_players) {
         if(!reserve_players.length) break
-        const player = getPlayer(Number(p))
-        if(!player) continue
-        const ovr = calcPlayerOvr(player)
-        players += `${player.name} (${parseInt(ovr.toString())}) — ${player.collection}\n`
+        const player = players.get(p)
+        if(!player || !player.ovr) continue
+        playersContent += `${player.name} (${parseInt(player.ovr.toString())}) — ${player.collection}\n`
       }
-      const txt = Buffer.from(players, "utf-8")
+      const txt = Buffer.from(playersContent, "utf-8")
       await ctx.reply("", {
         files: [
           {
