@@ -9,6 +9,7 @@ import EmbedBuilder from "../structures/builders/EmbedBuilder.ts"
 import ButtonBuilder from "../structures/builders/ButtonBuilder.ts"
 import App from "../structures/client/App.ts"
 import { PrismaClient } from "@prisma/client"
+import { SabineUser } from "../database/index.ts"
 const service = new Service(process.env.AUTH)
 
 const prisma = new PrismaClient()
@@ -406,40 +407,6 @@ const sendLolTBDMatches = async(client: App) => {
     }
   }
 }
-const remindUsers = async(client: App) => {
-  const users = await client.prisma.users.findMany({
-    where: {
-      remind: {
-        not: false
-      },
-      reminded: {
-        not: true
-      },
-      remindIn: {
-        not: null
-      },
-      claim_time: {
-        lte: new Date()
-      }
-    }
-  })
-  for(const user of users) {
-    if(!user.remindIn) continue
-    const channel = await client.rest.channels.get(user.remindIn) as TextChannel
-    await channel.createMessage({
-      content: t(user.lang, "helper.reminder", { user: `<@${user.id}>` })
-    })
-    await client.prisma.users.update({
-      where: {
-        id: user.id
-      },
-      data: {
-        reminded: true
-      }
-    })
-  }
-  setTimeout(async() => await remindUsers(client), 60 * 1000)
-}
 const runInBatches = async(client: App, tasks: any[], batch_size: number) => {
   for(let i = 0;i < tasks.length;i += batch_size) {
     const batch = tasks.slice(i, i + batch_size)
@@ -474,7 +441,21 @@ export default createListener({
       ])
     }
     await client.bulkEditGlobalCommands()
-    await remindUsers(client)
+    client.queue.process("reminder", async job => {
+      const user = await SabineUser.fetch(job.data.user)
+      if(!user) return
+      if(
+        !user.remind ||
+        user.reminded ||
+        !user.remindIn
+      ) return
+      const channel = client.getChannel(job.data.channel) as TextChannel
+      await channel.createMessage({
+        content: t(user.lang, "helper.reminder", { user: `<@${user.id}>` })
+      })
+      user.reminded = true
+      await user.save()
+    })
     await runTasks(client)
   }
 })

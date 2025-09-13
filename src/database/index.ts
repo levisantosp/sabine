@@ -1,5 +1,6 @@
 import { $Enums, type guilds, Prisma, PrismaClient, type users } from "@prisma/client"
 import { calcPlayerOvr, getPlayer } from "players"
+import { client } from "../structures/client/App.ts"
 
 const prisma = new PrismaClient()
 type PredictionTeam = {
@@ -149,6 +150,16 @@ export class SabineUser implements users {
       this.claims += 1
       if(channel) {
         this.remindIn = channel
+        if(this.remind) {
+          await client.queue.add("reminder", {
+            channel: this.remindIn,
+            user: this.id
+          }, {
+            delay: this.claim_time.getTime() - Date.now(),
+            removeOnComplete: true,
+            removeOnFail: true
+          })
+        }
       }
       if(calcPlayerOvr(getPlayer(Number(player))!) >= 85) {
         this.pity = 0

@@ -7,12 +7,20 @@ import { PrismaClient } from "@prisma/client"
 import Redis from "redis"
 import Logger from "../../util/Logger.ts"
 import type { CreateInteractionOptions } from "../interactions/createComponentInteraction.ts"
+import Queue from "bull"
 
+type Reminder = {
+  user: string
+  channel: string
+}
 const prisma = new PrismaClient()
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const redis = Redis.createClient({
   url: process.env.REDIS_URL
+})
+const queue = new Queue<Reminder>("reminder", {
+  redis: process.env.REDIS_URL
 })
 
 export default class App extends Oceanic.Client {
@@ -20,11 +28,13 @@ export default class App extends Oceanic.Client {
   public _uptime: number = Date.now()
   public prisma: typeof prisma
   public redis: typeof redis
+  public queue: typeof queue
   public interactions: Map<string, CreateInteractionOptions> = new Map()
   public constructor(options?: Oceanic.ClientOptions) {
     super(options)
     this.prisma = prisma
     this.redis = redis
+    this.queue = queue
   }
   public override async connect() {
     const start = Date.now()
