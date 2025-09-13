@@ -48,7 +48,10 @@ const updateRedis = async() => {
   )
   setTimeout(updateRedis, 10 * 60 * 1000)
 }
-await client.redis.flushDb()
+const keys = await client.redis.keys("*leaderboard:*")
+if(keys.length) {
+  await client.redis.del(keys)
+}
 await updateRedis()
 await client.connect()
 server.listen({
