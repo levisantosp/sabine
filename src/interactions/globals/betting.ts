@@ -8,7 +8,7 @@ export default createModalSubmitInteraction({
   async run({ ctx }) {
     const games = {
       valorant: async() => {
-        const preds = await ctx.client.prisma.predictions.findMany({
+        const preds = await ctx.client.prisma.prediction.findMany({
           where: {
             game: "valorant",
             match: ctx.args[2]
@@ -37,7 +37,7 @@ export default createModalSubmitInteraction({
           odd = calcOdd(oddB)
         }
         ctx.db.user.coins -= value
-        await client.prisma.predictions.update({
+        await client.prisma.prediction.update({
           where: {
             id: preds[index].id
           },
@@ -57,7 +57,7 @@ export default createModalSubmitInteraction({
         )
       },
       lol: async() => {
-        const preds = await ctx.client.prisma.predictions.findMany({
+        const preds = await ctx.client.prisma.prediction.findMany({
           where: {
             game: "lol",
             match: ctx.args[2],
@@ -89,7 +89,7 @@ export default createModalSubmitInteraction({
           odd = calcOdd(oddB)
         }
         ctx.db.user.coins -= value
-        await client.prisma.predictions.update({
+        await client.prisma.prediction.update({
           where: {
             id: preds[index].id
           },

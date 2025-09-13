@@ -19,7 +19,7 @@ export default createListener({
       embeds: [embed],
       avatarURL: client.user.avatarURL()
     }, webhook.token!)
-    await client.prisma.guilds.delete({
+    await client.prisma.guild.delete({
       where: {
         id: guild.id
       }

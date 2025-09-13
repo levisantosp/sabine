@@ -1,4 +1,4 @@
-import { $Enums, type guilds, Prisma, PrismaClient, type users } from "@prisma/client"
+import { $Enums, type Guild, PrismaClient, type User } from "@prisma/client"
 import { calcPlayerOvr, getPlayer } from "players"
 import { client } from "../structures/client/App.ts"
 
@@ -15,7 +15,7 @@ type Prediction = {
   bet: bigint | null
   odd: bigint | null
 }
-export class SabineUser implements users {
+export class SabineUser implements User {
   public id: string
   public correct_predictions: number = 0
   public incorrect_predictions: number = 0
@@ -54,19 +54,19 @@ export class SabineUser implements users {
     }
   }
   public async save() {
-    const data: Partial<users> = {}
+    const data: Partial<User> = {}
     for(const key in this) {
       if(typeof this[key] === "function" || key === "id") continue
       (data as any)[key] = this[key]
     }
-    return await prisma.users.upsert({
+    return await prisma.user.upsert({
       where: { id: this.id },
       update: data,
       create: { id: this.id, ...data }
     })
   }
   public static async fetch(id: string) {
-    const data = await prisma.users.findUnique({ where: { id } })
+    const data = await prisma.user.findUnique({ where: { id } })
     if(!data) return data
     let user = new SabineUser(data.id)
     user = Object.assign(user, data)
@@ -79,7 +79,7 @@ export class SabineUser implements users {
     return user
   }
   public async addPrediction(game: "valorant" | "lol", prediction: Prediction) {
-    await prisma.predictions.create({
+    await prisma.prediction.create({
       data: {
         ...prediction,
         game,
@@ -89,7 +89,7 @@ export class SabineUser implements users {
     return this
   }
   public async addCorrectPrediction(game: "valorant" | "lol", predictionId: string) {
-    const pred = await prisma.predictions.findFirst({
+    const pred = await prisma.prediction.findFirst({
       where: {
         match: predictionId,
         game,
@@ -98,7 +98,7 @@ export class SabineUser implements users {
     })
     if(!pred) return this
     this.correct_predictions += 1
-    await prisma.predictions.update({
+    await prisma.prediction.update({
       where: {
         match: predictionId,
         game,
@@ -113,7 +113,7 @@ export class SabineUser implements users {
     return this
   }
   public async addWrongPrediction(game: "valorant" | "lol", predictionId: string) {
-    const pred = await prisma.predictions.findFirst({
+    const pred = await prisma.prediction.findFirst({
       where: {
         match: predictionId,
         game,
@@ -122,7 +122,7 @@ export class SabineUser implements users {
     })
     if(!pred) return this
     this.incorrect_predictions += 1
-    await prisma.predictions.update({
+    await prisma.prediction.update({
       where: {
         match: predictionId,
         game,
@@ -165,7 +165,7 @@ export class SabineUser implements users {
         this.pity = 0
       }
     }
-    await prisma.transactions.create({
+    await prisma.transaction.create({
       data: {
         type: method,
         player,
@@ -185,7 +185,7 @@ export class SabineUser implements users {
   public async sellPlayer(id: string, price: bigint, i: number) {
     this.roster.reserve.splice(i, 1)
     this.coins += price
-    await prisma.transactions.create({
+    await prisma.transaction.create({
       data: {
         type: "SELL_PLAYER",
         player: id,
@@ -197,7 +197,7 @@ export class SabineUser implements users {
     return this
   }
 }
-export class SabineGuild implements guilds {
+export class SabineGuild implements Guild {
   public id: string
   public lang: $Enums.Language = "en"
   public valorant_events: { name: string; channel1: string; channel2: string; }[] = []
@@ -214,7 +214,7 @@ export class SabineGuild implements guilds {
   public lol_news_channel: string | null = null
   public lol_livefeed_channel: string | null = null
   public lol_live_matches: ({ currentMap: string | null; score1: string | null; score2: string | null; id: string; url: string | null; stage: string | null; } & { teams: { name: string; score: string; }[]; tournament: { name: string; full_name: string | null; image: string | null; }; })[] = []
-  public key: { type: $Enums.KeyType; expiresAt: Date | null; id: string; } | null = null
+  public key: { type: $Enums.KeyEnum; expiresAt: Date | null; id: string; } | null = null
   public tournamentsLength: number = 5
   public partner: boolean | null = null
   public invite: string | null = null
@@ -222,19 +222,19 @@ export class SabineGuild implements guilds {
     this.id = id
   }
   public async save() {
-    const data: Partial<guilds> = {}
+    const data: Partial<Guild> = {}
     for(const key in this) {
       if(typeof this[key] === "function" || key === "id") continue
       (data as any)[key] = this[key]
     }
-    return await prisma.guilds.upsert({
+    return await prisma.guild.upsert({
       where: { id: this.id },
       update: data,
-      create: { id: this.id, ...data } as Prisma.guildsCreateInput
+      create: { id: this.id, ...data }
     })
   }
   public static async fetch(id: string) {
-    const data = await prisma.guilds.findUnique({ where: { id } })
+    const data = await prisma.guild.findUnique({ where: { id } })
     if(!data) return data
     const guild = new SabineGuild(data.id)
     return Object.assign(guild, data)

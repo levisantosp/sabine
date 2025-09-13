@@ -33,7 +33,7 @@ export default createCommand({
   ephemeral: true,
   async run({ ctx, t, client }) {
     if(!ctx.guild) return
-    const key = await client.prisma.keys.findFirst({
+    const key = await client.prisma.key.findFirst({
       where: {
         user: ctx.db.user.id
       }
@@ -55,7 +55,7 @@ export default createCommand({
       await ctx.reply(button.build(t("commands.activatekey.would_like_to_continue", { key: ctx.db.guild!.key.type })))
     }
     else {
-      await client.prisma.keys.update({
+      await client.prisma.key.update({
         where: {
           id: key.id
         },
@@ -66,7 +66,7 @@ export default createCommand({
           }
         }
       })
-      await client.prisma.guilds.update({
+      await client.prisma.guild.update({
         where: {
           id: ctx.db.guild!.id
         },
@@ -86,7 +86,7 @@ export default createCommand({
   async createMessageComponentInteraction({ ctx, client }) {
     if(!ctx.guild) return
     await ctx.interaction.defer(64)
-    const key = await client.prisma.keys.findFirst({
+    const key = await client.prisma.key.findFirst({
       where: {
         user: ctx.db.user.id
       }
@@ -100,7 +100,7 @@ export default createCommand({
     if(key.type === "PREMIUM" && key.activeIn.length >= 2) {
       return await ctx.reply("commands.activatekey.limit_reached")
     }
-    await client.prisma.keys.update({
+    await client.prisma.key.update({
       where: {
         id: key.id
       },
@@ -111,7 +111,7 @@ export default createCommand({
         }
       }
     })
-    await client.prisma.guilds.update({
+    await client.prisma.guild.update({
       where: {
         id: ctx.db.guild!.id
       },

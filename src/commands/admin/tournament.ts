@@ -317,7 +317,7 @@ export default createCommand({
           await i.result(events.map(e => ({ name: e, value: e })))
         },
         remove: async() => {
-          const guild = (await prisma.guilds.findUnique({ where: { id: i.guild!.id } }))!
+          const guild = (await prisma.guild.findUnique({ where: { id: i.guild!.id } }))!
           const events = guild.lol_events.map(e => e.name)
             .filter(e => {
               if(e.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e

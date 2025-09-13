@@ -39,14 +39,14 @@ export default async function(
       )
     }
   }, async(req) => {
-    const guilds = await prisma.guilds.findMany({
+    const guilds = await prisma.guild.findMany({
       where: {
         lol_events: {
           isEmpty: false
         }
       }
     })
-    const preds = await prisma.predictions.findMany({
+    const preds = await prisma.prediction.findMany({
       where: {
         game: "lol"
       }
@@ -130,7 +130,7 @@ export default async function(
             user.fates += 10
             pred.odd = BigInt(odd)
             await Promise.all([
-              await prisma.predictions.update({
+              await prisma.prediction.update({
                 where: {
                   id: pred.id
                 },

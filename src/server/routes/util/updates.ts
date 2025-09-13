@@ -5,7 +5,7 @@ const prisma = new PrismaClient()
 
 export default async function(fastify: FastifyInstance) {
   fastify.get("/updates", async() => {
-    const updates = await prisma.updates.findMany()
+    const updates = await prisma.update.findMany()
     return updates
   })
 }

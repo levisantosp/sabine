@@ -57,7 +57,7 @@ export default async function(
       )
     }
   }, async(req) => {
-    const guilds = await prisma.guilds.findMany({
+    const guilds = await prisma.guild.findMany({
       where: {
         valorant_livefeed_channel: {
           isSet: true

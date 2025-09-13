@@ -8,7 +8,7 @@ import { SabineGuild, SabineUser } from "../../database/index.ts"
 import { resolve } from "node:path"
 import { readFileSync } from "node:fs"
 import Logger from "../../util/Logger.ts"
-import type { blacklist } from "@prisma/client"
+import type { Blacklist } from "@prisma/client"
 
 const locale: {[key: string]: string} = {
   pt: "br",
@@ -26,8 +26,8 @@ export default class CommandRunner {
       guild = await SabineGuild.fetch(interaction.guildID) ?? new SabineGuild(interaction.guildID)
       g = client.guilds.get(interaction.guildID)
     }
-    const value: blacklist[] = JSON.parse((await client.redis.get("blacklist"))!)
-    const blacklist = new Map<string | null, blacklist>(value.map(b => [b.id, b]))
+    const value: Blacklist[] = JSON.parse((await client.redis.get("blacklist"))!)
+    const blacklist = new Map<string | null, Blacklist>(value.map(b => [b.id, b]))
     const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
     const ban = blacklist.get(interaction.user.id)
     if(blacklist.get(interaction.guildID)) {
@@ -101,7 +101,7 @@ export default class CommandRunner {
       return locales(user.lang ?? guild?.lang ?? "en", content, args)
     }
     if(user.warn) {
-      const updates = (await client.prisma.updates.findMany()).sort((a, b) => b.published_at.getTime() - a.published_at.getTime())
+      const updates = (await client.prisma.update.findMany()).sort((a, b) => b.published_at.getTime() - a.published_at.getTime())
       const button = new ButtonBuilder()
       .setLabel(t("helper.dont_show_again"))
       .setStyle("red")

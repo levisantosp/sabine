@@ -183,7 +183,7 @@ export default createCommand({
     }
     else if(ctx.args[2] === "resend" && ctx.args[3] === "vlr") {
       await ctx.interaction.defer(64)
-      const guild = (await prisma.guilds.findUnique({ where: { id: ctx.interaction.guild!.id } }))!
+      const guild = (await prisma.guild.findUnique({ where: { id: ctx.interaction.guild!.id } }))!
       if(
         guild.valorant_resend_time &&
         guild.valorant_resend_time > new Date()
@@ -198,7 +198,7 @@ export default createCommand({
     }
     else if(ctx.args[2] === "resend" && ctx.args[3] === "lol") {
       await ctx.interaction.defer(64)
-      const guild = (await prisma.guilds.findUnique({ where: { id: ctx.interaction.guild!.id } }))!
+      const guild = (await prisma.guild.findUnique({ where: { id: ctx.interaction.guild!.id } }))!
       if(
         guild.lol_resend_time &&
         guild.lol_resend_time > new Date()
@@ -213,7 +213,7 @@ export default createCommand({
     }
     else if(ctx.args[2] === "continue" && ctx.args[3] === "vlr") {
       await (ctx.interaction as ComponentInteraction).deferUpdate()
-      const guild = (await prisma.guilds.findUnique({ where: { id: ctx.interaction.guild!.id } }))!
+      const guild = (await prisma.guild.findUnique({ where: { id: ctx.interaction.guild!.id } }))!
       if(
         guild.valorant_resend_time &&
         guild.valorant_resend_time > new Date()
@@ -303,7 +303,7 @@ export default createCommand({
         }
       }
       catch{ }
-      await prisma.guilds.update({
+      await prisma.guild.update({
         where: {
           id: ctx.interaction.guildID!
         },
@@ -317,7 +317,7 @@ export default createCommand({
     }
     else if(ctx.args[2] === "continue" && ctx.args[3] === "lol") {
       await (ctx.interaction as ComponentInteraction).deferUpdate()
-      const guild = (await prisma.guilds.findUnique({ where: { id: ctx.interaction.guild!.id } }))!
+      const guild = (await prisma.guild.findUnique({ where: { id: ctx.interaction.guild!.id } }))!
       if(
         guild.lol_resend_time &&
         guild.lol_resend_time > new Date()
@@ -404,7 +404,7 @@ export default createCommand({
         }
       }
       catch{ }
-      await prisma.guilds.update({
+      await prisma.guild.update({
         where: {
           id: ctx.interaction.guildID!
         },

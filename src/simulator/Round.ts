@@ -151,7 +151,7 @@ export default class Round extends Match {
             }
           }
         }
-        await prisma.matches.createMany({
+        await prisma.match.createMany({
           data: [
             {
               mode: "RANKED",
@@ -264,7 +264,7 @@ export default class Round extends Match {
             }
           }
         }
-        await prisma.matches.createMany({
+        await prisma.match.createMany({
           data: [
             {
               mode: "RANKED",
@@ -377,7 +377,7 @@ export default class Round extends Match {
             }
           }
         }
-        await prisma.matches.createMany({
+        await prisma.match.createMany({
           data: [
             {
               mode: "RANKED",
@@ -490,7 +490,7 @@ export default class Round extends Match {
             }
           }
         }
-        await prisma.matches.createMany({
+        await prisma.match.createMany({
           data: [
             {
               mode: "RANKED",
@@ -606,7 +606,7 @@ export default class Round extends Match {
             }
           }
         }
-        await prisma.matches.createMany({
+        await prisma.match.createMany({
           data: [
             {
               mode: "RANKED_SWIFTPLAY",
@@ -719,7 +719,7 @@ export default class Round extends Match {
             }
           }
         }
-        await prisma.matches.createMany({
+        await prisma.match.createMany({
           data: [
             {
               mode: "RANKED_SWIFTPLAY",
@@ -799,7 +799,7 @@ export default class Round extends Match {
       if(max === 5 && score1 === max) {
         user1.swiftplay_wins += 1
         user2.swiftplay_defeats += 1
-        await prisma.matches.createMany({
+        await prisma.match.createMany({
           data: [
             {
               mode: "SWIFTPLAY",
@@ -874,7 +874,7 @@ export default class Round extends Match {
       else if(max === 5 && score2 === max) {
         user2.swiftplay_wins += 1
         user1.swiftplay_defeats += 1
-        await prisma.matches.createMany({
+        await prisma.match.createMany({
           data: [
             {
               mode: "SWIFTPLAY",
@@ -952,7 +952,7 @@ export default class Round extends Match {
       if(max === 13 && score1 === max) {
         user1.unranked_wins += 1
         user2.unranked_defeats += 1
-        await prisma.matches.createMany({
+        await prisma.match.createMany({
           data: [
             {
               mode: "UNRANKED",
@@ -1027,7 +1027,7 @@ export default class Round extends Match {
       else if(max === 13 && score2 === max) {
         user2.unranked_wins += 1
         user1.unranked_defeats += 1
-        await prisma.matches.createMany({
+        await prisma.match.createMany({
           data: [
             {
               mode: "UNRANKED",
@@ -1103,7 +1103,7 @@ export default class Round extends Match {
     else if(this.mode === "tournament" && !this.overtime) {
       const max = Math.max(score1, score2)
       if(max === 13 && score1 === max) {
-        await prisma.matches.createMany({
+        await prisma.match.createMany({
           data: [
             {
               mode: "TOURNAMENT",
@@ -1176,7 +1176,7 @@ export default class Round extends Match {
         )
       }
       else if(max === 13 && score2 === max) {
-        await prisma.matches.createMany({
+        await prisma.match.createMany({
           data: [
             {
               mode: "TOURNAMENT",
@@ -1252,7 +1252,7 @@ export default class Round extends Match {
     else {
       const max = Math.max(score1, score2)
       if(max === 13 && score1 === max) {
-        await prisma.matches.createMany({
+        await prisma.match.createMany({
           data: [
             {
               mode: "TOURNAMENT",
@@ -1325,7 +1325,7 @@ export default class Round extends Match {
         )
       }
       else if(max === 13 && score2 === max) {
-        await prisma.matches.createMany({
+        await prisma.match.createMany({
           data: [
             {
               mode: "TOURNAMENT",
@@ -1398,7 +1398,7 @@ export default class Round extends Match {
         )
       }
       else if(max > 13 && score1 === max) {
-        await prisma.matches.createMany({
+        await prisma.match.createMany({
           data: [
             {
               mode: "TOURNAMENT",
@@ -1471,7 +1471,7 @@ export default class Round extends Match {
         )
       }
       else if(max > 13 && score2 === max) {
-        await prisma.matches.createMany({
+        await prisma.match.createMany({
           data: [
             {
               mode: "TOURNAMENT",

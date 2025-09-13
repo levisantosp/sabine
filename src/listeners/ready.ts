@@ -30,7 +30,7 @@ const sendValorantMatches = async(client: App) => {
   const res = await service.getMatches("valorant")
   const res2 = await service.getResults("valorant")
   if(!res || !res.length) return
-  const guilds = await prisma.guilds.findMany()
+  const guilds = await prisma.guild.findMany()
   if(!guilds.length) return
   for(const guild of guilds) {
     if(
@@ -194,7 +194,7 @@ const sendValorantMatches = async(client: App) => {
       }
     }
     catch{ }
-    await prisma.guilds.update({
+    await prisma.guild.update({
       where: {
         id: guild.id
       },
@@ -208,7 +208,7 @@ const sendValorantMatches = async(client: App) => {
 const sendValorantTBDMatches = async(client: App) => {
   const res = await service.getMatches("valorant")
   if(!res || !res.length) return
-  const guilds = await prisma.guilds.findMany()
+  const guilds = await prisma.guild.findMany()
   if(!guilds.length) return
   for(const guild of guilds) {
     if(!guild.valorant_tbd_matches.length) continue
@@ -251,7 +251,7 @@ const sendValorantTBDMatches = async(client: App) => {
         .catch(() => {})
         const index = guild.valorant_tbd_matches.findIndex((m) => m.id === match.id)
         guild.valorant_tbd_matches.splice(index, 1)
-        await prisma.guilds.update({
+        await prisma.guild.update({
           where: {
             id: guild.id
           },
@@ -267,7 +267,7 @@ const sendLolMatches = async(client: App) => {
   const res = await service.getMatches("lol")
   const res2 = await service.getResults("lol")
   if(!res || !res.length) return
-  const guilds = await prisma.guilds.findMany()
+  const guilds = await prisma.guild.findMany()
   if(!guilds.length) return
   for(const guild of guilds) {
     if(guild.lol_matches.length && !res2.some(d => d.id === guild.lol_matches[guild.lol_matches.length - 1])) continue
@@ -342,7 +342,7 @@ const sendLolMatches = async(client: App) => {
       }
     }
     catch{ }
-    await prisma.guilds.update({
+    await prisma.guild.update({
       where: {
         id: guild.id
       },
@@ -356,7 +356,7 @@ const sendLolMatches = async(client: App) => {
 const sendLolTBDMatches = async(client: App) => {
   const res = await service.getMatches("lol")
   if(!res || !res.length) return
-  const guilds = await prisma.guilds.findMany()
+  const guilds = await prisma.guild.findMany()
   if(!guilds.length) return
   for(const guild of guilds) {
     if(!guild.lol_tbd_matches.length) continue
@@ -395,7 +395,7 @@ const sendLolTBDMatches = async(client: App) => {
           .catch(() => { })
         const index = guild.lol_tbd_matches.findIndex((m) => m.id === match.id)
         guild.lol_tbd_matches.splice(index, 1)
-        await prisma.guilds.update({
+        await prisma.guild.update({
           where: {
             id: guild.id
           },

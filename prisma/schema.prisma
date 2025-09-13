@@ -19,15 +19,6 @@ enum PredictionStatus {
   wrong
 }
 
-type Prediction {
-  match  String
-  teams  PredictionTeams[]
-  status PredictionStatus
-  bet    BigInt?
-  odd    BigInt?
-  when   DateTime          @default(now())
-}
-
 enum Language {
   pt
   en
@@ -90,13 +81,13 @@ type LiveMatch {
   tournament LiveMatchTour
 }
 
-enum KeyType {
+enum KeyEnum {
   BOOSTER
   PREMIUM
 }
 
-type Key {
-  type      KeyType
+type KeyType {
+  type      KeyEnum
   expiresAt DateTime?
   id        String
 }
@@ -122,14 +113,6 @@ enum TransactionType {
   SIGN_PLAYER
 }
 
-type Transaction {
-  type   TransactionType
-  player String
-  when   DateTime        @default(now())
-  price  BigInt?         @db.Long
-  user   String?
-}
-
 enum Packet {
   IRON
   BRONZE
@@ -147,7 +130,7 @@ enum BlacklistType {
   USER
 }
 
-model blacklist {
+model Blacklist {
   id     String        @id @map("_id")
   type   BlacklistType
   name   String?
@@ -156,7 +139,7 @@ model blacklist {
   endsAt DateTime?
 }
 
-model guilds {
+model Guild {
   id                        String      @id @map("_id")
   lang                      Language    @default(en)
   valorant_events           Event[]
@@ -173,48 +156,48 @@ model guilds {
   lol_news_channel          String?
   lol_livefeed_channel      String?
   lol_live_matches          LiveMatch[]
-  key                       Key?
+  key                       KeyType?
   tournamentsLength         Int         @default(5) @db.Int
   partner                   Boolean?
   invite                    String?
 }
 
-model keys {
+model Key {
   id        String    @id @map("_id")
   active    Boolean   @default(false)
   activeIn  String[]
   expiresAt DateTime?
-  type      KeyType
+  type      KeyEnum
   user      String
 }
 
-model users {
-  id                       String         @id @map("_id")
-  predictions              predictions[]
-  correct_predictions      Int            @default(0) @db.Int
-  incorrect_predictions    Int            @default(0) @db.Int
-  lang                     Language       @default(en)
+model User {
+  id                       String        @id @map("_id")
+  predictions              Prediction[]
+  correct_predictions      Int           @default(0) @db.Int
+  incorrect_predictions    Int           @default(0) @db.Int
+  lang                     Language      @default(en)
   plan                     Premium?
   warned                   Boolean?
   roster                   Roster?
-  coins                    BigInt         @default(0)
+  coins                    BigInt        @default(0)
   team                     Team?
-  ranked_wins              Int            @default(0) @db.Int
-  unranked_wins            Int            @default(0) @db.Int
-  swiftplay_wins           Int            @default(0) @db.Int
-  ranked_swiftplay_wins    Int            @default(0) @db.Int
-  ranked_defeats           Int            @default(0) @db.Int
-  unranked_defeats         Int            @default(0) @db.Int
-  swiftplay_defeats        Int            @default(0) @db.Int
-  ranked_swiftplay_defeats Int            @default(0) @db.Int
+  ranked_wins              Int           @default(0) @db.Int
+  unranked_wins            Int           @default(0) @db.Int
+  swiftplay_wins           Int           @default(0) @db.Int
+  ranked_swiftplay_wins    Int           @default(0) @db.Int
+  ranked_defeats           Int           @default(0) @db.Int
+  unranked_defeats         Int           @default(0) @db.Int
+  swiftplay_defeats        Int           @default(0) @db.Int
+  ranked_swiftplay_defeats Int           @default(0) @db.Int
   daily_time               DateTime?
   claim_time               DateTime?
-  warn                     Boolean        @default(false)
-  pity                     Int            @default(0) @db.Int
-  claims                   Int            @default(0) @db.Int
-  rank_rating              Int            @default(0) @db.Int
-  fates                    Int            @default(0) @db.Int
-  elo                      Int            @default(0) @db.Int
+  warn                     Boolean       @default(false)
+  pity                     Int           @default(0) @db.Int
+  claims                   Int           @default(0) @db.Int
+  rank_rating              Int           @default(0) @db.Int
+  fates                    Int           @default(0) @db.Int
+  elo                      Int           @default(0) @db.Int
   // UNRANKED 0
   // IRON 1
   // IRON 2
@@ -241,13 +224,13 @@ model users {
   // IMMORTAL 23
   // IMMORTAL 24
   // RADIANT 25
-  elo_rating               Int            @default(50) @db.Int
-  remind                   Boolean        @default(false)
+  elo_rating               Int           @default(50) @db.Int
+  remind                   Boolean       @default(false)
   remindIn                 String?
-  reminded                 Boolean        @default(true)
+  reminded                 Boolean       @default(true)
   packets                  Packet[]
-  transactions             transactions[]
-  career                   matches[]
+  transactions             Transaction[]
+  career                   Match[]
   trade_time               DateTime?
 
   @@index([coins, correct_predictions, ranked_swiftplay_wins, ranked_wins, unranked_wins, swiftplay_wins])
@@ -258,7 +241,7 @@ enum Game {
   lol
 }
 
-model predictions {
+model Prediction {
   id     String            @id @default(auto()) @map("_id") @db.ObjectId
   match  String
   game   Game
@@ -267,19 +250,19 @@ model predictions {
   bet    BigInt?
   odd    BigInt?
   when   DateTime          @default(now())
-  user   users             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
   @@index([userId, game, id])
 }
 
-model transactions {
+model Transaction {
   id     String          @id @default(auto()) @map("_id") @db.ObjectId
   type   TransactionType
   player String
   when   DateTime        @default(now())
   price  BigInt?         @db.Long
-  user   users           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
   who    String?
 
@@ -294,20 +277,20 @@ enum MatchMode {
   TOURNAMENT
 }
 
-model matches {
+model Match {
   id     String       @id @default(auto()) @map("_id") @db.ObjectId
   mode   MatchMode
   winner Boolean
   teams  CarrerTeam[]
   points Int?         @db.Int
-  user   users        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
   when   DateTime     @default(now())
 
   @@index([userId])
 }
 
-model updates {
+model Update {
   id           String    @id @map("_id")
   published_at DateTime  @default(now())
   content      Content[]

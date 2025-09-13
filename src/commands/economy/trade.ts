@@ -157,7 +157,7 @@ export default createCommand({
       ctx.db.user.roster.reserve.push(ctx.args[4])
       ctx.db.user.coins -= BigInt(ctx.args[5])
       ctx.db.user.trade_time = new Date(Date.now() + (60 * 60 * 1000))
-      await client.prisma.transactions.createMany({
+      await client.prisma.transaction.createMany({
         data: [
           {
             type: "TRADE_PLAYER",

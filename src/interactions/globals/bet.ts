@@ -10,7 +10,7 @@ export default createComponentInteraction({
     if(ctx.db.user.coins < 500) return await ctx.reply("helper.coins_needed")
     const options = {
       valorant: async() => {
-        const pred = await client.prisma.predictions.findFirst({
+        const pred = await client.prisma.prediction.findFirst({
           where: {
             match: ctx.args[2],
             game: "valorant",
@@ -54,7 +54,7 @@ export default createComponentInteraction({
         })
       },
       lol: async() => {
-        const pred = await client.prisma.predictions.findFirst({
+        const pred = await client.prisma.prediction.findFirst({
           where: {
             match: ctx.args[2],
             game: "lol",

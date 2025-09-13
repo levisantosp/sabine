@@ -10,7 +10,7 @@ export default createModalSubmitInteraction({
   async run({ ctx }) {
     const games = {
       valorant: async() => {
-        const pred = await client.prisma.predictions.findFirst({
+        const pred = await client.prisma.prediction.findFirst({
           where: {
             match: ctx.args[2],
             userId: ctx.db.user.id,
@@ -54,7 +54,7 @@ export default createModalSubmitInteraction({
         })
       },
       lol: async() => {
-        const pred = await client.prisma.predictions.findFirst({
+        const pred = await client.prisma.prediction.findFirst({
           where: {
             match: ctx.args[2],
             userId: ctx.db.user.id,

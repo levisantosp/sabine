@@ -31,7 +31,7 @@ export default createCommand({
   },
   async createMessageComponentInteraction({ ctx, t, client }) {
     await ctx.interaction.defer(64)
-    const keys = await client.prisma.keys.findMany({
+    const keys = await client.prisma.key.findMany({
       where: {
         user: ctx.args[1]
       }

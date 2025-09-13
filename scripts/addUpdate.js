@@ -7,8 +7,8 @@ export default async function(version, content) {
   // if(!content.lang) throw new Error('lang is needed')
   // if(!content.title) throw new Error('title is needed')
   // if(!content.text) throw new Error('text is needed')
-  if(await prisma.updates.findUnique({ where: { id: version } })) throw new Error("this version already exists")
-  return await prisma.updates.create({
+  if(await prisma.update.findUnique({ where: { id: version } })) throw new Error("this version already exists")
+  return await prisma.update.create({
     data: {
       id: version,
       content,

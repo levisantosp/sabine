@@ -67,7 +67,7 @@ export default createCommand({
   userInstall: true,
   async run({ ctx, t, client }) {
     if(ctx.args[0] === "valorant") {
-      const predictions = await client.prisma.predictions.findMany({
+      const predictions = await client.prisma.prediction.findMany({
         where: {
           game: "valorant",
           userId: ctx.db.user.id
@@ -143,7 +143,7 @@ export default createCommand({
       }))
     }
     else {
-      const predictions = await client.prisma.predictions.findMany({
+      const predictions = await client.prisma.prediction.findMany({
         where: {
           game: "lol",
           userId: ctx.db.user.id
@@ -221,7 +221,7 @@ export default createCommand({
   },
   async createMessageComponentInteraction({ ctx, t, client }) {
     if(ctx.args[4] === "valorant") {
-      const predictions = await client.prisma.predictions.findMany({
+      const predictions = await client.prisma.prediction.findMany({
         where: {
           game: "valorant",
           userId: ctx.db.user.id
@@ -296,7 +296,7 @@ export default createCommand({
       }))
     }
     else {
-      const predictions = await client.prisma.predictions.findMany({
+      const predictions = await client.prisma.prediction.findMany({
         where: {
           game: "valorant",
           userId: ctx.db.user.id

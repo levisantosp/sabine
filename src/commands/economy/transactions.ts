@@ -31,7 +31,7 @@ export default createCommand({
   messageComponentInteractionTime: 5 * 60 * 1000,
   async run({ ctx, t, client }) {
     const page = Number(ctx.args[0]) || 1
-    let transactions = (await client.prisma.transactions.findMany({
+    let transactions = (await client.prisma.transaction.findMany({
       where: {
         userId: ctx.db.user.id
       }
@@ -84,7 +84,7 @@ export default createCommand({
   async createMessageComponentInteraction({ ctx, t, client }) {
     ctx.setFlags(64)
     const page = Number(ctx.args[2])
-    let transactions = (await client.prisma.transactions.findMany({
+    let transactions = (await client.prisma.transaction.findMany({
       where: {
         userId: ctx.db.user.id
       }

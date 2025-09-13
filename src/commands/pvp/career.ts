@@ -29,7 +29,7 @@ export default createCommand({
   userInstall: true,
   messageComponentInteractionTime: 5 * 60 * 1000,
   async run({ ctx, t, client }) {
-    const matches = await client.prisma.matches.findMany({
+    const matches = await client.prisma.match.findMany({
       where: {
         userId: ctx.db.user.id
       }
@@ -129,7 +129,7 @@ export default createCommand({
     }))
   },
   async createMessageComponentInteraction({ ctx, t, client }) {
-    const matches = await client.prisma.matches.findMany({
+    const matches = await client.prisma.match.findMany({
       where: {
         userId: ctx.db.user.id
       }
