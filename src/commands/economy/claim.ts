@@ -1,7 +1,6 @@
 import {
   calcPlayerOvr,
   calcPlayerPrice,
-  getPlayer,
   getPlayers,
   type Player
 } from "players"
@@ -27,32 +26,22 @@ const tier = (() => {
     c: [] as Player[] // ovr 69- (85%)
   }
   for(const p of players.values()) {
-    const ovr = calcPlayerOvr(p)
-    if(ovr >= 85) tier.s.push(p)
-    else if(ovr >= 80) tier.a.push(p)
-    else if(ovr >= 70) tier.b.push(p)
+    if(!p.ovr) continue
+    if(p.ovr >= 85) tier.s.push(p)
+    else if(p.ovr >= 80) tier.a.push(p)
+    else if(p.ovr >= 70) tier.b.push(p)
     else tier.c.push(p)
   }
   return tier
 })()
-const getRandomPlayerByOvr = () => {
-  let random = Math.random() * 100
-  if(random < 0.1) {
-    random = Math.floor(Math.random() * tier.s.length)
-    return tier.s[random]
-  }
-  else if(random < 1) {
-    random = Math.floor(Math.random() * tier.a.length)
-    return tier.a[random]
-  }
-  else if(random < 15) {
-    random = Math.floor(Math.random() * tier.b.length)
-    return tier.b[random]
-  }
-  else {
-    random = Math.floor(Math.random() * tier.c.length)
-    return tier.c[random]
-  }
+const getRandomPlayer = () => {
+  const random = Math.random() * 100
+  const pool =
+    random < 0.1 ? tier.s :
+      random < 1 ? tier.a :
+        random < 15 ? tier.b :
+          tier.c
+  return pool[Math.floor(Math.random() * pool.length)]
 }
 const getRandomPlayerByTier = (t: string) => {
   return tier[t][Math.floor(Math.random() * tier[t].length)]
@@ -87,7 +76,7 @@ export default createCommand({
     if(ctx.db.user.pity >= 49) {
       player = getRandomPlayerByTier("s")
     }
-    else player = getRandomPlayerByOvr()
+    else player = getRandomPlayer()
     let channel: string | undefined = undefined
     if(ctx.interaction.channel && ctx.db.user.remind) {
       channel = ctx.interaction.channel?.id
@@ -100,7 +89,7 @@ export default createCommand({
         "commands.claim.claimed",
         {
           player: player.name,
-          price: player.price?.toLocaleString("en-US")
+          price: player.price?.toLocaleString()
         }
       )
     )
@@ -140,11 +129,13 @@ export default createCommand({
       await ctx.reply("commands.promote.player_promoted", { p: players.get(ctx.args[3])?.name })
     }
     else if(ctx.args[2] === "sell") {
-      const player = getPlayer(Number(ctx.args[3]))
-      if(!player) return
-      const price = BigInt(calcPlayerPrice(player, true).toString())
-      await ctx.db.user.sellPlayer(player.id.toString(), price, i)
-      await ctx.reply("commands.sell.sold", { p: player.name, price: price.toLocaleString("en-US") })
+      const player = players.get(ctx.args[3])
+      if(!player || !player.price) {
+        return await ctx.reply("commands.sell.player_not_found")
+      }
+      player.price = BigInt(Math.floor(Number(player.price) * 0.1))
+      await ctx.db.user.sellPlayer(player.id.toString(), player.price, i)
+      await ctx.reply("commands.sell.sold", { p: player.name, price: player.price.toLocaleString() })
     }
   }
 })
