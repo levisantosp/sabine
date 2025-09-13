@@ -345,7 +345,8 @@ export const valorant_maps: {
       "Vyse",
       "Yoru",
       "Waylay",
-      "Cypher"
+      "Cypher",
+      "Chamber"
     ],
     current_map_pool: true,
     image: "https://imgur.com/HUdWHux.png",
@@ -414,7 +415,8 @@ export const valorant_maps: {
       "Yoru",
       "Iso",
       "Neon",
-      "Viper"
+      "Viper",
+      "Chamber"
     ],
     current_map_pool: true,
     image: "https://imgur.com/oNm4lD3.png",
@@ -429,7 +431,9 @@ export const valorant_maps: {
       "Killjoy",
       "Sova",
       "KAY/O",
-      "Gekko"
+      "Gekko",
+      "Reyna",
+      "Sage"
     ],
     image: "https://imgur.com/aQrhYgx.png",
     sides: ["A", "B"]
@@ -515,7 +519,8 @@ export const valorant_maps: {
       "Vyse",
       "Chamber",
       "Jett",
-      "Yoru"
+      "Yoru",
+      "Neon"
     ],
     current_map_pool: true,
     image: "https://imgur.com/7b8pgQz.png",
