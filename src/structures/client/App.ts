@@ -21,7 +21,7 @@ type Reminder = {
 }
 type NewPlayer = Omit<Player, "ovr" | "price"> & {
   ovr: number
-  price: bigint
+  price: number
 }
 const prisma = new PrismaClient()
 const __filename = fileURLToPath(import.meta.url)
@@ -38,7 +38,7 @@ const players = new Map<string, NewPlayer>(
     {
       ...p,
       ovr: calcPlayerOvr(p),
-      price: calcPlayerPrice(p)
+      price: Number(calcPlayerPrice(p))
     }
   ])
 )
