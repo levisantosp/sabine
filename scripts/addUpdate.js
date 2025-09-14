@@ -12,7 +12,7 @@ export default async function(version, content) {
     data: {
       id: version,
       content,
-      published_at: Date.now()
+      published_at: new Date()
     }
   })
 }
