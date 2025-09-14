@@ -1,3 +1,4 @@
+import { ApplicationCommandOptionTypes } from "oceanic.js"
 import createCommand from "../../structures/command/createCommand.ts"
 
 export default createCommand({
@@ -38,6 +39,14 @@ export default createCommand({
                 "pt-BR": "Informe o canal"
               },
               required: true
+            },
+            {
+              type: ApplicationCommandOptionTypes.BOOLEAN,
+              name: "spam",
+              description: "Select whether you want the bot to spam messages from live matches or not",
+              descriptionLocalizations: {
+                "pt-BR": "Selecione se você deseja que bot envie mensagens de spam de partidas ao vivo ou não"
+              }
             }
           ]
         },
@@ -60,6 +69,14 @@ export default createCommand({
                 "pt-BR": "Informe o canal"
               },
               required: true
+            },
+            {
+              type: ApplicationCommandOptionTypes.BOOLEAN,
+              name: "spam",
+              description: "Select whether you want the bot to spam messages from live matches or not",
+              descriptionLocalizations: {
+                "pt-BR": "Selecione se você deseja que bot envie mensagens de spam de partidas ao vivo ou não"
+              }
             }
           ]
         }
@@ -103,6 +120,9 @@ export default createCommand({
           if(!ctx.guild || !ctx.db.guild) return
           const channel = ctx.guild.channels.get(ctx.args[2].toString())!
           if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
+          if(typeof ctx.args[3] === "boolean") {
+            ctx.db.guild.spam_live_messages = ctx.args[3]
+          }
           ctx.db.guild.valorant_livefeed_channel = channel.id
           await ctx.db.guild.save()
           await ctx.reply("commands.live.live_enabled", { ch: channel.mention })
@@ -111,6 +131,9 @@ export default createCommand({
           if(!ctx.guild || !ctx.db.guild) return
           const channel = ctx.guild.channels.get(ctx.args[2].toString())!
           if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
+          if(typeof ctx.args[3] === "boolean") {
+            ctx.db.guild.spam_live_messages = ctx.args[3]
+          }
           ctx.db.guild.lol_livefeed_channel = channel.id
           await ctx.db.guild.save()
           await ctx.reply("commands.live.live_enabled", { ch: channel.mention })
