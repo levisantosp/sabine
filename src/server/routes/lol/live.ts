@@ -77,7 +77,47 @@ export default async function(
           .setStyle("blue")
           .setLabel(locales(guild.lang ?? "en", "helper.streams"))
           .setCustomId(`stream;lol;${data.id}`)
-        await channel.createMessage(embed.build(button.build()))
+        const messages = await channel.getMessages({ limit: 7 })
+        const message = messages.find(m =>
+          guild.live_messages.some(msg =>
+            msg.message === m.id &&
+            msg.event === data.tournament.name
+          )
+        )
+        if(!message || guild.spam_live_messages) {
+          const msg = await channel.createMessage(embed.build({
+            components: [
+              {
+                type: 1,
+                components: [button]
+              }
+            ]
+          }))
+          const index = guild.live_messages.findIndex(m => m.event === data.tournament.name)
+          guild.live_messages.splice(index, 1)
+          guild.live_messages.push({
+            message: msg.id,
+            event: data.tournament.name
+          })
+          await prisma.guild.update({
+            where: {
+              id: guild.id
+            },
+            data: {
+              live_messages: guild.live_messages
+            }
+          })
+        }
+        else {
+          await message.edit(embed.build({
+            components: [
+              {
+                type: 1,
+                components: [button]
+              }
+            ]
+          }))
+        }
       }
     }
   })
