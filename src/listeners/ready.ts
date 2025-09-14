@@ -200,7 +200,8 @@ const sendValorantMatches = async(client: App) => {
       },
       data: {
         valorant_matches: guild.valorant_matches,
-        valorant_tbd_matches: guild.valorant_tbd_matches
+        valorant_tbd_matches: guild.valorant_tbd_matches,
+        live_messages: []
       }
     })
   }
@@ -348,7 +349,8 @@ const sendLolMatches = async(client: App) => {
       },
       data: {
         lol_matches: guild.lol_matches,
-        lol_tbd_matches: guild.lol_tbd_matches
+        lol_tbd_matches: guild.lol_tbd_matches,
+        live_messages: []
       }
     })
   }
