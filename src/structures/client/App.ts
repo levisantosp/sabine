@@ -14,6 +14,10 @@ type Reminder = {
   user: string
   channel: string
 }
+type NewPlayer = Omit<Player, "ovr" | "price"> & {
+  ovr: number
+  price: bigint
+}
 const prisma = new PrismaClient()
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -23,7 +27,7 @@ const redis = Redis.createClient({
 const queue = new Queue<Reminder>("reminder", {
   redis: process.env.REDIS_URL
 })
-const players = new Map<string, Player>(
+const players = new Map<string, NewPlayer>(
   getPlayers().map(p => [
     p.id.toString(),
     {
