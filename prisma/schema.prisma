@@ -160,6 +160,7 @@ model Guild {
   tournamentsLength         Int         @default(5) @db.Int
   partner                   Boolean?
   invite                    String?
+  live_message              String?
 }
 
 model Key {
