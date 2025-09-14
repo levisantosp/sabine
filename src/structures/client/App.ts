@@ -8,6 +8,7 @@ import Redis from "redis"
 import Logger from "../../util/Logger.ts"
 import type { CreateInteractionOptions } from "../interactions/createComponentInteraction.ts"
 import Queue from "bull"
+import { calcPlayerOvr, calcPlayerPrice, getPlayers, Player } from "players"
 
 type Reminder = {
   user: string
@@ -22,6 +23,16 @@ const redis = Redis.createClient({
 const queue = new Queue<Reminder>("reminder", {
   redis: process.env.REDIS_URL
 })
+const players = new Map<string, Player>(
+  getPlayers().map(p => [
+    p.id.toString(),
+    {
+      ...p,
+      ovr: calcPlayerOvr(p),
+      price: calcPlayerPrice(p)
+    }
+  ])
+)
 
 export default class App extends Oceanic.Client {
   public commands: Map<string, Command> = new Map()
@@ -30,11 +41,13 @@ export default class App extends Oceanic.Client {
   public redis: typeof redis
   public queue: typeof queue
   public interactions: Map<string, CreateInteractionOptions> = new Map()
+  public players: typeof players = players
   public constructor(options?: Oceanic.ClientOptions) {
     super(options)
     this.prisma = prisma
     this.redis = redis
     this.queue = queue
+
   }
   public override async connect() {
     const start = Date.now()
