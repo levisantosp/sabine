@@ -1,30 +1,34 @@
 import type { FastifyInstance } from "fastify"
-import { readdirSync } from "node:fs"
-import path from "node:path"
-import { fileURLToPath } from "node:url"
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+import { client } from "../../../structures/client/App.ts"
 
 export default async function(fastify: FastifyInstance) {
   fastify.get("/commands", async() => {
-    const commands: any[] = []
-    for(const folder of readdirSync(path.resolve(__dirname, "../../../commands"))) {
-      for(const file of readdirSync(path.resolve(__dirname, `../../../commands/${folder}`))) {
-        const command = (await import(`../../../commands/${folder}/${file}`)).default
-        commands.push({
-          name: command.name,
-          nameLocalizations: command.nameLocalizations,
-          description: command.description,
-          descriptionLocalizations: command.descriptionLocalizations,
-          syntax: command.syntax,
-          syntaxes: command.syntaxes,
-          examples: command.examples,
-          permissions: command.permissions,
-          botPermissions: command.botPermissions
-        })
-      }
-    }
+    type Command = Pick<
+      typeof client.commands extends Map<any, infer V> ? V : never,
+      | "name"
+      | "nameLocalizations"
+      | "description"
+      | "descriptionLocalizations"
+      | "syntax"
+      | "syntaxes"
+      | "examples"
+      | "permissions"
+      | "botPermissions"
+    >
+    const commands: Command[] = []
+    client.commands.forEach(command => {
+      commands.push({
+        name: command.name,
+        nameLocalizations: command.nameLocalizations,
+        description: command.description,
+        descriptionLocalizations: command.descriptionLocalizations,
+        syntax: command.syntax,
+        syntaxes: command.syntaxes,
+        examples: command.examples,
+        permissions: command.permissions,
+        botPermissions: command.botPermissions
+      })
+    })
     return commands
   })
 }
