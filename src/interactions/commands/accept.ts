@@ -1,4 +1,3 @@
-import { calcPlayerOvr, getPlayer } from "players"
 import { SabineUser } from "../../database/index.ts"
 import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
 import createComponentInteraction from "../../structures/interactions/createComponentInteraction.ts"
@@ -45,8 +44,8 @@ export default createComponentInteraction({
       {
         name: user.team.name,
         value: user.roster.active.map(id => {
-          const player = getPlayer(id)!
-          const ovr = parseInt(calcPlayerOvr(player).toString())
+          const player = client.players.get(id)!
+          const ovr = parseInt(player.ovr.toString())
           return `<a:loading:809221866434199634> ${player.name} (${ovr})`
         }).join("\n"),
         inline: true
@@ -54,8 +53,8 @@ export default createComponentInteraction({
       {
         name: ctx.db.user.team.name,
         value: ctx.db.user.roster.active.map(id => {
-          const player = getPlayer(id)!
-          const ovr = parseInt(calcPlayerOvr(player).toString())
+          const player = client.players.get(id)!
+          const ovr = parseInt(player.ovr.toString())
           return `<a:loading:809221866434199634> ${player.name} (${ovr})`
         }).join("\n"),
         inline: true
@@ -67,7 +66,7 @@ export default createComponentInteraction({
     .setPlaceholder(user.team.name)
     .setOptions(
       ...user.roster.active.map(id => {
-        const player = getPlayer(id)!
+        const player = client.players.get(id)!
         return {
           label: `${player.name}`,
           value: player.id.toString()
@@ -79,7 +78,7 @@ export default createComponentInteraction({
     .setPlaceholder(ctx.db.user.team.name)
     .setOptions(
       ...ctx.db.user.roster.active.map(id => {
-        const player = getPlayer(id)!
+        const player = client.players.get(id)!
         return {
           label: `${player.name}`,
           value: player.id.toString()
@@ -119,8 +118,8 @@ export default createComponentInteraction({
       }[]
     } = {}
     data[ctx.db.user.id] = ctx.db.user.roster.active.map(id => {
-      const p = getPlayer(id)!
-      const ovr = calcPlayerOvr(p)
+      const p = client.players.get(id)!
+      const ovr = p.ovr
       return {
         ...p,
         ovr,
@@ -128,8 +127,8 @@ export default createComponentInteraction({
       }
     })
     data[user.id] = user.roster.active.map(id => {
-      const p = getPlayer(id)!
-      const ovr = calcPlayerOvr(p)
+      const p = client.players.get(id)!
+      const ovr = p.ovr
       return {
         ...p,
         ovr,

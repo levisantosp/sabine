@@ -1,16 +1,15 @@
 import { ComponentTypes } from "oceanic.js"
 import { valorant_agents } from "../../config.ts"
 import createComponentInteraction from "../../structures/interactions/createComponentInteraction.ts"
-import { getPlayer } from "players"
 import SelectMenuBuilder from "../../structures/builders/SelectMenuBuilder.ts"
 
 export default createComponentInteraction({
   name: "select",
   time: 6 * 60 * 1000,
   flags: 64,
-  async run({ ctx, t }) {
+  async run({ ctx, t, client }) {
     if(ctx.interaction.data.componentType !== ComponentTypes.STRING_SELECT) return
-    const player = getPlayer(ctx.interaction.data.values.getStrings()[0])
+    const player = client.players.get(ctx.interaction.data.values.getStrings()[0])
     if(!player) return
     const controllers = new SelectMenuBuilder()
     .setCustomId(`selected;${ctx.interaction.user.id};${player.id};controller;${ctx.args[2]}`)

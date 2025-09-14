@@ -3,7 +3,6 @@ import createComponentInteraction from "../../structures/interactions/createComp
 import { valorant_agents, valorant_maps } from "../../config.ts"
 import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
 import { SabineUser } from "../../database/index.ts"
-import { calcPlayerOvr, getPlayer } from "players"
 import Match from "../../simulator/Match.ts"
 import Logger from "../../util/Logger.ts"
 
@@ -56,7 +55,7 @@ export default createComponentInteraction({
               user.team!.name!,
         value: key.split(":")[1] === ctx.interaction.user.id ?
           ctx.db.user.roster.active.map(id => {
-            const player = getPlayer(id)!
+            const player = client.players.get(id)!
             let emoji: string | undefined = "<a:loading:809221866434199634>"
             const i = data[ctx.interaction.user.id].findIndex((p: any) => p.id.toString() === id)
             if(
@@ -66,11 +65,11 @@ export default createComponentInteraction({
             ) {
               emoji = valorant_agents.find(agent => agent.name === data[ctx.interaction.user.id][i].agent!.name)?.emoji
             }
-            const ovr = parseInt(calcPlayerOvr(player).toString())
+            const ovr = parseInt(player.ovr.toString())
             return `${emoji} ${player.name} (${ovr})`
           }).join("\n") :
           user.roster.active.map(id => {
-            const player = getPlayer(id)!
+            const player = client.players.get(id)!
             let emoji: string | undefined = "<a:loading:809221866434199634>"
             const i = data[user.id].findIndex((p: any) => p.id.toString() === id)
             if(
@@ -80,7 +79,7 @@ export default createComponentInteraction({
             ) {
               emoji = valorant_agents.find(agent => agent.name === data[user.id][i].agent!.name)?.emoji
             }
-            const ovr = parseInt(calcPlayerOvr(player).toString())
+            const ovr = parseInt(player.ovr.toString())
             return `${emoji} ${player.name} (${ovr})`
           }).join("\n"),
         inline: true
@@ -91,7 +90,7 @@ export default createComponentInteraction({
               user.team!.name!,
         value: key.split(":")[1] !== ctx.interaction.user.id ?
           ctx.db.user.roster.active.map(id => {
-            const player = getPlayer(id)!
+            const player = client.players.get(id)!
             let emoji: string | undefined = "<a:loading:809221866434199634>"
             const i = data[ctx.interaction.user.id].findIndex((p: any) => p.id.toString() === id)
             if(
@@ -101,11 +100,11 @@ export default createComponentInteraction({
             ) {
               emoji = valorant_agents.find(agent => agent.name === data[ctx.interaction.user.id][i].agent!.name)?.emoji
             }
-            const ovr = parseInt(calcPlayerOvr(player).toString())
+            const ovr = parseInt(player.ovr.toString())
             return `${emoji} ${player.name} (${ovr})`
           }).join("\n") :
           user.roster.active.map(id => {
-            const player = getPlayer(id)!
+            const player = client.players.get(id)!
             let emoji: string | undefined = "<a:loading:809221866434199634>"
             const i = data[user.id].findIndex((p: any) => p.id.toString() === id)
             if(
@@ -115,7 +114,7 @@ export default createComponentInteraction({
             ) {
               emoji = valorant_agents.find(agent => agent.name === data[user.id][i].agent!.name)?.emoji
             }
-            const ovr = parseInt(calcPlayerOvr(player).toString())
+            const ovr = parseInt(player.ovr.toString())
             return `${emoji} ${player.name} (${ovr})`
           }).join("\n"),
         inline: true
@@ -125,7 +124,7 @@ export default createComponentInteraction({
     const message: Message<AnyTextableChannel> = await client.rest.channels.getMessage(data.channelId, data.messageId)
     if(!message) return
     await ctx.edit("commands.duel.agent_selected", {
-      p: getPlayer(ctx.args[2])!.name,
+      p: client.players.get(ctx.args[2])!.name,
       agent: agentName
     })
     if(
