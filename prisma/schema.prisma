@@ -70,17 +70,6 @@ type LiveMatchTour {
   image     String?
 }
 
-type LiveMatch {
-  teams      LiveMatchTeam[]
-  currentMap String?
-  score1     String?
-  score2     String?
-  id         String
-  url        String?
-  stage      String?
-  tournament LiveMatchTour
-}
-
 enum KeyEnum {
   BOOSTER
   PREMIUM
@@ -130,6 +119,11 @@ enum BlacklistType {
   USER
 }
 
+type LiveMessage {
+  message String
+  event   String
+}
+
 model Blacklist {
   id     String        @id @map("_id")
   type   BlacklistType
@@ -140,27 +134,26 @@ model Blacklist {
 }
 
 model Guild {
-  id                        String      @id @map("_id")
-  lang                      Language    @default(en)
+  id                        String        @id @map("_id")
+  lang                      Language      @default(en)
   valorant_events           Event[]
   valorant_resend_time      DateTime?
-  valorant_matches          String[]    @default([])
+  valorant_matches          String[]      @default([])
   valorant_tbd_matches      TBDMatch[]
   valorant_news_channel     String?
   valorant_livefeed_channel String?
-  valorant_live_matches     LiveMatch[]
   lol_events                Event[]
   lol_resend_time           DateTime?
-  lol_matches               String[]    @default([])
+  lol_matches               String[]      @default([])
   lol_tbd_matches           TBDMatch[]
   lol_news_channel          String?
   lol_livefeed_channel      String?
-  lol_live_matches          LiveMatch[]
   key                       KeyType?
-  tournamentsLength         Int         @default(5) @db.Int
+  tournamentsLength         Int           @default(5) @db.Int
   partner                   Boolean?
   invite                    String?
-  live_message              String?
+  live_messages             LiveMessage[]
+  spam_live_messages        Boolean       @default(false)
 }
 
 model Key {

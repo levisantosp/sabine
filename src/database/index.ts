@@ -206,19 +206,18 @@ export class SabineGuild implements Guild {
   public valorant_tbd_matches: { id: string; channel: string; }[] = []
   public valorant_news_channel: string | null = null
   public valorant_livefeed_channel: string | null = null
-  public valorant_live_matches: ({ currentMap: string | null; score1: string | null; score2: string | null; id: string; url: string | null; stage: string | null; } & { teams: { name: string; score: string; }[]; tournament: { name: string; full_name: string | null; image: string | null; }; })[] = []
   public lol_events: { name: string; channel1: string; channel2: string; }[] = []
   public lol_resend_time: Date | null = null
   public lol_matches: string[] = []
   public lol_tbd_matches: { id: string; channel: string; }[] = []
   public lol_news_channel: string | null = null
   public lol_livefeed_channel: string | null = null
-  public lol_live_matches: ({ currentMap: string | null; score1: string | null; score2: string | null; id: string; url: string | null; stage: string | null; } & { teams: { name: string; score: string; }[]; tournament: { name: string; full_name: string | null; image: string | null; }; })[] = []
   public key: { type: $Enums.KeyEnum; expiresAt: Date | null; id: string; } | null = null
   public tournamentsLength: number = 5
   public partner: boolean | null = null
   public invite: string | null = null
-  public live_message: string | null = null
+  public live_messages: { message: string; event: string; }[] = []
+  public spam_live_messages: boolean = false
   public constructor(id: string) {
     this.id = id
   }
