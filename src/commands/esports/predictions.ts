@@ -92,7 +92,7 @@ export default createCommand({
         .setDesc(t("commands.predictions.embed.desc", {
           correct: ctx.db.user.correct_predictions,
           wrong: ctx.db.user.incorrect_predictions,
-          t: preds.length
+          t: predictions.length
         }))
         .setFooter({
           text: t("commands.predictions.embed.footer", {
