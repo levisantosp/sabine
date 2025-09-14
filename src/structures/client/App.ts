@@ -8,7 +8,12 @@ import Redis from "redis"
 import Logger from "../../util/Logger.ts"
 import type { CreateInteractionOptions } from "../interactions/createComponentInteraction.ts"
 import Queue from "bull"
-import { calcPlayerOvr, calcPlayerPrice, getPlayers, Player } from "players"
+import {
+  calcPlayerOvr,
+  calcPlayerPrice,
+  getPlayers,
+  type Player
+} from "players"
 
 type Reminder = {
   user: string
