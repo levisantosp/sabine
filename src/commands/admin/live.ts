@@ -131,9 +131,10 @@ export default createCommand({
           if(!ctx.guild || !ctx.db.guild) return
           const channel = ctx.guild.channels.get(ctx.args[2].toString())!
           if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
-          if(typeof ctx.args[3] === "boolean") {
+          if(ctx.args[3] === true) {
             ctx.db.guild.spam_live_messages = ctx.args[3]
           }
+          else ctx.db.guild.spam_live_messages = false
           ctx.db.guild.lol_livefeed_channel = channel.id
           await ctx.db.guild.save()
           await ctx.reply("commands.live.live_enabled", { ch: channel.mention })
