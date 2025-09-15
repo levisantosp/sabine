@@ -66,7 +66,8 @@ export class SabineUser implements User {
       if(
         typeof this[key] === "function" ||
         key === "id" ||
-        this[key] === null
+        this[key] === null ||
+        this[key] === "premium"
       ) continue
       (data as any)[key] = this[key]
     }
