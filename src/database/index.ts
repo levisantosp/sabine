@@ -71,10 +71,11 @@ export class SabineUser implements User {
       ) continue
       (data as any)[key] = this[key]
     }
+    const { premium, ...cleanData } = data as any
     return await prisma.user.upsert({
       where: { id: this.id },
-      update: data,
-      create: { id: this.id, ...data }
+      update: cleanData,
+      create: { id: this.id, ...cleanData }
     })
   }
   public static async fetch(id: string) {
