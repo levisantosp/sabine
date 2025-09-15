@@ -1,7 +1,7 @@
 import createCommand from "../../structures/command/createCommand.ts"
 import Service from "../../api/index.ts"
 import { PrismaClient } from "@prisma/client"
-import { SabineGuild, SabineUser } from "../../database/index.ts"
+import { SabineGuild } from "../../database/index.ts"
 const service = new Service(process.env.AUTH)
 
 const prisma = new PrismaClient()

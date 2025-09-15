@@ -1,4 +1,3 @@
-import { calcPlayerOvr, getPlayer } from "players"
 import { SabineUser } from "../../database/index.ts"
 import createCommand from "../../structures/command/createCommand.ts"
 

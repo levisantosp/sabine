@@ -2,7 +2,6 @@ import type { SelectOption } from "oceanic.js"
 import SelectMenuBuilder from "../../structures/builders/SelectMenuBuilder.ts"
 import createCommand from "../../structures/command/createCommand.ts"
 import { SabineUser } from "../../database/index.ts"
-import { calcPlayerOvr } from "players"
 
 export default createCommand({
   name: "promote",
