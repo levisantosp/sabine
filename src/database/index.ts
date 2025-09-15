@@ -72,6 +72,7 @@ export class SabineUser implements User {
       (data as any)[key] = this[key]
     }
     const { premium, ...cleanData } = data as any
+    premium
     return await prisma.user.upsert({
       where: { id: this.id },
       update: cleanData,

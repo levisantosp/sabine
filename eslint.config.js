@@ -43,7 +43,8 @@ export default defineConfig([
         asyncArrow: "never"
       }],
       "@typescript-eslint/no-explicit-any": "off",
-      "no-empty": "off"
+      "no-empty": "off",
+      "@typescript-eslint/no-unused-expressions": "off"
     }
   }
 ])
