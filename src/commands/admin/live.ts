@@ -123,7 +123,7 @@ export default createCommand({
           if(typeof ctx.args[3] === "boolean") {
             ctx.db.guild.spam_live_messages = ctx.args[3]
           }
-          ctx.db.guild.valorant_livefeed_channel = channel.id
+          ctx.db.guild.valorant_live_feed_channel = channel.id
           await ctx.db.guild.save()
           await ctx.reply("commands.live.live_enabled", { ch: channel.mention })
         },
@@ -135,7 +135,7 @@ export default createCommand({
             ctx.db.guild.spam_live_messages = ctx.args[3]
           }
           else ctx.db.guild.spam_live_messages = false
-          ctx.db.guild.lol_livefeed_channel = channel.id
+          ctx.db.guild.lol_live_feed_channel = channel.id
           await ctx.db.guild.save()
           await ctx.reply("commands.live.live_enabled", { ch: channel.mention })
         }
@@ -146,13 +146,13 @@ export default createCommand({
       const games = {
         valorant: async() => {
           if(!ctx.db.guild) return
-          ctx.db.guild.valorant_livefeed_channel = null
+          ctx.db.guild.valorant_live_feed_channel = null
           await ctx.db.guild.save()
           await ctx.reply("commands.live.live_disabled")
         },
         lol: async() => {
           if(!ctx.db.guild) return
-          ctx.db.guild.lol_livefeed_channel = null
+          ctx.db.guild.lol_live_feed_channel = null
           await ctx.db.guild.save()
           await ctx.reply("commands.live.live_disabled")
         }

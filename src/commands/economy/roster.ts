@@ -32,8 +32,8 @@ export default createCommand({
   userInstall: true,
   messageComponentInteractionTime: 5 * 60 * 1000,
   async run({ ctx, t }) {
-    const active_players = ctx.db.user.roster.active
-    const reserve_players = ctx.db.user.roster.reserve
+    const active_players = ctx.db.user.active_players
+    const reserve_players = ctx.db.user.reserve_players
     let value = 0n
     let ovr = 0
     for(const p of active_players) {
@@ -55,7 +55,7 @@ export default createCommand({
       {
         value: parseInt(value.toString()).toLocaleString(),
         ovr: Math.floor(ovr / (active_players.length + reserve_players.length)),
-        name: ctx.db.user.team?.name ? `${ctx.db.user.team.name} (${ctx.db.user.team.tag})` : "`undefined`"
+        name: ctx.db.user.team_name ? `${ctx.db.user.team_name} (${ctx.db.user.team_tag})` : "`undefined`"
       }
     ))
     .setThumb(ctx.interaction.user.avatarURL())
@@ -126,8 +126,8 @@ export default createCommand({
     if(ctx.args[2] === "file") {
       await ctx.interaction.defer(64)
       let playersContent = ""
-      const active_players = ctx.db.user.roster.active
-      const reserve_players = ctx.db.user.roster.reserve
+      const active_players = ctx.db.user.active_players
+      const reserve_players = ctx.db.user.reserve_players
       for(const p of active_players) {
         if(!active_players.length) break
         const player = players.get(p)
@@ -190,10 +190,8 @@ export default createCommand({
   async createModalSubmitInteraction({ ctx, i }) {
     await i.defer(64)
     const responses = i.data.components.getComponents()
-    ctx.db.user.team = {
-      name: responses[0].value,
-      tag: responses[1].value
-    }
+    ctx.db.user.team_name = responses[0].value
+    ctx.db.user.team_tag = responses[1].value
     await ctx.db.user.save()
     await ctx.reply("commands.roster.team_info_changed", {
       name: responses[0].value,

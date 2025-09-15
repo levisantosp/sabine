@@ -204,15 +204,53 @@ export default createCommand({
         valorant: async() => {
           if(!ctx.db.guild) return
           if(!ctx.guild) return
-          if((ctx.db.guild!.lol_events.length + ctx.db.guild!.valorant_events.length) >= ctx.db.guild!.tournamentsLength) return ctx.reply("commands.tournament.limit_reached", { cmd: `</tournament remove valorant:${id}>` })
+          const guild = await prisma.guild.findUnique({
+            where: {
+              id: ctx.db.guild.id
+            },
+            include: {
+              events: true
+            }
+          }) ?? new SabineGuild(ctx.db.guild.id)
+          if(
+            (
+              guild.events.filter(e => e.type === "lol").length +
+              guild.events.filter(e => e.type === "valorant").length
+            ) >=
+            ctx.db.guild.tournaments_length
+          ) return ctx.reply("commands.tournament.limit_reached", { cmd: `</tournament remove valorant:${id}>` })
           if(ctx.args[3].toString() === ctx.args[4].toString()) return ctx.reply("commands.tournament.channels_must_be_different")
           if(ctx.guild.channels.get(ctx.args[3].toString())?.type !== 0 || ctx.guild.channels.get(ctx.args[4].toString())?.type !== 0) return ctx.reply("commands.tournament.invalid_channel")
-          ctx.db.guild!.valorant_events.push({
-            name: ctx.args[2].toString(),
-            channel1: ctx.args[3].toString(),
-            channel2: ctx.args[4].toString()
+          await prisma.guild.upsert({
+            where: {
+              id: guild.id
+            },
+            update: {
+              events: {
+                create: [
+                  {
+                    name: ctx.args[2].toString(),
+                    channel1: ctx.args[3].toString(),
+                    channel2: ctx.args[4].toString(),
+                    type: "valorant"
+                  }
+                ]
+              }
+            },
+            create: {
+              events: {
+                create: [
+                  {
+                    name: ctx.args[2].toString(),
+                    channel1: ctx.args[3].toString(),
+                    channel2: ctx.args[4].toString(),
+                    type: "valorant"
+                  }
+                ]
+              },
+              id: ctx.db.guild.id
+            }
           })
-          await ctx.db.guild.save()
           await ctx.reply("commands.tournament.tournament_added", {
             t: ctx.args[2].toString()
           })
@@ -220,15 +258,53 @@ export default createCommand({
         lol: async() => {
           if(!ctx.db.guild) return
           if(!ctx.guild) return
-          if((ctx.db.guild!.lol_events.length + ctx.db.guild!.valorant_events.length) >= ctx.db.guild!.tournamentsLength) return ctx.reply("commands.tournament.limit_reached", { cmd: `</tournament remove lol:${id}>` })
+          const guild = await prisma.guild.findUnique({
+            where: {
+              id: ctx.db.guild.id
+            },
+            include: {
+              events: true
+            }
+          }) ?? new SabineGuild(ctx.db.guild.id)
+          if(
+            (
+              guild.events.filter(e => e.type === "lol").length +
+              guild.events.filter(e => e.type === "valorant").length
+            ) >=
+            ctx.db.guild.tournaments_length
+          ) return ctx.reply("commands.tournament.limit_reached", { cmd: `</tournament remove lol:${id}>` })
           if(ctx.args[3].toString() === ctx.args[4].toString()) return ctx.reply("commands.tournament.channels_must_be_different")
           if(ctx.guild.channels.get(ctx.args[3].toString())?.type !== 0 || ctx.guild.channels.get(ctx.args[4].toString())?.type !== 0) return ctx.reply("commands.tournament.invalid_channel")
-          ctx.db.guild!.lol_events.push({
-            name: ctx.args[2].toString(),
-            channel1: ctx.args[3].toString(),
-            channel2: ctx.args[4].toString()
+          await prisma.guild.upsert({
+            where: {
+              id: guild.id
+            },
+            update: {
+              events: {
+                create: [
+                  {
+                    name: ctx.args[2].toString(),
+                    channel1: ctx.args[3].toString(),
+                    channel2: ctx.args[4].toString(),
+                    type: "lol"
+                  }
+                ]
+              }
+            },
+            create: {
+              id: ctx.db.guild.id,
+              events: {
+                create: [
+                  {
+                    name: ctx.args[2].toString(),
+                    channel1: ctx.args[3].toString(),
+                    channel2: ctx.args[4].toString(),
+                    type: "lol"
+                  }
+                ]
+              }
+            }
           })
-          await ctx.db.guild.save()
           await ctx.reply("commands.tournament.tournament_added", {
             t: ctx.args[2].toString()
           })
@@ -240,13 +316,48 @@ export default createCommand({
       const games = {
         valorant: async() => {
           if(!ctx.db.guild) return
-          if(ctx.args[2].toString() === t("commands.tournament.remove_all") ) {
-            ctx.db.guild.valorant_events = []
-            await ctx.db.guild.save()
+          if(ctx.args[2].toString() === t("commands.tournament.remove_all")) {
+            const guild = await prisma.guild.findUnique({
+              where: {
+                id: ctx.db.guild.id
+              }
+            })
+            if(guild) {
+              await prisma.guild.update({
+                where: {
+                  id: ctx.db.guild.id
+                },
+                data: {
+                  events: {
+                    deleteMany: {
+                      type: "valorant"
+                    }
+                  }
+                }
+              })
+            }
             return await ctx.reply("commands.tournament.tournament_removed")
           }
-          ctx.db.guild!.valorant_events.splice(ctx.db.guild!.valorant_events.findIndex(e => e.name === ctx.args[2].toString()), 1)
-          await ctx.db.guild.save()
+          const guild = await prisma.guild.findUnique({
+            where: {
+              id: ctx.db.guild.id
+            }
+          })
+          if(guild) {
+            await prisma.guild.update({
+              where: {
+                id: ctx.db.guild.id
+              },
+              data: {
+                events: {
+                  deleteMany: {
+                    type: "valorant",
+                    name: ctx.args[2].toString()
+                  }
+                }
+              }
+            })
+          }
           await ctx.reply("commands.tournament.tournament_removed", {
             t: ctx.args[2].toString()
           })
@@ -254,13 +365,48 @@ export default createCommand({
         lol: async() => {
           if(!ctx.db.guild) return
           if(ctx.args[2].toString() === t("commands.tournament.remove_all")) {
-            ctx.db.guild.lol_events = []
-            await ctx.db.guild.save()
-            return ctx.reply("commands.tournament.tournament_removed")
+            const guild = await prisma.guild.findUnique({
+              where: {
+                id: ctx.db.guild.id
+              }
+            })
+            if(guild) {
+              await prisma.guild.update({
+                where: {
+                  id: ctx.db.guild.id
+                },
+                data: {
+                  events: {
+                    deleteMany: {
+                      type: "lol"
+                    }
+                  }
+                }
+              })
+            }
+            return await ctx.reply("commands.tournament.tournament_removed")
           }
-          ctx.db.guild!.lol_events.splice(ctx.db.guild!.lol_events.findIndex(e => e.name === ctx.args[2].toString()), 1)
-          await ctx.db.guild.save()
-          ctx.reply("commands.tournament.tournament_removed", {
+          const guild = await prisma.guild.findUnique({
+            where: {
+              id: ctx.db.guild.id
+            }
+          })
+          if(guild) {
+            await prisma.guild.update({
+              where: {
+                id: ctx.db.guild.id
+              },
+              data: {
+                events: {
+                  deleteMany: {
+                    type: "lol",
+                    name: ctx.args[2].toString()
+                  }
+                }
+              }
+            })
+          }
+          await ctx.reply("commands.tournament.tournament_removed", {
             t: ctx.args[2].toString()
           })
         }
@@ -293,9 +439,20 @@ export default createCommand({
           await i.result(events.map(e => ({ name: e, value: e })))
         },
         remove: async() => {
-          const guild = await SabineGuild.fetch(i.guild!.id)
+          const guild = await prisma.guild.findUnique({
+            where: {
+              id: i.guild!.id
+            },
+            include: {
+              events: {
+                where: {
+                  type: "valorant"
+                }
+              }
+            }
+          })
           if(!guild) return
-          const events = guild.valorant_events.map(e => e.name)
+          const events = guild.events.map(e => e.name)
             .filter(e => {
               if(e.toLowerCase().includes(i.data.options.getOptions()[0].value.toString().toLowerCase())) return e
             })
@@ -317,8 +474,20 @@ export default createCommand({
           await i.result(events.map(e => ({ name: e, value: e })))
         },
         remove: async() => {
-          const guild = (await prisma.guild.findUnique({ where: { id: i.guild!.id } }))!
-          const events = guild.lol_events.map(e => e.name)
+          const guild = await prisma.guild.findUnique({
+            where: {
+              id: i.guild!.id
+            },
+            include: {
+              events: {
+                where: {
+                  type: "valorant"
+                }
+              }
+            }
+          })
+          if(!guild) return
+          const events = guild.events.filter(e => e.type === "lol").map(e => e.name)
             .filter(e => {
               if(e.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e
             })

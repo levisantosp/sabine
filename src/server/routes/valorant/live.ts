@@ -59,19 +59,27 @@ export default async function(
   }, async(req) => {
     const guilds = await prisma.guild.findMany({
       where: {
-        valorant_livefeed_channel: {
-          isSet: true
+        valorant_live_feed_channel: {
+          not: null
         }
+      },
+      include: {
+        events: {
+          where: {
+            type: "valorant"
+          }
+        },
+        live_messages: true
       }
     })
     if(!guilds.length) return
     for(const data of req.body) {
       for(const guild of guilds) {
-        const channel = client.getChannel(guild.valorant_livefeed_channel!) as TextChannel
+        const channel = client.getChannel(guild.valorant_live_feed_channel!) as TextChannel
         if(!channel) continue
         if(
-          !guild.valorant_events.some(e => e.name === data.tournament.name) &&
-          !guild.valorant_events.some(e =>
+          !guild.events.some(e => e.name === data.tournament.name) &&
+          !guild.events.some(e =>
             tournaments[e.name]?.some(regex =>
               regex.test(data.tournament.name.replace(/\s+/g, " ").trim().toLowerCase())
             )
@@ -113,18 +121,27 @@ export default async function(
               }
             ]
           }))
-          const index = guild.live_messages.findIndex(m => m.event === data.tournament.name)
-          guild.live_messages.splice(index, 1)
-          guild.live_messages.push({
-            message: msg.id,
-            event: data.tournament.name
-          })
+          const liveMessage = guild.live_messages.filter(m => m.event === data.tournament.name)[0]
           await prisma.guild.update({
             where: {
               id: guild.id
             },
             data: {
-              live_messages: guild.live_messages
+              live_messages: {
+                upsert: {
+                  where: {
+                    id: liveMessage.id
+                  },
+                  update: {
+                    event: data.tournament.name,
+                    message: msg.id
+                  },
+                  create: {
+                    event: data.tournament.name,
+                    message: msg.id
+                  }
+                }
+              }
             }
           })
         }

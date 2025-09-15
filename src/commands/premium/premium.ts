@@ -12,7 +12,7 @@ export default createCommand({
   userInstall: true,
   messageComponentInteractionTime: 5 * 60 * 1000,
   async run({ ctx, t }) {
-    if(!ctx.db.user.plan || ctx.db.user.plan.type !== "PREMIUM") {
+    if(!ctx.db.user.premium || ctx.db.user.premium.type !== "PREMIUM") {
       return await ctx.reply("commands.premium.you_dont_have_premium")
     }
     const button = new ButtonBuilder()
@@ -24,7 +24,7 @@ export default createCommand({
       .setDesc(t(
         "commands.premium.embed.description",
         {
-          expiresAt: `<t:${(ctx.db.user.plan.expiresAt.getTime() / 1000).toFixed(0)}:R>`
+          expiresAt: `<t:${(ctx.db.user.premium.expires_at.getTime() / 1000).toFixed(0)}:R>`
         }
       ))
     await ctx.reply(button.build({ embeds: [embed] }))
@@ -41,13 +41,13 @@ export default createCommand({
     }
     const embed = new EmbedBuilder()
     for(const key of keys) {
-      if(key.expiresAt) {
+      if(key.expires_at) {
         embed.addField(
           key.type,
           t(
             "commands.premium.embed.field.value",
             {
-              expiresAt: `<t:${(key.expiresAt.getTime() / 1000).toFixed(0)}:R>`,
+              expiresAt: `<t:${(key.expires_at.getTime() / 1000).toFixed(0)}:R>`,
               key: key.id
             }
           )

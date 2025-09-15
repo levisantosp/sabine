@@ -15,6 +15,9 @@ export default createComponentInteraction({
             match: ctx.args[2],
             game: "valorant",
             userId: ctx.db.user.id
+          },
+          include: {
+            teams: true
           }
         })
         if(!pred) return await ctx.reply("helper.prediction_needed")
@@ -59,6 +62,9 @@ export default createComponentInteraction({
             match: ctx.args[2],
             game: "lol",
             userId: ctx.db.user.id
+          },
+          include: {
+            teams: true
           }
         })
         if(!pred) return await ctx.reply("helper.prediction_needed")

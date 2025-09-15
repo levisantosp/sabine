@@ -71,12 +71,15 @@ export default createCommand({
         where: {
           game: "valorant",
           userId: ctx.db.user.id
+        },
+        include: {
+          teams: true
         }
       })
       if(!predictions.length) {
         return await ctx.reply("commands.predictions.no_predictions")
       }
-      let preds = predictions.sort((a, b) => b.when.getTime() - a.when.getTime())
+      let preds = predictions.sort((a, b) => b.created_at.getTime() - a.created_at.getTime())
       const page = !ctx.args[1] ? 1 : Number(ctx.args[1])
       const pages = Math.ceil(preds.length / 5)
       if(page === 1) preds = preds.slice(0, 5)
@@ -115,7 +118,7 @@ export default createCommand({
         if(prediction.odd) {
           odd += `\nOdd: \`${prediction.odd}x\``
         }
-        const timestamp = (prediction.when.getTime() / 1000).toFixed(0)
+        const timestamp = (prediction.created_at.getTime() / 1000).toFixed(0)
         embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name} (<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>)`, t("commands.predictions.embed.field", {
           score1: prediction.teams[0].score,
           score2: prediction.teams[1].score,
@@ -147,12 +150,15 @@ export default createCommand({
         where: {
           game: "lol",
           userId: ctx.db.user.id
+        },
+        include: {
+          teams: true
         }
       })
       if(!predictions.length) {
         return await ctx.reply("commands.predictions.no_predictions")
       }
-      let preds = predictions.sort((a, b) => b.when.getTime() - a.when.getTime())
+      let preds = predictions.sort((a, b) => b.created_at.getTime() - a.created_at.getTime())
       const page = !ctx.args[1] ? 1 : Number(ctx.args[1])
       const pages = Math.ceil(predictions.length / 5)
       if(page === 1) preds = preds.slice(0, 5)
@@ -191,7 +197,7 @@ export default createCommand({
         if(prediction.odd) {
           odd += `\nOdd: \`${prediction.odd}x\``
         }
-        const timestamp = (prediction.when.getTime() / 1000).toFixed(0)
+        const timestamp = (prediction.created_at.getTime() / 1000).toFixed(0)
         embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name} (<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>)`, t("commands.predictions.embed.field", {
           score1: prediction.teams[0].score,
           score2: prediction.teams[1].score,
@@ -225,12 +231,15 @@ export default createCommand({
         where: {
           game: "valorant",
           userId: ctx.db.user.id
+        },
+        include: {
+          teams: true
         }
       })
       if(!predictions.length) {
         return await ctx.reply("commands.predictions.no_predictions")
       }
-      let preds = predictions.sort((a, b) => b.when.getTime() - a.when.getTime())
+      let preds = predictions.sort((a, b) => b.created_at.getTime() - a.created_at.getTime())
       const page = Number(ctx.args[2])
       const pages = Math.ceil(predictions.length / 5)
       preds = preds.slice(page * 5 - 5, page * 5)
@@ -268,7 +277,7 @@ export default createCommand({
         if(prediction.odd) {
           odd += `\nOdd: \`${prediction.odd}x\``
         }
-        const timestamp = (prediction.when.getTime() / 1000).toFixed(0)
+        const timestamp = (prediction.created_at.getTime() / 1000).toFixed(0)
         embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name} (<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>)`, t("commands.predictions.embed.field", {
           score1: prediction.teams[0].score,
           score2: prediction.teams[1].score,
@@ -300,12 +309,15 @@ export default createCommand({
         where: {
           game: "valorant",
           userId: ctx.db.user.id
+        },
+        include: {
+          teams: true
         }
       })
       if(!predictions.length) {
         return await ctx.reply("commands.predictions.no_predictions")
       }
-      let preds = predictions.sort((a, b) => b.when.getTime() - a.when.getTime())
+      let preds = predictions.sort((a, b) => b.created_at.getTime() - a.created_at.getTime())
       const page = Number(ctx.args[2])
       const pages = Math.ceil(predictions.length / 5)
       preds = preds.slice(page * 5 - 5, page * 5)
@@ -343,7 +355,7 @@ export default createCommand({
         if(prediction.odd) {
           odd += `\nOdd: \`${prediction.odd}x\``
         }
-        const timestamp = (prediction.when.getTime() / 1000).toFixed(0)
+        const timestamp = (prediction.created_at.getTime() / 1000).toFixed(0)
         embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name} (<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>)`, t("commands.predictions.embed.field", {
           score1: prediction.teams[0].score,
           score2: prediction.teams[1].score,

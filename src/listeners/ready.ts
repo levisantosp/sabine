@@ -30,19 +30,34 @@ const sendValorantMatches = async(client: App) => {
   const res = await service.getMatches("valorant")
   const res2 = await service.getResults("valorant")
   if(!res || !res.length) return
-  const guilds = await prisma.guild.findMany()
+  const guilds = await prisma.guild.findMany({
+    include: {
+      events: {
+        where: {
+          type: "valorant"
+        }
+      },
+      key: true,
+      tbd_matches: {
+        where: {
+          type: "valorant"
+        }
+      }
+    }
+  })
   if(!guilds.length) return
   for(const guild of guilds) {
+    const matches: typeof guild.tbd_matches = []
     if(
       guild.valorant_matches.length &&
       !res2.some(d => d.id === guild.valorant_matches[guild.valorant_matches.length - 1])
     ) continue
     guild.valorant_matches = []
     let data: MatchesData[]
-    if(guild.valorant_events.length > 5 && !guild.key) {
-      if(guild.valorant_events.slice().reverse().slice(0, 5).some(e => Object.keys(tournaments).includes(e.name))) {
+    if(guild.events.length > 5 && !guild.key) {
+      if(guild.events.slice().reverse().slice(0, 5).some(e => Object.keys(tournaments).includes(e.name))) {
         data = res.filter(d =>
-          guild.valorant_events.some(e => {
+          guild.events.some(e => {
             const tour = tournaments[e.name]
             if(!tour) return false
             return tour.some(regex =>
@@ -51,12 +66,12 @@ const sendValorantMatches = async(client: App) => {
           })
         )
       }
-      else data = res.filter(d => guild.valorant_events.slice().reverse().slice(0, 5).some(e => e.name === d.tournament.name))
+      else data = res.filter(d => guild.events.slice().reverse().slice(0, 5).some(e => e.name === d.tournament.name))
     }
     else {
-      if(guild.valorant_events.some(e => Object.keys(tournaments).includes(e.name))) {
+      if(guild.events.some(e => Object.keys(tournaments).includes(e.name))) {
         data = res.filter(d =>
-          guild.valorant_events.some(e => {
+          guild.events.some(e => {
             const tour = tournaments[e.name]
             if(!tour) return false
             return tour.some(regex =>
@@ -65,10 +80,10 @@ const sendValorantMatches = async(client: App) => {
           })
         )
       }
-      else data = res.filter(d => guild.valorant_events.some(e => e.name === d.tournament.name))
+      else data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
     }
     if(!data.length) continue
-    for(const e of guild.valorant_events) {
+    for(const e of guild.events) {
       if(!client.getChannel(e.channel1)) continue
       try {
         const messages = await client.rest.channels.getMessages(e.channel1, { limit: 100 })
@@ -82,7 +97,7 @@ const sendValorantMatches = async(client: App) => {
     try {
       for(const d of data) {
         if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
-        for(const e of guild.valorant_events) {
+        for(const e of guild.events) {
           if(e.name === d.tournament.name) {
             const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
             const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
@@ -128,9 +143,11 @@ const sendValorantMatches = async(client: App) => {
               ]
             }).catch(() => { })
             else {
-              guild.valorant_tbd_matches.push({
+              matches.push({
                 id: d.id!,
-                channel: e.channel1
+                channel: e.channel1,
+                guildId: guild.id,
+                type: "valorant"
               })
             }
           }
@@ -184,9 +201,11 @@ const sendValorantMatches = async(client: App) => {
               ]
             }).catch(() => { })
             else {
-              guild.valorant_tbd_matches.push({
+              matches.push({
                 id: d.id!,
-                channel: e.channel1
+                channel: e.channel1,
+                guildId: guild.id,
+                type: "valorant"
               })
             }
           }
@@ -200,8 +219,12 @@ const sendValorantMatches = async(client: App) => {
       },
       data: {
         valorant_matches: guild.valorant_matches,
-        valorant_tbd_matches: guild.valorant_tbd_matches,
-        live_messages: []
+        tbd_matches: {
+          create: matches
+        },
+        live_messages: {
+          deleteMany: {}
+        }
       }
     })
   }
@@ -209,11 +232,19 @@ const sendValorantMatches = async(client: App) => {
 const sendValorantTBDMatches = async(client: App) => {
   const res = await service.getMatches("valorant")
   if(!res || !res.length) return
-  const guilds = await prisma.guild.findMany()
+  const guilds = await prisma.guild.findMany({
+    include: {
+      tbd_matches: {
+        where: {
+          type: "valorant"
+        }
+      }
+    }
+  })
   if(!guilds.length) return
   for(const guild of guilds) {
-    if(!guild.valorant_tbd_matches.length) continue
-    for(const match of guild.valorant_tbd_matches) {
+    if(!guild.tbd_matches.length) continue
+    for(const match of guild.tbd_matches) {
       const data = res.find(d => d.id === match.id)
       if(!data) continue
       if(data.teams[0].name !== "TBD" && data.teams[1].name !== "TBD") {
@@ -250,14 +281,17 @@ const sendValorantTBDMatches = async(client: App) => {
           ]
         })
         .catch(() => {})
-        const index = guild.valorant_tbd_matches.findIndex((m) => m.id === match.id)
-        guild.valorant_tbd_matches.splice(index, 1)
+        const m = guild.tbd_matches.filter((m) => m.id === match.id)[0]
         await prisma.guild.update({
           where: {
             id: guild.id
           },
           data: {
-            valorant_tbd_matches: guild.valorant_tbd_matches
+            tbd_matches: {
+              delete: {
+                id: m.id
+              }
+            }
           }
         })
       }
@@ -268,17 +302,32 @@ const sendLolMatches = async(client: App) => {
   const res = await service.getMatches("lol")
   const res2 = await service.getResults("lol")
   if(!res || !res.length) return
-  const guilds = await prisma.guild.findMany()
+  const guilds = await prisma.guild.findMany({
+    include: {
+      events: {
+        where: {
+          type: "lol"
+        }
+      },
+      key: true,
+      tbd_matches: {
+        where: {
+          type: "lol"
+        }
+      }
+    }
+  })
   if(!guilds.length) return
   for(const guild of guilds) {
+    const matches: typeof guild.tbd_matches = []
     if(guild.lol_matches.length && !res2.some(d => d.id === guild.lol_matches[guild.lol_matches.length - 1])) continue
     guild.lol_matches = []
     let data: MatchesData[]
-    if(guild.lol_events.length > 5 && !guild.key) {
-      data = res.filter(d => guild.lol_events.reverse().slice(0, 5).some(e => e.name === d.tournament.name))
+    if(guild.events.length > 5 && !guild.key) {
+      data = res.filter(d => guild.events.reverse().slice(0, 5).some(e => e.name === d.tournament.name))
     }
-    else data = res.filter(d => guild.lol_events.some(e => e.name === d.tournament.name))
-    for(const e of guild.lol_events) {
+    else data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
+    for(const e of guild.events) {
       if(!client.getChannel(e.channel1)) continue
       try {
         const messages = await client.rest.channels.getMessages(e.channel1, { limit: 100 })
@@ -292,7 +341,7 @@ const sendLolMatches = async(client: App) => {
     try {
       for(const d of data) {
         if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
-        for(const e of guild.lol_events) {
+        for(const e of guild.events) {
           if(e.name === d.tournament.name) {
             const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
             const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
@@ -333,9 +382,11 @@ const sendLolMatches = async(client: App) => {
               ]
             }).catch(() => { })
             else {
-              guild.lol_tbd_matches.push({
+              matches.push({
                 id: d.id!,
-                channel: e.channel1
+                channel: e.channel1,
+                guildId: guild.id,
+                type: "lol"
               })
             }
           }
@@ -349,8 +400,12 @@ const sendLolMatches = async(client: App) => {
       },
       data: {
         lol_matches: guild.lol_matches,
-        lol_tbd_matches: guild.lol_tbd_matches,
-        live_messages: []
+        tbd_matches: {
+          create: matches
+        },
+        live_messages: {
+          deleteMany: {}
+        }
       }
     })
   }
@@ -358,11 +413,19 @@ const sendLolMatches = async(client: App) => {
 const sendLolTBDMatches = async(client: App) => {
   const res = await service.getMatches("lol")
   if(!res || !res.length) return
-  const guilds = await prisma.guild.findMany()
+  const guilds = await prisma.guild.findMany({
+    include: {
+      tbd_matches: {
+        where: {
+          type: "lol"
+        }
+      }
+    }
+  })
   if(!guilds.length) return
   for(const guild of guilds) {
-    if(!guild.lol_tbd_matches.length) continue
-    for(const match of guild.lol_tbd_matches) {
+    if(!guild.tbd_matches.length) continue
+    for(const match of guild.tbd_matches) {
       const data = res.find(d => d.id === match.id)
       if(!data) continue
       if(data.teams[0].name !== "TBD" && data.teams[1].name !== "TBD") {
@@ -395,14 +458,17 @@ const sendLolTBDMatches = async(client: App) => {
           ]
         })
           .catch(() => { })
-        const index = guild.lol_tbd_matches.findIndex((m) => m.id === match.id)
-        guild.lol_tbd_matches.splice(index, 1)
+        const m = guild.tbd_matches.filter((m) => m.id === match.id)[0]
         await prisma.guild.update({
           where: {
             id: guild.id
           },
           data: {
-            lol_tbd_matches: guild.lol_tbd_matches
+            tbd_matches: {
+              delete: {
+                id: m.id
+              }
+            }
           }
         })
       }
@@ -410,7 +476,7 @@ const sendLolTBDMatches = async(client: App) => {
   }
 }
 const runInBatches = async(client: App, tasks: any[], batch_size: number) => {
-  for(let i = 0;i < tasks.length;i += batch_size) {
+  for(let i = 0; i < tasks.length; i += batch_size) {
     const batch = tasks.slice(i, i + batch_size)
     await Promise.all(batch.map(task => task(client).catch((e: Error) => new Logger(client).error(e))))
   }
@@ -443,13 +509,13 @@ export default createListener({
       ])
     }
     await client.bulkEditGlobalCommands()
-    await client.queue.process("reminder", async job => {
+    client.queue.process("reminder", async job => {
       const user = await SabineUser.fetch(job.data.user)
       if(!user) return
       if(
         !user.remind ||
         user.reminded ||
-        !user.remindIn
+        !user.remind_in
       ) return
       const channel = client.getChannel(job.data.channel) as TextChannel
       await channel.createMessage({
@@ -458,6 +524,7 @@ export default createListener({
       user.reminded = true
       await user.save()
     })
+    .catch(e => new Logger(client).error(e))
     await runTasks(client)
   }
 })

@@ -41,34 +41,46 @@ export default async function(
   }, async(req) => {
     const guilds = await prisma.guild.findMany({
       where: {
-        lol_events: {
-          isEmpty: false
+        events: {
+          some: {
+            type: "lol"
+          }
         }
+      },
+      include: {
+        events: {
+          where: {
+            type: "lol"
+          }
+        },
+        key: true
       }
     })
     const preds = await prisma.prediction.findMany({
       where: {
         game: "lol"
+      },
+      include: {
+        teams: true
       }
     })
     if(!guilds.length) return
     for(const guild of guilds) {
       let data: ResultsData[]
-      if(guild.lol_events.length > 5 && !guild.key) {
-        data = req.body.filter(d => guild.lol_events.reverse().slice(0, 5).some(e => e.name === d.tournament.name))
+      if(guild.events.length > 5 && !guild.key) {
+        data = req.body.filter(d => guild.events.reverse().slice(0, 5).some(e => e.name === d.tournament.name))
       }
-      else data = req.body.filter(d => guild.lol_events.some(e => e.name === d.tournament.name))
+      else data = req.body.filter(d => guild.events.some(e => e.name === d.tournament.name))
       if(!data || !data[0]) continue
       data.reverse()
       for(const d of data) {
-        if(d.teams[0].score === "0" && d.teams[1].score === "0") continue
-        for(const e of guild.lol_events) {
+        for(const e of guild.events) {
           if(e.name === d.tournament.name) {
-            const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
-            const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
+            const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
+            const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
             const embed = new EmbedBuilder()
               .setAuthor({
-                name: d.tournament.full_name!,
+                name: d.tournament.name,
                 iconURL: d.tournament.image
               })
               .setField(
@@ -83,68 +95,74 @@ export default async function(
                   type: 1,
                   components: [
                     new ButtonBuilder()
-                      .setLabel(locales(guild.lang ?? "", "helper.pickem.label"))
+                      .setLabel(locales(guild.lang ?? "en", "helper.stats"))
+                      .setStyle("link")
+                      .setURL(`https://vlr.gg/${d.id}`),
+                    new ButtonBuilder()
+                      .setLabel(locales(guild.lang ?? "en", "helper.pickem.label"))
                       .setStyle("blue")
                       .setCustomId("pickem")
                   ]
                 }
               ]
             }))
+            .catch(() => {})
           }
         }
       }
     }
     if(!preds.length) return
     for(const data of req.body) {
-      const pred = preds.find(p => p.match === data.id)
-      if(!pred) continue
-      const user = await SabineUser.fetch(pred.userId)
-      if(!user) continue
-      if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
-        await user.addCorrectPrediction("lol", data.id)
-        if(pred.bet) {
-          const winnerIndex = data.teams.findIndex(t => t.winner)
-          if(pred.teams[winnerIndex].winner) {
-            let oddA = 0
-            let oddB = 0
-            for(const p of preds) {
-              if(p.teams[0].winner && p.bet) {
-                oddA += 1
-              }
-              else if(p.teams[1].winner && p.bet) {
-                oddB += 1
-              }
-            }
-            let odd: number
-            if(pred.teams[0].winner) {
-              odd = calcOdd(oddA)
-            }
-            else {
-              odd = calcOdd(oddB)
-            }
-            let bonus = 0
-            if(user.plan) {
-              bonus = Number(pred.bet) / 2
-            }
-            user.coins += BigInt(Number(pred.bet) * odd) + BigInt(bonus)
-            user.fates += 10
-            pred.odd = BigInt(odd)
-            await Promise.all([
-              await prisma.prediction.update({
-                where: {
-                  id: pred.id
-                },
-                data: {
-                  odd: BigInt(odd)
+      for(const pred of preds) {
+        if(data.id !== pred.match) continue
+        const user = await SabineUser.fetch(pred.userId)
+        if(!user) continue
+        if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
+          await user.addCorrectPrediction("lol", data.id)
+          if(pred.bet) {
+            const winnerIndex = data.teams.findIndex(t => t.winner)
+            if(pred.teams[winnerIndex].winner) {
+              let oddA = 0
+              let oddB = 0
+              for(const p of preds) {
+                if(p.teams[0].winner && p.bet) {
+                  oddA += 1
                 }
-              }),
-              user.save()
-            ])
+                else if(p.teams[1].winner && p.bet) {
+                  oddB += 1
+                }
+              }
+              let odd: number
+              if(pred.teams[0].winner) {
+                odd = calcOdd(oddA)
+              }
+              else {
+                odd = calcOdd(oddB)
+              }
+              let bonus = 0
+              if(user.premium) {
+                bonus = Number(pred.bet) / 2
+              }
+              user.coins += BigInt(Number(pred.bet) * odd) + BigInt(bonus)
+              user.fates += 10
+              pred.odd = odd
+              await Promise.all([
+                await prisma.prediction.update({
+                  where: {
+                    id: pred.id
+                  },
+                  data: {
+                    odd: odd
+                  }
+                }),
+                user.save()
+              ])
+            }
           }
         }
-      }
-      else {
-        await user.addWrongPrediction("lol", data.id)
+        else {
+          await user.addWrongPrediction("lol", data.id)
+        }
       }
     }
   })

@@ -114,17 +114,17 @@ export default createCommand({
   },
   async createMessageComponentInteraction({ ctx }) {
     ctx.setFlags(64)
-    if(!ctx.db.user.roster.reserve.includes(ctx.args[3])) {
+    if(!ctx.db.user.reserve_players.includes(ctx.args[3])) {
       return await ctx.reply("commands.sell.player_not_found")
     }
-    const i = ctx.db.user.roster.reserve.findIndex(p => p === ctx.args[3])
+    const i = ctx.db.user.reserve_players.findIndex(p => p === ctx.args[3])
     if(ctx.args[2] === "promote") {
-      if(ctx.db.user.roster.active.length >= 5 ) {
-        ctx.db.user.roster.reserve.push(ctx.db.user.roster.active.at(-1)!)
-        ctx.db.user.roster.active.splice(-1, 1)
+      if(ctx.db.user.active_players.length >= 5 ) {
+        ctx.db.user.reserve_players.push(ctx.db.user.active_players.at(-1)!)
+        ctx.db.user.active_players.splice(-1, 1)
       }
-      ctx.db.user.roster.active.push(ctx.args[3])
-      ctx.db.user.roster.reserve.splice(i, 1)
+      ctx.db.user.active_players.push(ctx.args[3])
+      ctx.db.user.reserve_players.splice(i, 1)
       await ctx.db.user.save()
       await ctx.reply("commands.promote.player_promoted", { p: players.get(ctx.args[3])?.name })
     }

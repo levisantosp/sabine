@@ -28,7 +28,7 @@ export default async function(
     const guilds = await prisma.guild.findMany({
       where: {
         valorant_news_channel: {
-          isSet: true
+          not: null
         }
       }
     })
@@ -46,7 +46,7 @@ export default async function(
           .setStyle("link")
           .setLabel(locales(guild.lang ?? "en", "helper.source"))
           .setURL(data.url)
-        channel.createMessage(embed.build({
+        await channel.createMessage(embed.build({
           components: [
             {
               type: 1,

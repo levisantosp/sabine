@@ -151,42 +151,47 @@ export default class Round extends Match {
             }
           }
         }
-        await prisma.match.createMany({
-          data: [
-            {
+        await Promise.all([
+          prisma.match.create({
+            data: {
               mode: "RANKED",
               points: pts,
               userId: this.teams[0].user,
               winner: true,
-              teams: [
-                {
-                  user: this.teams[0].user,
-                  score: score1,
-                },
-                {
-                  user: this.teams[1].user,
-                  score: score2
-                }
-              ]
-            },
-            {
+              teams: {
+                create: [
+                  {
+                    user: this.teams[0].user,
+                    score: score1
+                  },
+                  {
+                    user: this.teams[1].user,
+                    score: score2
+                  }
+                ]
+              }
+            }
+          }),
+          prisma.match.create({
+            data: {
               mode: "RANKED",
               points: -(pts - 5),
               userId: this.teams[1].user,
               winner: false,
-              teams: [
-                {
-                  user: this.teams[1].user,
-                  score: score2,
-                },
-                {
-                  user: this.teams[0].user,
-                  score: score1
-                }
-              ]
+              teams: {
+                create: [
+                  {
+                    user: this.teams[1].user,
+                    score: score2
+                  },
+                  {
+                    user: this.teams[0].user,
+                    score: score1
+                  }
+                ]
+              }
             }
-          ]
-        })
+          })])
         await Promise.all([user1.save(), user2.save()])
         const embed = new EmbedBuilder()
         .setTitle(this.t(`simulator.mode.${this.mode}`))
@@ -264,42 +269,48 @@ export default class Round extends Match {
             }
           }
         }
-        await prisma.match.createMany({
-          data: [
-            {
+        await Promise.all([
+          prisma.match.create({
+            data: {
               mode: "RANKED",
               points: pts,
               userId: this.teams[1].user,
               winner: true,
-              teams: [
-                {
-                  user: this.teams[1].user,
-                  score: score2,
-                },
-                {
-                  user: this.teams[0].user,
-                  score: score1
-                }
-              ]
-            },
-            {
+              teams: {
+                create: [
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  },
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  }
+                ]
+              }
+            }
+          }),
+          prisma.match.create({
+            data: {
               mode: "RANKED",
               points: -(pts - 5),
               userId: this.teams[0].user,
               winner: false,
-              teams: [
-                {
-                  user: this.teams[0].user,
-                  score: score1,
-                },
-                {
-                  user: this.teams[1].user,
-                  score: score2
-                }
-              ]
+              teams: {
+                create: [
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  },
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  }
+                ]
+              }
             }
-          ]
-        })
+          })
+        ])
         await Promise.all([user1.save(), user2.save()])
         const embed = new EmbedBuilder()
         .setTitle(this.t(`simulator.mode.${this.mode}`))
@@ -377,42 +388,48 @@ export default class Round extends Match {
             }
           }
         }
-        await prisma.match.createMany({
-          data: [
-            {
+        await Promise.all([
+          prisma.match.create({
+            data: {
               mode: "RANKED",
               points: pts,
               userId: this.teams[0].user,
               winner: true,
-              teams: [
-                {
-                  user: this.teams[0].user,
-                  score: score1,
-                },
-                {
-                  user: this.teams[1].user,
-                  score: score2
-                }
-              ]
-            },
-            {
+              teams: {
+                create: [
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  },
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  }
+                ]
+              }
+            }
+          }),
+          prisma.match.create({
+            data: {
               mode: "RANKED",
               points: -(pts - 5),
               userId: this.teams[1].user,
               winner: false,
-              teams: [
-                {
-                  user: this.teams[1].user,
-                  score: score2,
-                },
-                {
-                  user: this.teams[0].user,
-                  score: score1
-                }
-              ]
+              teams: {
+                create: [
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  },
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  }
+                ]
+              }
             }
-          ]
-        })
+          })
+        ])
         await Promise.all([user1.save(), user2.save()])
         const embed = new EmbedBuilder()
         .setTitle(this.t(`simulator.mode.${this.mode}`))
@@ -490,42 +507,48 @@ export default class Round extends Match {
             }
           }
         }
-        await prisma.match.createMany({
-          data: [
-            {
+        await Promise.all([
+          prisma.match.create({
+            data: {
               mode: "RANKED",
               points: pts,
               userId: this.teams[1].user,
               winner: true,
-              teams: [
-                {
-                  user: this.teams[1].user,
-                  score: score2,
-                },
-                {
-                  user: this.teams[0].user,
-                  score: score1
-                }
-              ]
-            },
-            {
+              teams: {
+                create: [
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  },
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  }
+                ]
+              }
+            }
+          }),
+          prisma.match.create({
+            data: {
               mode: "RANKED",
               points: -(pts - 5),
               userId: this.teams[1].user,
               winner: false,
-              teams: [
-                {
-                  user: this.teams[1].user,
-                  score: score2,
-                },
-                {
-                  user: this.teams[0].user,
-                  score: score1
-                }
-              ]
+              teams: {
+                create: [
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  },
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  }
+                ]
+              }
             }
-          ]
-        })
+          })
+        ])
         await Promise.all([user1.save(), user2.save()])
         const embed = new EmbedBuilder()
         .setTitle(this.t(`simulator.mode.${this.mode}`))
@@ -606,42 +629,48 @@ export default class Round extends Match {
             }
           }
         }
-        await prisma.match.createMany({
-          data: [
-            {
+        await Promise.all([
+          prisma.match.create({
+            data: {
               mode: "RANKED_SWIFTPLAY",
               points: pts,
               userId: this.teams[0].user,
               winner: true,
-              teams: [
-                {
-                  user: this.teams[0].user,
-                  score: score1,
-                },
-                {
-                  user: this.teams[1].user,
-                  score: score2
-                }
-              ]
-            },
-            {
+              teams: {
+                create: [
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  },
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  }
+                ]
+              }
+            }
+          }),
+          prisma.match.create({
+            data: {
               mode: "RANKED_SWIFTPLAY",
               points: -(pts - 5),
               userId: this.teams[1].user,
               winner: false,
-              teams: [
-                {
-                  user: this.teams[1].user,
-                  score: score2,
-                },
-                {
-                  user: this.teams[0].user,
-                  score: score1
-                }
-              ]
+              teams: {
+                create: [
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  },
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  }
+                ]
+              }
             }
-          ]
-        })
+          })
+        ])
         await Promise.all([user1.save(), user2.save()])
         const embed = new EmbedBuilder()
         .setTitle(this.t(`simulator.mode.${this.mode}`))
@@ -719,42 +748,48 @@ export default class Round extends Match {
             }
           }
         }
-        await prisma.match.createMany({
-          data: [
-            {
+        await Promise.all([
+          prisma.match.create({
+            data: {
               mode: "RANKED_SWIFTPLAY",
               points: pts,
               userId: this.teams[1].user,
               winner: true,
-              teams: [
-                {
-                  user: this.teams[1].user,
-                  score: score2,
-                },
-                {
-                  user: this.teams[0].user,
-                  score: score1
-                }
-              ]
-            },
-            {
+              teams: {
+                create: [
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  },
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  }
+                ]
+              }
+            }
+          }),
+          prisma.match.create({
+            data: {
               mode: "RANKED_SWIFTPLAY",
               points: -(pts - 5),
               userId: this.teams[0].user,
               winner: false,
-              teams: [
-                {
-                  user: this.teams[0].user,
-                  score: score1,
-                },
-                {
-                  user: this.teams[1].user,
-                  score: score2
-                }
-              ]
+              teams: {
+                create: [
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  },
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  }
+                ]
+              }
             }
-          ]
-        })
+          })
+        ])
         await Promise.all([user1.save(), user2.save()])
         const embed = new EmbedBuilder()
         .setTitle(this.t(`simulator.mode.${this.mode}`))
@@ -799,40 +834,46 @@ export default class Round extends Match {
       if(max === 5 && score1 === max) {
         user1.swiftplay_wins += 1
         user2.swiftplay_defeats += 1
-        await prisma.match.createMany({
-          data: [
-            {
+        await Promise.all([
+          prisma.match.create({
+            data: {
               mode: "SWIFTPLAY",
               userId: this.teams[0].user,
               winner: true,
-              teams: [
-                {
-                  user: this.teams[0].user,
-                  score: score1,
-                },
-                {
-                  user: this.teams[1].user,
-                  score: score2
-                }
-              ]
-            },
-            {
+              teams: {
+                create: [
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  },
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  }
+                ]
+              }
+            }
+          }),
+          prisma.match.create({
+            data: {
               mode: "SWIFTPLAY",
               userId: this.teams[1].user,
               winner: false,
-              teams: [
-                {
-                  user: this.teams[1].user,
-                  score: score2,
-                },
-                {
-                  user: this.teams[0].user,
-                  score: score1
-                }
-              ]
+              teams: {
+                create: [
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  },
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  }
+                ]
+              }
             }
-          ]
-        })
+          })
+        ])
         await Promise.all([user1.save(), user2.save()])
         const embed = new EmbedBuilder()
         .setTitle(this.t(`simulator.mode.${this.mode}`))
@@ -874,40 +915,46 @@ export default class Round extends Match {
       else if(max === 5 && score2 === max) {
         user2.swiftplay_wins += 1
         user1.swiftplay_defeats += 1
-        await prisma.match.createMany({
-          data: [
-            {
+        await Promise.all([
+          prisma.match.create({
+            data: {
               mode: "SWIFTPLAY",
               userId: this.teams[1].user,
               winner: true,
-              teams: [
-                {
-                  user: this.teams[1].user,
-                  score: score2,
-                },
-                {
-                  user: this.teams[0].user,
-                  score: score1
-                }
-              ]
-            },
-            {
+              teams: {
+                create: [
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  },
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  }
+                ]
+              }
+            }
+          }),
+          prisma.match.create({
+            data: {
               mode: "SWIFTPLAY",
               userId: this.teams[0].user,
               winner: false,
-              teams: [
-                {
-                  user: this.teams[0].user,
-                  score: score1,
-                },
-                {
-                  user: this.teams[1].user,
-                  score: score2
-                }
-              ]
+              teams: {
+                create: [
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  },
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  }
+                ]
+              }
             }
-          ]
-        })
+          })
+        ])
         await Promise.all([user1.save(), user2.save()])
         const embed = new EmbedBuilder()
         .setTitle(this.t(`simulator.mode.${this.mode}`))
@@ -952,40 +999,46 @@ export default class Round extends Match {
       if(max === 13 && score1 === max) {
         user1.unranked_wins += 1
         user2.unranked_defeats += 1
-        await prisma.match.createMany({
-          data: [
-            {
+        await Promise.all([
+          prisma.match.create({
+            data: {
               mode: "UNRANKED",
               userId: this.teams[0].user,
               winner: true,
-              teams: [
-                {
-                  user: this.teams[0].user,
-                  score: score1,
-                },
-                {
-                  user: this.teams[1].user,
-                  score: score2
-                }
-              ]
-            },
-            {
+              teams: {
+                create: [
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  },
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  }
+                ]
+              }
+            }
+          }),
+          prisma.match.create({
+            data: {
               mode: "UNRANKED",
               userId: this.teams[1].user,
               winner: false,
-              teams: [
-                {
-                  user: this.teams[1].user,
-                  score: score2,
-                },
-                {
-                  user: this.teams[0].user,
-                  score: score1
-                }
-              ]
+              teams: {
+                create: [
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  },
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  }
+                ]
+              }
             }
-          ]
-        })
+          })
+        ])
         await Promise.all([user1.save(), user2.save()])
         const embed = new EmbedBuilder()
         .setTitle(this.t(`simulator.mode.${this.mode}`))
@@ -1027,40 +1080,46 @@ export default class Round extends Match {
       else if(max === 13 && score2 === max) {
         user2.unranked_wins += 1
         user1.unranked_defeats += 1
-        await prisma.match.createMany({
-          data: [
-            {
+        await Promise.all([
+          prisma.match.create({
+            data: {
               mode: "UNRANKED",
               userId: this.teams[1].user,
               winner: true,
-              teams: [
-                {
-                  user: this.teams[1].user,
-                  score: score2,
-                },
-                {
-                  user: this.teams[0].user,
-                  score: score1
-                }
-              ]
-            },
-            {
+              teams: {
+                create: [
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  },
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  }
+                ]
+              }
+            }
+          }),
+          prisma.match.create({
+            data: {
               mode: "UNRANKED",
               userId: this.teams[0].user,
               winner: false,
-              teams: [
-                {
-                  user: this.teams[0].user,
-                  score: score1,
-                },
-                {
-                  user: this.teams[1].user,
-                  score: score2
-                }
-              ]
+              teams: {
+                create: [
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  },
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  }
+                ]
+              }
             }
-          ]
-        })
+          })
+        ])
         await Promise.all([user1.save(), user2.save()])
         const embed = new EmbedBuilder()
         .setTitle(this.t(`simulator.mode.${this.mode}`))
@@ -1103,40 +1162,46 @@ export default class Round extends Match {
     else if(this.mode === "tournament" && !this.overtime) {
       const max = Math.max(score1, score2)
       if(max === 13 && score1 === max) {
-        await prisma.match.createMany({
-          data: [
-            {
+        await Promise.all([
+          prisma.match.create({
+            data: {
               mode: "TOURNAMENT",
               userId: this.teams[0].user,
               winner: true,
-              teams: [
-                {
-                  user: this.teams[0].user,
-                  score: score1,
-                },
-                {
-                  user: this.teams[1].user,
-                  score: score2
-                }
-              ]
-            },
-            {
+              teams: {
+                create: [
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  },
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  }
+                ]
+              }
+            }
+          }),
+          prisma.match.create({
+            data: {
               mode: "TOURNAMENT",
               userId: this.teams[1].user,
               winner: false,
-              teams: [
-                {
-                  user: this.teams[1].user,
-                  score: score2,
-                },
-                {
-                  user: this.teams[0].user,
-                  score: score1
-                }
-              ]
+              teams: {
+                create: [
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  },
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  }
+                ]
+              }
             }
-          ]
-        })
+          })
+        ])
         await Promise.all([user1.save(), user2.save()])
         const embed = new EmbedBuilder()
         .setTitle(this.t(`simulator.mode.${this.mode}`))
@@ -1176,40 +1241,46 @@ export default class Round extends Match {
         )
       }
       else if(max === 13 && score2 === max) {
-        await prisma.match.createMany({
-          data: [
-            {
-              mode: "TOURNAMENT",
-              userId: this.teams[1].user,
-              winner: true,
-              teams: [
-                {
-                  user: this.teams[1].user,
-                  score: score2,
-                },
-                {
-                  user: this.teams[0].user,
-                  score: score1
-                }
-              ]
-            },
-            {
+        await Promise.all([
+          prisma.match.create({
+            data: {
               mode: "TOURNAMENT",
               userId: this.teams[0].user,
-              winner: false,
-              teams: [
-                {
-                  user: this.teams[0].user,
-                  score: score1,
-                },
-                {
-                  user: this.teams[1].user,
-                  score: score2
-                }
-              ]
+              winner: true,
+              teams: {
+                create: [
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  },
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  }
+                ]
+              }
             }
-          ]
-        })
+          }),
+          prisma.match.create({
+            data: {
+              mode: "TOURNAMENT",
+              userId: this.teams[1].user,
+              winner: false,
+              teams: {
+                create: [
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  },
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  }
+                ]
+              }
+            }
+          })
+        ])
         await Promise.all([user1.save(), user2.save()])
         const embed = new EmbedBuilder()
         .setTitle(this.t(`simulator.mode.${this.mode}`))
@@ -1252,40 +1323,34 @@ export default class Round extends Match {
     else {
       const max = Math.max(score1, score2)
       if(max === 13 && score1 === max) {
-        await prisma.match.createMany({
-          data: [
-            {
+        await Promise.all([
+          prisma.match.create({
+            data: {
               mode: "TOURNAMENT",
               userId: this.teams[0].user,
               winner: true,
-              teams: [
-                {
-                  user: this.teams[0].user,
-                  score: score1,
-                },
-                {
-                  user: this.teams[1].user,
-                  score: score2
-                }
-              ]
-            },
-            {
+              teams: {
+                create: [
+                  { user: this.teams[0].user, score: score1 },
+                  { user: this.teams[1].user, score: score2 }
+                ]
+              }
+            }
+          }),
+          prisma.match.create({
+            data: {
               mode: "TOURNAMENT",
               userId: this.teams[1].user,
               winner: false,
-              teams: [
-                {
-                  user: this.teams[1].user,
-                  score: score2,
-                },
-                {
-                  user: this.teams[0].user,
-                  score: score1
-                }
-              ]
+              teams: {
+                create: [
+                  { user: this.teams[1].user, score: score2 },
+                  { user: this.teams[0].user, score: score1 }
+                ]
+              }
             }
-          ]
-        })
+          })
+        ])
         await Promise.all([user1.save(), user2.save()])
         const embed = new EmbedBuilder()
         .setTitle(this.t(`simulator.mode.${this.mode}`))
@@ -1325,40 +1390,46 @@ export default class Round extends Match {
         )
       }
       else if(max === 13 && score2 === max) {
-        await prisma.match.createMany({
-          data: [
-            {
+        await Promise.all([
+          prisma.match.create({
+            data: {
               mode: "TOURNAMENT",
               userId: this.teams[1].user,
               winner: true,
-              teams: [
-                {
-                  user: this.teams[1].user,
-                  score: score2,
-                },
-                {
-                  user: this.teams[0].user,
-                  score: score1
-                }
-              ]
-            },
-            {
+              teams: {
+                create: [
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  },
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  }
+                ]
+              }
+            }
+          }),
+          prisma.match.create({
+            data: {
               mode: "TOURNAMENT",
               userId: this.teams[0].user,
               winner: false,
-              teams: [
-                {
-                  user: this.teams[0].user,
-                  score: score1,
-                },
-                {
-                  user: this.teams[1].user,
-                  score: score2
-                }
-              ]
+              teams: {
+                create: [
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  },
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  }
+                ]
+              }
             }
-          ]
-        })
+          })
+        ])
         await Promise.all([user1.save(), user2.save()])
         const embed = new EmbedBuilder()
         .setTitle(this.t(`simulator.mode.${this.mode}`))
@@ -1398,40 +1469,46 @@ export default class Round extends Match {
         )
       }
       else if(max > 13 && score1 === max) {
-        await prisma.match.createMany({
-          data: [
-            {
+        await Promise.all([
+          prisma.match.create({
+            data: {
               mode: "TOURNAMENT",
               userId: this.teams[0].user,
               winner: true,
-              teams: [
-                {
-                  user: this.teams[0].user,
-                  score: score1,
-                },
-                {
-                  user: this.teams[1].user,
-                  score: score2
-                }
-              ]
-            },
-            {
+              teams: {
+                create: [
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  },
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  }
+                ]
+              }
+            }
+          }),
+          prisma.match.create({
+            data: {
               mode: "TOURNAMENT",
               userId: this.teams[1].user,
               winner: false,
-              teams: [
-                {
-                  user: this.teams[1].user,
-                  score: score2,
-                },
-                {
-                  user: this.teams[0].user,
-                  score: score1
-                }
-              ]
+              teams: {
+                create: [
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  },
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  }
+                ]
+              }
             }
-          ]
-        })
+          })
+        ])
         await Promise.all([user1.save(), user2.save()])
         const embed = new EmbedBuilder()
         .setTitle(this.t(`simulator.mode.${this.mode}`))
@@ -1471,40 +1548,46 @@ export default class Round extends Match {
         )
       }
       else if(max > 13 && score2 === max) {
-        await prisma.match.createMany({
-          data: [
-            {
+        await Promise.all([
+          prisma.match.create({
+            data: {
               mode: "TOURNAMENT",
               userId: this.teams[1].user,
               winner: true,
-              teams: [
-                {
-                  user: this.teams[1].user,
-                  score: score2,
-                },
-                {
-                  user: this.teams[0].user,
-                  score: score1
-                }
-              ]
-            },
-            {
+              teams: {
+                create: [
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  },
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  }
+                ]
+              }
+            }
+          }),
+          prisma.match.create({
+            data: {
               mode: "TOURNAMENT",
               userId: this.teams[1].user,
               winner: false,
-              teams: [
-                {
-                  user: this.teams[1].user,
-                  score: score2,
-                },
-                {
-                  user: this.teams[0].user,
-                  score: score1
-                }
-              ]
+              teams: {
+                create: [
+                  {
+                    user: this.teams[1].user,
+                    score: score2,
+                  },
+                  {
+                    user: this.teams[0].user,
+                    score: score1,
+                  }
+                ]
+              }
             }
-          ]
-        })
+          })
+        ])
         await Promise.all([user1.save(), user2.save()])
         const embed = new EmbedBuilder()
         .setTitle(this.t(`simulator.mode.${this.mode}`))

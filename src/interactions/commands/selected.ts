@@ -51,10 +51,10 @@ export default createComponentInteraction({
     .setFields(
       {
         name: key.split(":")[1] === ctx.interaction.user.id ?
-              ctx.db.user.team!.name! :
-              user.team!.name!,
+              ctx.db.user.team_name! :
+              user.team_name!,
         value: key.split(":")[1] === ctx.interaction.user.id ?
-          ctx.db.user.roster.active.map(id => {
+          ctx.db.user.active_players.map(id => {
             const player = client.players.get(id)!
             let emoji: string | undefined = "<a:loading:809221866434199634>"
             const i = data[ctx.interaction.user.id].findIndex((p: any) => p.id.toString() === id)
@@ -68,7 +68,7 @@ export default createComponentInteraction({
             const ovr = parseInt(player.ovr.toString())
             return `${emoji} ${player.name} (${ovr})`
           }).join("\n") :
-          user.roster.active.map(id => {
+          user.active_players.map(id => {
             const player = client.players.get(id)!
             let emoji: string | undefined = "<a:loading:809221866434199634>"
             const i = data[user.id].findIndex((p: any) => p.id.toString() === id)
@@ -86,10 +86,10 @@ export default createComponentInteraction({
       },
       {
         name: key.split(":")[1] !== ctx.interaction.user.id ?
-              ctx.db.user.team!.name! :
-              user.team!.name!,
+              ctx.db.user.team_name! :
+              user.team_name!,
         value: key.split(":")[1] !== ctx.interaction.user.id ?
-          ctx.db.user.roster.active.map(id => {
+          ctx.db.user.active_players.map(id => {
             const player = client.players.get(id)!
             let emoji: string | undefined = "<a:loading:809221866434199634>"
             const i = data[ctx.interaction.user.id].findIndex((p: any) => p.id.toString() === id)
@@ -103,7 +103,7 @@ export default createComponentInteraction({
             const ovr = parseInt(player.ovr.toString())
             return `${emoji} ${player.name} (${ovr})`
           }).join("\n") :
-          user.roster.active.map(id => {
+          user.active_players.map(id => {
             const player = client.players.get(id)!
             let emoji: string | undefined = "<a:loading:809221866434199634>"
             const i = data[user.id].findIndex((p: any) => p.id.toString() === id)
@@ -144,14 +144,14 @@ export default createComponentInteraction({
           teams: [
             {
               roster: data[ctx.db.user.id],
-              name: ctx.db.user.team!.name!,
-              tag: ctx.db.user.team!.tag!,
+              name: ctx.db.user.team_name!,
+              tag: ctx.db.user.team_tag!,
               user: ctx.db.user.id
             },
             {
               roster: data[user.id],
-              name: user.team!.name!,
-              tag: user.team!.tag!,
+              name: user.team_name!,
+              tag: user.team_tag!,
               user: user.id
             }
           ],

@@ -110,7 +110,7 @@ export default createCommand({
   async createAutocompleteInteraction({ i }) {
     const user = (await SabineUser.fetch(i.user.id)) ?? new SabineUser(i.user.id)
     const players: Array<{ name: string, ovr: number, id: string }> = []
-    for(const p_id of user.roster.reserve) {
+    for(const p_id of user.reserve_players) {
       const p = getPlayer(Number(p_id))
       if(!p) break
       const ovr = parseInt(calcPlayerOvr(p).toString())
@@ -143,7 +143,7 @@ export default createCommand({
       const user = await SabineUser.fetch(ctx.args[3])
       const player = getPlayer(Number(ctx.args[4]))
       if(!user || !player) return
-      const i = user.roster.reserve.findIndex(p => p === ctx.args[4])
+      const i = user.reserve_players.findIndex(p => p === ctx.args[4])
       if(i === -1 || i === undefined) return
       if(ctx.db.user.coins < BigInt(ctx.args[5])) {
         return await ctx.edit("commands.trade.missing_coins", {
@@ -151,27 +151,27 @@ export default createCommand({
           user: `<@${ctx.interaction.user.mention}>`          
         })
       }
-      user.roster.reserve.splice(i, 1)
+      user.reserve_players.splice(i, 1)
       user.coins += BigInt(ctx.args[5])
       user.trade_time = new Date(Date.now() + (60 * 60 * 1000))
-      ctx.db.user.roster.reserve.push(ctx.args[4])
+      ctx.db.user.reserve_players.push(ctx.args[4])
       ctx.db.user.coins -= BigInt(ctx.args[5])
       ctx.db.user.trade_time = new Date(Date.now() + (60 * 60 * 1000))
       await client.prisma.transaction.createMany({
         data: [
           {
             type: "TRADE_PLAYER",
-            player: player.id.toString(),
+            player: player.id,
             price: BigInt(ctx.args[5]),
             userId: ctx.db.user.id,
-            who: user.id
+            to: user.id
           },
           {
             type: "TRADE_PLAYER",
-            player: player.id.toString(),
+            player: player.id,
             price: BigInt(ctx.args[5]),
             userId: user.id,
-            who: ctx.db.user.id
+            to: ctx.db.user.id
           }
         ]
       })

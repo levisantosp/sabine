@@ -2,7 +2,6 @@ import type { SelectOption } from "oceanic.js"
 import SelectMenuBuilder from "../../structures/builders/SelectMenuBuilder.ts"
 import createCommand from "../../structures/command/createCommand.ts"
 import { SabineUser } from "../../database/index.ts"
-import { calcPlayerOvr, getPlayer } from "players"
 
 export default createCommand({
   name: "promote",
@@ -31,26 +30,26 @@ export default createCommand({
   ],
   userInstall: true,
   messageComponentInteractionTime: 5 * 60 * 1000,
-  async run({ ctx, t }) {
-    const p = getPlayer(Number(ctx.args[0]))
+  async run({ ctx, t, client }) {
+    const p = client.players.get(ctx.args[0].toString())
     if(!p) {
       return ctx.reply("commands.promote.player_not_found")
     }
     const options: SelectOption[] = []
-    const players = ctx.db.user.roster.active
+    const players = ctx.db.user.active_players
     if(players.length < 5) {
-      const i = ctx.db.user.roster.reserve.findIndex(pl => pl === p.id.toString())
-      ctx.db.user.roster.active.push(p.id.toString())
-      ctx.db.user.roster.reserve.splice(i, 1)
+      const i = ctx.db.user.reserve_players.findIndex(pl => pl === p.id.toString())
+      ctx.db.user.active_players.push(p.id.toString())
+      ctx.db.user.reserve_players.splice(i, 1)
       await ctx.db.user.save()
       return await ctx.reply("commands.promote.player_promoted", { p: p.name })
     }
     let i = 0
     for(const p_id of players) {
       i++
-      const p = getPlayer(Number(p_id))
+      const p = client.players.get(p_id)
       if(!p) break
-      const ovr = parseInt(calcPlayerOvr(p).toString())
+      const ovr = parseInt(p.ovr.toString())
       options.push({
         label: `${p.name} (${ovr})`,
         description: p.role,
@@ -62,13 +61,13 @@ export default createCommand({
     .setOptions(...options)
     await ctx.reply(menu.build(t("commands.promote.select_player")))
   },
-  async createAutocompleteInteraction({ i }) {
+  async createAutocompleteInteraction({ i, client }) {
     const user = (await SabineUser.fetch(i.user.id))!
     const players: Array<{ name: string, ovr: number, id: string }> = []
-    for(const p_id of user.roster.reserve) {
-      const p = getPlayer(Number(p_id))
+    for(const p_id of user.reserve_players) {
+      const p = client.players.get(p_id)
       if(!p) break
-      const ovr = parseInt(calcPlayerOvr(p).toString())
+      const ovr = parseInt(p.ovr.toString())
       players.push({
         name: `${p.name} (${ovr}) — ${p.collection}`,
         ovr,
@@ -84,17 +83,17 @@ export default createCommand({
       .map(p => ({ name: p.name, value: p.id }))
     )
   },
-  async createMessageComponentInteraction({ ctx, i, t }) {
+  async createMessageComponentInteraction({ ctx, i, t, client }) {
     if(i.data.componentType === 3) {
       const id = i.data.values.getStrings()[0].split("_")[1]
-      let index = ctx.db.user.roster.active.findIndex(p => p === id)
-      ctx.db.user.roster.active.splice(index, 1)
-      ctx.db.user.roster.reserve.push(id)
-      index = ctx.db.user.roster.reserve.findIndex(p => p === ctx.args[2])
-      ctx.db.user.roster.reserve.splice(index, 1)
-      ctx.db.user.roster.active.push(ctx.args[2])
+      let index = ctx.db.user.active_players.findIndex(p => p === id)
+      ctx.db.user.active_players.splice(index, 1)
+      ctx.db.user.reserve_players.push(id)
+      index = ctx.db.user.reserve_players.findIndex(p => p === ctx.args[2])
+      ctx.db.user.reserve_players.splice(index, 1)
+      ctx.db.user.active_players.push(ctx.args[2])
       await ctx.db.user.save()
-      const p = getPlayer(Number(ctx.args[2]))!
+      const p = client.players.get(ctx.args[2])!
       await i.editParent({
         content: t("commands.promote.player_promoted", { p: p.name }),
         components: []
