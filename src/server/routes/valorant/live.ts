@@ -97,7 +97,7 @@ export default async function(
           .setStyle("link")
           .setLabel(locales(guild.lang ?? "en", "helper.stats"))
           .setURL(data.url)
-        const messages = await channel.getMessages({ limit: 7 })
+        const messages = await channel.getMessages({ limit: 10 })
         const message = messages.find(m =>
           guild.live_messages.some(msg =>
             msg.message === m.id &&
