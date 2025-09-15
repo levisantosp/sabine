@@ -152,16 +152,27 @@ export default createCommand({
       await options[ctx.args[1] as "pt" | "en"]()
     }
     else if(ctx.args[0] === "premium") {
-      if(!ctx.db.guild!.key) {
+      if(!ctx.db.guild) {
+        return await ctx.reply("commands.admin.no_premium")
+      }
+      const guild = await prisma.guild.findUnique({
+        where: {
+          id: ctx.db.guild.id
+        },
+        include: {
+          key: true
+        }
+      })
+      if(!guild || !guild.key || !guild.key.expires_at) {
         return await ctx.reply("commands.admin.no_premium")
       }
       const embed = new EmbedBuilder()
 				.setTitle("Premium")
 				.setDesc(t("commands.admin.premium", {
-				  key: ctx.db.guild!.key.type,
-				  expiresAt: `<t:${(ctx.db.guild!.key.expires_at!.getTime() / 1000).toFixed(0)}:R>`
+				  key: guild.key.type,
+				  expiresAt: `<t:${(guild.key.expires_at.getTime() / 1000).toFixed(0)}:R>`
 				}))
-			ctx.reply(embed.build())
+			await ctx.reply(embed.build())
     }
   },
   async createMessageComponentInteraction({ ctx, t }) {

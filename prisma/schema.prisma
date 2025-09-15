@@ -128,7 +128,7 @@ model Prediction {
   teams      Team[]
   status     PredictionStatus @default(pending)
   bet        BigInt?
-  odd        BigInt?
+  odd        Int?             @db.SmallInt
   created_at DateTime         @default(now())
 
   @@index([userId, game, id])
@@ -168,7 +168,7 @@ model Guild {
 
 model LiveMessage {
   id      String @id @default(uuid())
-  guild   Guild  @relation(fields: [guildId], references: [id])
+  guild   Guild  @relation(fields: [guildId], references: [id], onDelete: Cascade)
   guildId String
   message String
   event   String
@@ -178,7 +178,7 @@ model LiveMessage {
 
 model Key {
   id         String    @id @default(uuid())
-  guild      Guild     @relation(fields: [guildId], references: [id])
+  guild      Guild     @relation(fields: [guildId], references: [id], onDelete: Cascade)
   guildId    String    @unique
   type       KeyType
   expires_at DateTime?
@@ -191,7 +191,7 @@ model Key {
 
 model TBDMatch {
   id      String    @id
-  guild   Guild     @relation(fields: [guildId], references: [id])
+  guild   Guild     @relation(fields: [guildId], references: [id], onDelete: Cascade)
   guildId String
   type    EventType
   channel String
@@ -201,7 +201,7 @@ model TBDMatch {
 
 model Event {
   id       String    @id @default(uuid())
-  guild    Guild     @relation(fields: [guildId], references: [id])
+  guild    Guild     @relation(fields: [guildId], references: [id], onDelete: Cascade)
   guildId  String
   type     EventType
   name     String

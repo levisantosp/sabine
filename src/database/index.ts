@@ -22,7 +22,7 @@ type Prediction = {
   teams: PredictionTeam[]
   status: "pending" | "correct" | "wrong"
   bet: bigint | null
-  odd: bigint | null
+  odd: number | null
 }
 export class SabineUser implements User {
   public id: string
@@ -77,7 +77,12 @@ export class SabineUser implements User {
     })
   }
   public static async fetch(id: string) {
-    const data = await prisma.user.findUnique({ where: { id } })
+    const data = await prisma.user.findUnique({
+      where: { id },
+      include: {
+        premium: true
+      }
+    })
     if(!data) return data
     let user = new SabineUser(data.id)
     user = Object.assign(user, data)
@@ -236,12 +241,7 @@ export class SabineGuild implements Guild {
     })
   }
   public static async fetch(id: string) {
-    const data = await prisma.guild.findUnique({
-      where: { id },
-      include: {
-        
-      }
-    })
+    const data = await prisma.guild.findUnique({ where: { id } })
     if(!data) return data
     const guild = new SabineGuild(data.id)
     return Object.assign(guild, data)
