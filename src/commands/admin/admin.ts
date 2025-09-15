@@ -172,7 +172,7 @@ export default createCommand({
 				  key: guild.key.type,
 				  expiresAt: `<t:${(guild.key.expires_at.getTime() / 1000).toFixed(0)}:R>`
 				}))
-			await ctx.reply(embed.build())
+      await ctx.reply(embed.build())
     }
   },
   async createMessageComponentInteraction({ ctx, t }) {
@@ -354,8 +354,8 @@ export default createCommand({
 								guild.tbd_matches.push({
 								  id: d.id!,
 								  channel: e.channel1,
-                  guildId: guild.id,
-                  type: "valorant"
+								  guildId: guild.id,
+								  type: "valorant"
 								})
 							}
             }
@@ -476,8 +476,8 @@ export default createCommand({
 								guild.tbd_matches.push({
 								  id: d.id!,
 								  channel: e.channel1,
-                  guildId: guild.id,
-                  type: "lol"
+								  guildId: guild.id,
+								  type: "lol"
 								})
 							}
             }
