@@ -31,7 +31,7 @@ export default createCommand({
   cooldown: true,
   async run({ ctx }) {
     const player = getPlayer(Number(ctx.args[0]))
-    const i = ctx.db.user.roster.reserve.findIndex(p => p === ctx.args[0])
+    const i = ctx.db.user.reserve_players.findIndex(p => p === ctx.args[0])
     if(!player || i === -1) {
       return await ctx.reply("commands.sell.player_not_found")
     }
@@ -42,7 +42,7 @@ export default createCommand({
   async createAutocompleteInteraction({ i }) {
     const user = (await SabineUser.fetch(i.user.id))!
     const players: Array<{ name: string, ovr: number, id: string }> = []
-    for(const p_id of user.roster.reserve) {
+    for(const p_id of user.reserve_players) {
       const p = getPlayer(Number(p_id))
       if(!p) break
       const ovr = parseInt(calcPlayerOvr(p).toString())

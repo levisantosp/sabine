@@ -11,16 +11,16 @@ export default createComponentInteraction({
   async run({ ctx, client, t }) {
     const user = await SabineUser.fetch(ctx.args[2])
     const keys = await client.redis.keys("agent_selection*")
-    if(!ctx.db.user.team?.name || !ctx.db.user.team.tag) {
+    if(!ctx.db.user.team_name || !ctx.db.user.team_tag) {
       return await ctx.reply("commands.duel.needed_team_name")
     }
-    if(!ctx.db.user.roster || ctx.db.user.roster.active.length < 5) {
+    if(ctx.db.user.active_players.length < 5) {
       return await  ctx.reply("commands.duel.team_not_completed_1")
     }
-    if(!user || !user.roster || user.roster.active.length < 5) {
+    if(!user || user.active_players.length < 5) {
       return await ctx.reply("commands.duel.team_not_completed_2")
     }
-    if(!user.team?.name || !user.team.tag) {
+    if(!user.team_name || !user.team_tag) {
       return await ctx.reply("commands.duel.needed_team_name_2")
     }
     if(await client.redis.get(`match:${ctx.interaction.user.id}`) || keys.some(key => key.includes(ctx.interaction.user.id))) {
@@ -42,8 +42,8 @@ export default createComponentInteraction({
     .setDesc(t("commands.duel.embed.desc"))
     .setFields(
       {
-        name: user.team.name,
-        value: user.roster.active.map(id => {
+        name: user.team_name,
+        value: user.active_players.map(id => {
           const player = client.players.get(id)!
           const ovr = parseInt(player.ovr.toString())
           return `<a:loading:809221866434199634> ${player.name} (${ovr})`
@@ -51,8 +51,8 @@ export default createComponentInteraction({
         inline: true
       },
       {
-        name: ctx.db.user.team.name,
-        value: ctx.db.user.roster.active.map(id => {
+        name: ctx.db.user.team_name,
+        value: ctx.db.user.active_players.map(id => {
           const player = client.players.get(id)!
           const ovr = parseInt(player.ovr.toString())
           return `<a:loading:809221866434199634> ${player.name} (${ovr})`
@@ -63,9 +63,9 @@ export default createComponentInteraction({
     .setImage(map.image)
     .setFooter({ text: t("commands.duel.time") })
     const menu1 = new SelectMenuBuilder()
-    .setPlaceholder(user.team.name)
+    .setPlaceholder(user.team_name)
     .setOptions(
-      ...user.roster.active.map(id => {
+      ...user.active_players.map(id => {
         const player = client.players.get(id)!
         return {
           label: `${player.name}`,
@@ -75,9 +75,9 @@ export default createComponentInteraction({
     )
     .setCustomId(`select;${user.id};${ctx.interaction.user.id}`)
     const menu2 = new SelectMenuBuilder()
-    .setPlaceholder(ctx.db.user.team.name)
+    .setPlaceholder(ctx.db.user.team_name!)
     .setOptions(
-      ...ctx.db.user.roster.active.map(id => {
+      ...ctx.db.user.active_players.map(id => {
         const player = client.players.get(id)!
         return {
           label: `${player.name}`,
@@ -117,7 +117,7 @@ export default createComponentInteraction({
         } | null
       }[]
     } = {}
-    data[ctx.db.user.id] = ctx.db.user.roster.active.map(id => {
+    data[ctx.db.user.id] = ctx.db.user.active_players.map(id => {
       const p = client.players.get(id)!
       const ovr = p.ovr
       return {
@@ -126,7 +126,7 @@ export default createComponentInteraction({
         agent: null
       }
     })
-    data[user.id] = user.roster.active.map(id => {
+    data[user.id] = user.active_players.map(id => {
       const p = client.players.get(id)!
       const ovr = p.ovr
       return {

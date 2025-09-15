@@ -170,24 +170,24 @@ export default createCommand({
     const user = await SabineUser.fetch(id)
     const authorCounts: {[key: string]: number} = {}
     const userCounts: {[key: string]: number} = {}
-    for(const p of ctx.db.user.roster.active ?? []) {
+    for(const p of ctx.db.user.active_players) {
       authorCounts[p] = (authorCounts[p] || 0) + 1
     }
     const authorDuplicates = Object.values(authorCounts).filter(count => count > 1).length
     const keys = await client.redis.keys("agent_selection*")
-    if(!ctx.db.user.team?.name || !ctx.db.user.team.tag) {
+    if(!ctx.db.user.team_name || !ctx.db.user.team_tag) {
       return await ctx.reply("commands.duel.needed_team_name")
     }
-    if(!ctx.db.user.roster || ctx.db.user.roster.active.length < 5) {
+    if(ctx.db.user.active_players.length < 5) {
       return await ctx.reply("commands.duel.team_not_completed_1")
     }
     if(authorDuplicates) {
       return await ctx.reply("commands.duel.duplicated_cards")
     }
-    if(!user || !user.roster || user.roster.active.length < 5) {
+    if(!user || user.active_players.length < 5) {
       return await ctx.reply("commands.duel.team_not_completed_2")
     }
-    if(!user.team?.name || !user.team.tag) {
+    if(!user.team_name || !user.team_tag) {
       return await ctx.reply("commands.duel.needed_team_name_2")
     }
     if(await client.redis.get(`match:${ctx.interaction.user.id}`) || keys.some(key => key.includes(ctx.interaction.user.id))) {
@@ -199,7 +199,7 @@ export default createCommand({
     if(ctx.args.at(-1) === ctx.interaction.user.id) {
       return await ctx.reply("commands.duel.cannot_duel")
     }
-    for(const p of user.roster.active ?? []) {
+    for(const p of user.active_players) {
       userCounts[p] = (userCounts[p] || 0) + 1
     }
     const userDuplicates = Object.values(userCounts).filter(count => count > 1).length

@@ -32,6 +32,9 @@ export default createCommand({
     const matches = await client.prisma.match.findMany({
       where: {
         userId: ctx.db.user.id
+      },
+      include: {
+        teams: true
       }
     })
     let career = matches.sort((a, b) => b.when.getTime() - a.when.getTime())
@@ -132,6 +135,9 @@ export default createCommand({
     const matches = await client.prisma.match.findMany({
       where: {
         userId: ctx.db.user.id
+      },
+      include: {
+        teams: true
       }
     })
     let career = matches.sort((a, b) => b.when.getTime() - a.when.getTime())

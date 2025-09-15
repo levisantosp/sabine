@@ -49,17 +49,25 @@ export default async function(
   }, async(req) => {
     const guilds = await prisma.guild.findMany({
       where: {
-        lol_livefeed_channel: {
-          isSet: true
+        lol_live_feed_channel: {
+          not: null
         }
+      },
+      include: {
+        events: {
+          where: {
+            type: "lol"
+          }
+        },
+        live_messages: true
       }
     })
     if(!guilds.length) return
     for(const data of req.body) {
       for(const guild of guilds) {
-        const channel = client.getChannel(guild.lol_livefeed_channel!) as TextChannel
+        const channel = client.getChannel(guild.lol_live_feed_channel!) as TextChannel
         if(!channel) continue
-        if(!guild.lol_events.some(e => e.name === data.tournament.name)) continue
+        if(!guild.events.some(e => e.name === data.tournament.name)) continue
         const emoji1 = emojis.find(e => e?.name === data.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
         const emoji2 = emojis.find(e => e?.name === data.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
         const embed = new EmbedBuilder()
@@ -93,18 +101,27 @@ export default async function(
               }
             ]
           }))
-          const index = guild.live_messages.findIndex(m => m.event === data.tournament.name)
-          guild.live_messages.splice(index, 1)
-          guild.live_messages.push({
-            message: msg.id,
-            event: data.tournament.name
-          })
+          const liveMessage = guild.live_messages.filter(m => m.event === data.tournament.name)[0]
           await prisma.guild.update({
             where: {
               id: guild.id
             },
             data: {
-              live_messages: guild.live_messages
+              live_messages: {
+                upsert: {
+                  where: {
+                    id: liveMessage.id
+                  },
+                  update: {
+                    event: data.tournament.name,
+                    message: msg.id
+                  },
+                  create: {
+                    event: data.tournament.name,
+                    message: msg.id
+                  }
+                }
+              }
             }
           })
         }

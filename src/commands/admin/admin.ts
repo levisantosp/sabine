@@ -86,16 +86,24 @@ export default createCommand({
   async run({ ctx, t, id }) {
     if(!ctx.db.guild) return
     if(ctx.args[0] === "dashboard") {
+      const guild = (await prisma.guild.findUnique({
+        where: {
+          id: ctx.db.guild.id
+        },
+        include: {
+          events: true
+        }
+      }))!
       const embed = new EmbedBuilder()
 				.setTitle(t("commands.admin.dashboard"))
 				.setDesc(t("commands.admin.desc", {
 				  lang: ctx.db.guild!.lang.replace("en", "English").replace("pt", "Português"),
-				  limit: ctx.db.guild!.tournamentsLength === Infinity ? "`Infinity`" : `${ctx.db.guild!.lol_events.length + ctx.db.guild!.valorant_events.length}/${ctx.db.guild!.tournamentsLength}`,
+				  limit: ctx.db.guild!.tournaments_length === Infinity ? "`Infinity`" : `${guild.events.length}/${ctx.db.guild!.tournaments_length}`,
 				  id,
 				  vlr_news: !ctx.db.guild!.valorant_news_channel ? "`undefined`" : `<#${ctx.db.guild!.valorant_news_channel}>`,
-				  vlr_live: !ctx.db.guild!.valorant_livefeed_channel ? "`undefined`" : `<#${ctx.db.guild!.valorant_livefeed_channel}>`,
+				  vlr_live: !ctx.db.guild!.valorant_live_feed_channel ? "`undefined`" : `<#${ctx.db.guild!.valorant_live_feed_channel}>`,
 				  lol_news: !ctx.db.guild!.lol_news_channel ? "`undefined`" : `<#${ctx.db.guild!.lol_news_channel}>`,
-				  lol_live: !ctx.db.guild!.lol_livefeed_channel ? "`undefined`" : `<#${ctx.db.guild!.lol_livefeed_channel}>`,
+				  lol_live: !ctx.db.guild!.lol_live_feed_channel ? "`undefined`" : `<#${ctx.db.guild!.lol_live_feed_channel}>`,
 				}))
       await ctx.reply(embed.build({
         components: [
@@ -151,17 +159,30 @@ export default createCommand({
 				.setTitle("Premium")
 				.setDesc(t("commands.admin.premium", {
 				  key: ctx.db.guild!.key.type,
-				  expiresAt: `<t:${(ctx.db.guild!.key.expiresAt!.getTime() / 1000).toFixed(0)}:R>`
+				  expiresAt: `<t:${(ctx.db.guild!.key.expires_at!.getTime() / 1000).toFixed(0)}:R>`
 				}))
 			ctx.reply(embed.build())
     }
   },
   async createMessageComponentInteraction({ ctx, t }) {
+    if(!ctx.db.guild) return
     if(ctx.args[2] === "vlr") {
-      await ctx.interaction.defer(64)
+      ctx.setFlags(64)
+      const guild = (await prisma.guild.findUnique({
+        where: {
+          id: ctx.db.guild.id
+        },
+        include: {
+          events: {
+            where: {
+              type: "valorant"
+            }
+          }
+        }
+      }))!
       const embed = new EmbedBuilder()
 				.setDesc(t("commands.admin.tournaments", { game: "VALORANT" }))
-      for(const event of ctx.db.guild!.valorant_events) {
+      for(const event of guild.events) {
 				embed.addField(event.name, t("commands.admin.event_channels", {
 				  ch1: `<#${event.channel1}>`,
 				  ch2: `<#${event.channel2}>`
@@ -170,10 +191,22 @@ export default createCommand({
       await ctx.reply(embed.build())
     }
     else if(ctx.args[2] === "lol") {
-      await ctx.interaction.defer(64)
+      ctx.setFlags(64)
+      const guild = (await prisma.guild.findUnique({
+        where: {
+          id: ctx.db.guild.id
+        },
+        include: {
+          events: {
+            where: {
+              type: "lol"
+            }
+          }
+        }
+      }))!
       const embed = new EmbedBuilder()
 				.setDesc(t("commands.admin.tournaments", { game: "League of Legends" }))
-      for(const event of ctx.db.guild!.lol_events) {
+      for(const event of guild.events) {
 				embed.addField(event.name, t("commands.admin.event_channels", {
 				  ch1: `<#${event.channel1}>`,
 				  ch2: `<#${event.channel2}>`
@@ -183,12 +216,11 @@ export default createCommand({
     }
     else if(ctx.args[2] === "resend" && ctx.args[3] === "vlr") {
       await ctx.interaction.defer(64)
-      const guild = (await prisma.guild.findUnique({ where: { id: ctx.interaction.guild!.id } }))!
       if(
-        guild.valorant_resend_time &&
-        guild.valorant_resend_time > new Date()
+        ctx.db.guild.valorant_resend_time &&
+        ctx.db.guild.valorant_resend_time > new Date()
       ) {
-        return await ctx.reply("commands.admin.resend_time", { t: `<t:${(guild.valorant_resend_time.getTime() / 1000).toFixed(0)}:R>` })
+        return await ctx.reply("commands.admin.resend_time", { t: `<t:${(ctx.db.guild.valorant_resend_time.getTime() / 1000).toFixed(0)}:R>` })
       }
       const button = new ButtonBuilder()
 				.setLabel(t("commands.admin.continue"))
@@ -198,12 +230,11 @@ export default createCommand({
     }
     else if(ctx.args[2] === "resend" && ctx.args[3] === "lol") {
       await ctx.interaction.defer(64)
-      const guild = (await prisma.guild.findUnique({ where: { id: ctx.interaction.guild!.id } }))!
       if(
-        guild.lol_resend_time &&
-        guild.lol_resend_time > new Date()
+        ctx.db.guild.lol_resend_time &&
+        ctx.db.guild.lol_resend_time > new Date()
       ) {
-        return await ctx.reply("commands.admin.resend_time", { t: `<t:${(guild.lol_resend_time.getTime() / 1000).toFixed(0)}:R>` })
+        return await ctx.reply("commands.admin.resend_time", { t: `<t:${(ctx.db.guild.lol_resend_time.getTime() / 1000).toFixed(0)}:R>` })
       }
       const button = new ButtonBuilder()
 				.setLabel(t("commands.admin.continue"))
@@ -212,16 +243,32 @@ export default createCommand({
       await ctx.reply(button.build(t("commands.admin.confirm")))
     }
     else if(ctx.args[2] === "continue" && ctx.args[3] === "vlr") {
-      await (ctx.interaction as ComponentInteraction).deferUpdate()
-      const guild = (await prisma.guild.findUnique({ where: { id: ctx.interaction.guild!.id } }))!
       if(
-        guild.valorant_resend_time &&
-        guild.valorant_resend_time > new Date()
+        ctx.db.guild.valorant_resend_time &&
+        ctx.db.guild.valorant_resend_time > new Date()
       ) {
-        return await ctx.edit("commands.admin.resend_time", { t: `<t:${(guild.valorant_resend_time.getTime() / 1000).toFixed(0)}:R>` })
+        return await ctx.edit("commands.admin.resend_time", { t: `<t:${(ctx.db.guild.valorant_resend_time.getTime() / 1000).toFixed(0)}:R>` })
       }
+      const guild = (await prisma.guild.findUnique({
+        where: {
+          id: ctx.db.guild.id
+        },
+        include: {
+          events: {
+            where: {
+              type: "valorant"
+            }
+          },
+          tbd_matches: {
+            where: {
+              type: "valorant"
+            }
+          },
+          key: true
+        }
+      }))!
       guild.valorant_matches = []
-      guild.valorant_tbd_matches = []
+      guild.tbd_matches = []
       guild.valorant_resend_time = new Date(Date.now() + 3600000)
       await ctx.edit("commands.admin.resending")
       const res = await service.getMatches("valorant")
@@ -229,11 +276,11 @@ export default createCommand({
       const res2 = await service.getResults("valorant")
       if(guild.valorant_matches.length && !res2.some(d => d.id === guild.valorant_matches[guild.valorant_matches.length - 1])) return
       let data: MatchesData[]
-      if(guild.valorant_events.length > 5 && !guild.key) {
-        data = res.filter(d => guild.valorant_events.reverse().slice(0, 5).some(e => e.name === d.tournament.name))
+      if(guild.events.length > 5 && !guild.key) {
+        data = res.filter(d => guild.events.reverse().slice(0, 5).some(e => e.name === d.tournament.name))
       }
-      else data = res.filter(d => guild.valorant_events.some(e => e.name === d.tournament.name))
-      for(const e of guild.valorant_events) {
+      else data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
+      for(const e of guild.events) {
         if(!ctx.client.getChannel(e.channel1)) continue
         try {
           const messages = await ctx.client.rest.channels.getMessages(e.channel1, { limit: 100 })
@@ -247,7 +294,7 @@ export default createCommand({
       try {
         for(const d of data) {
           if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
-          for(const e of guild.valorant_events) {
+          for(const e of guild.events) {
             if(e.name === d.tournament.name) {
               const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
               const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
@@ -293,9 +340,11 @@ export default createCommand({
 							  ]
 							}).catch(() => { })
 							else {
-								guild.valorant_tbd_matches.push({
+								guild.tbd_matches.push({
 								  id: d.id!,
-								  channel: e.channel1
+								  channel: e.channel1,
+                  guildId: guild.id,
+                  type: "valorant"
 								})
 							}
             }
@@ -309,7 +358,9 @@ export default createCommand({
         },
         data: {
           valorant_matches: guild.valorant_matches,
-          valorant_tbd_matches: guild.valorant_tbd_matches,
+          tbd_matches: {
+            create: guild.tbd_matches
+          },
           valorant_resend_time: guild.valorant_resend_time
         }
       })
@@ -317,15 +368,32 @@ export default createCommand({
     }
     else if(ctx.args[2] === "continue" && ctx.args[3] === "lol") {
       await (ctx.interaction as ComponentInteraction).deferUpdate()
-      const guild = (await prisma.guild.findUnique({ where: { id: ctx.interaction.guild!.id } }))!
       if(
-        guild.lol_resend_time &&
-        guild.lol_resend_time > new Date()
+        ctx.db.guild.lol_resend_time &&
+        ctx.db.guild.lol_resend_time > new Date()
       ) {
-        return await ctx.edit("commands.admin.resend_time", { t: `<t:${(guild.lol_resend_time.getTime() / 1000).toFixed(0)}:R>` })
+        return await ctx.edit("commands.admin.resend_time", { t: `<t:${(ctx.db.guild.lol_resend_time.getTime() / 1000).toFixed(0)}:R>` })
       }
+      const guild = (await prisma.guild.findUnique({
+        where: {
+          id: ctx.db.guild.id
+        },
+        include: {
+          events: {
+            where: {
+              type: "lol"
+            }
+          },
+          tbd_matches: {
+            where: {
+              type: "lol"
+            }
+          },
+          key: true
+        }
+      }))!
       guild.lol_matches = []
-      guild.lol_tbd_matches = []
+      guild.tbd_matches = []
       guild.lol_resend_time = new Date(Date.now() + 3600000)
       await ctx.edit("commands.admin.resending")
       const res = await service.getMatches("lol")
@@ -333,11 +401,11 @@ export default createCommand({
       const res2 = await service.getResults("lol")
       if(guild.lol_matches.length && !res2.some(d => d.id === guild.lol_matches[guild.lol_matches.length - 1])) return
       let data: MatchesData[]
-      if(guild.lol_events.length > 5 && !guild.key) {
-        data = res.filter(d => guild.lol_events.reverse().slice(0, 5).some(e => e.name === d.tournament.name))
+      if(guild.events.length > 5 && !guild.key) {
+        data = res.filter(d => guild.events.reverse().slice(0, 5).some(e => e.name === d.tournament.name))
       }
-      else data = res.filter(d => guild.lol_events.some(e => e.name === d.tournament.name))
-      for(const e of guild.lol_events) {
+      else data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
+      for(const e of guild.events) {
         if(!ctx.client.getChannel(e.channel1)) continue
         try {
           const messages = await ctx.client.rest.channels.getMessages(e.channel1, { limit: 100 })
@@ -351,7 +419,7 @@ export default createCommand({
       try {
         for(const d of data) {
           if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
-          for(const e of guild.lol_events) {
+          for(const e of guild.events) {
             if(e.name === d.tournament.name) {
               const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
               const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
@@ -394,9 +462,11 @@ export default createCommand({
 							  ]
 							}).catch(() => { })
 							else {
-								guild.lol_tbd_matches.push({
+								guild.tbd_matches.push({
 								  id: d.id!,
-								  channel: e.channel1
+								  channel: e.channel1,
+                  guildId: guild.id,
+                  type: "lol"
 								})
 							}
             }
@@ -410,7 +480,9 @@ export default createCommand({
         },
         data: {
           lol_matches: guild.lol_matches,
-          lol_tbd_matches: guild.lol_tbd_matches,
+          tbd_matches: {
+            create: guild.tbd_matches
+          },
           lol_resend_time: guild.lol_resend_time
         }
       })

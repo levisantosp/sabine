@@ -23,7 +23,7 @@ export default createCommand({
       fates
     }) + "\n"
     const bonus: string[] = []
-    if(ctx.db.user.plan) {
+    if(ctx.db.user.premium) {
       coins *= 5n
       fates = Math.round(fates * 1.5)
       bonus.push(t("commands.daily.bonus", {

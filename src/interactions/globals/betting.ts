@@ -12,6 +12,9 @@ export default createModalSubmitInteraction({
           where: {
             game: "valorant",
             match: ctx.args[2]
+          },
+          include: {
+            teams: true
           }
         })
         const value = BigInt(ctx.args[3])
@@ -60,10 +63,10 @@ export default createModalSubmitInteraction({
         const preds = await ctx.client.prisma.prediction.findMany({
           where: {
             game: "lol",
-            match: ctx.args[2],
-            bet: {
-              not: null
-            }
+            match: ctx.args[2]
+          },
+          include: {
+            teams: true
           }
         })
         const value = BigInt(ctx.args[3])

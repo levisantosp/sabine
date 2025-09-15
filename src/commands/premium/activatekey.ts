@@ -41,10 +41,10 @@ export default createCommand({
     if(!key) {
       return await ctx.reply("commands.activatekey.invalid_key")
     }
-    if((key.type === "BOOSTER" && key.active) || key.activeIn.includes(ctx.guild.id)) {
+    if((key.type === "BOOSTER" && key.active) || key.active_in.includes(ctx.guild.id)) {
       return await ctx.reply("commands.activatekey.key_already_activated")
     }
-    if(key.type === "PREMIUM" && key.activeIn.length >= 2) {
+    if(key.type === "PREMIUM" && key.active_in.length >= 2) {
       return await ctx.reply("commands.activatekey.limit_reached")
     }
     if(ctx.db.guild!.key) {
@@ -55,13 +55,13 @@ export default createCommand({
       await ctx.reply(button.build(t("commands.activatekey.would_like_to_continue", { key: ctx.db.guild!.key.type })))
     }
     else {
-      await client.prisma.key.update({
+      const k = await client.prisma.key.update({
         where: {
           id: key.id
         },
         data: {
           active: true,
-          activeIn: {
+          active_in: {
             push: ctx.guild.id
           }
         }
@@ -71,11 +71,15 @@ export default createCommand({
           id: ctx.db.guild!.id
         },
         data: {
-          tournamentsLength: 20,
+          tournaments_length: 20,
           key: {
-            type: key.type,
-            id: key.id,
-            expiresAt: key.expiresAt
+            create: {
+              type: k.type,
+              id: k.id,
+              expires_at: k.expires_at,
+              user: k.user,
+              active: k.active
+            }
           }
         }
       })
@@ -94,19 +98,19 @@ export default createCommand({
     if(!key) {
       return await ctx.reply("commands.activatekey.invalid_key")
     }
-    if((key.type === "BOOSTER" && key.active) || key.activeIn.includes(ctx.guild.id)) {
+    if((key.type === "BOOSTER" && key.active) || key.active_in.includes(ctx.guild.id)) {
       return await ctx.reply("commands.activatekey.key_already_activated")
     }
-    if(key.type === "PREMIUM" && key.activeIn.length >= 2) {
+    if(key.type === "PREMIUM" && key.active_in.length >= 2) {
       return await ctx.reply("commands.activatekey.limit_reached")
     }
-    await client.prisma.key.update({
+    const k = await client.prisma.key.update({
       where: {
         id: key.id
       },
       data: {
         active: true,
-        activeIn: {
+        active_in: {
           push: ctx.guild.id
         }
       }
@@ -116,11 +120,15 @@ export default createCommand({
         id: ctx.db.guild!.id
       },
       data: {
-        tournamentsLength: 20,
+        tournaments_length: 20,
         key: {
-          type: key.type,
-          id: key.id,
-          expiresAt: key.expiresAt
+          create: {
+            type: k.type,
+            id: k.id,
+            expires_at: k.expires_at,
+            user: k.user,
+            active: k.active
+          }
         }
       }
     })

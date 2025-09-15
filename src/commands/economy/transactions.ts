@@ -35,7 +35,7 @@ export default createCommand({
       where: {
         userId: ctx.db.user.id
       }
-    })).sort((a, b) => b.when.getTime() - a.when.getTime())
+    })).sort((a, b) => b.created_at.getTime() - a.created_at.getTime())
     const array = transactions
     if(page === 1) {
       transactions = transactions.slice(0, 10)
@@ -57,9 +57,9 @@ export default createCommand({
     })
     let description = ""
     for(const transaction of transactions) {
-      const timestamp = (transaction.when.getTime() / 1000).toFixed(0)
+      const timestamp = (transaction.created_at.getTime() / 1000).toFixed(0)
       const player = getPlayer(transaction.player)
-      description += `- [<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] ${t(`commands.transactions.type.${transaction.type}`, { player: `${player?.name} (${player?.collection})`, price: transaction.price?.toLocaleString(), user: `<@${transaction.who}>` })}\n`
+      description += `- [<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] ${t(`commands.transactions.type.${transaction.type}`, { player: `${player?.name} (${player?.collection})`, price: transaction.price?.toLocaleString(), user: `<@${transaction.to}>` })}\n`
     }
     embed.setDesc(description)
     const previous = new ButtonBuilder()
@@ -88,7 +88,7 @@ export default createCommand({
       where: {
         userId: ctx.db.user.id
       }
-    })).sort((a, b) => b.when.getTime() - a.when.getTime())
+    })).sort((a, b) => b.created_at.getTime() - a.created_at.getTime())
     const array = transactions
     transactions = transactions.slice(page * 10 - 10, page * 10)
     if(!transactions.length) {
@@ -107,9 +107,9 @@ export default createCommand({
     })
     let description = ""
     for(const transaction of transactions) {
-      const timestamp = (transaction.when.getTime() / 1000).toFixed(0)
+      const timestamp = (transaction.created_at.getTime() / 1000).toFixed(0)
       const player = getPlayer(transaction.player)
-      description += `- [<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] ${t(`commands.transactions.type.${transaction.type}`, { player: `${player?.name} (${player?.collection})`, price: transaction.price?.toLocaleString(), user: `<@${transaction.who}>` })}\n`
+      description += `- [<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] ${t(`commands.transactions.type.${transaction.type}`, { player: `${player?.name} (${player?.collection})`, price: transaction.price?.toLocaleString(), user: `<@${transaction.to}>` })}\n`
     }
     embed.setDesc(description)
     const previous = new ButtonBuilder()
