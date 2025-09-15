@@ -361,7 +361,7 @@
       "user": "You're weak. You lack the following permissions to use this command: {permissions}",
       "bot": "I lack the following permissions for this command to work properly: {permissions}"
     },
-    "error": "An unexpected error has occurred...\n`{e}`",
+    "error": "An unexpected error has occurred...\n```fix\n{e}```",
     "privacy": "Before you start to use the bot, you must accept the [Terms of Service and Privacy](https://levispires.github.io/sabine-terms/)",
     "verified": "Make your prediction by clicking the button below.",
     "pickem": {
