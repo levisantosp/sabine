@@ -154,7 +154,7 @@ model Guild {
   valorant_news_channel      String?
   valorant_live_feed_channel String?
   lol_resend_time            DateTime?
-  lol_matches                String[]
+  lol_matches                String[]      @default([])
   lol_news_channel           String?
   lol_live_feed_channel      String?
   tbd_matches                TBDMatch[]
