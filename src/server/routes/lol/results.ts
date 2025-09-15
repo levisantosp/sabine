@@ -145,14 +145,14 @@ export default async function(
               }
               user.coins += BigInt(Number(pred.bet) * odd) + BigInt(bonus)
               user.fates += 10
-              pred.odd = BigInt(odd)
+              pred.odd = odd
               await Promise.all([
                 await prisma.prediction.update({
                   where: {
                     id: pred.id
                   },
                   data: {
-                    odd: BigInt(odd)
+                    odd: odd
                   }
                 }),
                 user.save()
