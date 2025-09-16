@@ -39,9 +39,17 @@ export default createCommand({
         fates: "1.25x"
       }))
     }
+    const key = await client.prisma.guildKey.findUnique({
+      where: {
+        guildId: ctx.db.guild?.id
+      },
+      include: {
+        key: true
+      }
+    })
     if(
-      (ctx.guild && ctx.db.guild) &&
-      ctx.db.guild.key?.type === "PREMIUM"
+      key &&
+      key.key.type === "PREMIUM"
     ) {
       coins = BigInt(Math.round(Number(coins) * 1.5))
       bonus.push(t("commands.daily.bonus3", {
@@ -49,8 +57,8 @@ export default createCommand({
       }))
     }
     if(
-      (ctx.guild && ctx.db.guild) &&
-      ctx.db.guild.key?.type === "BOOSTER"
+      key &&
+      key.key.type === "BOOSTER"
     ) {
       coins = BigInt(Math.round(Number(coins) * 1.25))
       bonus.push(t("commands.daily.bonus4", {

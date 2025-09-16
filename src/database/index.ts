@@ -57,6 +57,7 @@ export class SabineUser implements User {
   public remind_in: string | null = null
   public reminded: boolean = true
   public boxes: $Enums.Box[] = []
+  public warned: boolean | null = null
   public constructor(id: string) {
     this.id = id
   }
@@ -210,7 +211,7 @@ export class SabineGuild implements Guild {
   public id: string
   public lang: $Enums.Language = "en"
   public tbd_matches: TBDMatch[] = []
-  public key: Key | null = null
+  public guildKeyId: string | null = null
   public events: Event[] = []
   public live_messages: LiveMessage[] = []
   public valorant_resend_time: Date | null = null

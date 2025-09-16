@@ -155,22 +155,22 @@ export default createCommand({
       if(!ctx.db.guild) {
         return await ctx.reply("commands.admin.no_premium")
       }
-      const guild = await prisma.guild.findUnique({
+      const key = await prisma.guildKey.findUnique({
         where: {
-          id: ctx.db.guild.id
+          guildId: ctx.db.guild.id
         },
         include: {
           key: true
         }
       })
-      if(!guild || !guild.key || !guild.key.expires_at) {
+      if(!key || !key.key.expires_at) {
         return await ctx.reply("commands.admin.no_premium")
       }
       const embed = new EmbedBuilder()
 				.setTitle("Premium")
 				.setDesc(t("commands.admin.premium", {
-				  key: guild.key.type,
-				  expiresAt: `<t:${(guild.key.expires_at.getTime() / 1000).toFixed(0)}:R>`
+				  key: key.key.type,
+				  expiresAt: `<t:${(key.key.expires_at.getTime() / 1000).toFixed(0)}:R>`
 				}))
       await ctx.reply(embed.build())
     }

@@ -69,6 +69,7 @@ model User {
   transactions             Transaction[]
   career                   Match[]
   trade_time               DateTime?
+  warned                   Boolean?
 
   @@index([coins, correct_predictions, rank_rating, elo])
 }
@@ -158,12 +159,13 @@ model Guild {
   lol_news_channel           String?
   lol_live_feed_channel      String?
   tbd_matches                TBDMatch[]
-  key                        Key?
+  key                        GuildKey?
   tournaments_length         Int           @default(5) @db.SmallInt
   partner                    Boolean?
   invite                     String?
   live_messages              LiveMessage[]
   spam_live_messages         Boolean?
+  guildKeyId                 String?
 }
 
 model LiveMessage {
@@ -176,17 +178,27 @@ model LiveMessage {
   @@index([guildId])
 }
 
+model GuildKey {
+  id      String @id @default(uuid())
+  guild   Guild  @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  guildId String @unique
+  key     Key    @relation(fields: [keyId], references: [id], onDelete: Cascade)
+  keyId   String
+
+  @@unique([guildId, keyId])
+  @@index([guildId, keyId])
+}
+
 model Key {
-  id         String    @id @default(uuid())
-  guild      Guild     @relation(fields: [guildId], references: [id], onDelete: Cascade)
-  guildId    String    @unique
+  id         String     @id @default(uuid())
   type       KeyType
   expires_at DateTime?
   user       String
-  active     Boolean
-  active_in  String[]  @default([])
+  active     Boolean    @default(false)
+  active_in  String[]   @default([])
+  guildKeys  GuildKey[]
 
-  @@index([guildId])
+  @@index([user, type])
 }
 
 model TBDMatch {
