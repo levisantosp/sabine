@@ -212,7 +212,7 @@ model Event {
 }
 
 model Update {
-  id           String    @id @default(uuid())
+  id           String    @id
   published_at DateTime  @default(now())
   content      Content[]
 }
