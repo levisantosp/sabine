@@ -140,7 +140,7 @@ model Team {
   predictionId String
   name         String
   score        String
-  winner       Boolean
+  winner       Boolean?
 
   @@index([predictionId])
 }
