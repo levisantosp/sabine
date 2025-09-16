@@ -98,10 +98,7 @@ export class SabineUser implements User {
         game,
         userId: this.id,
         teams: {
-          create: prediction.teams.map(team => ({
-            name: team.name,
-            score: team.score
-          }))
+          create: prediction.teams
         }
       }
     })

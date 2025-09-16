@@ -131,7 +131,7 @@ model Prediction {
   odd        Int?             @db.SmallInt
   created_at DateTime         @default(now())
 
-  @@index([userId, game, id])
+  @@index([userId, game, id, match])
 }
 
 model Team {
@@ -140,7 +140,7 @@ model Team {
   predictionId String
   name         String
   score        String
-  winner       Boolean?
+  winner       Boolean
 
   @@index([predictionId])
 }

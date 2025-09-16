@@ -40,20 +40,31 @@ export default createModalSubmitInteraction({
           odd = calcOdd(oddB)
         }
         ctx.db.user.coins -= value
+        const pred = await client.prisma.prediction.findFirst({
+          where: {
+            match: ctx.args[2],
+            userId: ctx.interaction.user.id,
+            game: "valorant"
+          },
+          include: {
+            teams: true
+          }
+        })
+        if(!pred) return await ctx.reply("helper.prediction_needed")
         await client.prisma.prediction.update({
           where: {
-            id: preds[index].id
+            id: pred.id
           },
           data: {
-            bet: value + BigInt(preds[index].bet ?? 0)
+            bet: value + (pred.bet ?? 0n)
           }
         })
         await ctx.db.user.save()
-        const winnerIndex = preds[index].teams.findIndex(t => t.winner)
+        const winnerIndex = pred.teams.findIndex(t => t.winner)
         await ctx.reply(
           "helper.bet_res",
           {
-            team: preds[index].teams[winnerIndex].name,
+            team: pred.teams[winnerIndex].name,
             coins: value.toLocaleString("en-US"),
             odd
           }
@@ -92,20 +103,31 @@ export default createModalSubmitInteraction({
           odd = calcOdd(oddB)
         }
         ctx.db.user.coins -= value
+        const pred = await client.prisma.prediction.findFirst({
+          where: {
+            match: ctx.args[2],
+            userId: ctx.interaction.user.id,
+            game: "lol"
+          },
+          include: {
+            teams: true
+          }
+        })
+        if(!pred) return await ctx.reply("helper.prediction_needed")
         await client.prisma.prediction.update({
           where: {
-            id: preds[index].id
+            id: pred.id
           },
           data: {
-            bet: value + BigInt(preds[index].bet ?? 0)
+            bet: value + (pred.bet ?? 0n)
           }
         })
         await ctx.db.user.save()
-        const winnerIndex = preds[index].teams.findIndex(t => t.winner)
+        const winnerIndex = pred.teams.findIndex(t => t.winner)
         await ctx.reply(
           "helper.bet_res",
           {
-            team: preds[index].teams[winnerIndex].name,
+            team: pred.teams[winnerIndex].name,
             coins: value.toLocaleString("en-US"),
             odd
           }
