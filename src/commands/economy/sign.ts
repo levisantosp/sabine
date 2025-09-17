@@ -2,7 +2,7 @@ import { ApplicationCommandOptionTypes } from "oceanic.js"
 import createCommand from "../../structures/command/createCommand.ts"
 import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
 import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
-import { calcPlayerOvr, calcPlayerPrice, getPlayer, getPlayers } from "players"
+
 export default createCommand({
   name: "sign",
   nameLocalizations: {
@@ -30,10 +30,10 @@ export default createCommand({
   ],
   userInstall: true,
   messageComponentInteractionTime: 5 * 60 * 1000,
-  async run({ ctx, t }) {
-    const player = getPlayer(Number(ctx.args[0]))
+  async run({ ctx, t, client }) {
+    const player = client.players.get(ctx.args[0].toString())
     if(!player || !player.purchaseable) return await ctx.reply("commands.sign.player_not_found")
-    const price = calcPlayerPrice(player)
+    const price = player.price
     const embed = new EmbedBuilder()
     .setTitle(player.name)
     .setDesc(t(
@@ -49,10 +49,11 @@ export default createCommand({
     .setCustomId(`sign;${ctx.interaction.user.id};${player.id}`)
     await ctx.reply(embed.build(button.build()))
   },
-  async createAutocompleteInteraction({ i }) {
+  async createAutocompleteInteraction({ i, client }) {
     const players: Array<{ name: string, ovr: number, id: number }> = []
-    for(const p of getPlayers().filter(p => p.purchaseable)) {
-      const ovr = parseInt(calcPlayerOvr(p).toString())
+    for(const p of client.players.values()) {
+      if(!p.purchaseable) continue
+      const ovr = p.ovr
       players.push({
         name: `${p.name} (${ovr}) — ${p.collection}`,
         ovr,
@@ -70,10 +71,10 @@ export default createCommand({
   },
   async createMessageComponentInteraction({ ctx, i, client }) {
     await i.defer(64)
-    const player = getPlayer(Number(ctx.args[2]))
+    const player = client.players.get(ctx.args[2])
     if(!player) return
-    const price = calcPlayerPrice(player)
-    const ovr = parseInt(calcPlayerOvr(player).toString())
+    const price = player.price
+    const ovr = player.ovr
     if(price > ctx.db.user.coins) return ctx.reply("commands.sign.coins_needed")
     ctx.db.user.coins -= BigInt(price)
     ctx.db.user.reserve_players.push(player.id.toString())

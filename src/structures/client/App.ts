@@ -9,8 +9,6 @@ import Logger from "../../util/Logger.ts"
 import type { CreateInteractionOptions } from "../interactions/createComponentInteraction.ts"
 import Queue from "bull"
 import {
-  calcPlayerOvr,
-  calcPlayerPrice,
   getPlayers,
   type Player
 } from "players"
@@ -18,10 +16,6 @@ import {
 type Reminder = {
   user: string
   channel: string
-}
-type NewPlayer = Omit<Player, "ovr" | "price"> & {
-  ovr: number
-  price: number
 }
 const prisma = new PrismaClient()
 const __filename = fileURLToPath(import.meta.url)
@@ -32,14 +26,10 @@ const redis = Redis.createClient({
 const queue = new Queue<Reminder>("reminder", {
   redis: process.env.REDIS_URL
 })
-const players = new Map<string, NewPlayer>(
+const players = new Map<string, Player>(
   getPlayers().map(p => [
     p.id.toString(),
-    {
-      ...p,
-      ovr: calcPlayerOvr(p),
-      price: Number(calcPlayerPrice(p))
-    }
+    p
   ])
 )
 

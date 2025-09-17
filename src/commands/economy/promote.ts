@@ -33,7 +33,7 @@ export default createCommand({
   async run({ ctx, t, client }) {
     const p = client.players.get(ctx.args[0].toString())
     if(!p) {
-      return ctx.reply("commands.promote.player_not_found")
+      return await ctx.reply("commands.promote.player_not_found")
     }
     const options: SelectOption[] = []
     const players = ctx.db.user.active_players

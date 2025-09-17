@@ -1,4 +1,3 @@
-import { getPlayer } from "players"
 import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
 import createCommand from "../../structures/command/createCommand.ts"
 import { ApplicationCommandOptionTypes } from "oceanic.js"
@@ -58,8 +57,9 @@ export default createCommand({
     let description = ""
     for(const transaction of transactions) {
       const timestamp = (transaction.created_at.getTime() / 1000).toFixed(0)
-      const player = getPlayer(transaction.player)
-      description += `- [<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] ${t(`commands.transactions.type.${transaction.type}`, { player: `${player?.name} (${player?.collection})`, price: transaction.price?.toLocaleString(), user: `<@${transaction.to}>` })}\n`
+      const player = client.players.get(transaction.player.toString())
+      if(!player) continue
+      description += `- [<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] ${t(`commands.transactions.type.${transaction.type}`, { player: `${player.name} (${player.collection})`, price: transaction.price?.toLocaleString(), user: `<@${transaction.to}>` })}\n`
     }
     embed.setDesc(description)
     const previous = new ButtonBuilder()
@@ -108,8 +108,9 @@ export default createCommand({
     let description = ""
     for(const transaction of transactions) {
       const timestamp = (transaction.created_at.getTime() / 1000).toFixed(0)
-      const player = getPlayer(transaction.player)
-      description += `- [<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] ${t(`commands.transactions.type.${transaction.type}`, { player: `${player?.name} (${player?.collection})`, price: transaction.price?.toLocaleString(), user: `<@${transaction.to}>` })}\n`
+      const player = client.players.get(transaction.player.toString())
+      if(!player) continue
+      description += `- [<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] ${t(`commands.transactions.type.${transaction.type}`, { player: `${player.name} (${player.collection})`, price: transaction.price?.toLocaleString(), user: `<@${transaction.to}>` })}\n`
     }
     embed.setDesc(description)
     const previous = new ButtonBuilder()

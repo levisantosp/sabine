@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionTypes } from "oceanic.js"
 import createCommand from "../../structures/command/createCommand.ts"
 import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
-import { calcPlayerOvr, calcPlayerPrice, getPlayer, getPlayers } from "players"
+import { calcPlayerPrice } from "players"
 
 const date = Date.now()
 export default createCommand({
@@ -30,8 +30,8 @@ export default createCommand({
       required: true
     }
   ],
-  async run({ ctx, t }) {
-    const player = getPlayer(Number(ctx.args[0]))
+  async run({ ctx, t, client }) {
+    const player = client.players.get(ctx.args[0].toString())
     if(!player) return await ctx.reply("commands.card.player_not_found")
     const embed = new EmbedBuilder()
     .setFields(
@@ -64,10 +64,10 @@ export default createCommand({
     .setImage(`${process.env.CDN_URL}/cards/${player.id}.png?ts=${date}`)
     await ctx.reply(embed.build())
   },
-  async createAutocompleteInteraction({ i }) {
+  async createAutocompleteInteraction({ i, client }) {
     const players: Array<{ name: string, ovr: number, id: number }> = []
-    for(const p of getPlayers()) {
-      const ovr = parseInt(calcPlayerOvr(p).toString())
+    for(const p of client.players.values()) {
+      const ovr = Math.floor(p.ovr)
       players.push({
         name: `${p.name} (${ovr}) — ${p.collection}`,
         ovr,

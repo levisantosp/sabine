@@ -1,24 +1,8 @@
-import {
-  calcPlayerOvr,
-  calcPlayerPrice,
-  getPlayers,
-  type Player
-} from "players"
 import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
 import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
 import createCommand from "../../structures/command/createCommand.ts"
 import { emojis } from "../../util/emojis.ts"
 
-const players = new Map<string, Player>(
-  getPlayers().map(p => [
-    p.id.toString(),
-    {
-      ...p,
-      ovr: calcPlayerOvr(p),
-      price: calcPlayerPrice(p)
-    }
-  ])
-)
 export default createCommand({
   name: "roster",
   category: "economy",
@@ -31,20 +15,20 @@ export default createCommand({
   },
   userInstall: true,
   messageComponentInteractionTime: 5 * 60 * 1000,
-  async run({ ctx, t }) {
+  async run({ ctx, t, client }) {
     const active_players = ctx.db.user.active_players
     const reserve_players = ctx.db.user.reserve_players
-    let value = 0n
+    let value = 0
     let ovr = 0
     for(const p of active_players) {
-      const player = players.get(p)
-      if(!player || !player.ovr || !player.price) break
+      const player = client.players.get(p)
+      if(!player || !player.price) break
       ovr += player.ovr
       value += player.price
     }
     for(const p of reserve_players) {
-      const player = players.get(p)
-      if(!player || !player.ovr || !player.price) break
+      const player = client.players.get(p)
+      if(!player || !player.price) break
       ovr += player.ovr
       value += player.price
     }
@@ -62,16 +46,16 @@ export default createCommand({
     let active_content = ""
     let reserve_content = ""
     for(const p_id of active_players) {
-      const player = players.get(p_id)
-      if(!player || !player.ovr) break
+      const player = client.players.get(p_id)
+      if(!player) break
       active_content += `${emojis.find(e => e.name === player.role)?.emoji} ${player.name} (${Math.floor(player.ovr)}) — ${player.collection}\n`
     }
     let i = 0
     for(const p_id of reserve_players) {
       i++
       if(i >= 10) break
-      const player = players.get(p_id)
-      if(!player || !player.ovr) break
+      const player = client.players.get(p_id)
+      if(!player) break
       reserve_content += `${emojis.find(e => e.name === player.role)?.emoji} ${player.name} (${Math.floor(player.ovr)}) — ${player.collection}\n`
     }
     if(reserve_players.length > 10) {
@@ -122,7 +106,7 @@ export default createCommand({
       ]
     }))
   },
-  async createMessageComponentInteraction({ ctx, i, t }) {
+  async createMessageComponentInteraction({ ctx, i, t, client }) {
     if(ctx.args[2] === "file") {
       await ctx.interaction.defer(64)
       let playersContent = ""
@@ -130,14 +114,14 @@ export default createCommand({
       const reserve_players = ctx.db.user.reserve_players
       for(const p of active_players) {
         if(!active_players.length) break
-        const player = players.get(p)
-        if(!player || !player.ovr) continue
+        const player = client.players.get(p)
+        if(!player) continue
         playersContent += `${player.name} (${parseInt(player.ovr.toString())}) — ${player.collection}\n`
       }
       for(const p of reserve_players) {
         if(!reserve_players.length) break
-        const player = players.get(p)
-        if(!player || !player.ovr) continue
+        const player = client.players.get(p)
+        if(!player) continue
         playersContent += `${player.name} (${parseInt(player.ovr.toString())}) — ${player.collection}\n`
       }
       const txt = Buffer.from(playersContent, "utf-8")

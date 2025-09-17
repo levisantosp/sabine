@@ -30,7 +30,7 @@ export default createCommand({
   async run({ ctx, client }) {
     const p = client.players.get(ctx.args[0].toString())
     if(!ctx.db.user.active_players.includes(ctx.args[0].toString()) || !p) {
-      return ctx.reply("commands.remove.player_not_found")
+      return await ctx.reply("commands.remove.player_not_found")
     }
     const i = ctx.db.user.active_players.findIndex(pl => pl === p.id.toString())
     ctx.db.user.reserve_players.push(p.id.toString())

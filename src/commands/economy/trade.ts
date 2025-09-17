@@ -2,7 +2,6 @@ import { ApplicationCommandOptionTypes } from "oceanic.js"
 import createCommand from "../../structures/command/createCommand.ts"
 import { SabineUser } from "../../database/index.ts"
 import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
-import { calcPlayerOvr, getPlayer } from "players"
 
 export default createCommand({
   name: "trade",
@@ -56,7 +55,7 @@ export default createCommand({
   ],
   messageComponentInteractionTime: 5 * 60 * 1000,
   cooldown: true,
-  async run({ ctx, t }) {
+  async run({ ctx, t, client }) {
     if(
       ctx.db.user.trade_time &&
       ctx.db.user.trade_time.getTime() > Date.now()
@@ -66,7 +65,7 @@ export default createCommand({
       })
     }
     const user = await SabineUser.fetch(ctx.args[0].toString())
-    const player = getPlayer(Number(ctx.args[1]))
+    const player = client.players.get(ctx.args[1].toString())
     if(BigInt(ctx.args[2]) < 0) {
       return await ctx.reply("commands.trade.invalid_value")
     }
@@ -84,7 +83,7 @@ export default createCommand({
     }
     await ctx.reply({
       content: t("commands.trade.request", {
-        player: `${player.name} (${parseInt(calcPlayerOvr(player).toString())})`,
+        player: `${player.name} (${player.ovr})`,
         collection: player.collection,
         user: `<@${ctx.args[0]}>`,
         author: ctx.interaction.user.mention,
@@ -107,13 +106,13 @@ export default createCommand({
       ]
     })
   },
-  async createAutocompleteInteraction({ i }) {
+  async createAutocompleteInteraction({ i, client }) {
     const user = (await SabineUser.fetch(i.user.id)) ?? new SabineUser(i.user.id)
     const players: Array<{ name: string, ovr: number, id: string }> = []
     for(const p_id of user.reserve_players) {
-      const p = getPlayer(Number(p_id))
-      if(!p) break
-      const ovr = parseInt(calcPlayerOvr(p).toString())
+      const p = client.players.get(p_id)
+      if(!p) continue
+      const ovr = p.ovr
       players.push({
         name: `${p.name} (${ovr})`,
         ovr,
@@ -141,7 +140,7 @@ export default createCommand({
     }
     if(ctx.args[2] === "buy") {
       const user = await SabineUser.fetch(ctx.args[3])
-      const player = getPlayer(Number(ctx.args[4]))
+      const player = client.players.get(ctx.args[4])
       if(!user || !player) return
       const i = user.reserve_players.findIndex(p => p === ctx.args[4])
       if(i === -1 || i === undefined) return
@@ -178,7 +177,7 @@ export default createCommand({
       await user.save()
       await ctx.db.user.save()
       await ctx.edit("commands.trade.res", {
-        player: `${player.name} (${parseInt(calcPlayerOvr(player).toString())})`,
+        player: `${player.name} (${player.ovr})`,
         collection: player.collection,
         user: ctx.interaction.user.mention,
         coins: BigInt(ctx.args[5]).toLocaleString()

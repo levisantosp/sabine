@@ -1,23 +1,12 @@
 import {
-  calcPlayerOvr,
-  calcPlayerPrice,
   getPlayers,
   type Player
 } from "players"
 import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
 import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
 import createCommand from "../../structures/command/createCommand.ts"
+import { client } from "../../structures/client/App.ts"
 
-const players = new Map<string, Player>(
-  getPlayers().map(p => [
-    p.id.toString(),
-    {
-      ...p,
-      ovr: calcPlayerOvr(p),
-      price: calcPlayerPrice(p)
-    }
-  ])
-)
 const tier = (() => {
   const tier: {[key: string]: Player[]} = {
     s: [] as Player[], // ovr 85+ (0.1%)
@@ -25,7 +14,7 @@ const tier = (() => {
     b: [] as Player[], // ovr 70-79 (14%)
     c: [] as Player[] // ovr 69- (85%)
   }
-  for(const p of players.values()) {
+  for(const p of client.players.values()) {
     if(!p.ovr) continue
     if(p.ovr >= 85) tier.s.push(p)
     else if(p.ovr >= 80) tier.a.push(p)
@@ -126,15 +115,15 @@ export default createCommand({
       ctx.db.user.active_players.push(ctx.args[3])
       ctx.db.user.reserve_players.splice(i, 1)
       await ctx.db.user.save()
-      await ctx.reply("commands.promote.player_promoted", { p: players.get(ctx.args[3])?.name })
+      await ctx.reply("commands.promote.player_promoted", { p: client.players.get(ctx.args[3])?.name })
     }
     else if(ctx.args[2] === "sell") {
-      const player = players.get(ctx.args[3])
+      const player = client.players.get(ctx.args[3])
       if(!player || !player.price) {
         return await ctx.reply("commands.sell.player_not_found")
       }
-      player.price = BigInt(Math.floor(Number(player.price) * 0.1))
-      await ctx.db.user.sellPlayer(player.id.toString(), player.price, i)
+      player.price = Math.floor(Number(player.price) * 0.1)
+      await ctx.db.user.sellPlayer(player.id.toString(), BigInt(player.price), i)
       await ctx.reply("commands.sell.sold", { p: player.name, price: player.price.toLocaleString() })
     }
   }

@@ -1,4 +1,4 @@
-import { calcPlayerOvr, calcPlayerPrice, getPlayer } from "players"
+import { calcPlayerPrice } from "players"
 import { SabineUser } from "../../database/index.ts"
 import createCommand from "../../structures/command/createCommand.ts"
 
@@ -29,23 +29,23 @@ export default createCommand({
   ],
   userInstall: true,
   cooldown: true,
-  async run({ ctx }) {
-    const player = getPlayer(Number(ctx.args[0]))
+  async run({ ctx, client }) {
+    const player = client.players.get(ctx.args[0].toString())
     const i = ctx.db.user.reserve_players.findIndex(p => p === ctx.args[0])
     if(!player || i === -1) {
       return await ctx.reply("commands.sell.player_not_found")
     }
-    const price = BigInt(calcPlayerPrice(player, true).toString())
-    await ctx.db.user.sellPlayer(player.id.toString(), price, i)
-    await ctx.reply("commands.sell.sold", { p: player.name, price: price.toLocaleString("en-US") })
+    await ctx.db.user.sellPlayer(player.id.toString(), BigInt(calcPlayerPrice(player, true)), i)
+    await ctx.reply("commands.sell.sold", { p: player.name, price: player.price.toLocaleString("en-US") })
   },
-  async createAutocompleteInteraction({ i }) {
-    const user = (await SabineUser.fetch(i.user.id))!
+  async createAutocompleteInteraction({ i, client }) {
+    const user = await SabineUser.fetch(i.user.id)
+    if(!user) return
     const players: Array<{ name: string, ovr: number, id: string }> = []
     for(const p_id of user.reserve_players) {
-      const p = getPlayer(Number(p_id))
+      const p = client.players.get(p_id)
       if(!p) break
-      const ovr = parseInt(calcPlayerOvr(p).toString())
+      const ovr = p.ovr
       players.push({
         name: `${p.name} (${ovr})`,
         ovr,
