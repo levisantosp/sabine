@@ -64,25 +64,28 @@ export class SabineUser implements User {
     const data: Partial<User> = {}
     for(const key in this) {
       if(
-        ["premium"]
-        .includes(key)
-      ) {
-        (data as any)[key] = {
-          [key]: Array.isArray(this[key]) &&
-            this[key].length ?
-            {
-              create: this[key]
-            } :
-            undefined
-        }
-      }
-      else (data as any)[key] = this[key]
+        typeof this[key] === "function" ||
+        key === "id" ||
+        this[key] === null ||
+        this[key] === "premium"
+      ) continue
+      (data as any)[key] = this[key]
     }
-    return await prisma.guild.upsert({
-      where: { id: this.id },
-      update: data,
-      create: { id: this.id, ...data }
-    })
+    const { premium, ...cleanData } = data as any
+    if(premium) {
+      return await prisma.user.upsert({
+        where: { id: this.id },
+        update: cleanData,
+        create: { id: this.id, ...cleanData }
+      })
+    }
+    else {
+      return await prisma.user.upsert({
+        where: { id: this.id },
+        update: cleanData,
+        create: { id: this.id, ...cleanData }
+      })
+    }
   }
   public static async fetch(id: string) {
     const data = await prisma.user.findUnique({
