@@ -64,19 +64,24 @@ export class SabineUser implements User {
     const data: Partial<User> = {}
     for(const key in this) {
       if(
-        typeof this[key] === "function" ||
-        key === "id" ||
-        this[key] === null ||
-        this[key] === "premium"
-      ) continue
-      (data as any)[key] = this[key]
+        ["premium"]
+        .includes(key)
+      ) {
+        (data as any)[key] = {
+          [key]: Array.isArray(this[key]) &&
+            this[key].length ?
+            {
+              create: this[key]
+            } :
+            undefined
+        }
+      }
+      else (data as any)[key] = this[key]
     }
-    const { premium, ...cleanData } = data as any
-    premium
-    return await prisma.user.upsert({
+    return await prisma.guild.upsert({
       where: { id: this.id },
-      update: cleanData,
-      create: { id: this.id, ...cleanData }
+      update: data,
+      create: { id: this.id, ...data }
     })
   }
   public static async fetch(id: string) {
@@ -231,8 +236,25 @@ export class SabineGuild implements Guild {
   public async save() {
     const data: Partial<Guild> = {}
     for(const key in this) {
-      if(typeof this[key] === "function" || key === "id") continue
-      (data as any)[key] = this[key]
+      if(
+        typeof this[key] === "function" ||
+        key === "id" ||
+        this[key] === null
+      ) continue
+      if(
+        ["tbd_matches", "events", "live_messages"]
+        .includes(key)
+      ) {
+        (data as any)[key] = {
+          [key]: Array.isArray(this[key]) &&
+            this[key].length ?
+            {
+              create: this[key]
+            } :
+            undefined
+        }
+      }
+      else (data as any)[key] = this[key]
     }
     return await prisma.guild.upsert({
       where: { id: this.id },
