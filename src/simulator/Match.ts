@@ -1,4 +1,4 @@
-import { calcPlayerOvr } from "players"
+import { calcPlayerOvr, type Player } from "players"
 import { valorant_agents, valorant_maps, valorant_weapons } from "../config.ts"
 import type { Args } from "../locales/index.ts"
 import EmbedBuilder from "../structures/builders/EmbedBuilder.ts"
@@ -202,7 +202,7 @@ export default class Match {
           p.ACS *= 0.95
           p.gamesense *= 0.95
         }
-        p.ovr = calcPlayerOvr(p)
+        p.ovr = calcPlayerOvr(p as unknown as Player)
         p.credits = 800
         p.life = 100
         p.kills = 0
