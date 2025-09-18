@@ -9,7 +9,9 @@ export default async function(version, content) {
     data: {
       id: version,
       content: {
-        createMany: content
+        createMany: {
+          data: content
+        }
       },
       published_at: new Date()
     }
