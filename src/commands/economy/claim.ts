@@ -1,7 +1,4 @@
-import {
-  getPlayers,
-  type Player
-} from "players"
+import type { Player } from "players"
 import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
 import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
 import createCommand from "../../structures/command/createCommand.ts"
