@@ -36,7 +36,7 @@ export default createCommand({
       return await ctx.reply("commands.sell.player_not_found")
     }
     await ctx.db.user.sellPlayer(player.id.toString(), BigInt(calcPlayerPrice(player, true)), i)
-    await ctx.reply("commands.sell.sold", { p: player.name, price: player.price.toLocaleString("en-US") })
+    await ctx.reply("commands.sell.sold", { p: player.name, price: calcPlayerPrice(player, true).toLocaleString("en-US") })
   },
   async createAutocompleteInteraction({ i, client }) {
     const user = await SabineUser.fetch(i.user.id)
