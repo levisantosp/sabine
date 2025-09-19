@@ -58,7 +58,7 @@ export default createModalSubmitInteraction({
           where: {
             match: ctx.args[2],
             userId: ctx.db.user.id,
-            game: "valorant"
+            game: "lol"
           }
         })
         if(pred) {
