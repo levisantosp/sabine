@@ -1,6 +1,6 @@
 import { ComponentTypes } from "oceanic.js"
 import { valorant_agents } from "../../config.ts"
-import createComponentInteraction from "../../structures/interactions/createComponentInteraction.ts"
+import createComponentInteraction from "../../structures/interaction/createComponentInteraction.ts"
 import SelectMenuBuilder from "../../structures/builders/SelectMenuBuilder.ts"
 
 export default createComponentInteraction({

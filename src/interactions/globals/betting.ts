@@ -1,5 +1,5 @@
 import { client } from "../../structures/client/App.ts"
-import createModalSubmitInteraction from "../../structures/interactions/createModalSubmitInteraction.ts"
+import createModalSubmitInteraction from "../../structures/interaction/createModalSubmitInteraction.ts"
 import calcOdd from "../../util/calcOdd.ts"
 
 export default createModalSubmitInteraction({

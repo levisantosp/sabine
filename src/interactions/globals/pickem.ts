@@ -1,4 +1,4 @@
-import createComponentInteraction from "../../structures/interactions/createComponentInteraction.ts"
+import createComponentInteraction from "../../structures/interaction/createComponentInteraction.ts"
 
 export default createComponentInteraction({
   name: "pickem",
