@@ -1,7 +1,7 @@
 import type { CommandInteraction, Guild, TextChannel } from "oceanic.js"
 import App from "../client/App.ts"
 import CommandContext from "./CommandContext.ts"
-import locales, { type Args } from "../../locales/index.ts"
+import locales from "../../locales/index.ts"
 import ButtonBuilder from "../builders/ButtonBuilder.ts"
 import EmbedBuilder from "../builders/EmbedBuilder.ts"
 import { SabineGuild, SabineUser } from "../../database/index.ts"
@@ -19,8 +19,8 @@ const locale: {
 const raw: {
   [key: string]: any
 } = {
-  pt: JSON.parse(readFileSync(path.resolve(`src/locales/pt.json`), "utf-8")),
-  en: JSON.parse(readFileSync(path.resolve(`src/locales/en.json`), "utf-8"))
+  pt: JSON.parse(readFileSync(path.resolve("src/locales/pt.json"), "utf-8")),
+  en: JSON.parse(readFileSync(path.resolve("src/locales/en.json"), "utf-8"))
 }
 export default class CommandRunner {
   public async run(

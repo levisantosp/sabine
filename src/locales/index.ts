@@ -9,10 +9,10 @@ const locale: {
   [key: string]: any
 } = {
   en: JSON.parse(
-    readFileSync(path.resolve(`src/locales/en.json`), "utf-8")
+    readFileSync(path.resolve("src/locales/en.json"), "utf-8")
   ),
   pt: JSON.parse(
-    readFileSync(path.resolve(`src/locales/pt.json`), "utf-8")
+    readFileSync(path.resolve("src/locales/pt.json"), "utf-8")
   )
 }
 
