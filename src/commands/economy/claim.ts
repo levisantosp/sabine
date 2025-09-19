@@ -45,7 +45,7 @@ export default createCommand({
     "pt-BR": "Obtenha um jogador aleatório"
   },
   userInstall: true,
-  isThiking: true,
+  isThinking: true,
   messageComponentInteractionTime: 60 * 1000,
   cooldown: true,
   async run({ ctx, t }) {

@@ -182,7 +182,7 @@ export default createCommand({
     "leaderboard local 2",
     "leaderboard local 5"
   ],
-  isThiking: true,
+  isThinking: true,
   messageComponentInteractionTime: 10 * 60 * 1000,
   async run({ ctx, t, client }) {
     if(ctx.args[0] === "local" && ctx.guild) {
