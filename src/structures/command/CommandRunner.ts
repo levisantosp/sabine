@@ -5,14 +5,22 @@ import locales, { type Args } from "../../locales/index.ts"
 import ButtonBuilder from "../builders/ButtonBuilder.ts"
 import EmbedBuilder from "../builders/EmbedBuilder.ts"
 import { SabineGuild, SabineUser } from "../../database/index.ts"
-import { resolve } from "node:path"
+import path from "node:path"
 import { readFileSync } from "node:fs"
 import Logger from "../../util/Logger.ts"
 import type { Blacklist } from "@prisma/client"
 
-const locale: {[key: string]: string} = {
+const locale: {
+  [key: string]: string
+} = {
   pt: "br",
   en: "us"
+}
+const raw: {
+  [key: string]: any
+} = {
+  pt: JSON.parse(readFileSync(path.resolve(`src/locales/pt.json`), "utf-8")),
+  en: JSON.parse(readFileSync(path.resolve(`src/locales/en.json`), "utf-8"))
 }
 export default class CommandRunner {
   public async run(
@@ -26,7 +34,8 @@ export default class CommandRunner {
       guild = await SabineGuild.fetch(interaction.guildID) ?? new SabineGuild(interaction.guildID)
       g = client.guilds.get(interaction.guildID)
     }
-    const value: Blacklist[] = JSON.parse((await client.redis.get("blacklist"))!)
+    const rawBlacklist = await client.redis.get("blacklist")
+    const value: Blacklist[] = rawBlacklist ? JSON.parse(rawBlacklist) : []
     const blacklist = new Map<string | null, Blacklist>(value.map(b => [b.id, b]))
     const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
     const ban = blacklist.get(interaction.user.id)
@@ -69,9 +78,7 @@ export default class CommandRunner {
         guild
       }
     })
-    const path = resolve(`src/locales/${ctx.locale}.json`)
-    const raw = readFileSync(path, "utf-8")
-    const { permissions } = JSON.parse(raw)
+    const { permissions } = raw[ctx.locale]
     if(command.permissions) {
       const perms: string[] = []
       for(const perm of command.permissions) {
@@ -94,22 +101,26 @@ export default class CommandRunner {
     if(command.ephemeral) {
       await interaction.defer(64)
     }
-    else if(command.isThiking) {
+    else if(command.isThinking) {
       await interaction.defer()
     }
-    const t = (content: string, args?: Args) => {
-      return locales(user.lang ?? guild?.lang ?? "en", content, args)
-    }
+    const t = ctx.t.bind(ctx)
     if(user.warn) {
-      const updates = (await client.prisma.update.findMany()).sort((a, b) => b.published_at.getTime() - a.published_at.getTime())
-      const button = new ButtonBuilder()
-      .setLabel(t("helper.dont_show_again"))
-      .setStyle("red")
-      .setCustomId("dontshowagain")
-      .build(t("helper.warn", {
-        link: `https://sabinebot.xyz/${locale[ctx.locale]}/changelog/v${updates[0].id}`
-      }))
-      await ctx.reply(button)
+      const update = await client.prisma.update.findFirst({
+        orderBy: {
+          published_at: "desc"
+        }
+      })
+      if(update) {
+        const button = new ButtonBuilder()
+        .setLabel(t("helper.dont_show_again"))
+        .setStyle("red")
+        .setCustomId("dontshowagain")
+        .build(t("helper.warn", {
+          link: `https://sabinebot.xyz/${locale[ctx.locale]}/changelog/v${update.id}`
+        }))
+        await ctx.reply(button)
+      }
     }
     if(command.cooldown) {
       const cooldown = await client.redis.get(`cooldown:${interaction.user.id}`)

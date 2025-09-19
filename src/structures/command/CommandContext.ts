@@ -32,6 +32,9 @@ export default class CommandContext {
     this.db = options.db
     this.args = options.args
   }
+  public t(content: string, args?: Args) {
+    return locales(this.locale, content, args)
+  }
   public async reply(content: string | Oceanic.InteractionContent, options?: Args) {
     switch(typeof content) {
     case "string": {

@@ -6,7 +6,7 @@ import { fileURLToPath } from "url"
 import { PrismaClient } from "@prisma/client"
 import Redis from "redis"
 import Logger from "../../util/Logger.ts"
-import type { CreateInteractionOptions } from "../interactions/createComponentInteraction.ts"
+import type { CreateInteractionOptions } from "../interaction/createComponentInteraction.ts"
 import Queue from "bull"
 import {
   getPlayers,

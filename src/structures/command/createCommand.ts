@@ -2,8 +2,8 @@ import * as Oceanic from "oceanic.js"
 import App from "../client/App.ts"
 import CommandContext from "./CommandContext.ts"
 import type { Args } from "../../locales/index.ts"
-import ComponentInteractionContext from "../interactions/ComponentInteractionContext.ts"
-import ModalSubmitInteractionContext from "../interactions/ModalSubmitInteractionContext.ts"
+import ComponentInteractionContext from "../interaction/ComponentInteractionContext.ts"
+import ModalSubmitInteractionContext from "../interaction/ModalSubmitInteractionContext.ts"
 
 type CommandOptions = {
   ctx: CommandContext
@@ -45,7 +45,7 @@ export type Command = {
   onlyDev?: boolean
   ephemeral?: boolean
   userInstall?: boolean
-  isThiking?: boolean
+  isThinking?: boolean
   messageComponentInteractionTime?: number
   modalSubmitInteractionTime?: number
   cooldown?: boolean
@@ -54,8 +54,6 @@ export type Command = {
   createMessageComponentInteraction?: (options: CreateComponentInteractionOptions) => Promise<any>
   createModalSubmitInteraction?: (options: CreateModalSubmitInteractionOptions) => Promise<any>
 }
-export default function(
-  command: Command
-): Command {
+export default function(command: Command) {
   return command
 }

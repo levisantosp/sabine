@@ -4,8 +4,8 @@ import CommandRunner from "../structures/command/CommandRunner.ts"
 import { client } from "../structures/client/App.ts"
 import { SabineGuild, SabineUser } from "../database/index.ts"
 import locales, { type Args } from "../locales/index.ts"
-import ComponentInteractionContext from "../structures/interactions/ComponentInteractionContext.ts"
-import ModalSubmitInteractionContext from "../structures/interactions/ModalSubmitInteractionContext.ts"
+import ComponentInteractionContext from "../structures/interaction/ComponentInteractionContext.ts"
+import ModalSubmitInteractionContext from "../structures/interaction/ModalSubmitInteractionContext.ts"
 
 const blacklist = await (async() => {
   return (await client.prisma.blacklist.findMany())
