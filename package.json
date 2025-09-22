@@ -18,7 +18,7 @@
   "author": "levisantosp",
   "license": "ISC",
   "dependencies": {
-    "@fastify/type-provider-typebox": "^5.2.0",
+    "@fastify/type-provider-typebox": "^6.0.0",
     "@iamtraction/google-translate": "^2.0.1",
     "@prisma/client": "^6.16.1",
     "bull": "^4.16.5",
