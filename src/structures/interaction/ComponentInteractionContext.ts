@@ -1,12 +1,13 @@
 import type { ComponentInteraction, EditInteractionContent, File, Guild, InteractionContent } from "oceanic.js"
 import App from "../client/App.ts"
-import locales, { type Args } from "../../locales/index.ts"
+import locales, { type Content, type Args } from "../../locales/index.ts"
 import { SabineGuild, SabineUser } from "../../database/index.ts"
 
 type Database = {
   guild?: SabineGuild
   user: SabineUser
 }
+
 type ComponentInteractionContextOptions = {
   client: App
   guild?: Guild | null
@@ -15,6 +16,7 @@ type ComponentInteractionContextOptions = {
   db: Database
   args: string[]
 }
+
 export default class ComponentInteractionContext {
   public client: App
   public guild?: Guild | null
@@ -35,7 +37,7 @@ export default class ComponentInteractionContext {
     this.flags = flags
     return this
   }
-  public async reply(content: string | InteractionContent, options?: Args) {
+  public async reply(content: Content | InteractionContent, options?: Args) {
     switch(typeof content) {
     case "string": {
       if(options?.files) {
@@ -105,7 +107,7 @@ export default class ComponentInteractionContext {
     }
     }
   }
-  public async edit(content: string | EditInteractionContent, options?: Args) {
+  public async edit(content: Content | EditInteractionContent, options?: Args) {
     switch(typeof content) {
     case "string": {
       if(options?.files) {

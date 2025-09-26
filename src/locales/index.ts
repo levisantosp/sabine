@@ -1,31 +1,45 @@
-import { readFileSync } from "node:fs"
-import path from "node:path"
 import * as Oceanic from "oceanic.js"
+import pt from "./pt.json" with { type: "json" }
+import en from "./en.json" with { type: "json" }
 
 export type Args = {
   [key: string]: string | Error | number | Oceanic.File[] | undefined | null | bigint
 }
+
+export type Content = Keys<Locale> | (string & {})
+
+type Locale = typeof en
+
+type Keys<T> = T extends object
+  ? {[K in keyof T]: K extends string 
+      ? T[K] extends object 
+        ? `${K}.${Keys<T[K]>}`
+        : K
+      : never
+    }[keyof T]
+  : never
+
 const locale: {
   [key: string]: any
 } = {
-  en: JSON.parse(
-    readFileSync(path.resolve("src/locales/en.json"), "utf-8")
-  ),
-  pt: JSON.parse(
-    readFileSync(path.resolve("src/locales/pt.json"), "utf-8")
-  )
+  en,
+  pt
 }
 
-export default function t(lang: string, content: string, args?: Args): string {
+export default function t(lang: string, content: Content, args?: Args): string {
   let json = locale[lang]
+
   for(const param of content.split(".")) {
     json = json[param]
+
     if(!json) return content
   }
+
   if(args) {
     for(const arg of Object.keys(args)) {
       json = json.replaceAll(`{${arg}}`, args[arg])
     }
   }
+  
   return json
 }

@@ -1,7 +1,7 @@
 import * as Oceanic from "oceanic.js"
 import App from "../client/App.ts"
 import locales from "../../locales/index.ts"
-import type { Args } from "../../locales/index.ts"
+import type { Args, Content } from "../../locales/index.ts"
 import { SabineGuild, SabineUser } from "../../database/index.ts"
 import Logger from "../../util/Logger.ts"
 
@@ -9,6 +9,7 @@ type Database = {
   guild?: SabineGuild
   user: SabineUser
 }
+
 type CommandContextOptions = {
   client: App
   guild?: Oceanic.Guild | null
@@ -17,6 +18,7 @@ type CommandContextOptions = {
   db: Database
   args: (string | number | boolean)[]
 }
+
 export default class CommandContext {
   public client: App
   public guild?: Oceanic.Guild | null
@@ -24,6 +26,7 @@ export default class CommandContext {
   public locale: string
   public db: Database
   public args: (string | number | boolean)[]
+
   public constructor(options: CommandContextOptions) {
     this.client = options.client
     this.guild = options.guild
@@ -32,10 +35,12 @@ export default class CommandContext {
     this.db = options.db
     this.args = options.args
   }
-  public t(content: string, args?: Args) {
+
+  public t(content: Content, args?: Args) {
     return locales(this.locale, content, args)
   }
-  public async reply(content: string | Oceanic.InteractionContent, options?: Args) {
+
+  public async reply(content: Content | Oceanic.InteractionContent, options?: Args) {
     switch(typeof content) {
     case "string": {
       if(options?.files) {
@@ -45,6 +50,7 @@ export default class CommandContext {
             files: options.files as Oceanic.File[]
           }
         ).catch(e => new Logger(this.client).error(e))
+
         else return await this.interaction.createMessage(
           {
             content: locales(this.locale, content, options)
@@ -57,6 +63,7 @@ export default class CommandContext {
             content: locales(this.locale, content, options)
           }
         ).catch(e => new Logger(this.client).error(e))
+
         else return await this.interaction.createMessage(
           {
             content: locales(this.locale, content, options)
@@ -67,16 +74,18 @@ export default class CommandContext {
     case "object": {
       if(options?.files) {
         if(this.interaction.acknowledged) return await this.interaction.createFollowup(Object.assign(content, { files: options.files as Oceanic.File[] })).catch(e => new Logger(this.client).error(e))
+        
         else return await this.interaction.createMessage(Object.assign(content, { files: options.files as Oceanic.File[] })).catch(e => new Logger(this.client).error(e))
       }
       else {
         if(this.interaction.acknowledged) return await this.interaction.createFollowup(content).catch(e => new Logger(this.client).error(e))
+
         else return await this.interaction.createMessage(content).catch(e => new Logger(this.client).error(e))
       }
     }
     }
   }
-  public async edit(content: string | Oceanic.EditInteractionContent, options?: Args) {
+  public async edit(content: Content | Oceanic.EditInteractionContent, options?: Args) {
     if(this.interaction instanceof Oceanic.CommandInteraction) {
       switch(typeof content) {
       case "string": {
