@@ -7,6 +7,7 @@ type CreateInteractionProps = {
   t: (content: string, args?: Args) => string
   client: App
 }
+
 export type CreateInteractionOptions = {
   name: string
   isThinking?: boolean
@@ -14,7 +15,9 @@ export type CreateInteractionOptions = {
   flags?: number
   run: (props: CreateInteractionProps) => Promise<any>
   time?: number
+  global?: boolean
 }
+
 export default function(component: CreateInteractionOptions) {
   return component
 }

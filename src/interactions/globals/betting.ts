@@ -5,6 +5,7 @@ import calcOdd from "../../util/calcOdd.ts"
 export default createModalSubmitInteraction({
   name: "betting",
   flags: 64,
+  global: true,
   async run({ ctx }) {
     const games = {
       valorant: async() => {

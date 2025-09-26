@@ -7,6 +7,7 @@ import { PrismaClient } from "@prisma/client"
 import Redis from "redis"
 import Logger from "../../util/Logger.ts"
 import type { CreateInteractionOptions } from "../interaction/createComponentInteraction.ts"
+import type { CreateModalSubmitInteractionOptions } from "../interaction/createModalSubmitInteraction.ts"
 import Queue from "bull"
 import {
   getPlayers,
@@ -17,15 +18,20 @@ type Reminder = {
   user: string
   channel: string
 }
+
 const prisma = new PrismaClient()
+
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
+
 const redis: Redis.RedisClientType = Redis.createClient({
   url: process.env.REDIS_URL
 })
+
 const queue = new Queue<Reminder>("reminder", {
   redis: process.env.REDIS_URL
 })
+
 const players = new Map<string, Player>(
   getPlayers().map(p => [
     p.id.toString(),
@@ -39,35 +45,56 @@ export default class App extends Oceanic.Client {
   public prisma: typeof prisma
   public redis: typeof redis
   public queue: typeof queue
-  public interactions: Map<string, CreateInteractionOptions> = new Map()
+  public interactions: Map<string, CreateInteractionOptions & CreateModalSubmitInteractionOptions> = new Map()
   public players: typeof players = players
+  
   public constructor(options?: Oceanic.ClientOptions) {
     super(options)
     this.prisma = prisma
     this.redis = redis
     this.queue = queue
-
   }
+
   public override async connect() {
     const start = Date.now()
+    
     Logger.warn("Connecting to database...")
+
     await prisma.$connect()
+
     Logger.send(`Database connected in ${((Date.now() - start) / 1000).toFixed(1)}s!`)
+
     for(const file of readdirSync(path.resolve(__dirname, "../../listeners"))) {
       const listener = (await import(`../../listeners/${file}`)).default
+
       if(listener.name === "ready") this.once("ready", () => listener.run(this).catch((e: Error) => new Logger(this).error(e)))
+
       else this.on(listener.name, (...args) => listener.run(this, ...args).catch((e: Error) => new Logger(this).error(e)))
     }
+
     for(const folder of readdirSync(path.resolve(__dirname, "../../commands"))) {
       for(const file of readdirSync(path.resolve(__dirname, `../../commands/${folder}`))) {
         const command = (await import(`../../commands/${folder}/${file}`)).default
+
+        if(this.commands.get(command.name)) {
+          Logger.warn(`There is already an interaction named '${command.name}'`)
+        }
+
         this.commands.set(command.name, command)
       }
     }
-    for(const file of readdirSync(path.resolve(__dirname, "../../interactions/commands"))) {
-      const interaction = (await import(`../../interactions/commands/${file}`)).default
-      this.interactions.set(interaction.name, interaction)
+    for(const folder of readdirSync(path.resolve(__dirname, "../../interactions"))) {
+      for(const file of readdirSync(path.resolve(__dirname, `../../interactions/${folder}`))) {
+        const interaction = (await import(`../../interactions/${folder}/${file}`)).default
+
+        if(this.interactions.get(interaction.name)) {
+          Logger.warn(`There is already an interaction named '${interaction.name}'`)
+        }
+
+        this.interactions.set(interaction.name, interaction)
+      }
     }
+
     await super.connect()
   }
   public async bulkEditGlobalCommands() {

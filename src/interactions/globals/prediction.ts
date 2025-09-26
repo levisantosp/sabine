@@ -7,6 +7,7 @@ const service = new Service(process.env.AUTH)
 export default createModalSubmitInteraction({
   name: "prediction",
   flags: 64,
+  global: true,
   async run({ ctx }) {
     const games = {
       valorant: async() => {

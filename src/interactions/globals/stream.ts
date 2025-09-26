@@ -6,6 +6,7 @@ const service = new Service(process.env.AUTH)
 export default createComponentInteraction({
   name: "stream",
   flags: 64,
+  global: true,
   async run({ ctx }) {
     const res = await service.getLiveMatches()
     const match = res.find(r => r.id.toString() === ctx.args[2])

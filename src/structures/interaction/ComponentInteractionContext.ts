@@ -43,14 +43,16 @@ export default class ComponentInteractionContext {
   public async reply(content: Content | Oceanic.InteractionContent, options?: Args): Promise<Oceanic.Message> {
     if(typeof content === "string") {
       content = {
-        content: locales(this.locale, content, options)
+        content: locales(this.locale, content, options),
+        flags: this.flags
       }
     }
 
     if(options && options.files) {
       content = {
         ...content,
-        files: options.files as Oceanic.File[]
+        files: options.files as Oceanic.File[],
+        flags: this.flags
       }
     }
 
@@ -61,7 +63,7 @@ export default class ComponentInteractionContext {
     else return await (await this.interaction.createMessage(content)).getMessage()
   }
 
-  public async edit(content: Content | Oceanic.EditInteractionContent, options?: Args): Promise<Oceanic.Message> {
+  public async edit(content: Content | Oceanic.EditInteractionContent, options?: Args): Promise<Oceanic.Message | Oceanic.InteractionCallbackResponse> {
     if(typeof content === "string") {
       content = {
         content: locales(this.locale, content, options)
@@ -79,9 +81,6 @@ export default class ComponentInteractionContext {
       return await this.interaction.editOriginal(content)
     }
 
-    else return await (await this.interaction.createMessage({
-      content: locales(this.locale, "helper.interaction_failed"),
-      flags: 64
-    })).getMessage()
+    else return await this.interaction.editParent(content as Oceanic.InteractionContent)
   }
 }

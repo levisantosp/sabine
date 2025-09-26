@@ -43,14 +43,16 @@ export default class ModalSubmitInteractionContext {
   public async reply(content: Content | Oceanic.InteractionContent, options?: Args): Promise<Oceanic.Message> {
     if(typeof content === "string") {
       content = {
-        content: locales(this.locale, content, options)
+        content: locales(this.locale, content, options),
+        flags: this.flags
       }
     }
 
     if(options && options.files) {
       content = {
         ...content,
-        files: options.files as Oceanic.File[]
+        files: options.files as Oceanic.File[],
+        flags: this.flags
       }
     }
 

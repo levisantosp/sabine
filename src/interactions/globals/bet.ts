@@ -6,6 +6,7 @@ const service = new Service(process.env.AUTH)
 export default createComponentInteraction({
   name: "bet",
   flags: 64,
+  global: true,
   async run({ ctx, t, client }) {
     if(ctx.db.user.coins < 500) return await ctx.reply("helper.coins_needed")
     const options = {

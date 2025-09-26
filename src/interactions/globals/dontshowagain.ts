@@ -3,6 +3,7 @@ import createComponentInteraction from "../../structures/interaction/createCompo
 export default createComponentInteraction({
   name: "dontshowagain",
   flags: 64,
+  global: true,
   async run({ ctx }) {
     ctx.db.user.warn = false
     await ctx.db.user.save()

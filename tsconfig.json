@@ -11,7 +11,7 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "rewriteRelativeImportExtensions": true,
-    "declaration": true
+    "declaration": true,
   },
   "include": [
     "src/**/*.json",

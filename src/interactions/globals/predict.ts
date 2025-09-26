@@ -6,6 +6,7 @@ const service = new Service(process.env.AUTH)
 export default createComponentInteraction({
   name: "predict",
   flags: 64,
+  global: true,
   async run({ ctx, t, client }) {
     const games = {
       valorant: async() => {
