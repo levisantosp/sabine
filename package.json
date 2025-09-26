@@ -8,11 +8,12 @@
     "test": "node --env-file=.env test.ts",
     "start": "node --env-file=.env .",
     "dev": "node --watch --env-file=.env src/index.ts",
-    "build": "npx eslint . && rm -rf dist && tsc",
-    "push": "npx prisma db push",
-    "pull": "npx prisma db pull",
-    "pull:force": "npx prisma db pull --force",
-    "gen": "npx prisma generate"
+    "build": "pnpm lint && rm -rf dist && tsc",
+    "push": "pnpm prisma db push",
+    "pull": "pnpm prisma db pull",
+    "pull:force": "pnpm prisma db pull --force",
+    "gen": "pnpm prisma generate",
+    "lint": "pnpm eslint ."
   },
   "keywords": [],
   "author": "levisantosp",
@@ -20,24 +21,24 @@
   "dependencies": {
     "@fastify/type-provider-typebox": "^5.2.0",
     "@iamtraction/google-translate": "^2.0.1",
-    "@prisma/client": "^6.16.1",
+    "@prisma/client": "^6.16.2",
     "bull": "^4.16.5",
     "colors": "^1.4.0",
-    "fastify": "^5.6.0",
-    "humanize-duration": "^3.33.0",
+    "fastify": "^5.6.1",
+    "humanize-duration": "^3.33.1",
     "moment": "^2.30.1",
     "oceanic.js": "^1.12.0",
     "players": "github:levisantosp/sabine-players",
     "redis": "^5.8.2"
   },
   "devDependencies": {
-    "@eslint/js": "^9.35.0",
+    "@eslint/js": "^9.36.0",
     "@types/humanize-duration": "^3.27.4",
-    "@types/node": "^24.3.2",
-    "eslint": "^9.35.0",
+    "@types/node": "^24.5.2",
+    "eslint": "^9.36.0",
     "globals": "^16.4.0",
-    "prisma": "^6.16.1",
+    "prisma": "^6.16.2",
     "typescript": "^5.9.2",
-    "typescript-eslint": "^8.43.0"
+    "typescript-eslint": "^8.44.1"
   }
 }
