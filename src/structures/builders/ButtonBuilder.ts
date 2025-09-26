@@ -53,7 +53,7 @@ export default class ButtonBuilder {
     this.disabled = false
     return this
   }
-  public build(content?: string | Oceanic.InteractionContent) {
+  public build(content?: string | Oceanic.InteractionContent): Oceanic.InteractionContent {
     if(typeof content === "string") {
       return {
         content: content ?? "",

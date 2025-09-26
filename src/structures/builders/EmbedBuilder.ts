@@ -64,7 +64,7 @@ export default class EmbedBuilder {
     this.footer = footer
     return this
   }
-  public build(content?: string | Oceanic.InteractionContent) {
+  public build(content?: string | Oceanic.InteractionContent): Oceanic.InteractionContent {
     if(typeof content === "string" || !content) {
       return {
         content: content ?? "",
