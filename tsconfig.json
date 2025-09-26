@@ -10,8 +10,7 @@
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "rewriteRelativeImportExtensions": true,
-    "declaration": true,
+    "rewriteRelativeImportExtensions": true
   },
   "include": [
     "src/**/*.json",
