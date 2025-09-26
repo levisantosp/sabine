@@ -20,7 +20,7 @@ type Reminder = {
 const prisma = new PrismaClient()
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const redis = Redis.createClient({
+const redis: Redis.RedisClientType = Redis.createClient({
   url: process.env.REDIS_URL
 })
 const queue = new Queue<Reminder>("reminder", {
