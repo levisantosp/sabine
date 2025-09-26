@@ -5,7 +5,9 @@ await client.redis.connect()
 const updateRedis = async() => {
   const users = await client.prisma.user.findMany()
   const blacklist = await client.prisma.blacklist.findMany()
+  
   await client.redis.set("blacklist", JSON.stringify(blacklist))
+
   await client.redis.set(
     "leaderboard:coins",
     JSON.stringify(
@@ -20,6 +22,7 @@ const updateRedis = async() => {
       (_, value) => typeof value === "bigint" ? value.toString() : value
     )
   )
+
   await client.redis.set(
     "leaderboard:predictions",
     JSON.stringify(
@@ -33,6 +36,7 @@ const updateRedis = async() => {
       }
     )
   )
+
   await client.redis.set(
     "leaderboard:rating",
     JSON.stringify(
@@ -46,15 +50,22 @@ const updateRedis = async() => {
       }
     )
   )
+
   setTimeout(updateRedis, 10 * 60 * 1000)
 }
+
 const keys = await client.redis.keys("*leaderboard:*")
+
 if(keys.length) {
   await client.redis.del(keys)
 }
+
 await updateRedis()
+
 await client.connect()
+
 server.listen({
   host: process.env.HOST,
-  port: process.env.PORT ?? 3001
+  port: process.env.PORT
 })
+.then(() => console.log(`HTTP server running at ${process.env.PORT}`))
