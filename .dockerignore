@@ -1,5 +1,4 @@
 scripts/
 .gitignore
 *test*
-package-lock.json
 node_modules/
