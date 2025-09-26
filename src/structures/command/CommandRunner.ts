@@ -25,7 +25,7 @@ const raw: {
 export default class CommandRunner {
   public async run(
     client: App, interaction: CommandInteraction
-  ) {
+  ): Promise<unknown> {
     const command = client.commands.get(interaction.data.name)
     if(!command) return
     let guild: SabineGuild | undefined
