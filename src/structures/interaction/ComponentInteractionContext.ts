@@ -1,4 +1,4 @@
-import type { ComponentInteraction, EditInteractionContent, File, Guild, InteractionContent } from "oceanic.js"
+import * as Oceanic from "oceanic.js"
 import App from "../client/App.ts"
 import locales, { type Content, type Args } from "../../locales/index.ts"
 import { SabineGuild, SabineUser } from "../../database/index.ts"
@@ -10,8 +10,8 @@ type Database = {
 
 type ComponentInteractionContextOptions = {
   client: App
-  guild?: Guild | null
-  interaction: ComponentInteraction
+  guild?: Oceanic.Guild | null
+  interaction: Oceanic.ComponentInteraction
   locale: string
   db: Database
   args: string[]
@@ -19,12 +19,13 @@ type ComponentInteractionContextOptions = {
 
 export default class ComponentInteractionContext {
   public client: App
-  public guild?: Guild | null
-  public interaction: ComponentInteraction
+  public guild?: Oceanic.Guild | null
+  public interaction: Oceanic.ComponentInteraction
   public locale: string
   public db: Database
   public args: string[]
   public flags?: number
+
   public constructor(options: ComponentInteractionContextOptions) {
     this.client = options.client
     this.guild = options.guild
@@ -33,144 +34,54 @@ export default class ComponentInteractionContext {
     this.db = options.db
     this.args = options.args
   }
+
   public setFlags(flags: number) {
     this.flags = flags
     return this
   }
-  public async reply(content: Content | InteractionContent, options?: Args) {
-    switch(typeof content) {
-    case "string": {
-      if(options?.files) {
-        if(this.interaction.acknowledged) return await this.interaction.createFollowup(
-          {
-            content: locales(this.locale, content, options),
-            files: options.files as File[],
-            flags: this.flags
-          }
-        )
-        else return await this.interaction.createMessage(
-          {
-            content: locales(this.locale, content, options),
-            files: options.files as File[],
-            flags: this.flags
-          }
-        )
-      }
-      else {
-        if(this.interaction.acknowledged) return await this.interaction.createFollowup(
-          {
-            content: locales(this.locale, content, options),
-            flags: this.flags
-          }
-        )
-        else return await this.interaction.createMessage(
-          {
-            content: locales(this.locale, content, options),
-            flags: this.flags
-          }
-        )
+
+  public async reply(content: Content | Oceanic.InteractionContent, options?: Args): Promise<Oceanic.Message> {
+    if(typeof content === "string") {
+      content = {
+        content: locales(this.locale, content, options)
       }
     }
-    case "object": {
-      if(options?.files) {
-        if(this.interaction.acknowledged) return await this.interaction.createFollowup(
-            Object.assign(
-              content,
-              {
-                files: options.files,
-                flags: this.flags
-              }
-            )
-        )
-        else return await this.interaction.createMessage(
-            Object.assign(
-              content,
-              {
-                files: options.files,
-                flags: this.flags
-              }
-            )
-        )
-      }
-      else {
-        if(this.interaction.acknowledged) return await this.interaction.createFollowup(
-          {
-            ...content,
-            flags: this.flags
-          }
-        )
-        else return await this.interaction.createMessage({
-          ...content,
-          flags: this.flags
-        })
+
+    if(options && options.files) {
+      content = {
+        ...content,
+        files: options.files as Oceanic.File[]
       }
     }
+
+    if(this.interaction.acknowledged) {
+      return await (await this.interaction.createFollowup(content)).getMessage()
     }
+
+    else return await (await this.interaction.createMessage(content)).getMessage()
   }
-  public async edit(content: Content | EditInteractionContent, options?: Args) {
-    switch(typeof content) {
-    case "string": {
-      if(options?.files) {
-        if(this.interaction.acknowledged) return await this.interaction.editOriginal(
-          {
-            content: locales(this.locale, content, options),
-            files: options.files as File[],
-            components: [],
-            embeds: []
-          }
-        )
-        else return await this.interaction.editParent(
-          {
-            content: locales(this.locale, content, options),
-            files: options.files as File[],
-            components: [],
-            embeds: []
-          }
-        )
-      }
-      else {
-        if(this.interaction.acknowledged) return await this.interaction.editOriginal(
-          {
-            content: locales(this.locale, content, options),
-            components: [],
-            embeds: []
-          }
-        )
-        else return await this.interaction.editParent(
-          {
-            content: locales(this.locale, content, options),
-            components: [],
-            embeds: []
-          }
-        )
+
+  public async edit(content: Content | Oceanic.EditInteractionContent, options?: Args): Promise<Oceanic.Message> {
+    if(typeof content === "string") {
+      content = {
+        content: locales(this.locale, content, options)
       }
     }
-    case "object": {
-      if(options?.files) {
-        if(this.interaction.acknowledged) return await this.interaction.editOriginal(
-            Object.assign(
-              content,
-              {
-                files: options.files,
-                components: [],
-                embeds: []
-              }
-            )
-        )
-        else return await this.interaction.editParent(
-            {
-              ...content,
-              files: options.files,
-              components: [],
-              embeds: []
-            } as InteractionContent
-        )
-      }
-      else {
-        if(this.interaction.acknowledged) return await this.interaction.editOriginal(content as InteractionContent)
-        else return await this.interaction.editParent(content as InteractionContent)
+
+    if(options && options.files) {
+      content = {
+        ...content,
+        files: options.files as Oceanic.File[]
       }
     }
+
+    if(this.interaction.acknowledged) {
+      return await this.interaction.editOriginal(content)
     }
+
+    else return await (await this.interaction.createMessage({
+      content: locales(this.locale, "helper.interaction_failed"),
+      flags: 64
+    })).getMessage()
   }
 }

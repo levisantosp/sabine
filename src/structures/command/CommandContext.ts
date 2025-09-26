@@ -3,7 +3,6 @@ import App from "../client/App.ts"
 import locales from "../../locales/index.ts"
 import type { Args, Content } from "../../locales/index.ts"
 import { SabineGuild, SabineUser } from "../../database/index.ts"
-import Logger from "../../util/Logger.ts"
 
 type Database = {
   guild?: SabineGuild
@@ -13,7 +12,7 @@ type Database = {
 type CommandContextOptions = {
   client: App
   guild?: Oceanic.Guild | null
-  interaction: Oceanic.CommandInteraction | Oceanic.ComponentInteraction | Oceanic.ModalSubmitInteraction
+  interaction: Oceanic.CommandInteraction
   locale: string
   db: Database
   args: (string | number | boolean)[]
@@ -40,160 +39,47 @@ export default class CommandContext {
     return locales(this.locale, content, args)
   }
 
-  public async reply(content: Content | Oceanic.InteractionContent, options?: Args) {
-    switch(typeof content) {
-    case "string": {
-      if(options?.files) {
-        if(this.interaction.acknowledged) return await this.interaction.createFollowup(
-          {
-            content: locales(this.locale, content, options),
-            files: options.files as Oceanic.File[]
-          }
-        ).catch(e => new Logger(this.client).error(e))
-
-        else return await this.interaction.createMessage(
-          {
-            content: locales(this.locale, content, options)
-          }
-        ).catch(e => new Logger(this.client).error(e))
-      }
-      else {
-        if(this.interaction.acknowledged) return await this.interaction.createFollowup(
-          {
-            content: locales(this.locale, content, options)
-          }
-        ).catch(e => new Logger(this.client).error(e))
-
-        else return await this.interaction.createMessage(
-          {
-            content: locales(this.locale, content, options)
-          }
-        ).catch(e => new Logger(this.client).error(e))
+  public async reply(content: Content | Oceanic.InteractionContent, options?: Args): Promise<Oceanic.Message> {
+    if(typeof content === "string") {
+      content = {
+        content: locales(this.locale, content, options)
       }
     }
-    case "object": {
-      if(options?.files) {
-        if(this.interaction.acknowledged) return await this.interaction.createFollowup(Object.assign(content, { files: options.files as Oceanic.File[] })).catch(e => new Logger(this.client).error(e))
-        
-        else return await this.interaction.createMessage(Object.assign(content, { files: options.files as Oceanic.File[] })).catch(e => new Logger(this.client).error(e))
-      }
-      else {
-        if(this.interaction.acknowledged) return await this.interaction.createFollowup(content).catch(e => new Logger(this.client).error(e))
 
-        else return await this.interaction.createMessage(content).catch(e => new Logger(this.client).error(e))
+    if(options && options.files) {
+      content = {
+        ...content,
+        files: options.files as Oceanic.File[]
       }
     }
+
+    if(this.interaction.acknowledged) {
+      return await (await this.interaction.createFollowup(content)).getMessage()
     }
+
+    else return await (await this.interaction.createMessage(content)).getMessage()
   }
-  public async edit(content: Content | Oceanic.EditInteractionContent, options?: Args) {
-    if(this.interaction instanceof Oceanic.CommandInteraction) {
-      switch(typeof content) {
-      case "string": {
-        if(options?.files) {
-          if(this.interaction.acknowledged) return await this.interaction.editOriginal(
-            {
-              content: locales(this.locale, content, options),
-              files: options.files as Oceanic.File[],
-              components: []
-            }
-          ).catch(e => new Logger(this.client).error(e))
-          else return await this.interaction.createMessage({
-            content: locales(this.locale, "helper.interaction_failed"),
-            flags: 64
-          }).catch(e => new Logger(this.client).error(e))
-        }
-        else {
-          if(this.interaction.acknowledged) return await this.interaction.editOriginal(
-            {
-              content: locales(this.locale, content, options),
-              components: []
-            }
-          ).catch(e => new Logger(this.client).error(e))
-          else return await this.interaction.createMessage({
-            content: locales(this.locale, "helper.interaction_failed"),
-            flags: 64
-          }).catch(e => new Logger(this.client).error(e))
-        }
-      }
-      case "object": {
-        if(options?.files) {
-          if(this.interaction.acknowledged) return await this.interaction.editOriginal(
-              Object.assign(
-                content,
-                {
-                  files: options.files as Oceanic.File[],
-                  components: []
-                }
-              )
-          )
-          else return await this.interaction.createMessage({
-            content: locales(this.locale, "helper.interaction_failed"),
-            flags: 64
-          }).catch(e => new Logger(this.client).error(e))
-        }
-        else {
-          if(this.interaction.acknowledged) return await this.interaction.editOriginal({
-            ...content,
-            components: []
-          })
-          else return await this.interaction.createMessage({
-            content: locales(this.locale, "helper.interaction_failed"),
-            flags: 64
-          }).catch(e => new Logger(this.client).error(e))
-        }
-      }
+  public async edit(content: Content | Oceanic.EditInteractionContent, options?: Args): Promise<Oceanic.Message> {
+    if(typeof content === "string") {
+      content = {
+        content: locales(this.locale, content, options)
       }
     }
-    else if(this.interaction instanceof Oceanic.ComponentInteraction) {
-      switch(typeof content) {
-      case "string": {
-        if(options?.files) {
-          if(this.interaction.acknowledged) return await this.interaction.editOriginal(
-            {
-              content: locales(this.locale, content, options),
-              files: options.files as Oceanic.File[],
-              components: []
-            }
-          ).catch(e => new Logger(this.client).error(e))
-          else return await this.interaction.createMessage({
-            content: locales(this.locale, "helper.interaction_failed"),
-            flags: 64
-          }).catch(e => new Logger(this.client).error(e))
-        }
-        else {
-          if(this.interaction.acknowledged) return await this.interaction.editOriginal(
-            {
-              content: locales(this.locale, content, options),
-              components: []
-            }
-          ).catch(e => new Logger(this.client).error(e))
-          else return await this.interaction.createMessage({
-            content: locales(this.locale, "helper.interaction_failed"),
-            flags: 64
-          }).catch(e => new Logger(this.client).error(e))
-        }
-      }
-      case "object": {
-        if(options?.files) {
-          if(this.interaction.acknowledged) return await this.interaction.editOriginal(Object.assign(content, { files: options.files as Oceanic.File[] })).catch(e => new Logger(this.client).error(e))
-          else return await this.interaction.createMessage({
-            content: locales(this.locale, "helper.interaction_failed"),
-            flags: 64
-          }).catch(e => new Logger(this.client).error(e))
-        }
-        else {
-          if(this.interaction.acknowledged) return await this.interaction.editOriginal({
-            ...content,
-            components: !content.components ? [] : content.components,
-            content: !content.content ? "" : content.content
-          })
-          else return await this.interaction.createMessage({
-            content: locales(this.locale, "helper.interaction_failed"),
-            flags: 64
-          }).catch(e => new Logger(this.client).error(e))
-        }
-      }
+
+    if(options && options.files) {
+      content = {
+        ...content,
+        files: options.files as Oceanic.File[]
       }
     }
+
+    if(this.interaction.acknowledged) {
+      return await this.interaction.editOriginal(content)
+    }
+
+    else return await (await this.interaction.createMessage({
+      content: locales(this.locale, "helper.interaction_failed"),
+      flags: 64
+    })).getMessage()
   }
 }
