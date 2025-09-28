@@ -10,6 +10,7 @@ import type { CreateInteractionOptions } from "../interaction/createComponentInt
 import type { CreateModalSubmitInteractionOptions } from "../interaction/createModalSubmitInteraction.ts"
 import Queue from "bull"
 import {
+  calcPlayerPrice,
   getPlayers,
   type Player
 } from "players"
@@ -32,13 +33,6 @@ const queue = new Queue<Reminder>("reminder", {
   redis: process.env.REDIS_URL
 })
 
-const players = new Map<string, Player>(
-  getPlayers().map(p => [
-    p.id.toString(),
-    p
-  ])
-)
-
 export default class App extends Oceanic.Client {
   public commands: Map<string, Command> = new Map()
   public _uptime: number = Date.now()
@@ -46,7 +40,7 @@ export default class App extends Oceanic.Client {
   public redis: typeof redis
   public queue: typeof queue
   public interactions: Map<string, CreateInteractionOptions & CreateModalSubmitInteractionOptions> = new Map()
-  public players: typeof players = players
+  public players: Map<string, Player> = new Map()
   
   public constructor(options?: Oceanic.ClientOptions) {
     super(options)
@@ -93,6 +87,13 @@ export default class App extends Oceanic.Client {
 
         this.interactions.set(interaction.name, interaction)
       }
+    }
+
+    for(const player of getPlayers()) {
+      this.players.set(player.id.toString(), {
+        ...player,
+        price: calcPlayerPrice(player)
+      })
     }
 
     await super.connect()
