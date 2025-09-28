@@ -58,6 +58,13 @@ export default class App extends Oceanic.Client {
 
     Logger.send(`Database connected in ${((Date.now() - start) / 1000).toFixed(1)}s!`)
 
+    for(const player of getPlayers()) {
+      this.players.set(player.id.toString(), {
+        ...player,
+        price: calcPlayerPrice(player)
+      })
+    }
+
     for(const file of readdirSync(path.resolve(__dirname, "../../listeners"))) {
       const listener = (await import(`../../listeners/${file}`)).default
 
@@ -87,13 +94,6 @@ export default class App extends Oceanic.Client {
 
         this.interactions.set(interaction.name, interaction)
       }
-    }
-
-    for(const player of getPlayers()) {
-      this.players.set(player.id.toString(), {
-        ...player,
-        price: calcPlayerPrice(player)
-      })
     }
 
     await super.connect()
