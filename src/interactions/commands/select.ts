@@ -63,6 +63,9 @@ export default createComponentInteraction({
         }
       })
     )
+
+    ctx.setFlags(64)
+    
     return await ctx.reply({
       components: [
         {
