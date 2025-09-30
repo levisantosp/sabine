@@ -43,15 +43,20 @@ export default class ComponentInteractionContext {
   public async reply(content: Content | Oceanic.InteractionContent, options?: Args): Promise<Oceanic.Message> {
     if(typeof content === "string") {
       content = {
-        content: locales(this.locale, content, options),
-        flags: this.flags
+        content: locales(this.locale, content, options)
       }
     }
 
     if(options && options.files) {
       content = {
         ...content,
-        files: options.files as Oceanic.File[],
+        files: options.files as Oceanic.File[]
+      }
+    }
+
+    if(this.flags) {
+      content = {
+        ...content,
         flags: this.flags
       }
     }

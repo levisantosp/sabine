@@ -154,16 +154,15 @@ export default class ComponentInteractionRunner {
       return locales(ctx.locale, content, args)
     }
 
-    if(i.ephemeral) {
+    if(i.flags) {
+      ctx.setFlags(i.flags)
+    }
+    else if(i.ephemeral) {
       await interaction.defer(64)
     }
 
     else if(i.isThinking) {
       await interaction.defer()
-    }
-
-    else if(i.flags) {
-      ctx.setFlags(i.flags)
     }
 
     await i.run({ ctx, t, client })
