@@ -89,7 +89,7 @@ export default createCommand({
         "commands.claim.claimed",
         {
           player: player.name,
-          price: calcPlayerPrice(player)
+          price: calcPlayerPrice(player).toLocaleString()
         }
       )
     )
@@ -142,9 +142,11 @@ export default createCommand({
         return await ctx.reply("commands.sell.player_not_found")
       }
 
-      await ctx.db.user.sellPlayer(player.id.toString(), BigInt(calcPlayerPrice(player)), i)
+      const price = BigInt(calcPlayerPrice(player))
 
-      await ctx.reply("commands.sell.sold", { p: player.name, price: player.price.toLocaleString() })
+      await ctx.db.user.sellPlayer(player.id.toString(), price, i)
+
+      await ctx.reply("commands.sell.sold", { p: player.name, price: price.toLocaleString() })
     }
   }
 })
