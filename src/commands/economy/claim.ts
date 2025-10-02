@@ -142,7 +142,7 @@ export default createCommand({
         return await ctx.reply("commands.sell.player_not_found")
       }
 
-      const price = BigInt(calcPlayerPrice(player))
+      const price = BigInt(calcPlayerPrice(player, true))
 
       await ctx.db.user.sellPlayer(player.id.toString(), price, i)
 
