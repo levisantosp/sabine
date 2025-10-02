@@ -37,7 +37,7 @@ importers:
         version: 1.12.0
       players:
         specifier: github:levisantosp/sabine-players
-        version: https://codeload.github.com/levisantosp/sabine-players/tar.gz/78526da7961f03f144e8320b98b123d0493b8913
+        version: https://codeload.github.com/levisantosp/sabine-players/tar.gz/2f9beee3ac69f3f9ae93f5da305192dbfe05f6ac
       redis:
         specifier: ^5.8.2
         version: 5.8.2
@@ -49,8 +49,8 @@ importers:
         specifier: ^3.27.4
         version: 3.27.4
       '@types/node':
-        specifier: ^24.6.1
-        version: 24.6.1
+        specifier: ^24.6.2
+        version: 24.6.2
       eslint:
         specifier: ^9.36.0
         version: 9.36.0(jiti@2.6.1)
@@ -276,8 +276,8 @@ packages:
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
-  '@types/node@24.6.1':
-    resolution: {integrity: sha512-ljvjjs3DNXummeIaooB4cLBKg2U6SPI6Hjra/9rRIy7CpM0HpLtG9HptkMKAb4HYWy5S7HUvJEuWgr/y0U8SHw==}
+  '@types/node@24.6.2':
+    resolution: {integrity: sha512-d2L25Y4j+W3ZlNAeMKcy7yDsK425ibcAOO2t7aPTz6gNMH0z2GThtwENCDc0d/Pw9wgyRqE5Px1wkV7naz8ang==}
 
   '@types/ws@8.18.1':
     resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
@@ -845,8 +845,8 @@ packages:
   pkg-types@2.3.0:
     resolution: {integrity: sha512-SIqCzDRg0s9npO5XQ3tNZioRY1uK06lA41ynBC1YmFTmnY6FjUjVt6s4LoADmwoig1qqD0oK8h1p/8mlMx8Oig==}
 
-  players@https://codeload.github.com/levisantosp/sabine-players/tar.gz/78526da7961f03f144e8320b98b123d0493b8913:
-    resolution: {tarball: https://codeload.github.com/levisantosp/sabine-players/tar.gz/78526da7961f03f144e8320b98b123d0493b8913}
+  players@https://codeload.github.com/levisantosp/sabine-players/tar.gz/2f9beee3ac69f3f9ae93f5da305192dbfe05f6ac:
+    resolution: {tarball: https://codeload.github.com/levisantosp/sabine-players/tar.gz/2f9beee3ac69f3f9ae93f5da305192dbfe05f6ac}
     version: 1.0.0
 
   prelude-ls@1.2.1:
@@ -1269,13 +1269,13 @@ snapshots:
 
   '@types/json-schema@7.0.15': {}
 
-  '@types/node@24.6.1':
+  '@types/node@24.6.2':
     dependencies:
       undici-types: 7.13.0
 
   '@types/ws@8.18.1':
     dependencies:
-      '@types/node': 24.6.1
+      '@types/node': 24.6.2
     optional: true
 
   '@typescript-eslint/eslint-plugin@8.45.0(@typescript-eslint/parser@8.45.0(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3))(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.3)':
@@ -1924,7 +1924,7 @@ snapshots:
       exsolve: 1.0.7
       pathe: 2.0.3
 
-  players@https://codeload.github.com/levisantosp/sabine-players/tar.gz/78526da7961f03f144e8320b98b123d0493b8913: {}
+  players@https://codeload.github.com/levisantosp/sabine-players/tar.gz/2f9beee3ac69f3f9ae93f5da305192dbfe05f6ac: {}
 
   prelude-ls@1.2.1: {}
 
