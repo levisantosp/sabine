@@ -37,10 +37,10 @@ importers:
         version: 1.12.0
       players:
         specifier: github:levisantosp/sabine-players
-        version: https://codeload.github.com/levisantosp/sabine-players/tar.gz/2f9beee3ac69f3f9ae93f5da305192dbfe05f6ac
+        version: https://codeload.github.com/levisantosp/sabine-players/tar.gz/93b78a71290fae07f62d0271931652f55330f001
       redis:
-        specifier: ^5.8.2
-        version: 5.8.2
+        specifier: ^5.8.3
+        version: 5.8.3
     devDependencies:
       '@eslint/js':
         specifier: ^9.36.0
@@ -233,33 +233,33 @@ packages:
   '@prisma/get-platform@6.16.3':
     resolution: {integrity: sha512-X1LxiFXinJ4iQehrodGp0f66Dv6cDL0GbRlcCoLtSu6f4Wi+hgo7eND/afIs5029GQLgNWKZ46vn8hjyXTsHLA==}
 
-  '@redis/bloom@5.8.2':
-    resolution: {integrity: sha512-855DR0ChetZLarblio5eM0yLwxA9Dqq50t8StXKp5bAtLT0G+rZ+eRzzqxl37sPqQKjUudSYypz55o6nNhbz0A==}
+  '@redis/bloom@5.8.3':
+    resolution: {integrity: sha512-1eldTzHvdW3Oi0TReb8m1yiFt8ZwyF6rv1NpZyG5R4TpCwuAdKQetBKoCw7D96tNFgsVVd6eL+NaGZZCqhRg4g==}
     engines: {node: '>= 18'}
     peerDependencies:
-      '@redis/client': ^5.8.2
+      '@redis/client': ^5.8.3
 
-  '@redis/client@5.8.2':
-    resolution: {integrity: sha512-WtMScno3+eBpTac1Uav2zugXEoXqaU23YznwvFgkPwBQVwEHTDgOG7uEAObtZ/Nyn8SmAMbqkEubJaMOvnqdsQ==}
+  '@redis/client@5.8.3':
+    resolution: {integrity: sha512-MZVUE+l7LmMIYlIjubPosruJ9ltSLGFmJqsXApTqPLyHLjsJUSAbAJb/A3N34fEqean4ddiDkdWzNu4ZKPvRUg==}
     engines: {node: '>= 18'}
 
-  '@redis/json@5.8.2':
-    resolution: {integrity: sha512-uxpVfas3I0LccBX9rIfDgJ0dBrUa3+0Gc8sEwmQQH0vHi7C1Rx1Qn8Nv1QWz5bohoeIXMICFZRcyDONvum2l/w==}
-    engines: {node: '>= 18'}
-    peerDependencies:
-      '@redis/client': ^5.8.2
-
-  '@redis/search@5.8.2':
-    resolution: {integrity: sha512-cNv7HlgayavCBXqPXgaS97DRPVWFznuzsAmmuemi2TMCx5scwLiP50TeZvUS06h/MG96YNPe6A0Zt57yayfxwA==}
+  '@redis/json@5.8.3':
+    resolution: {integrity: sha512-DRR09fy/u8gynHGJ4gzXYeM7D8nlS6EMv5o+h20ndTJiAc7RGR01fdk2FNjnn1Nz5PjgGGownF+s72bYG4nZKQ==}
     engines: {node: '>= 18'}
     peerDependencies:
-      '@redis/client': ^5.8.2
+      '@redis/client': ^5.8.3
 
-  '@redis/time-series@5.8.2':
-    resolution: {integrity: sha512-g2NlHM07fK8H4k+613NBsk3y70R2JIM2dPMSkhIjl2Z17SYvaYKdusz85d7VYOrZBWtDrHV/WD2E3vGu+zni8A==}
+  '@redis/search@5.8.3':
+    resolution: {integrity: sha512-EMIvEeGRR2I0BJEz4PV88DyCuPmMT1rDtznlsHY3cKSDcc9vj0Q411jUnX0iU2vVowUgWn/cpySKjpXdZ8m+5g==}
     engines: {node: '>= 18'}
     peerDependencies:
-      '@redis/client': ^5.8.2
+      '@redis/client': ^5.8.3
+
+  '@redis/time-series@5.8.3':
+    resolution: {integrity: sha512-5Jwy3ilsUYQjzpE7WZ1lEeG1RkqQ5kHtwV1p8yxXHSEmyUbC/T/AVgyjMcm52Olj/Ov/mhDKjx6ndYUi14bXsw==}
+    engines: {node: '>= 18'}
+    peerDependencies:
+      '@redis/client': ^5.8.3
 
   '@sinclair/typebox@0.34.41':
     resolution: {integrity: sha512-6gS8pZzSXdyRHTIqoqSVknxolr1kzfy4/CeDnrzsVz8TTIWUbOBr6gnzOmTYJ3eXQNh4IYHIGi5aIL7sOZ2G/g==}
@@ -845,8 +845,8 @@ packages:
   pkg-types@2.3.0:
     resolution: {integrity: sha512-SIqCzDRg0s9npO5XQ3tNZioRY1uK06lA41ynBC1YmFTmnY6FjUjVt6s4LoADmwoig1qqD0oK8h1p/8mlMx8Oig==}
 
-  players@https://codeload.github.com/levisantosp/sabine-players/tar.gz/2f9beee3ac69f3f9ae93f5da305192dbfe05f6ac:
-    resolution: {tarball: https://codeload.github.com/levisantosp/sabine-players/tar.gz/2f9beee3ac69f3f9ae93f5da305192dbfe05f6ac}
+  players@https://codeload.github.com/levisantosp/sabine-players/tar.gz/93b78a71290fae07f62d0271931652f55330f001:
+    resolution: {tarball: https://codeload.github.com/levisantosp/sabine-players/tar.gz/93b78a71290fae07f62d0271931652f55330f001}
     version: 1.0.0
 
   prelude-ls@1.2.1:
@@ -918,8 +918,8 @@ packages:
     resolution: {integrity: sha512-DJnGAeenTdpMEH6uAJRK/uiyEIH9WVsUmoLwzudwGJUwZPp80PDBWPHXSAGNPwNvIXAbe7MSUB1zQFugFml66A==}
     engines: {node: '>=4'}
 
-  redis@5.8.2:
-    resolution: {integrity: sha512-31vunZj07++Y1vcFGcnNWEf5jPoTkGARgfWI4+Tk55vdwHxhAvug8VEtW7Cx+/h47NuJTEg/JL77zAwC6E0OeA==}
+  redis@5.8.3:
+    resolution: {integrity: sha512-MfSrfV6+tEfTw8c4W0yFp6XWX8Il4laGU7Bx4kvW4uiYM1AuZ3KGqEGt1LdQHeD1nEyLpIWetZ/SpY3kkbgrYw==}
     engines: {node: '>= 18'}
 
   require-from-string@2.0.2:
@@ -1239,25 +1239,25 @@ snapshots:
     dependencies:
       '@prisma/debug': 6.16.3
 
-  '@redis/bloom@5.8.2(@redis/client@5.8.2)':
+  '@redis/bloom@5.8.3(@redis/client@5.8.3)':
     dependencies:
-      '@redis/client': 5.8.2
+      '@redis/client': 5.8.3
 
-  '@redis/client@5.8.2':
+  '@redis/client@5.8.3':
     dependencies:
       cluster-key-slot: 1.1.2
 
-  '@redis/json@5.8.2(@redis/client@5.8.2)':
+  '@redis/json@5.8.3(@redis/client@5.8.3)':
     dependencies:
-      '@redis/client': 5.8.2
+      '@redis/client': 5.8.3
 
-  '@redis/search@5.8.2(@redis/client@5.8.2)':
+  '@redis/search@5.8.3(@redis/client@5.8.3)':
     dependencies:
-      '@redis/client': 5.8.2
+      '@redis/client': 5.8.3
 
-  '@redis/time-series@5.8.2(@redis/client@5.8.2)':
+  '@redis/time-series@5.8.3(@redis/client@5.8.3)':
     dependencies:
-      '@redis/client': 5.8.2
+      '@redis/client': 5.8.3
 
   '@sinclair/typebox@0.34.41': {}
 
@@ -1924,7 +1924,7 @@ snapshots:
       exsolve: 1.0.7
       pathe: 2.0.3
 
-  players@https://codeload.github.com/levisantosp/sabine-players/tar.gz/2f9beee3ac69f3f9ae93f5da305192dbfe05f6ac: {}
+  players@https://codeload.github.com/levisantosp/sabine-players/tar.gz/93b78a71290fae07f62d0271931652f55330f001: {}
 
   prelude-ls@1.2.1: {}
 
@@ -1967,13 +1967,13 @@ snapshots:
     dependencies:
       redis-errors: 1.2.0
 
-  redis@5.8.2:
+  redis@5.8.3:
     dependencies:
-      '@redis/bloom': 5.8.2(@redis/client@5.8.2)
-      '@redis/client': 5.8.2
-      '@redis/json': 5.8.2(@redis/client@5.8.2)
-      '@redis/search': 5.8.2(@redis/client@5.8.2)
-      '@redis/time-series': 5.8.2(@redis/client@5.8.2)
+      '@redis/bloom': 5.8.3(@redis/client@5.8.3)
+      '@redis/client': 5.8.3
+      '@redis/json': 5.8.3(@redis/client@5.8.3)
+      '@redis/search': 5.8.3(@redis/client@5.8.3)
+      '@redis/time-series': 5.8.3(@redis/client@5.8.3)
 
   require-from-string@2.0.2: {}
 
