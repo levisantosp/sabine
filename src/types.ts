@@ -5,15 +5,18 @@ export type EventsData = {
   image?: string
   url?: string
 }
+
 export type MatchTeam = {
   name: string
   country?: string
 }
+
 export type MatchTournament = {
   name: string
   full_name?: string
   image?: string
 }
+
 export type MatchesData = {
   id?: string
   teams: MatchTeam[]
@@ -23,34 +26,41 @@ export type MatchesData = {
   when: number
   url?: string
 }
+
 export type PlayersData = {
   name: string
   teamTag: string
   country: string
   id: string
 }
+
 export type PlayerCountry = {
   name: string
   flag?: string
 }
+
 export type PlayerPastTeam = {
   id: string
   url: string
   name: string
 }
+
 export type PlayerLastResultTeam = {
   name: string
   score?: string | number
 }
+
 export type PlayerLastResult = {
   id: string
   teams: PlayerLastResultTeam[]
   url: string
 }
+
 export type PlayerCurrentTeam = {
   name: string
   url: string
 }
+
 export type PlayerData = {
   avatar: string
   user: string
@@ -61,12 +71,14 @@ export type PlayerData = {
   lastResults: PlayerLastResult[]
   id: string
 }
+
 export type ResultsTeam = {
   name: string
   score: string
   country?: string
   winner?: boolean
 }
+
 export type ResultsData = {
   id: string
   teams: ResultsTeam[]
@@ -76,6 +88,7 @@ export type ResultsData = {
   when: any
   url?: string
 }
+
 export type TeamsData = {
   id: string
   name: string
@@ -83,22 +96,27 @@ export type TeamsData = {
   image?: string
   country: string
 }
+
 export type Roster = {
   id: string
   user: string
   url: string
 }
+
 export type TeamRoster = {
   players: Roster[]
   staffs: Roster[]
 }
+
 export type UpcomingMatchTeam = {
   name: string
 }
+
 export type UpcomingMatch = {
   teams: UpcomingMatchTeam[]
   url: string
 }
+
 export type TeamData = {
   id: string
   name: string
@@ -108,12 +126,14 @@ export type TeamData = {
   lastResults: PlayerLastResult[]
   upcomingMatches: UpcomingMatch[]
 }
+
 export type NewsData = {
   title: string
   description?: string
   url: string
   id?: string
 }
+
 export type LiveFeedStream = {
   main: boolean
   language: string
@@ -121,6 +141,7 @@ export type LiveFeedStream = {
   official: boolean
   raw_url: string
 }
+
 export type LiveFeed = {
   teams: PlayerLastResultTeam[]
   currentMap?: string

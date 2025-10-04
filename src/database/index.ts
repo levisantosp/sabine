@@ -7,28 +7,31 @@ import {
   PrismaClient,
   type TBDMatch,
   type User
-} from "@prisma/client"
-import { client } from "../structures/client/App.ts"
+} from '@prisma/client'
+import { client } from '../structures/client/App.ts'
 
-const prisma = new PrismaClient()
+export const prisma = new PrismaClient()
+
 type PredictionTeam = {
   name: string
   score: string,
   winner: boolean
 }
+
 type Prediction = {
   match: string
   teams: PredictionTeam[]
-  status: "pending" | "correct" | "wrong"
+  status: 'pending' | 'correct' | 'wrong'
   bet: bigint | null
   odd: number | null
 }
+
 export class SabineUser implements User {
   public id: string
   public created_at: Date = new Date()
   public correct_predictions: number = 0
   public incorrect_predictions: number = 0
-  public lang: $Enums.Language = "en"
+  public lang: $Enums.Language = 'en'
   public premium: Premium | null = null
   public active_players: string[] = []
   public reserve_players: string[] = []
@@ -57,21 +60,27 @@ export class SabineUser implements User {
   public reminded: boolean = true
   public boxes: $Enums.Box[] = []
   public warned: boolean | null = null
+
   public constructor(id: string) {
     this.id = id
   }
+
   public async save() {
     const data: Partial<User> = {}
+
     for(const key in this) {
       if(
-        typeof this[key] === "function" ||
-        key === "id" ||
+        typeof this[key] === 'function' ||
+        key === 'id' ||
         this[key] === null ||
-        this[key] === "premium"
+        this[key] === 'premium'
       ) continue
+
       (data as any)[key] = this[key]
     }
+    
     const { premium, ...cleanData } = data as any
+
     if(premium) {
       return await prisma.user.upsert({
         where: { id: this.id },
@@ -79,6 +88,7 @@ export class SabineUser implements User {
         create: { id: this.id, ...cleanData }
       })
     }
+
     else {
       return await prisma.user.upsert({
         where: { id: this.id },
@@ -87,6 +97,7 @@ export class SabineUser implements User {
       })
     }
   }
+
   public static async fetch(id: string) {
     const data = await prisma.user.findUnique({
       where: { id },
@@ -94,12 +105,17 @@ export class SabineUser implements User {
         premium: true
       }
     })
+
     if(!data) return data
+
     let user = new SabineUser(data.id)
+
     user = Object.assign(user, data)
+
     return user
   }
-  public async addPrediction(game: "valorant" | "lol", prediction: Prediction) {
+  
+  public async addPrediction(game: 'valorant' | 'lol', prediction: Prediction) {
     await prisma.prediction.create({
       data: {
         ...prediction,
@@ -110,9 +126,11 @@ export class SabineUser implements User {
         }
       }
     })
+
     return this
   }
-  public async addCorrectPrediction(game: "valorant" | "lol", predictionId: string) {
+
+  public async addCorrectPrediction(game: 'valorant' | 'lol', predictionId: string) {
     const pred = await prisma.prediction.findFirst({
       where: {
         match: predictionId,
@@ -120,8 +138,11 @@ export class SabineUser implements User {
         userId: this.id
       }
     })
+
     if(!pred) return this
+
     this.correct_predictions += 1
+
     await prisma.prediction.update({
       where: {
         match: predictionId,
@@ -130,13 +151,16 @@ export class SabineUser implements User {
         id: pred.id
       },
       data: {
-        status: "correct"
+        status: 'correct'
       }
     })
+
     await this.save()
+
     return this
   }
-  public async addWrongPrediction(game: "valorant" | "lol", predictionId: string) {
+
+  public async addWrongPrediction(game: 'valorant' | 'lol', predictionId: string) {
     const pred = await prisma.prediction.findFirst({
       where: {
         match: predictionId,
@@ -144,8 +168,11 @@ export class SabineUser implements User {
         userId: this.id
       }
     })
+
     if(!pred) return this
+
     this.incorrect_predictions += 1
+
     await prisma.prediction.update({
       where: {
         match: predictionId,
@@ -154,28 +181,36 @@ export class SabineUser implements User {
         id: pred.id
       },
       data: {
-        status: "wrong"
+        status: 'wrong'
       }
     })
+
     await this.save()
+
     return this
   }
-  public async addPlayerToRoster(player: string, method: "CLAIM_PLAYER_BY_CLAIM_COMMAND" | "CLAIM_PLAYER_BY_COMMAND" = "CLAIM_PLAYER_BY_CLAIM_COMMAND", channel?: string) {
+
+  public async addPlayerToRoster(player: string, method: 'CLAIM_PLAYER_BY_CLAIM_COMMAND' | 'CLAIM_PLAYER_BY_COMMAND' = 'CLAIM_PLAYER_BY_CLAIM_COMMAND', channel?: string) {
     this.reserve_players.push(player)
-    if(method === "CLAIM_PLAYER_BY_CLAIM_COMMAND") {
+
+    if(method === 'CLAIM_PLAYER_BY_CLAIM_COMMAND') {
       if(this.premium) {
         this.claim_time = new Date(Date.now() + 5 * 60 * 1000)
       }
+
       else this.claim_time = new Date(Date.now() + 10 * 60 * 1000)
+
       this.fates -= 1
       this.claims += 1
       this.reminded = false
       this.pity += 1
       this.claims += 1
+
       if(channel) {
         this.remind_in = channel
+
         if(this.remind) {
-          await client.queue.add("reminder", {
+          await client.queue.add('reminder', {
             channel: this.remind_in,
             user: this.id
           }, {
@@ -185,10 +220,12 @@ export class SabineUser implements User {
           })
         }
       }
+
       if(client.players.get(player)!.ovr >= 85) {
         this.pity = 0
       }
     }
+
     await prisma.transaction.create({
       data: {
         type: method,
@@ -196,27 +233,33 @@ export class SabineUser implements User {
         userId: this.id
       }
     })
+
     await this.save()
+
     return this
   }
+
   public async sellPlayer(id: string, price: bigint, i: number) {
     this.reserve_players.splice(i, 1)
     this.coins += price
+
     await prisma.transaction.create({
       data: {
-        type: "SELL_PLAYER",
+        type: 'SELL_PLAYER',
         player: Number(id),
         price,
         userId: this.id
       }
     })
+
     await this.save()
+
     return this
   }
 }
 export class SabineGuild implements Guild {
   public id: string
-  public lang: $Enums.Language = "en"
+  public lang: $Enums.Language = 'en'
   public tbd_matches: TBDMatch[] = []
   public guildKeyId: string | null = null
   public events: Event[] = []
@@ -233,19 +276,23 @@ export class SabineGuild implements Guild {
   public partner: boolean | null = null
   public invite: string | null = null
   public spam_live_messages: boolean | null = null
+
   public constructor(id: string) {
     this.id = id
   }
+
   public async save() {
     const data: Partial<Guild> = {}
+
     for(const key in this) {
       if(
-        typeof this[key] === "function" ||
-        key === "id" ||
+        typeof this[key] === 'function' ||
+        key === 'id' ||
         this[key] === null
       ) continue
+
       if(
-        ["tbd_matches", "events", "live_messages"]
+        ['tbd_matches', 'events', 'live_messages']
         .includes(key)
       ) {
         (data as any)[key] = {
@@ -257,18 +304,24 @@ export class SabineGuild implements Guild {
             undefined
         }
       }
+
       else (data as any)[key] = this[key]
     }
+
     return await prisma.guild.upsert({
       where: { id: this.id },
       update: data,
       create: { id: this.id, ...data }
     })
   }
+
   public static async fetch(id: string) {
     const data = await prisma.guild.findUnique({ where: { id } })
+
     if(!data) return data
+
     const guild = new SabineGuild(data.id)
+
     return Object.assign(guild, data)
   }
 }

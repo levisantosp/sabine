@@ -1,70 +1,80 @@
-import { PrismaClient } from "@prisma/client"
-import { valorant_agents, valorant_maps, valorant_weapons } from "../config.ts"
-import { SabineUser } from "../database/index.ts"
-import EmbedBuilder from "../structures/builders/EmbedBuilder.ts"
-import Match, { type TeamRoster, type KillEvent } from "./Match.ts"
-import Player from "./Player.ts"
+import { valorant_agents, valorant_maps, valorant_weapons } from '../config.ts'
+import { prisma, SabineUser } from '../database/index.ts'
+import EmbedBuilder from '../structures/builders/EmbedBuilder.ts'
+import Match, { type TeamRoster, type KillEvent } from './Match.ts'
+import Player from './Player.ts'
 
-const prisma = new PrismaClient()
 export default class Round extends Match {
   public override async start() {
     if(this.rounds.length === this.switchSidesAt) {
       await this.switchSides()
     }
+
     const score1 = this.rounds.filter(r => r.winning_team === 0).length
     const score2 = this.rounds.filter(r => r.winning_team === 1).length
-    if(this.mode === "ranked") {
+
+    if(this.mode === 'ranked') {
       if((score1 === 13 || score2 === 13) && this.rounds.length <= 24) {
         return await this.finish(score1, score2)
       }
+
       else if((score1 > 13 || score2 > 13) && Math.abs(score1 - score2) === 2) {
         return await this.finish(score1, score2)
       }
     }
-    else if(this.mode === "tournament") {
+
+    else if(this.mode === 'tournament') {
       if((score1 === 13 || score2 === 13) && this.rounds.length <= 24) {
         return await this.finish(score1, score2)
       }
+
       else if((score1 > 13 || score2 > 13) && Math.abs(score1 - score2) === 2) {
         return await this.finish(score1, score2)
       }
     }
+
     else if(!this.overtime) {
       if(score1 >= this.maxScore || score2 >= this.maxScore) {
         return await this.finish(score1, score2)
       }
     }
+    
     if(this.rounds.length >= 24) {
       await this.switchSides()
     }
-    this.content = this.t("simulator.processing")
+
+    this.content = this.t('simulator.processing')
+
     const embed = new EmbedBuilder()
-    .setTitle(this.t(`simulator.mode.${this.mode}`))
-    .setDesc(
-      `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n`
-      +
-      this.content
-    )
-    .setImage(this.mapImage)
-    .setFields(
-      {
-        name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
-        value: this.teams[0].roster
-          .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-          .join("\n"),
-        inline: true
-      },
-      {
-        name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
-        value: this.teams[1].roster
-          .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-          .join("\n"),
-        inline: true
-      }
-    )
+      .setTitle(this.t(`simulator.mode.${this.mode}`))
+      .setDesc(
+        `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n`
+        +
+        this.content
+      )
+      .setImage(this.mapImage)
+      .setFields(
+        {
+          name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
+          value: this.teams[0].roster
+            .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+            .join('\n'),
+          inline: true
+        },
+        {
+          name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
+          value: this.teams[1].roster
+            .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+            .join('\n'),
+          inline: true
+        }
+      )
+
     await this.ctx.edit(embed.build(this.mentions))
+
     for(const t of this.teams) {
       const teamCredits = t.roster.reduce((sum, p) => sum + p.credits, 0) / 5
+
       for(const p of t.roster) {
         if(p.life <= 0) {
           p.weapon = {
@@ -75,10 +85,11 @@ export default class Round extends Match {
               },
               rate_fire: 750
             },
-            secondary: valorant_weapons.filter(w => w.name === "Classic")[0]
+            secondary: valorant_weapons.filter(w => w.name === 'Classic')[0]
           }
         }
         p.life = 100
+
         const player = new Player({
           name: p.name,
           life: p.life,
@@ -89,28 +100,37 @@ export default class Round extends Match {
           id: p.id,
           rounds: this.rounds.length
         })
+
         player.buy()
+
         p.credits = player.credits
         p.weapon = player.weapon
+
         if(p.weapon.primary) {
           const weapon = valorant_weapons.filter(w => w.name === p.weapon?.primary?.name)[0]
+
           p.weapon.primary.magazine = weapon.magazine
         }
+
         if(p.weapon.secondary) {
           const weapon = valorant_weapons.filter(w => w.name === p.weapon?.secondary?.name)[0]
+
           p.weapon.secondary.magazine = weapon.magazine
         }
       }
     }
+
     await this.wait(3000)
+
     await this.firstStep(Math.floor(Math.random() * 6))
+    
     return this
   }
   private async finish(score1: number, score2: number) {
     this.finished = true
     const user1 = await SabineUser.fetch(this.teams[0].user) || new SabineUser(this.teams[0].user)
     const user2 = await SabineUser.fetch(this.teams[1].user) || new SabineUser(this.teams[1].user)
-    if(this.mode === "ranked") {
+    if(this.mode === 'ranked') {
       const max = Math.max(score1, score2)
       if(max === 13 && score1 === max) {
         const diff = score1 - score2
@@ -154,7 +174,7 @@ export default class Round extends Match {
         await Promise.all([
           prisma.match.create({
             data: {
-              mode: "RANKED",
+              mode: 'RANKED',
               points: pts,
               userId: this.teams[0].user,
               winner: true,
@@ -174,7 +194,7 @@ export default class Round extends Match {
           }),
           prisma.match.create({
             data: {
-              mode: "RANKED",
+              mode: 'RANKED',
               points: -(pts - 5),
               userId: this.teams[1].user,
               winner: false,
@@ -197,7 +217,7 @@ export default class Round extends Match {
         .setTitle(this.t(`simulator.mode.${this.mode}`))
         .setDesc(
           `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n` +
-          this.t("simulator.match_finished")
+          this.t('simulator.match_finished')
         )
         .setImage(this.mapImage)
         .setFields(
@@ -205,21 +225,21 @@ export default class Round extends Match {
             name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
             value: this.teams[0].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           },
           {
             name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
             value: this.teams[1].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
         await this.ctx.channel.createMessage(
           {
-            content: this.t("simulator.winner",
+            content: this.t('simulator.winner',
               {
                 t: this.teams[0].name,
                 users: this.mentions
@@ -272,7 +292,7 @@ export default class Round extends Match {
         await Promise.all([
           prisma.match.create({
             data: {
-              mode: "RANKED",
+              mode: 'RANKED',
               points: pts,
               userId: this.teams[1].user,
               winner: true,
@@ -292,7 +312,7 @@ export default class Round extends Match {
           }),
           prisma.match.create({
             data: {
-              mode: "RANKED",
+              mode: 'RANKED',
               points: -(pts - 5),
               userId: this.teams[0].user,
               winner: false,
@@ -316,7 +336,7 @@ export default class Round extends Match {
         .setTitle(this.t(`simulator.mode.${this.mode}`))
         .setDesc(
           `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n` +
-          this.t("simulator.match_finished")
+          this.t('simulator.match_finished')
         )
         .setImage(this.mapImage)
         .setFields(
@@ -324,21 +344,21 @@ export default class Round extends Match {
             name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
             value: this.teams[0].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           },
           {
             name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
             value: this.teams[1].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
         await this.ctx.channel.createMessage(
           {
-            content: this.t("simulator.winner",
+            content: this.t('simulator.winner',
               {
                 t: this.teams[1].name,
                 users: this.mentions
@@ -391,7 +411,7 @@ export default class Round extends Match {
         await Promise.all([
           prisma.match.create({
             data: {
-              mode: "RANKED",
+              mode: 'RANKED',
               points: pts,
               userId: this.teams[0].user,
               winner: true,
@@ -411,7 +431,7 @@ export default class Round extends Match {
           }),
           prisma.match.create({
             data: {
-              mode: "RANKED",
+              mode: 'RANKED',
               points: -(pts - 5),
               userId: this.teams[1].user,
               winner: false,
@@ -435,7 +455,7 @@ export default class Round extends Match {
         .setTitle(this.t(`simulator.mode.${this.mode}`))
         .setDesc(
           `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n` +
-          this.t("simulator.match_finished")
+          this.t('simulator.match_finished')
         )
         .setImage(this.mapImage)
         .setFields(
@@ -443,21 +463,21 @@ export default class Round extends Match {
             name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
             value: this.teams[0].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           },
           {
             name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
             value: this.teams[1].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
         await this.ctx.channel.createMessage(
           {
-            content: this.t("simulator.winner",
+            content: this.t('simulator.winner',
               {
                 t: this.teams[0].name,
                 users: this.mentions
@@ -510,7 +530,7 @@ export default class Round extends Match {
         await Promise.all([
           prisma.match.create({
             data: {
-              mode: "RANKED",
+              mode: 'RANKED',
               points: pts,
               userId: this.teams[1].user,
               winner: true,
@@ -530,7 +550,7 @@ export default class Round extends Match {
           }),
           prisma.match.create({
             data: {
-              mode: "RANKED",
+              mode: 'RANKED',
               points: -(pts - 5),
               userId: this.teams[1].user,
               winner: false,
@@ -554,7 +574,7 @@ export default class Round extends Match {
         .setTitle(this.t(`simulator.mode.${this.mode}`))
         .setDesc(
           `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n` +
-          this.t("simulator.match_finished")
+          this.t('simulator.match_finished')
         )
         .setImage(this.mapImage)
         .setFields(
@@ -562,21 +582,21 @@ export default class Round extends Match {
             name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
             value: this.teams[0].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           },
           {
             name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
             value: this.teams[1].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
         await this.ctx.channel.createMessage(
           {
-            content: this.t("simulator.winner",
+            content: this.t('simulator.winner',
               {
                 t: this.teams[1].name,
                 users: this.mentions
@@ -588,7 +608,7 @@ export default class Round extends Match {
         )
       }
     }
-    else if(this.mode === "swiftplay:ranked") {
+    else if(this.mode === 'swiftplay:ranked') {
       const max = Math.max(score1, score2)
       if(max === 7 && score1 === max) {
         const diff = score1 - score2
@@ -632,7 +652,7 @@ export default class Round extends Match {
         await Promise.all([
           prisma.match.create({
             data: {
-              mode: "RANKED_SWIFTPLAY",
+              mode: 'RANKED_SWIFTPLAY',
               points: pts,
               userId: this.teams[0].user,
               winner: true,
@@ -652,7 +672,7 @@ export default class Round extends Match {
           }),
           prisma.match.create({
             data: {
-              mode: "RANKED_SWIFTPLAY",
+              mode: 'RANKED_SWIFTPLAY',
               points: -(pts - 5),
               userId: this.teams[1].user,
               winner: false,
@@ -676,7 +696,7 @@ export default class Round extends Match {
         .setTitle(this.t(`simulator.mode.${this.mode}`))
         .setDesc(
           `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n` +
-          this.t("simulator.match_finished")
+          this.t('simulator.match_finished')
         )
         .setImage(this.mapImage)
         .setFields(
@@ -684,21 +704,21 @@ export default class Round extends Match {
             name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
             value: this.teams[0].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           },
           {
             name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
             value: this.teams[1].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
         await this.ctx.channel.createMessage(
           {
-            content: this.t("simulator.winner",
+            content: this.t('simulator.winner',
               {
                 t: this.teams[0].name,
                 users: this.mentions
@@ -751,7 +771,7 @@ export default class Round extends Match {
         await Promise.all([
           prisma.match.create({
             data: {
-              mode: "RANKED_SWIFTPLAY",
+              mode: 'RANKED_SWIFTPLAY',
               points: pts,
               userId: this.teams[1].user,
               winner: true,
@@ -771,7 +791,7 @@ export default class Round extends Match {
           }),
           prisma.match.create({
             data: {
-              mode: "RANKED_SWIFTPLAY",
+              mode: 'RANKED_SWIFTPLAY',
               points: -(pts - 5),
               userId: this.teams[0].user,
               winner: false,
@@ -795,7 +815,7 @@ export default class Round extends Match {
         .setTitle(this.t(`simulator.mode.${this.mode}`))
         .setDesc(
           `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n` +
-          this.t("simulator.match_finished")
+          this.t('simulator.match_finished')
         )
         .setImage(this.mapImage)
         .setFields(
@@ -803,21 +823,21 @@ export default class Round extends Match {
             name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
             value: this.teams[0].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           },
           {
             name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
             value: this.teams[1].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
         await this.ctx.channel.createMessage(
           {
-            content: this.t("simulator.winner",
+            content: this.t('simulator.winner',
               {
                 t: this.teams[1].name,
                 users: this.mentions
@@ -829,7 +849,7 @@ export default class Round extends Match {
         )
       }
     }
-    else if(this.mode === "swiftplay:unranked") {
+    else if(this.mode === 'swiftplay:unranked') {
       const max = Math.max(score1, score2)
       if(max === 5 && score1 === max) {
         user1.swiftplay_wins += 1
@@ -837,7 +857,7 @@ export default class Round extends Match {
         await Promise.all([
           prisma.match.create({
             data: {
-              mode: "SWIFTPLAY",
+              mode: 'SWIFTPLAY',
               userId: this.teams[0].user,
               winner: true,
               teams: {
@@ -856,7 +876,7 @@ export default class Round extends Match {
           }),
           prisma.match.create({
             data: {
-              mode: "SWIFTPLAY",
+              mode: 'SWIFTPLAY',
               userId: this.teams[1].user,
               winner: false,
               teams: {
@@ -879,7 +899,7 @@ export default class Round extends Match {
         .setTitle(this.t(`simulator.mode.${this.mode}`))
         .setDesc(
           `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n` +
-          this.t("simulator.match_finished")
+          this.t('simulator.match_finished')
         )
         .setImage(this.mapImage)
         .setFields(
@@ -887,21 +907,21 @@ export default class Round extends Match {
             name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
             value: this.teams[0].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           },
           {
             name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
             value: this.teams[1].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
         await this.ctx.channel.createMessage(
           {
-            content: this.t("simulator.winner",
+            content: this.t('simulator.winner',
               {
                 t: this.teams[0].name,
                 users: this.mentions
@@ -918,7 +938,7 @@ export default class Round extends Match {
         await Promise.all([
           prisma.match.create({
             data: {
-              mode: "SWIFTPLAY",
+              mode: 'SWIFTPLAY',
               userId: this.teams[1].user,
               winner: true,
               teams: {
@@ -937,7 +957,7 @@ export default class Round extends Match {
           }),
           prisma.match.create({
             data: {
-              mode: "SWIFTPLAY",
+              mode: 'SWIFTPLAY',
               userId: this.teams[0].user,
               winner: false,
               teams: {
@@ -960,7 +980,7 @@ export default class Round extends Match {
         .setTitle(this.t(`simulator.mode.${this.mode}`))
         .setDesc(
           `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n` +
-          this.t("simulator.match_finished")
+          this.t('simulator.match_finished')
         )
         .setImage(this.mapImage)
         .setFields(
@@ -968,21 +988,21 @@ export default class Round extends Match {
             name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
             value: this.teams[0].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           },
           {
             name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
             value: this.teams[1].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
         await this.ctx.channel.createMessage(
           {
-            content: this.t("simulator.winner",
+            content: this.t('simulator.winner',
               {
                 t: this.teams[1].name,
                 users: this.mentions
@@ -994,7 +1014,7 @@ export default class Round extends Match {
         )
       }
     }
-    else if(this.mode === "unranked") {
+    else if(this.mode === 'unranked') {
       const max = Math.max(score1, score2)
       if(max === 13 && score1 === max) {
         user1.unranked_wins += 1
@@ -1002,7 +1022,7 @@ export default class Round extends Match {
         await Promise.all([
           prisma.match.create({
             data: {
-              mode: "UNRANKED",
+              mode: 'UNRANKED',
               userId: this.teams[0].user,
               winner: true,
               teams: {
@@ -1021,7 +1041,7 @@ export default class Round extends Match {
           }),
           prisma.match.create({
             data: {
-              mode: "UNRANKED",
+              mode: 'UNRANKED',
               userId: this.teams[1].user,
               winner: false,
               teams: {
@@ -1044,7 +1064,7 @@ export default class Round extends Match {
         .setTitle(this.t(`simulator.mode.${this.mode}`))
         .setDesc(
           `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n` +
-          this.t("simulator.match_finished")
+          this.t('simulator.match_finished')
         )
         .setImage(this.mapImage)
         .setFields(
@@ -1052,21 +1072,21 @@ export default class Round extends Match {
             name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
             value: this.teams[0].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           },
           {
             name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
             value: this.teams[1].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
         await this.ctx.channel.createMessage(
           {
-            content: this.t("simulator.winner",
+            content: this.t('simulator.winner',
               {
                 t: this.teams[0].name,
                 users: this.mentions
@@ -1083,7 +1103,7 @@ export default class Round extends Match {
         await Promise.all([
           prisma.match.create({
             data: {
-              mode: "UNRANKED",
+              mode: 'UNRANKED',
               userId: this.teams[1].user,
               winner: true,
               teams: {
@@ -1102,7 +1122,7 @@ export default class Round extends Match {
           }),
           prisma.match.create({
             data: {
-              mode: "UNRANKED",
+              mode: 'UNRANKED',
               userId: this.teams[0].user,
               winner: false,
               teams: {
@@ -1125,7 +1145,7 @@ export default class Round extends Match {
         .setTitle(this.t(`simulator.mode.${this.mode}`))
         .setDesc(
           `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n` +
-          this.t("simulator.match_finished")
+          this.t('simulator.match_finished')
         )
         .setImage(this.mapImage)
         .setFields(
@@ -1133,21 +1153,21 @@ export default class Round extends Match {
             name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
             value: this.teams[0].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           },
           {
             name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
             value: this.teams[1].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
         await this.ctx.channel.createMessage(
           {
-            content: this.t("simulator.winner",
+            content: this.t('simulator.winner',
               {
                 t: this.teams[1].name,
                 users: this.mentions
@@ -1159,13 +1179,13 @@ export default class Round extends Match {
         )
       }
     }
-    else if(this.mode === "tournament" && !this.overtime) {
+    else if(this.mode === 'tournament' && !this.overtime) {
       const max = Math.max(score1, score2)
       if(max === 13 && score1 === max) {
         await Promise.all([
           prisma.match.create({
             data: {
-              mode: "TOURNAMENT",
+              mode: 'TOURNAMENT',
               userId: this.teams[0].user,
               winner: true,
               teams: {
@@ -1184,7 +1204,7 @@ export default class Round extends Match {
           }),
           prisma.match.create({
             data: {
-              mode: "TOURNAMENT",
+              mode: 'TOURNAMENT',
               userId: this.teams[1].user,
               winner: false,
               teams: {
@@ -1207,7 +1227,7 @@ export default class Round extends Match {
         .setTitle(this.t(`simulator.mode.${this.mode}`))
         .setDesc(
           `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n` +
-          this.t("simulator.match_finished")
+          this.t('simulator.match_finished')
         )
         .setImage(this.mapImage)
         .setFields(
@@ -1215,21 +1235,21 @@ export default class Round extends Match {
             name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
             value: this.teams[0].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           },
           {
             name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
             value: this.teams[1].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
         await this.ctx.channel.createMessage(
           {
-            content: this.t("simulator.winner",
+            content: this.t('simulator.winner',
               {
                 t: this.teams[0].name,
                 users: this.mentions
@@ -1244,7 +1264,7 @@ export default class Round extends Match {
         await Promise.all([
           prisma.match.create({
             data: {
-              mode: "TOURNAMENT",
+              mode: 'TOURNAMENT',
               userId: this.teams[0].user,
               winner: true,
               teams: {
@@ -1263,7 +1283,7 @@ export default class Round extends Match {
           }),
           prisma.match.create({
             data: {
-              mode: "TOURNAMENT",
+              mode: 'TOURNAMENT',
               userId: this.teams[1].user,
               winner: false,
               teams: {
@@ -1286,7 +1306,7 @@ export default class Round extends Match {
         .setTitle(this.t(`simulator.mode.${this.mode}`))
         .setDesc(
           `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n` +
-          this.t("simulator.match_finished")
+          this.t('simulator.match_finished')
         )
         .setImage(this.mapImage)
         .setFields(
@@ -1294,21 +1314,21 @@ export default class Round extends Match {
             name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
             value: this.teams[0].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           },
           {
             name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
             value: this.teams[1].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
         await this.ctx.channel.createMessage(
           {
-            content: this.t("simulator.winner",
+            content: this.t('simulator.winner',
               {
                 t: this.teams[1].name,
                 users: this.mentions
@@ -1326,7 +1346,7 @@ export default class Round extends Match {
         await Promise.all([
           prisma.match.create({
             data: {
-              mode: "TOURNAMENT",
+              mode: 'TOURNAMENT',
               userId: this.teams[0].user,
               winner: true,
               teams: {
@@ -1339,7 +1359,7 @@ export default class Round extends Match {
           }),
           prisma.match.create({
             data: {
-              mode: "TOURNAMENT",
+              mode: 'TOURNAMENT',
               userId: this.teams[1].user,
               winner: false,
               teams: {
@@ -1356,7 +1376,7 @@ export default class Round extends Match {
         .setTitle(this.t(`simulator.mode.${this.mode}`))
         .setDesc(
           `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n` +
-          this.t("simulator.match_finished")
+          this.t('simulator.match_finished')
         )
         .setImage(this.mapImage)
         .setFields(
@@ -1364,21 +1384,21 @@ export default class Round extends Match {
             name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
             value: this.teams[0].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           },
           {
             name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
             value: this.teams[1].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
         await this.ctx.channel.createMessage(
           {
-            content: this.t("simulator.winner",
+            content: this.t('simulator.winner',
               {
                 t: this.teams[0].name,
                 users: this.mentions
@@ -1393,7 +1413,7 @@ export default class Round extends Match {
         await Promise.all([
           prisma.match.create({
             data: {
-              mode: "TOURNAMENT",
+              mode: 'TOURNAMENT',
               userId: this.teams[1].user,
               winner: true,
               teams: {
@@ -1412,7 +1432,7 @@ export default class Round extends Match {
           }),
           prisma.match.create({
             data: {
-              mode: "TOURNAMENT",
+              mode: 'TOURNAMENT',
               userId: this.teams[0].user,
               winner: false,
               teams: {
@@ -1435,7 +1455,7 @@ export default class Round extends Match {
         .setTitle(this.t(`simulator.mode.${this.mode}`))
         .setDesc(
           `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n` +
-          this.t("simulator.match_finished")
+          this.t('simulator.match_finished')
         )
         .setImage(this.mapImage)
         .setFields(
@@ -1443,21 +1463,21 @@ export default class Round extends Match {
             name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
             value: this.teams[0].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           },
           {
             name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
             value: this.teams[1].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
         await this.ctx.channel.createMessage(
           {
-            content: this.t("simulator.winner",
+            content: this.t('simulator.winner',
               {
                 t: this.teams[1].name,
                 users: this.mentions
@@ -1472,7 +1492,7 @@ export default class Round extends Match {
         await Promise.all([
           prisma.match.create({
             data: {
-              mode: "TOURNAMENT",
+              mode: 'TOURNAMENT',
               userId: this.teams[0].user,
               winner: true,
               teams: {
@@ -1491,7 +1511,7 @@ export default class Round extends Match {
           }),
           prisma.match.create({
             data: {
-              mode: "TOURNAMENT",
+              mode: 'TOURNAMENT',
               userId: this.teams[1].user,
               winner: false,
               teams: {
@@ -1514,7 +1534,7 @@ export default class Round extends Match {
         .setTitle(this.t(`simulator.mode.${this.mode}`))
         .setDesc(
           `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n` +
-          this.t("simulator.match_finished")
+          this.t('simulator.match_finished')
         )
         .setImage(this.mapImage)
         .setFields(
@@ -1522,21 +1542,21 @@ export default class Round extends Match {
             name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
             value: this.teams[0].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           },
           {
             name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
             value: this.teams[1].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
         await this.ctx.channel.createMessage(
           {
-            content: this.t("simulator.winner",
+            content: this.t('simulator.winner',
               {
                 t: this.teams[0].name,
                 users: this.mentions
@@ -1551,7 +1571,7 @@ export default class Round extends Match {
         await Promise.all([
           prisma.match.create({
             data: {
-              mode: "TOURNAMENT",
+              mode: 'TOURNAMENT',
               userId: this.teams[1].user,
               winner: true,
               teams: {
@@ -1570,7 +1590,7 @@ export default class Round extends Match {
           }),
           prisma.match.create({
             data: {
-              mode: "TOURNAMENT",
+              mode: 'TOURNAMENT',
               userId: this.teams[1].user,
               winner: false,
               teams: {
@@ -1593,7 +1613,7 @@ export default class Round extends Match {
         .setTitle(this.t(`simulator.mode.${this.mode}`))
         .setDesc(
           `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n` +
-          this.t("simulator.match_finished")
+          this.t('simulator.match_finished')
         )
         .setImage(this.mapImage)
         .setFields(
@@ -1601,20 +1621,20 @@ export default class Round extends Match {
             name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
             value: this.teams[0].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           },
           {
             name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
             value: this.teams[1].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           }
         )
         await this.ctx.edit(embed.build(this.mentions))
         await this.ctx.channel.createMessage({
-          content: this.t("simulator.winner",
+          content: this.t('simulator.winner',
             {
               t: this.teams[1].name,
               users: this.mentions
@@ -1651,12 +1671,12 @@ export default class Round extends Match {
           id: victim.id.toString()
         },
         victimIndex: loserTeamIndex,
-        weapon: weapon as typeof valorant_weapons[number]["name"]
+        weapon: weapon as typeof valorant_weapons[number]['name']
       })
     }
     for(const kill of kills) {
       const content = this.t(
-        "simulator.kill",
+        'simulator.kill',
         {
           t1: this.teams[kill.killerIndex].tag,
           p1: kill.killer.name,
@@ -1680,14 +1700,14 @@ export default class Round extends Match {
         name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
         value: this.teams[0].roster
           .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-          .join("\n"),
+          .join('\n'),
         inline: true
       },
       {
         name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
         value: this.teams[1].roster
           .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-          .join("\n"),
+          .join('\n'),
         inline: true
       }
     )
@@ -1699,7 +1719,7 @@ export default class Round extends Match {
       this.rounds.push({
         winning_team: winningTeam,
         kills,
-        win_type: "ELIMINATION"
+        win_type: 'ELIMINATION'
       })
       for(let i = 0; i < this.teams.length; i++) {
         if(i === winningTeam) {
@@ -1714,12 +1734,12 @@ export default class Round extends Match {
         }
       }
       const content = this.t(
-        "simulator.won_by_elimination",
+        'simulator.won_by_elimination',
         {
           t: this.teams[winningTeam].name
         }
       )
-      this.content = this.content.split("\n").slice(1).join("\n") + `${content}\n`
+      this.content = this.content.split('\n').slice(1).join('\n') + `${content}\n`
       const embed = new EmbedBuilder()
       .setTitle(this.t(`simulator.mode.${this.mode}`))
       .setDesc(
@@ -1733,14 +1753,14 @@ export default class Round extends Match {
           name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
           value: this.teams[0].roster
             .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-            .join("\n"),
+            .join('\n'),
           inline: true
         },
         {
           name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
           value: this.teams[1].roster
             .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-            .join("\n"),
+            .join('\n'),
           inline: true
         }
       )
@@ -1748,7 +1768,7 @@ export default class Round extends Match {
       return await this.wait(3000)
     }
     else {
-      const playersAlive = this.teams.find(t => t.side === "ATTACK")!.roster.filter(p => p.life > 0).length
+      const playersAlive = this.teams.find(t => t.side === 'ATTACK')!.roster.filter(p => p.life > 0).length
       const minChance = 0.2
       const maxChance = 0.8
       const chance = minChance + ((playersAlive - 1) / (5 - 1)) * (maxChance - minChance)
@@ -1757,7 +1777,7 @@ export default class Round extends Match {
         const bombSites = valorant_maps.find(m => m.name === this.map)!.sides
         const bombSite = bombSites[Math.floor(Math.random() * bombSites.length)]
         const content = this.t(
-          "simulator.spike_planted",
+          'simulator.spike_planted',
           {
             bomb: bombSite
           }
@@ -1776,14 +1796,14 @@ export default class Round extends Match {
             name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
             value: this.teams[0].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           },
           {
             name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
             value: this.teams[1].roster
               .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-              .join("\n"),
+              .join('\n'),
             inline: true
           }
         )
@@ -1799,35 +1819,35 @@ export default class Round extends Match {
   }
   private async secondStep(bombPlanted?: boolean) {
     const kills: KillEvent[] = []
-    const attacker = this.teams.findIndex(t => t.side === "ATTACK")
-    const defender = this.teams.findIndex(t => t.side === "DEFENSE")
+    const attacker = this.teams.findIndex(t => t.side === 'ATTACK')
+    const defender = this.teams.findIndex(t => t.side === 'DEFENSE')
     const attackerOvr = this.calcTeamOvr(attacker, true)
     const defenderOvr = this.calcTeamOvr(defender, true)
     const totalOvr = attackerOvr + defenderOvr
     const attackerChance = attackerOvr / totalOvr
     const defenderChance = defenderOvr / totalOvr
-    let win_type: "ELIMINATION" | "BOMB" | "DEFUSE" | "TIME"
+    let win_type: 'ELIMINATION' | 'BOMB' | 'DEFUSE' | 'TIME'
     if(bombPlanted) {
       const random = Math.random()
       if(random < defenderChance * 0.5) {
-        win_type = "DEFUSE"
+        win_type = 'DEFUSE'
       }
       else if(random < attackerChance * 0.7) {
-        win_type = "BOMB"
+        win_type = 'BOMB'
       }
       else {
-        win_type = "ELIMINATION"
+        win_type = 'ELIMINATION'
       }
     }
     else {
       if(Math.random() < defenderChance * 0.05) {
-        win_type = "TIME"
+        win_type = 'TIME'
       }
       else {
-        win_type = "ELIMINATION"
+        win_type = 'ELIMINATION'
       }
     }
-    if(win_type === "ELIMINATION") {
+    if(win_type === 'ELIMINATION') {
       let alivePlayers = [
         ...this.teams[0].roster.filter(p => p.life > 0),
         ...this.teams[1].roster.filter(p => p.life > 0)
@@ -1857,13 +1877,13 @@ export default class Round extends Match {
             id: victim.id.toString()
           },
           victimIndex: loserTeamIndex,
-          weapon: weapon as typeof valorant_weapons[number]["name"]
+          weapon: weapon as typeof valorant_weapons[number]['name']
         })
         alivePlayers--
       }
       for(const kill of kills) {
         const content = this.t(
-          "simulator.kill",
+          'simulator.kill',
           {
             t1: this.teams[kill.killerIndex].tag,
             p1: kill.killer.name,
@@ -1897,12 +1917,12 @@ export default class Round extends Match {
         }
       }
       const content = this.t(
-        "simulator.won_by_elimination",
+        'simulator.won_by_elimination',
         {
           t: this.teams[winning_team].name
         }
       )
-      this.content = this.content.split("\n").slice(1).join("\n") + `${content}\n`
+      this.content = this.content.split('\n').slice(1).join('\n') + `${content}\n`
       const embed = new EmbedBuilder()
       .setTitle(this.t(`simulator.mode.${this.mode}`))
       .setDesc(
@@ -1916,21 +1936,21 @@ export default class Round extends Match {
           name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
           value: this.teams[0].roster
             .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-            .join("\n"),
+            .join('\n'),
           inline: true
         },
         {
           name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
           value: this.teams[1].roster
             .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-            .join("\n"),
+            .join('\n'),
           inline: true
         }
       )
       await this.ctx.edit(embed.build(this.mentions))
       await this.wait(3000)
     }
-    else if(win_type === "BOMB") {
+    else if(win_type === 'BOMB') {
       let alivePlayers = [
         ...this.teams[0].roster.filter(p => p.life > 0),
         ...this.teams[1].roster.filter(p => p.life > 0)
@@ -1960,13 +1980,13 @@ export default class Round extends Match {
             id: victim.id.toString()
           },
           victimIndex: loserTeamIndex,
-          weapon: weapon as typeof valorant_weapons[number]["name"]
+          weapon: weapon as typeof valorant_weapons[number]['name']
         })
         alivePlayers--
       }
       for(const kill of kills) {
         const content = this.t(
-          "simulator.kill",
+          'simulator.kill',
           {
             t1: this.teams[kill.killerIndex].tag,
             p1: kill.killer.name,
@@ -1977,7 +1997,7 @@ export default class Round extends Match {
         )
         this.content += `- ${content}\n`
       }
-      const winning_team = this.teams.findIndex(t => t.side === "ATTACK")
+      const winning_team = this.teams.findIndex(t => t.side === 'ATTACK')
       this.rounds.push({
         kills,
         win_type,
@@ -2000,12 +2020,12 @@ export default class Round extends Match {
         }
       }
       const content = this.t(
-        "simulator.spike_detonated",
+        'simulator.spike_detonated',
         {
           t: this.teams[winning_team].name
         }
       )
-      this.content = this.content.split("\n").slice(1).join("\n") + `${content}\n`
+      this.content = this.content.split('\n').slice(1).join('\n') + `${content}\n`
       const embed = new EmbedBuilder()
       .setTitle(this.t(`simulator.mode.${this.mode}`))
       .setDesc(
@@ -2019,21 +2039,21 @@ export default class Round extends Match {
           name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
           value: this.teams[0].roster
             .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-            .join("\n"),
+            .join('\n'),
           inline: true
         },
         {
           name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
           value: this.teams[1].roster
             .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-            .join("\n"),
+            .join('\n'),
           inline: true
         }
       )
       await this.ctx.edit(embed.build(this.mentions))
       await this.wait(3000)
     }
-    else if(win_type === "DEFUSE") {
+    else if(win_type === 'DEFUSE') {
       let alivePlayers = [
         ...this.teams[0].roster.filter(p => p.life > 0),
         ...this.teams[1].roster.filter(p => p.life > 0)
@@ -2063,13 +2083,13 @@ export default class Round extends Match {
             id: victim.id.toString()
           },
           victimIndex: loserTeamIndex,
-          weapon: weapon as typeof valorant_weapons[number]["name"]
+          weapon: weapon as typeof valorant_weapons[number]['name']
         })
         alivePlayers--
       }
       for(const kill of kills) {
         const content = this.t(
-          "simulator.kill",
+          'simulator.kill',
           {
             t1: this.teams[kill.killerIndex].tag,
             p1: kill.killer.name,
@@ -2080,7 +2100,7 @@ export default class Round extends Match {
         )
         this.content += `- ${content}\n`
       }
-      const winning_team = this.teams.findIndex(t => t.side === "DEFENSE")
+      const winning_team = this.teams.findIndex(t => t.side === 'DEFENSE')
       this.rounds.push({
         kills,
         win_type,
@@ -2103,12 +2123,12 @@ export default class Round extends Match {
         }
       }
       const content = this.t(
-        "simulator.spike_defused",
+        'simulator.spike_defused',
         {
           t: this.teams[winning_team].name
         }
       )
-      this.content = this.content.split("\n").slice(1).join("\n") + `${content}\n`
+      this.content = this.content.split('\n').slice(1).join('\n') + `${content}\n`
       const embed = new EmbedBuilder()
       .setTitle(this.t(`simulator.mode.${this.mode}`))
       .setDesc(
@@ -2122,21 +2142,21 @@ export default class Round extends Match {
           name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
           value: this.teams[0].roster
             .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-            .join("\n"),
+            .join('\n'),
           inline: true
         },
         {
           name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
           value: this.teams[1].roster
             .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-            .join("\n"),
+            .join('\n'),
           inline: true
         }
       )
       await this.ctx.edit(embed.build(this.mentions))
       await this.wait(3000)
     }
-    else if(win_type === "TIME") {
+    else if(win_type === 'TIME') {
       let alivePlayers = [
         ...this.teams[0].roster.filter(p => p.life > 0),
         ...this.teams[1].roster.filter(p => p.life > 0)
@@ -2166,13 +2186,13 @@ export default class Round extends Match {
             id: victim.id.toString()
           },
           victimIndex: loserTeamIndex,
-          weapon: weapon as typeof valorant_weapons[number]["name"]
+          weapon: weapon as typeof valorant_weapons[number]['name']
         })
         alivePlayers--
       }
       for(const kill of kills) {
         const content = this.t(
-          "simulator.kill",
+          'simulator.kill',
           {
             t1: this.teams[kill.killerIndex].tag,
             p1: kill.killer.name,
@@ -2183,7 +2203,7 @@ export default class Round extends Match {
         )
         this.content += `- ${content}\n`
       }
-      const winning_team = this.teams.findIndex(t => t.side === "DEFENSE")
+      const winning_team = this.teams.findIndex(t => t.side === 'DEFENSE')
       this.rounds.push({
         kills,
         win_type,
@@ -2206,12 +2226,12 @@ export default class Round extends Match {
         }
       }
       const content = this.t(
-        "simulator.spike_not_planted",
+        'simulator.spike_not_planted',
         {
           t: this.teams[winning_team].name
         }
       )
-      this.content = this.content.split("\n").slice(1).join("\n") + `${content}\n`
+      this.content = this.content.split('\n').slice(1).join('\n') + `${content}\n`
       const embed = new EmbedBuilder()
       .setTitle(this.t(`simulator.mode.${this.mode}`))
       .setDesc(
@@ -2225,14 +2245,14 @@ export default class Round extends Match {
           name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
           value: this.teams[0].roster
             .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-            .join("\n"),
+            .join('\n'),
           inline: true
         },
         {
           name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
           value: this.teams[1].roster
             .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-            .join("\n"),
+            .join('\n'),
           inline: true
         }
       )
@@ -2291,8 +2311,8 @@ export default class Round extends Match {
   private async chooseWinner(player1: Player | undefined, player2: Player | undefined) {
     let nextShot1 = 0
     let nextShot2 = 0
-    let weapon1 = ""
-    let weapon2 = ""
+    let weapon1 = ''
+    let weapon2 = ''
     if(!player1) {
       if(player2!.weapon.primary && player2!.weapon.primary.magazine && player2!.weapon.primary.magazine > 0) {
         nextShot2 = player2!.weapon.primary.rate_fire
@@ -2304,7 +2324,7 @@ export default class Round extends Match {
       }
       else {
         nextShot2 = player2!.weapon.melee.rate_fire
-        weapon2 = "Melee"
+        weapon2 = 'Melee'
       }
       return [false, true, weapon1, weapon2]
     }
@@ -2319,15 +2339,15 @@ export default class Round extends Match {
       }
       else {
         nextShot1 = player1.weapon.melee.rate_fire
-        weapon1 = "Melee"
+        weapon1 = 'Melee'
       }
       return [true, false, weapon1, weapon2]
     }
     if(!player1.weapon.secondary) {
-      player1.weapon.secondary = valorant_weapons.find(w => w.name === "Classic")!
+      player1.weapon.secondary = valorant_weapons.find(w => w.name === 'Classic')!
     }
     if(!player2.weapon.secondary) {
-      player2.weapon.secondary = valorant_weapons.find(w => w.name === "Classic")!
+      player2.weapon.secondary = valorant_weapons.find(w => w.name === 'Classic')!
     }
     if(player1.weapon.primary && player1.weapon.primary.magazine && player1.weapon.primary.magazine > 0) {
       nextShot1 = player1.weapon.primary.rate_fire
@@ -2339,7 +2359,7 @@ export default class Round extends Match {
     }
     else {
       nextShot1 = player1.weapon.melee.rate_fire
-      weapon1 = "Melee"
+      weapon1 = 'Melee'
     }
     if(player2.weapon.primary && player2.weapon.primary.magazine && player2.weapon.primary.magazine > 0) {
       nextShot2 = player2.weapon.primary.rate_fire
@@ -2351,7 +2371,7 @@ export default class Round extends Match {
     }
     else {
       nextShot2 = player2.weapon.melee.rate_fire
-      weapon2 = "Melee"
+      weapon2 = 'Melee'
     }
     while(player1.life > 0 && player2.life > 0) {
       const wait = Math.min(nextShot1, nextShot2)

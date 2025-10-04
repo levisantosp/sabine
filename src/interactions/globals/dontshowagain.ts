@@ -1,12 +1,14 @@
-import createComponentInteraction from "../../structures/interaction/createComponentInteraction.ts"
+import createComponentInteraction from '../../structures/interaction/createComponentInteraction.ts'
 
 export default createComponentInteraction({
-  name: "dontshowagain",
+  name: 'dontshowagain',
   flags: 64,
   global: true,
   async run({ ctx }) {
     ctx.db.user.warn = false
+
     await ctx.db.user.save()
-    await ctx.reply("helper.wont_be_warned")
+
+    await ctx.reply('helper.wont_be_warned')
   }
 })

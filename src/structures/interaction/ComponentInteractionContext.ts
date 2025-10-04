@@ -1,7 +1,7 @@
-import * as Oceanic from "oceanic.js"
-import App from "../client/App.ts"
-import locales, { type Content, type Args } from "../../locales/index.ts"
-import { SabineGuild, SabineUser } from "../../database/index.ts"
+import * as Oceanic from 'oceanic.js'
+import App from '../client/App.ts'
+import locales, { type Content, type Args } from '../../locales/index.ts'
+import { SabineGuild, SabineUser } from '../../database/index.ts'
 
 type Database = {
   guild?: SabineGuild
@@ -41,7 +41,7 @@ export default class ComponentInteractionContext {
   }
 
   public async reply(content: Content | Oceanic.InteractionContent, options?: Args): Promise<Oceanic.Message> {
-    if(typeof content === "string") {
+    if(typeof content === 'string') {
       content = {
         content: locales(this.locale, content, options)
       }
@@ -69,7 +69,7 @@ export default class ComponentInteractionContext {
   }
 
   public async edit(content: Content | Oceanic.EditInteractionContent, options?: Args): Promise<Oceanic.Message | Oceanic.InteractionCallbackResponse> {
-    if(typeof content === "string") {
+    if(typeof content === 'string') {
       content = {
         content: locales(this.locale, content, options)
       }
@@ -79,6 +79,13 @@ export default class ComponentInteractionContext {
       content = {
         ...content,
         files: options.files as Oceanic.File[]
+      }
+    }
+
+    if(!content.components) {
+      content = {
+        ...content,
+        components: []
       }
     }
 

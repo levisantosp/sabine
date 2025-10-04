@@ -1,20 +1,20 @@
-import type { ModalSubmitInteraction } from "oceanic.js"
-import App from "../client/App.ts"
-import ModalSubmitInteractionContext from "./ModalSubmitInteractionContext.ts"
-import { SabineGuild, SabineUser } from "../../database/index.ts"
-import locales, { type Args, type Content } from "../../locales/index.ts"
-import type { Blacklist } from "@prisma/client"
+import type { ModalSubmitInteraction } from 'oceanic.js'
+import App from '../client/App.ts'
+import ModalSubmitInteractionContext from './ModalSubmitInteractionContext.ts'
+import { SabineGuild, SabineUser } from '../../database/index.ts'
+import locales, { type Args, type Content } from '../../locales/index.ts'
+import type { Blacklist } from '@prisma/client'
 
 export default class ModalSubmitInteractionRunner {
   public async run(
     client: App,
     interaction: ModalSubmitInteraction
   ): Promise<unknown> {
-    const args = interaction.data.customID.split(";")
+    const args = interaction.data.customID.split(';')
     const i = client.interactions.get(args[0])
     const command = client.commands.get(args[0])
 
-    const rawBlacklist = await client.redis.get("blacklist")
+    const rawBlacklist = await client.redis.get('blacklist')
     const value: Blacklist[] = rawBlacklist ? JSON.parse(rawBlacklist) : []
     const blacklist = new Map<string | null, Blacklist>(value.map(b => [b.id, b]))
 

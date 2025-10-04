@@ -1,21 +1,21 @@
-import type { ComponentInteraction } from "oceanic.js"
-import App from "../client/App.ts"
-import ComponentInteractionContext from "./ComponentInteractionContext.ts"
-import { SabineGuild, SabineUser } from "../../database/index.ts"
-import locales, { type Args, type Content } from "../../locales/index.ts"
-import type { Blacklist } from "@prisma/client"
-import type ModalSubmitInteractionContext from "./ModalSubmitInteractionContext.ts"
+import type { ComponentInteraction } from 'oceanic.js'
+import App from '../client/App.ts'
+import ComponentInteractionContext from './ComponentInteractionContext.ts'
+import { SabineGuild, SabineUser } from '../../database/index.ts'
+import locales, { type Args, type Content } from '../../locales/index.ts'
+import type { Blacklist } from '@prisma/client'
+import type ModalSubmitInteractionContext from './ModalSubmitInteractionContext.ts'
 
 export default class ComponentInteractionRunner {
   public async run(
     client: App,
     interaction: ComponentInteraction
   ): Promise<unknown> {
-    const args = interaction.data.customID.split(";")
+    const args = interaction.data.customID.split(';')
     const i = client.interactions.get(args[0])
     const command = client.commands.get(args[0])
 
-    const rawBlacklist = await client.redis.get("blacklist")
+    const rawBlacklist = await client.redis.get('blacklist')
     const value: Blacklist[] = rawBlacklist ? JSON.parse(rawBlacklist) : []
     const blacklist = new Map<string | null, Blacklist>(value.map(b => [b.id, b]))
 
@@ -92,13 +92,13 @@ export default class ComponentInteractionRunner {
       ) {
         ctx.setFlags(64)
 
-        return await ctx.reply("helper.unknown_interaction")
+        return await ctx.reply('helper.unknown_interaction')
       }
 
-      if(args[1] !== "all" && args[1] !== interaction.user.id) {
+      if(args[1] !== 'all' && args[1] !== interaction.user.id) {
         ctx.setFlags(64)
 
-        return await ctx.reply("helper.this_isnt_for_you")
+        return await ctx.reply('helper.this_isnt_for_you')
       }
 
       const t = <T extends Content>(content: T, args?: Args) => {
@@ -141,13 +141,13 @@ export default class ComponentInteractionRunner {
     ) {
       ctx.setFlags(64)
 
-      return await ctx.reply("helper.unknown_interaction")
+      return await ctx.reply('helper.unknown_interaction')
     }
 
     if(args[1] !== interaction.user.id) {
       ctx.setFlags(64)
 
-      return await ctx.reply("helper.this_isnt_for_you")
+      return await ctx.reply('helper.this_isnt_for_you')
     }
 
     const t = <T extends Content>(content: T, args?: Args) => {

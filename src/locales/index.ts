@@ -1,6 +1,6 @@
-import * as Oceanic from "oceanic.js"
-import pt from "./pt.json" with { type: "json" }
-import en from "./en.json" with { type: "json" }
+import * as Oceanic from 'oceanic.js'
+import pt from './pt.json' with { type: 'json' }
+import en from './en.json' with { type: 'json' }
 
 export type Args = {
   [key: string]: string | Error | number | Oceanic.File[] | undefined | null | bigint
@@ -29,7 +29,7 @@ const locale: {
 export default function t<T extends Content>(lang: string, content: T, args?: Args): string {
   let json = locale[lang]
 
-  for(const param of content.split(".")) {
+  for(const param of content.split('.')) {
     json = json[param]
 
     if(!json) return content

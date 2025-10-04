@@ -1,22 +1,22 @@
-import { Type, type TypeBoxTypeProvider } from "@fastify/type-provider-typebox"
-import type { FastifyBaseLogger, RawServerDefault, FastifyInstance } from "fastify"
-import type { IncomingMessage, ServerResponse } from "http"
-import { client } from "../../../structures/client/App.ts"
-import { emojis } from "../../../util/emojis.ts"
-import EmbedBuilder from "../../../structures/builders/EmbedBuilder.ts"
-import locales from "../../../locales/index.ts"
-import ButtonBuilder from "../../../structures/builders/ButtonBuilder.ts"
-import { type ResultsData } from "../../../types.ts"
-import calcOdd from "../../../util/calcOdd.ts"
-import { PrismaClient } from "@prisma/client"
-import { SabineUser } from "../../../database/index.ts"
+import { Type, type TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
+import type { FastifyBaseLogger, RawServerDefault, FastifyInstance } from 'fastify'
+import type { IncomingMessage, ServerResponse } from 'http'
+import { client } from '../../../structures/client/App.ts'
+import { emojis } from '../../../util/emojis.ts'
+import EmbedBuilder from '../../../structures/builders/EmbedBuilder.ts'
+import locales from '../../../locales/index.ts'
+import ButtonBuilder from '../../../structures/builders/ButtonBuilder.ts'
+import { type ResultsData } from '../../../types.ts'
+import calcOdd from '../../../util/calcOdd.ts'
+import { PrismaClient } from '@prisma/client'
+import { SabineUser } from '../../../database/index.ts'
 
 const prisma = new PrismaClient()
 
 export default async function(
   fastify: FastifyInstance<RawServerDefault, IncomingMessage, ServerResponse<IncomingMessage>, FastifyBaseLogger, TypeBoxTypeProvider>
 ) {
-  fastify.post("/webhooks/results/lol", {
+  fastify.post('/webhooks/results/lol', {
     schema: {
       body: Type.Array(
         Type.Object({
@@ -43,41 +43,50 @@ export default async function(
       where: {
         events: {
           some: {
-            type: "lol"
+            type: 'lol'
           }
         }
       },
       include: {
         events: {
           where: {
-            type: "lol"
+            type: 'lol'
           }
         },
         key: true
       }
     })
+
     const preds = await prisma.prediction.findMany({
       where: {
-        game: "lol"
+        game: 'lol'
       },
       include: {
         teams: true
       }
     })
+
     if(!guilds.length) return
+
     for(const guild of guilds) {
       let data: ResultsData[]
+
       if(guild.events.length > 5 && !guild.key) {
         data = req.body.filter(d => guild.events.reverse().slice(0, 5).some(e => e.name === d.tournament.name))
       }
+
       else data = req.body.filter(d => guild.events.some(e => e.name === d.tournament.name))
+
       if(!data || !data[0]) continue
+
       data.reverse()
+
       for(const d of data) {
         for(const e of guild.events) {
           if(e.name === d.tournament.name) {
-            const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
-            const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
+            const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
+            const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
+
             const embed = new EmbedBuilder()
               .setAuthor({
                 name: d.tournament.name,
@@ -89,19 +98,20 @@ export default async function(
                 true
               )
               .setFooter({ text: d.stage })
+              
             client.rest.channels.createMessage(e.channel2, embed.build({
               components: [
                 {
                   type: 1,
                   components: [
                     new ButtonBuilder()
-                      .setLabel(locales(guild.lang ?? "en", "helper.stats"))
-                      .setStyle("link")
+                      .setLabel(locales(guild.lang ?? 'en', 'helper.stats'))
+                      .setStyle('link')
                       .setURL(`https://vlr.gg/${d.id}`),
                     new ButtonBuilder()
-                      .setLabel(locales(guild.lang ?? "en", "helper.pickem.label"))
-                      .setStyle("blue")
-                      .setCustomId("pickem")
+                      .setLabel(locales(guild.lang ?? 'en', 'helper.pickem.label'))
+                      .setStyle('blue')
+                      .setCustomId('pickem')
                   ]
                 }
               ]
@@ -118,7 +128,7 @@ export default async function(
         const user = await SabineUser.fetch(pred.userId)
         if(!user) continue
         if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
-          await user.addCorrectPrediction("lol", data.id)
+          await user.addCorrectPrediction('lol', data.id)
           if(pred.bet) {
             const winnerIndex = data.teams.findIndex(t => t.winner)
             if(pred.teams[winnerIndex].winner) {
@@ -161,7 +171,7 @@ export default async function(
           }
         }
         else {
-          await user.addWrongPrediction("lol", data.id)
+          await user.addWrongPrediction('lol', data.id)
         }
       }
     }

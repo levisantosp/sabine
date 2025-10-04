@@ -1,23 +1,28 @@
-import createCommand from "../../structures/command/createCommand.ts"
+import createCommand from '../../structures/command/createCommand.ts'
 
 export default createCommand({
-  name: "remind",
+  name: 'remind',
   nameLocalizations: {
-    "pt-BR": "lembrar"
+    'pt-BR': 'lembrar'
   },
-  description: "Notify you when you can run /claim again",
+  description: 'Notify you when you can run /claim again',
   descriptionLocalizations: {
-    "pt-BR": "Notifica você quando você puder usar /claim novamente"
+    'pt-BR': 'Notifica você quando você puder usar /claim novamente'
   },
-  category: "misc",
+  category: 'misc',
   async run({ ctx }) {
     if(!ctx.db.user.remind) {
       ctx.db.user.remind = true
+
       await ctx.db.user.save()
-      return await ctx.reply("commands.remind.enabled")
+
+      return await ctx.reply('commands.remind.enabled')
     }
+    
     ctx.db.user.remind = false
+
     await ctx.db.user.save()
-    return await ctx.reply("commands.remind.disabled")
+    
+    return await ctx.reply('commands.remind.disabled')
   }
 })

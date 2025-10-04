@@ -1,15 +1,16 @@
-import { client } from "./structures/client/App.ts"
-import { server } from "./server/index.ts"
+import { client } from './structures/client/App.ts'
+import { server } from './server/index.ts'
 
 await client.redis.connect()
+
 const updateRedis = async() => {
   const users = await client.prisma.user.findMany()
   const blacklist = await client.prisma.blacklist.findMany()
   
-  await client.redis.set("blacklist", JSON.stringify(blacklist))
+  await client.redis.set('blacklist', JSON.stringify(blacklist))
 
   await client.redis.set(
-    "leaderboard:coins",
+    'leaderboard:coins',
     JSON.stringify(
       {
         updated_at: Date.now(),
@@ -19,12 +20,12 @@ const updateRedis = async() => {
         }))
         .filter(user => user.coins > 0)
       },
-      (_, value) => typeof value === "bigint" ? value.toString() : value
+      (_, value) => typeof value === 'bigint' ? value.toString() : value
     )
   )
 
   await client.redis.set(
-    "leaderboard:predictions",
+    'leaderboard:predictions',
     JSON.stringify(
       {
         updated_at: Date.now(),
@@ -38,7 +39,7 @@ const updateRedis = async() => {
   )
 
   await client.redis.set(
-    "leaderboard:rating",
+    'leaderboard:rating',
     JSON.stringify(
       {
         updated_at: Date.now(),
@@ -54,7 +55,7 @@ const updateRedis = async() => {
   setTimeout(updateRedis, 10 * 60 * 1000)
 }
 
-const keys = await client.redis.keys("*leaderboard:*")
+const keys = await client.redis.keys('*leaderboard:*')
 
 if(keys.length) {
   await client.redis.del(keys)

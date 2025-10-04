@@ -1,44 +1,44 @@
-import createCommand from "../../structures/command/createCommand.ts"
+import createCommand from '../../structures/command/createCommand.ts'
 
 export default createCommand({
-  name: "news",
-  category: "admin",
+  name: 'news',
+  category: 'admin',
   nameLocalizations: {
-    "pt-BR": "noticias"
+    'pt-BR': 'noticias'
   },
-  description: "Manage news feature",
+  description: 'Manage news feature',
   descriptionLocalizations: {
-    "pt-BR": "Gerencie a funcionalidade de notícias"
+    'pt-BR': 'Gerencie a funcionalidade de notícias'
   },
   options: [
     {
       type: 2,
-      name: "enable",
+      name: 'enable',
       nameLocalizations: {
-        "pt-BR": "habilitar"
+        'pt-BR': 'habilitar'
       },
-      description: "Enable news feature",
+      description: 'Enable news feature',
       descriptionLocalizations: {
-        "pt-BR": "Habilitar"
+        'pt-BR': 'Habilitar'
       },
       options: [
         {
           type: 1,
-          name: "valorant",
-          description: "Enable VALORANT news feature",
+          name: 'valorant',
+          description: 'Enable VALORANT news feature',
           descriptionLocalizations: {
-            "pt-BR": "Habilita a funcionalidade de notícias de VALORANT"
+            'pt-BR': 'Habilita a funcionalidade de notícias de VALORANT'
           },
           options: [
             {
               type: 7,
-              name: "channel",
+              name: 'channel',
               nameLocalizations: {
-                "pt-BR": "canal"
+                'pt-BR': 'canal'
               },
-              description: "Enter a channel",
+              description: 'Enter a channel',
               descriptionLocalizations: {
-                "pt-BR": "Informe o canal"
+                'pt-BR': 'Informe o canal'
               },
               required: true
             }
@@ -46,21 +46,21 @@ export default createCommand({
         },
         {
           type: 1,
-          name: "lol",
-          description: "Enable League of Legends news feature",
+          name: 'lol',
+          description: 'Enable League of Legends news feature',
           descriptionLocalizations: {
-            "pt-BR": "Habilita a funcionalidade de notícias de League of Legends"
+            'pt-BR': 'Habilita a funcionalidade de notícias de League of Legends'
           },
           options: [
             {
               type: 7,
-              name: "channel",
+              name: 'channel',
               nameLocalizations: {
-                "pt-BR": "canal"
+                'pt-BR': 'canal'
               },
-              description: "Enter a channel",
+              description: 'Enter a channel',
               descriptionLocalizations: {
-                "pt-BR": "Informe o canal"
+                'pt-BR': 'Informe o canal'
               },
               required: true
             }
@@ -70,72 +70,90 @@ export default createCommand({
     },
     {
       type: 2,
-      name: "disable",
+      name: 'disable',
       nameLocalizations: {
-        "pt-BR": "desabilitar"
+        'pt-BR': 'desabilitar'
       },
-      description: "Disable news feature",
+      description: 'Disable news feature',
       descriptionLocalizations: {
-        "pt-BR": "Desabilitar a funcionalidade de notícias"
+        'pt-BR': 'Desabilitar a funcionalidade de notícias'
       },
       options: [
         {
           type: 1,
-          name: "valorant",
-          description: "Disable VALORANT news feature",
+          name: 'valorant',
+          description: 'Disable VALORANT news feature',
           descriptionLocalizations: {
-            "pt-BR": "Desabilita a funcionalidade de notícias de VALORANT"
+            'pt-BR': 'Desabilita a funcionalidade de notícias de VALORANT'
           }
         },
         {
           type: 1,
-          name: "lol",
-          description: "Disable League of Legends news feature",
+          name: 'lol',
+          description: 'Disable League of Legends news feature',
           descriptionLocalizations: {
-            "pt-BR": "Desabilita a funcionalidade de notícias de League of Legends"
+            'pt-BR': 'Desabilita a funcionalidade de notícias de League of Legends'
           }
         }
       ]
     }
   ],
   async run({ ctx }) {
-    if(ctx.args[0] === "enable") {
+    if(ctx.args[0] === 'enable') {
       const games = {
         valorant: async() => {
           if(!ctx.guild || !ctx.db.guild) return
+
           const channel = ctx.guild.channels.get(ctx.args[2].toString())!
-          if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.news.invalid_channel")
+
+          if(![0, 5].some(t => t === channel.type)) return await ctx.reply('commands.news.invalid_channel')
+            
           ctx.db.guild.valorant_news_channel = channel.id
+
           await ctx.db.guild.save()
-          await ctx.reply("commands.news.news_enabled", { ch: channel.mention })
+
+          await ctx.reply('commands.news.news_enabled', { ch: channel.mention })
         },
         lol: async() => {
           if(!ctx.guild || !ctx.db.guild) return
+
           const channel = ctx.guild.channels.get(ctx.args[2].toString())!
-          if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.news.invalid_channel")
+
+          if(![0, 5].some(t => t === channel.type)) return await ctx.reply('commands.news.invalid_channel')
+
           ctx.db.guild.lol_news_channel = channel.id
+
           await ctx.db.guild.save()
-          await ctx.reply("commands.news.news_enabled", { ch: channel.mention })
+
+          await ctx.reply('commands.news.news_enabled', { ch: channel.mention })
         }
       }
-      await games[ctx.args[1] as "valorant" | "lol"]()
+
+      await games[ctx.args[1] as 'valorant' | 'lol']()
     }
     else {
       const games = {
         valorant: async() => {
           if(!ctx.db.guild) return
+
           ctx.db.guild.valorant_news_channel = null
+
           await ctx.db.guild.save()
-          await ctx.reply("commands.news.news_disabled")
+
+          await ctx.reply('commands.news.news_disabled')
         },
         lol: async() => {
           if(!ctx.db.guild) return
+
           ctx.db.guild.lol_news_channel = null
+
           await ctx.db.guild.save()
-          await ctx.reply("commands.news.news_disabled")
+
+          await ctx.reply('commands.news.news_disabled')
         }
       }
-      await games[ctx.args[1] as "valorant" | "lol"]()
+      
+      await games[ctx.args[1] as 'valorant' | 'lol']()
     }
   }
 })

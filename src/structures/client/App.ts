@@ -1,19 +1,19 @@
-import * as Oceanic from "oceanic.js"
-import { readdirSync } from "fs"
-import path from "path"
-import type { Command } from "../command/createCommand.ts"
-import { fileURLToPath } from "url"
-import { PrismaClient } from "@prisma/client"
-import Redis from "redis"
-import Logger from "../../util/Logger.ts"
-import type { CreateInteractionOptions } from "../interaction/createComponentInteraction.ts"
-import type { CreateModalSubmitInteractionOptions } from "../interaction/createModalSubmitInteraction.ts"
-import Queue from "bull"
+import * as Oceanic from 'oceanic.js'
+import { readdirSync } from 'node:fs'
+import path from 'node:path'
+import type { Command } from '../command/createCommand.ts'
+import { fileURLToPath } from 'node:url'
+import { PrismaClient } from '@prisma/client'
+import Redis from 'redis'
+import Logger from '../../util/Logger.ts'
+import type { CreateInteractionOptions } from '../interaction/createComponentInteraction.ts'
+import type { CreateModalSubmitInteractionOptions } from '../interaction/createModalSubmitInteraction.ts'
+import Queue from 'bull'
 import {
   calcPlayerPrice,
   getPlayers,
   type Player
-} from "players"
+} from 'players'
 
 type Reminder = {
   user: string
@@ -29,7 +29,7 @@ const redis: Redis.RedisClientType = Redis.createClient({
   url: process.env.REDIS_URL
 })
 
-const queue = new Queue<Reminder>("reminder", {
+const queue = new Queue<Reminder>('reminder', {
   redis: process.env.REDIS_URL
 })
 
@@ -52,7 +52,7 @@ export default class App extends Oceanic.Client {
   public override async connect() {
     const start = Date.now()
     
-    Logger.warn("Connecting to database...")
+    Logger.warn('Connecting to database...')
 
     await prisma.$connect()
 
@@ -65,15 +65,15 @@ export default class App extends Oceanic.Client {
       })
     }
 
-    for(const file of readdirSync(path.resolve(__dirname, "../../listeners"))) {
+    for(const file of readdirSync(path.resolve(__dirname, '../../listeners'))) {
       const listener = (await import(`../../listeners/${file}`)).default
 
-      if(listener.name === "ready") this.once("ready", () => listener.run(this).catch((e: Error) => new Logger(this).error(e)))
+      if(listener.name === 'ready') this.once('ready', () => listener.run(this).catch((e: Error) => new Logger(this).error(e)))
 
       else this.on(listener.name, (...args) => listener.run(this, ...args).catch((e: Error) => new Logger(this).error(e)))
     }
 
-    for(const folder of readdirSync(path.resolve(__dirname, "../../commands"))) {
+    for(const folder of readdirSync(path.resolve(__dirname, '../../commands'))) {
       for(const file of readdirSync(path.resolve(__dirname, `../../commands/${folder}`))) {
         const command = (await import(`../../commands/${folder}/${file}`)).default
 
@@ -84,7 +84,7 @@ export default class App extends Oceanic.Client {
         this.commands.set(command.name, command)
       }
     }
-    for(const folder of readdirSync(path.resolve(__dirname, "../../interactions"))) {
+    for(const folder of readdirSync(path.resolve(__dirname, '../../interactions'))) {
       for(const file of readdirSync(path.resolve(__dirname, `../../interactions/${folder}`))) {
         const interaction = (await import(`../../interactions/${folder}/${file}`)).default
 
@@ -100,13 +100,16 @@ export default class App extends Oceanic.Client {
   }
   public async bulkEditGlobalCommands() {
     const commands: Oceanic.CreateApplicationCommandOptions[] = []
+
     this.commands.forEach(cmd => {
       const integrationTypes = [
         Oceanic.ApplicationIntegrationTypes.GUILD_INSTALL
       ]
+
       const contexts = [
         Oceanic.InteractionContextTypes.GUILD
       ]
+
       if(cmd.userInstall) {
         integrationTypes.push(Oceanic.ApplicationIntegrationTypes.USER_INSTALL)
         contexts.push(
@@ -114,6 +117,7 @@ export default class App extends Oceanic.Client {
           Oceanic.InteractionContextTypes.PRIVATE_CHANNEL
         )
       }
+
       commands.push({
         name: cmd.name,
         nameLocalizations: cmd.nameLocalizations,
@@ -125,15 +129,16 @@ export default class App extends Oceanic.Client {
         contexts
       })
     })
+    
     await this.application.bulkEditGlobalCommands(commands)
   }
 }
 export const client = new App({
-  auth: "Bot " + process.env.BOT_TOKEN,
+  auth: 'Bot ' + process.env.BOT_TOKEN,
   gateway: {
-    intents: ["ALL"],
+    intents: ['ALL'],
     autoReconnect: true,
-    maxShards: "auto"
+    maxShards: 'auto'
   },
   allowedMentions: {
     everyone: false,
@@ -141,6 +146,6 @@ export const client = new App({
     repliedUser: true,
     roles: false
   },
-  defaultImageFormat: "png",
+  defaultImageFormat: 'png',
   defaultImageSize: 2048
 })

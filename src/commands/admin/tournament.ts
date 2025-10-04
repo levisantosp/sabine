@@ -1,75 +1,73 @@
-import createCommand from "../../structures/command/createCommand.ts"
-import Service from "../../api/index.ts"
-import { PrismaClient } from "@prisma/client"
-import { SabineGuild } from "../../database/index.ts"
+import createCommand from '../../structures/command/createCommand.ts'
+import Service from '../../api/index.ts'
+import { SabineGuild } from '../../database/index.ts'
+
 const service = new Service(process.env.AUTH)
 
-const prisma = new PrismaClient()
-
 export default createCommand({
-  name: "tournament",
-  category: "admin",
+  name: 'tournament',
+  category: 'admin',
   nameLocalizations: {
-    "pt-BR": "torneio"
+    'pt-BR': 'torneio'
   },
-  description: "Add or remove tournaments, manage it, and more",
+  description: 'Add or remove tournaments, manage it, and more',
   descriptionLocalizations: {
-    "pt-BR": "Adicione ou remova torneios, gerencie-os, e mais"
+    'pt-BR': 'Adicione ou remova torneios, gerencie-os, e mais'
   },
   options: [
     {
       type: 2,
-      name: "add",
+      name: 'add',
       nameLocalizations: {
-        "pt-BR": "adicionar"
+        'pt-BR': 'adicionar'
       },
-      description: "Add a tournament",
+      description: 'Add a tournament',
       descriptionLocalizations: {
-        "pt-BR": "Adicione um torneio"
+        'pt-BR': 'Adicione um torneio'
       },
       options: [
         {
           type: 1,
-          name: "valorant",
-          description: "Add a VALORANT tournament",
+          name: 'valorant',
+          description: 'Add a VALORANT tournament',
           descriptionLocalizations: {
-            "pt-BR": "Adicione um torneio de VALORANT"
+            'pt-BR': 'Adicione um torneio de VALORANT'
           },
           options: [
             {
               type: 3,
-              name: "tournament",
+              name: 'tournament',
               nameLocalizations: {
-                "pt-BR": "torneio"
+                'pt-BR': 'torneio'
               },
-              description: "Enter a tournament",
+              description: 'Enter a tournament',
               descriptionLocalizations: {
-                "pt-BR": "Informe o torneio"
+                'pt-BR': 'Informe o torneio'
               },
               autocomplete: true,
               required: true
             },
             {
               type: 7,
-              name: "matches_channel",
+              name: 'matches_channel',
               nameLocalizations: {
-                "pt-BR": "canal_de_partidas"
+                'pt-BR': 'canal_de_partidas'
               },
-              description: "Enter a channel",
+              description: 'Enter a channel',
               descriptionLocalizations: {
-                "pt-BR": "Informe o canal"
+                'pt-BR': 'Informe o canal'
               },
               required: true
             },
             {
               type: 7,
-              name: "results_channel",
+              name: 'results_channel',
               nameLocalizations: {
-                "pt-BR": "canal_de_resultados"
+                'pt-BR': 'canal_de_resultados'
               },
-              description: "Enter a channel",
+              description: 'Enter a channel',
               descriptionLocalizations: {
-                "pt-BR": "Informe o canal"
+                'pt-BR': 'Informe o canal'
               },
               required: true
             }
@@ -77,46 +75,46 @@ export default createCommand({
         },
         {
           type: 1,
-          name: "lol",
-          description: "Add a League of Legends tournament",
+          name: 'lol',
+          description: 'Add a League of Legends tournament',
           descriptionLocalizations: {
-            "pt-BR": "Adicione um torneio de League of Legends"
+            'pt-BR': 'Adicione um torneio de League of Legends'
           },
           options: [
             {
               type: 3,
-              name: "tournament",
+              name: 'tournament',
               nameLocalizations: {
-                "pt-BR": "torneio"
+                'pt-BR': 'torneio'
               },
-              description: "Enter a tournament",
+              description: 'Enter a tournament',
               descriptionLocalizations: {
-                "pt-BR": "Informe o torneio"
+                'pt-BR': 'Informe o torneio'
               },
               autocomplete: true,
               required: true
             },
             {
               type: 7,
-              name: "matches_channel",
+              name: 'matches_channel',
               nameLocalizations: {
-                "pt-BR": "canal_de_partidas"
+                'pt-BR': 'canal_de_partidas'
               },
-              description: "Enter a channel",
+              description: 'Enter a channel',
               descriptionLocalizations: {
-                "pt-BR": "Informe o canal"
+                'pt-BR': 'Informe o canal'
               },
               required: true
             },
             {
               type: 7,
-              name: "results_channel",
+              name: 'results_channel',
               nameLocalizations: {
-                "pt-BR": "canal_de_resultados"
+                'pt-BR': 'canal_de_resultados'
               },
-              description: "Enter a channel",
+              description: 'Enter a channel',
               descriptionLocalizations: {
-                "pt-BR": "Informe o canal"
+                'pt-BR': 'Informe o canal'
               },
               required: true
             }
@@ -126,32 +124,32 @@ export default createCommand({
     },
     {
       type: 2,
-      name: "remove",
+      name: 'remove',
       nameLocalizations: {
-        "pt-BR": "remover"
+        'pt-BR': 'remover'
       },
-      description: "Remove a tournament",
+      description: 'Remove a tournament',
       descriptionLocalizations: {
-        "pt-BR": "Remove um torneio"
+        'pt-BR': 'Remove um torneio'
       },
       options: [
         {
           type: 1,
-          name: "valorant",
-          description: "Remove a VALORANT tournament",
+          name: 'valorant',
+          description: 'Remove a VALORANT tournament',
           descriptionLocalizations: {
-            "pt-BR": "Remova um torneio de VALORANT"
+            'pt-BR': 'Remova um torneio de VALORANT'
           },
           options: [
             {
               type: 3,
-              name: "tournament",
+              name: 'tournament',
               nameLocalizations: {
-                "pt-BR": "torneio"
+                'pt-BR': 'torneio'
               },
-              description: "Enter a tournament",
+              description: 'Enter a tournament',
               descriptionLocalizations: {
-                "pt-BR": "Informe o torneio"
+                'pt-BR': 'Informe o torneio'
               },
               autocomplete: true,
               required: true
@@ -160,21 +158,21 @@ export default createCommand({
         },
         {
           type: 1,
-          name: "lol",
-          description: "Remove a League of Legends tournament",
+          name: 'lol',
+          description: 'Remove a League of Legends tournament',
           descriptionLocalizations: {
-            "pt-BR": "Remova um torneio de League of Legends"
+            'pt-BR': 'Remova um torneio de League of Legends'
           },
           options: [
             {
               type: 3,
-              name: "tournament",
+              name: 'tournament',
               nameLocalizations: {
-                "pt-BR": "torneio"
+                'pt-BR': 'torneio'
               },
-              description: "Enter a tournament",
+              description: 'Enter a tournament',
               descriptionLocalizations: {
-                "pt-BR": "Informe o torneio"
+                'pt-BR': 'Informe o torneio'
               },
               autocomplete: true,
               required: true
@@ -184,27 +182,27 @@ export default createCommand({
       ]
     }
   ],
-  permissions: ["MANAGE_GUILD", "MANAGE_CHANNELS"],
-  botPermissions: ["MANAGE_MESSAGES", "SEND_MESSAGES"],
+  permissions: ['MANAGE_GUILD', 'MANAGE_CHANNELS'],
+  botPermissions: ['MANAGE_MESSAGES', 'SEND_MESSAGES'],
   syntaxes: [
-    "tournament add valorant [tournament] [matches_channel] [results_channel]",
-    "tournament add lol [tournament] [matches_channel] [results_channel]",
-    "tournament remove valorant [tournament]",
-    "tournament remove lol [tournament]"
+    'tournament add valorant [tournament] [matches_channel] [results_channel]',
+    'tournament add lol [tournament] [matches_channel] [results_channel]',
+    'tournament remove valorant [tournament]',
+    'tournament remove lol [tournament]'
   ],
   examples: [
-    "tournament add valorant VCT Americas #matches #results",
-    "tournament add lol Worlds #matches #results",
-    "tournament remove valorant VCT Americas",
-    "tournament remove lol Worlds"
+    'tournament add valorant VCT Americas #matches #results',
+    'tournament add lol Worlds #matches #results',
+    'tournament remove valorant VCT Americas',
+    'tournament remove lol Worlds'
   ],
-  async run({ ctx, id, t }) {
-    if(ctx.args[0].toString() === "add") {
+  async run({ ctx, id, t, client }) {
+    if(ctx.args[0].toString() === 'add') {
       const games = {
         valorant: async() => {
-          if(!ctx.db.guild) return
-          if(!ctx.guild) return
-          const guild = await prisma.guild.findUnique({
+          if(!ctx.db.guild || !ctx.guild) return
+
+          const guild = await client.prisma.guild.findUnique({
             where: {
               id: ctx.db.guild.id
             },
@@ -212,16 +210,25 @@ export default createCommand({
               events: true
             }
           }) ?? new SabineGuild(ctx.db.guild.id)
+
           if(
             (
-              guild.events.filter(e => e.type === "lol").length +
-              guild.events.filter(e => e.type === "valorant").length
+              guild.events.filter(e => e.type === 'lol').length +
+              guild.events.filter(e => e.type === 'valorant').length
             ) >=
             ctx.db.guild.tournaments_length
-          ) return ctx.reply("commands.tournament.limit_reached", { cmd: `</tournament remove valorant:${id}>` })
-          if(ctx.args[3].toString() === ctx.args[4].toString()) return ctx.reply("commands.tournament.channels_must_be_different")
-          if(ctx.guild.channels.get(ctx.args[3].toString())?.type !== 0 || ctx.guild.channels.get(ctx.args[4].toString())?.type !== 0) return ctx.reply("commands.tournament.invalid_channel")
-          await prisma.guild.upsert({
+          ) return ctx.reply('commands.tournament.limit_reached', { cmd: `</tournament remove valorant:${id}>` })
+
+          if(ctx.args[3].toString() === ctx.args[4].toString()) return ctx.reply('commands.tournament.channels_must_be_different')
+            
+          if(
+            ctx.guild.channels.get(ctx.args[3].toString())?.type !== 0 ||
+            ctx.guild.channels.get(ctx.args[4].toString())?.type !== 0
+          ) {
+            return ctx.reply('commands.tournament.invalid_channel')
+          }
+
+          await client.prisma.guild.upsert({
             where: {
               id: guild.id
             },
@@ -232,7 +239,7 @@ export default createCommand({
                     name: ctx.args[2].toString(),
                     channel1: ctx.args[3].toString(),
                     channel2: ctx.args[4].toString(),
-                    type: "valorant"
+                    type: 'valorant'
                   }
                 ]
               }
@@ -244,21 +251,23 @@ export default createCommand({
                     name: ctx.args[2].toString(),
                     channel1: ctx.args[3].toString(),
                     channel2: ctx.args[4].toString(),
-                    type: "valorant"
+                    type: 'valorant'
                   }
                 ]
               },
               id: ctx.db.guild.id
             }
           })
-          await ctx.reply("commands.tournament.tournament_added", {
+
+          await ctx.reply('commands.tournament.tournament_added', {
             t: ctx.args[2].toString()
           })
+
         },
         lol: async() => {
-          if(!ctx.db.guild) return
-          if(!ctx.guild) return
-          const guild = await prisma.guild.findUnique({
+          if(!ctx.db.guild || !ctx.guild) return
+
+          const guild = await client.prisma.guild.findUnique({
             where: {
               id: ctx.db.guild.id
             },
@@ -266,16 +275,21 @@ export default createCommand({
               events: true
             }
           }) ?? new SabineGuild(ctx.db.guild.id)
+
           if(
             (
-              guild.events.filter(e => e.type === "lol").length +
-              guild.events.filter(e => e.type === "valorant").length
+              guild.events.filter(e => e.type === 'lol').length +
+              guild.events.filter(e => e.type === 'valorant').length
             ) >=
             ctx.db.guild.tournaments_length
-          ) return ctx.reply("commands.tournament.limit_reached", { cmd: `</tournament remove lol:${id}>` })
-          if(ctx.args[3].toString() === ctx.args[4].toString()) return ctx.reply("commands.tournament.channels_must_be_different")
-          if(ctx.guild.channels.get(ctx.args[3].toString())?.type !== 0 || ctx.guild.channels.get(ctx.args[4].toString())?.type !== 0) return ctx.reply("commands.tournament.invalid_channel")
-          await prisma.guild.upsert({
+          ) return ctx.reply('commands.tournament.limit_reached', { cmd: `</tournament remove lol:${id}>` })
+          if(ctx.args[3].toString() === ctx.args[4].toString()) return ctx.reply('commands.tournament.channels_must_be_different')
+          if(
+            ctx.guild.channels.get(ctx.args[3].toString())?.type !== 0 ||
+            ctx.guild.channels.get(ctx.args[4].toString())?.type !== 0
+          ) return ctx.reply('commands.tournament.invalid_channel')
+
+          await client.prisma.guild.upsert({
             where: {
               id: guild.id
             },
@@ -286,7 +300,7 @@ export default createCommand({
                     name: ctx.args[2].toString(),
                     channel1: ctx.args[3].toString(),
                     channel2: ctx.args[4].toString(),
-                    type: "lol"
+                    type: 'lol'
                   }
                 ]
               }
@@ -299,203 +313,234 @@ export default createCommand({
                     name: ctx.args[2].toString(),
                     channel1: ctx.args[3].toString(),
                     channel2: ctx.args[4].toString(),
-                    type: "lol"
+                    type: 'lol'
                   }
                 ]
               }
             }
           })
-          await ctx.reply("commands.tournament.tournament_added", {
+
+          await ctx.reply('commands.tournament.tournament_added', {
             t: ctx.args[2].toString()
           })
         }
       }
-      await games[ctx.args[1].toString() as "valorant" | "lol"]()
+
+      await games[ctx.args[1].toString() as 'valorant' | 'lol']()
     }
     else {
       const games = {
         valorant: async() => {
           if(!ctx.db.guild) return
-          if(ctx.args[2].toString() === t("commands.tournament.remove_all")) {
-            const guild = await prisma.guild.findUnique({
+          
+          if(ctx.args[2].toString() === t('commands.tournament.remove_all')) {
+            const guild = await client.prisma.guild.findUnique({
               where: {
                 id: ctx.db.guild.id
               }
             })
+
             if(guild) {
-              await prisma.guild.update({
+              await client.prisma.guild.update({
                 where: {
                   id: ctx.db.guild.id
                 },
                 data: {
                   events: {
                     deleteMany: {
-                      type: "valorant"
+                      type: 'valorant'
                     }
                   }
                 }
               })
             }
-            return await ctx.reply("commands.tournament.tournament_removed")
+
+            return await ctx.reply('commands.tournament.tournament_removed')
           }
-          const guild = await prisma.guild.findUnique({
+
+          const guild = await client.prisma.guild.findUnique({
             where: {
               id: ctx.db.guild.id
             }
           })
+
           if(guild) {
-            await prisma.guild.update({
+            await client.prisma.guild.update({
               where: {
                 id: ctx.db.guild.id
               },
               data: {
                 events: {
                   deleteMany: {
-                    type: "valorant",
+                    type: 'valorant',
                     name: ctx.args[2].toString()
                   }
                 }
               }
             })
           }
-          await ctx.reply("commands.tournament.tournament_removed", {
+
+          await ctx.reply('commands.tournament.tournament_removed', {
             t: ctx.args[2].toString()
           })
         },
         lol: async() => {
           if(!ctx.db.guild) return
-          if(ctx.args[2].toString() === t("commands.tournament.remove_all")) {
-            const guild = await prisma.guild.findUnique({
+          if(ctx.args[2].toString() === t('commands.tournament.remove_all')) {
+            const guild = await client.prisma.guild.findUnique({
               where: {
                 id: ctx.db.guild.id
               }
             })
+
             if(guild) {
-              await prisma.guild.update({
+              await client.prisma.guild.update({
                 where: {
                   id: ctx.db.guild.id
                 },
                 data: {
                   events: {
                     deleteMany: {
-                      type: "lol"
+                      type: 'lol'
                     }
                   }
                 }
               })
             }
-            return await ctx.reply("commands.tournament.tournament_removed")
+
+            return await ctx.reply('commands.tournament.tournament_removed')
           }
-          const guild = await prisma.guild.findUnique({
+
+          const guild = await client.prisma.guild.findUnique({
             where: {
               id: ctx.db.guild.id
             }
           })
+
           if(guild) {
-            await prisma.guild.update({
+            await client.prisma.guild.update({
               where: {
                 id: ctx.db.guild.id
               },
               data: {
                 events: {
                   deleteMany: {
-                    type: "lol",
+                    type: 'lol',
                     name: ctx.args[2].toString()
                   }
                 }
               }
             })
           }
-          await ctx.reply("commands.tournament.tournament_removed", {
+          
+          await ctx.reply('commands.tournament.tournament_removed', {
             t: ctx.args[2].toString()
           })
         }
       }
-      await games[ctx.args[1].toString() as "valorant" | "lol"]()
+
+      await games[ctx.args[1].toString() as 'valorant' | 'lol']()
     }
   },
-  async createAutocompleteInteraction({ i, t, args }) {
-    if(!args) return
-    if(!i.guild) return
-    if(args[1] === "valorant") {
-      const res = await service.getEvents("valorant")
+  async createAutocompleteInteraction({ i, t, args, client }) {
+    if(!args || !i.guild) return
+
+    if(args[1] === 'valorant') {
+      const res = await service.getEvents('valorant')
+
       res.unshift({
-        name: "Valorant Game Changers"
+        name: 'Valorant Game Changers'
       })
+
       res.unshift({
-        name: "Valorant Challengers League"
+        name: 'Valorant Challengers League'
       })
+
       res.unshift({
-        name: "Valorant Champions Tour"
+        name: 'Valorant Champions Tour'
       })
-      const events = res.filter(e => e.status !== "completed")
+
+      const events = res.filter(e => e.status !== 'completed')
         .map(e => e.name)
         .filter(e => {
           if(e.toLowerCase().includes(i.data.options.getOptions()[0].value.toString().toLowerCase())) return e
         })
         .slice(0, 25)
+
       const actions = {
         add: async() => {
           await i.result(events.map(e => ({ name: e, value: e })))
         },
         remove: async() => {
-          const guild = await prisma.guild.findUnique({
+          const guild = await client.prisma.guild.findUnique({
             where: {
               id: i.guild!.id
             },
             include: {
               events: {
                 where: {
-                  type: "valorant"
+                  type: 'valorant'
                 }
               }
             }
           })
+
           if(!guild) return
+
           const events = guild.events.map(e => e.name)
             .filter(e => {
               if(e.toLowerCase().includes(i.data.options.getOptions()[0].value.toString().toLowerCase())) return e
             })
-          events.unshift(t("commands.tournament.remove_all"))
+
+          events.unshift(t('commands.tournament.remove_all'))
+
           await i.result(events.map(e => ({ name: e, value: e })))
         }
       }
-      await actions[args[0] as "add" | "remove"]()
+
+      await actions[args[0] as 'add' | 'remove']()
     }
     else {
-      const res = await service.getEvents("lol")
+      const res = await service.getEvents('lol')
+
       const events = res.map(e => e.name)
         .filter(e => {
           if(e.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e
         })
         .slice(0, 25)
+
       const actions = {
         add: async() => {
           await i.result(events.map(e => ({ name: e, value: e })))
         },
         remove: async() => {
-          const guild = await prisma.guild.findUnique({
+          const guild = await client.prisma.guild.findUnique({
             where: {
               id: i.guild!.id
             },
             include: {
               events: {
                 where: {
-                  type: "valorant"
+                  type: 'valorant'
                 }
               }
             }
           })
+
           if(!guild) return
-          const events = guild.events.filter(e => e.type === "lol").map(e => e.name)
+
+          const events = guild.events.filter(e => e.type === 'lol').map(e => e.name)
             .filter(e => {
               if(e.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e
             })
-          events.unshift(t("commands.tournament.remove_all"))
+
+          events.unshift(t('commands.tournament.remove_all'))
+
           await i.result(events.map(e => ({ name: e, value: e })))
         }
       }
-      await actions[args[0] as "add" | "remove"]()
+      
+      await actions[args[0] as 'add' | 'remove']()
     }
   }
 })

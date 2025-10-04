@@ -1,10 +1,10 @@
-import createComponentInteraction from "../../structures/interaction/createComponentInteraction.ts"
+import createComponentInteraction from '../../structures/interaction/createComponentInteraction.ts'
 
 export default createComponentInteraction({
-  name: "pickem",
+  name: 'pickem',
   flags: 64,
   global: true,
   async run({ ctx }) {
-    await ctx.reply("helper.pickem.res")
+    await ctx.reply('helper.pickem.res')
   }
 })

@@ -1,5 +1,5 @@
-import type { Args } from "../../locales/index.ts"
-import ModalSubmitInteractionContext from "./ModalSubmitInteractionContext.ts"
+import type { Args } from '../../locales/index.ts'
+import ModalSubmitInteractionContext from './ModalSubmitInteractionContext.ts'
 
 type CreateModalSubmitInteractionProps = {
   ctx: ModalSubmitInteractionContext

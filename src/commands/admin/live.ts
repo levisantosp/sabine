@@ -1,81 +1,81 @@
-import { ApplicationCommandOptionTypes } from "oceanic.js"
-import createCommand from "../../structures/command/createCommand.ts"
+import { ApplicationCommandOptionTypes } from 'oceanic.js'
+import createCommand from '../../structures/command/createCommand.ts'
 
 export default createCommand({
-  name: "live",
-  category: "admin",
-  description: "Manage lvie feed feature",
+  name: 'live',
+  category: 'admin',
+  description: 'Manage lvie feed feature',
   descriptionLocalizations: {
-    "pt-BR": "Gerencie a funcionalidade de transmissão ao vivo"
+    'pt-BR': 'Gerencie a funcionalidade de transmissão ao vivo'
   },
   options: [
     {
       type: 2,
-      name: "enable",
+      name: 'enable',
       nameLocalizations: {
-        "pt-BR": "habilitar"
+        'pt-BR': 'habilitar'
       },
-      description: "Enable live feed feature",
+      description: 'Enable live feed feature',
       descriptionLocalizations: {
-        "pt-BR": "Habilita a funcionalidade de transmissão aivo"
+        'pt-BR': 'Habilita a funcionalidade de transmissão aivo'
       },
       options: [
         {
           type: 1,
-          name: "valorant",
-          description: "Enable VALORANT live feed feature",
+          name: 'valorant',
+          description: 'Enable VALORANT live feed feature',
           descriptionLocalizations: {
-            "pt-BR": "Habilita a funcionalidade de transmissão ao vivo de VALORANT"
+            'pt-BR': 'Habilita a funcionalidade de transmissão ao vivo de VALORANT'
           },
           options: [
             {
               type: 7,
-              name: "channel",
+              name: 'channel',
               nameLocalizations: {
-                "pt-BR": "canal"
+                'pt-BR': 'canal'
               },
-              description: "Enter a channel",
+              description: 'Enter a channel',
               descriptionLocalizations: {
-                "pt-BR": "Informe o canal"
+                'pt-BR': 'Informe o canal'
               },
               required: true
             },
             {
               type: ApplicationCommandOptionTypes.BOOLEAN,
-              name: "spam",
-              description: "Select whether you want the bot to spam messages from live matches or not",
+              name: 'spam',
+              description: 'Select whether you want the bot to spam messages from live matches or not',
               descriptionLocalizations: {
-                "pt-BR": "Selecione se você deseja que bot envie mensagens de spam de partidas ao vivo ou não"
+                'pt-BR': 'Selecione se você deseja que bot envie mensagens de spam de partidas ao vivo ou não'
               }
             }
           ]
         },
         {
           type: 1,
-          name: "lol",
-          description: "Enable League of Legends live feed feature",
+          name: 'lol',
+          description: 'Enable League of Legends live feed feature',
           descriptionLocalizations: {
-            "pt-BR": "Habilita a funcionalidade de transmissão ao vivo de League of Legends"
+            'pt-BR': 'Habilita a funcionalidade de transmissão ao vivo de League of Legends'
           },
           options: [
             {
               type: 7,
-              name: "channel",
+              name: 'channel',
               nameLocalizations: {
-                "pt-BR": "canal"
+                'pt-BR': 'canal'
               },
-              description: "Enter a channel",
+              description: 'Enter a channel',
               descriptionLocalizations: {
-                "pt-BR": "Informe o canal"
+                'pt-BR': 'Informe o canal'
               },
               required: true
             },
             {
               type: ApplicationCommandOptionTypes.BOOLEAN,
-              name: "spam",
-              description: "Select whether you want the bot to spam messages from live matches or not",
+              name: 'spam',
+              description: 'Select whether you want the bot to spam messages from live matches or not',
               descriptionLocalizations: {
-                "pt-BR": "Selecione se você deseja que bot envie mensagens de spam de partidas ao vivo ou não"
+                'pt-BR': 'Selecione se você deseja que bot envie mensagens de spam de partidas ao vivo ou não'
               }
             }
           ]
@@ -84,29 +84,29 @@ export default createCommand({
     },
     {
       type: 2,
-      name: "disable",
+      name: 'disable',
       nameLocalizations: {
-        "pt-BR": "desabilitar"
+        'pt-BR': 'desabilitar'
       },
-      description: "Disable live feed feature",
+      description: 'Disable live feed feature',
       descriptionLocalizations: {
-        "pt-BR": "Desabilitar a funcionalidade de transmissão ao vivo"
+        'pt-BR': 'Desabilitar a funcionalidade de transmissão ao vivo'
       },
       options: [
         {
           type: 1,
-          name: "valorant",
-          description: "Disable VALORANT live feed feature",
+          name: 'valorant',
+          description: 'Disable VALORANT live feed feature',
           descriptionLocalizations: {
-            "pt-BR": "Desabilita a funcionalidade de transmissão ao vivo de VALORANT"
+            'pt-BR': 'Desabilita a funcionalidade de transmissão ao vivo de VALORANT'
           }
         },
         {
           type: 1,
-          name: "lol",
-          description: "Disable League of Legends live feed feature",
+          name: 'lol',
+          description: 'Disable League of Legends live feed feature',
           descriptionLocalizations: {
-            "pt-BR": "Desabilita a funcionalidade de transmissão ao vivo de League of Legends"
+            'pt-BR': 'Desabilita a funcionalidade de transmissão ao vivo de League of Legends'
           }
         }
       ]
@@ -114,50 +114,72 @@ export default createCommand({
   ],
   async run({ ctx }) {
     if(!ctx.db.guild) return
-    if(ctx.args[0] === "enable") {
+
+    if(ctx.args[0] === 'enable') {
       const games = {
         valorant: async() => {
           if(!ctx.guild || !ctx.db.guild) return
+
           const channel = ctx.guild.channels.get(ctx.args[2].toString())!
-          if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
-          if(typeof ctx.args[3] === "boolean") {
+
+          if(![0, 5].some(t => t === channel.type)) return await ctx.reply('commands.live.invalid_channel')
+
+          if(typeof ctx.args[3] === 'boolean') {
             ctx.db.guild.spam_live_messages = ctx.args[3]
           }
+
           ctx.db.guild.valorant_live_feed_channel = channel.id
+
           await ctx.db.guild.save()
-          await ctx.reply("commands.live.live_enabled", { ch: channel.mention })
+
+          await ctx.reply('commands.live.live_enabled', { ch: channel.mention })
         },
         lol: async() => {
           if(!ctx.guild || !ctx.db.guild) return
+
           const channel = ctx.guild.channels.get(ctx.args[2].toString())!
-          if(![0, 5].some(t => t === channel.type)) return await ctx.reply("commands.live.invalid_channel")
+
+          if(![0, 5].some(t => t === channel.type)) return await ctx.reply('commands.live.invalid_channel')
+
           if(ctx.args[3] === true) {
             ctx.db.guild.spam_live_messages = ctx.args[3]
           }
+
           else ctx.db.guild.spam_live_messages = false
+
           ctx.db.guild.lol_live_feed_channel = channel.id
+
           await ctx.db.guild.save()
-          await ctx.reply("commands.live.live_enabled", { ch: channel.mention })
+
+          await ctx.reply('commands.live.live_enabled', { ch: channel.mention })
         }
       }
-      await games[ctx.args[1] as "valorant" | "lol"]()
+
+      await games[ctx.args[1] as 'valorant' | 'lol']()
     }
     else {
       const games = {
         valorant: async() => {
           if(!ctx.db.guild) return
+
           ctx.db.guild.valorant_live_feed_channel = null
+
           await ctx.db.guild.save()
-          await ctx.reply("commands.live.live_disabled")
+
+          await ctx.reply('commands.live.live_disabled')
         },
         lol: async() => {
           if(!ctx.db.guild) return
+
           ctx.db.guild.lol_live_feed_channel = null
+          
           await ctx.db.guild.save()
-          await ctx.reply("commands.live.live_disabled")
+
+          await ctx.reply('commands.live.live_disabled')
         }
       }
-      await games[ctx.args[1] as "valorant" | "lol"]()
+      
+      await games[ctx.args[1] as 'valorant' | 'lol']()
     }
   }
 })

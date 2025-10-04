@@ -1,104 +1,117 @@
-import translate from "@iamtraction/google-translate"
-import createCommand from "../../structures/command/createCommand.ts"
-import EmbedBuilder from "../../structures/builders/EmbedBuilder.ts"
-import ButtonBuilder from "../../structures/builders/ButtonBuilder.ts"
-import { resolve } from "node:path"
-import { readFileSync } from "node:fs"
+import translate from '@iamtraction/google-translate'
+import createCommand from '../../structures/command/createCommand.ts'
+import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
+import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
+import path from 'node:path'
+import fs from 'node:fs'
+
+const raw: {
+  [key: string]: any
+} = {
+  pt: JSON.parse(fs.readFileSync(path.resolve('src/locales/pt.json'), 'utf-8')),
+  en: JSON.parse(fs.readFileSync(path.resolve('src/locales/en.json'), 'utf-8'))
+}
 
 export default createCommand({
-  name: "help",
-  category: "misc",
+  name: 'help',
+  category: 'misc',
   nameLocalizations: {
-    "pt-BR": "ajuda"
+    'pt-BR': 'ajuda'
   },
-  description: "List of commands",
+  description: 'List of commands',
   descriptionLocalizations: {
-    "pt-BR": "Lista de comandos"
+    'pt-BR': 'Lista de comandos'
   },
   options: [
     {
       type: 3,
-      name: "command",
+      name: 'command',
       nameLocalizations: {
-        "pt-BR": "comando"
+        'pt-BR': 'comando'
       },
-      description: "Select the command",
+      description: 'Select the command',
       descriptionLocalizations: {
-        "pt-BR": "Selecione o comando"
+        'pt-BR': 'Selecione o comando'
       },
       autocomplete: true
     }
   ],
-  syntax: "help <command>",
+  syntax: 'help <command>',
   examples: [
-    "help",
-    "help ping",
-    "help team",
-    "help player"
+    'help',
+    'help ping',
+    'help team',
+    'help player'
   ],
   userInstall: true,
   async run({ ctx, client, t }) {
     if(ctx.args[0]?.toString()) {
       const cmd = client.commands.get(ctx.args[0].toString())
+
       if(!cmd || cmd.onlyDev) {
-        return await ctx.reply("commands.help.command_not_found")
+        return await ctx.reply('commands.help.command_not_found')
       }
-      const path = resolve(`src/locales/${ctx.locale}.json`)
-      const raw = readFileSync(path, "utf-8")
-      const { permissions } = JSON.parse(raw)
+
+      const { permissions } = raw[ctx.locale]
+
       const embed = new EmbedBuilder()
-      .setTitle(ctx.args[0].toString())
-      .setDesc((await translate(cmd.description, {
-        to: ctx.db.guild!.lang
-      })).text)
-      .addField(t("commands.help.name"), `\`${cmd.name}\``)
-      .setFooter({ text: t("commands.help.footer") })
-      .setThumb(client.user.avatarURL())
-      if(cmd.syntax) embed.addField(t("commands.help.syntax"), `\`/${cmd.syntax}\``)
-      if(cmd.syntaxes) embed.addField(t("commands.help.syntax"), cmd.syntaxes.map(syntax => `\`/${syntax}\``).join("\n"))
-      if(cmd.examples) embed.addField(t("commands.help.examples"), cmd.examples.map(ex => `\`/${ex}\``).join("\n"))
-      if(cmd.permissions) embed.addField(t("commands.help.permissions"), cmd.permissions.map(perm => `\`${permissions[perm]}\``).join(", "), true)
-      if(cmd.botPermissions) embed.addField(t("commands.help.bot_permissions"), cmd.botPermissions.map(perm => `\`${permissions[perm]}\``).join(", "), true)
-      await ctx.reply(embed.build())
+        .setTitle(ctx.args[0].toString())
+        .setDesc((await translate(cmd.description, {
+          to: ctx.db.guild!.lang
+        })).text)
+        .addField(t('commands.help.name'), `\`${cmd.name}\``)
+        .setFooter({ text: t('commands.help.footer') })
+        .setThumb(client.user.avatarURL())
+
+      if(cmd.syntax) embed.addField(t('commands.help.syntax'), `\`/${cmd.syntax}\``)
+      if(cmd.syntaxes) embed.addField(t('commands.help.syntax'), cmd.syntaxes.map(syntax => `\`/${syntax}\``).join('\n'))
+      if(cmd.examples) embed.addField(t('commands.help.examples'), cmd.examples.map(ex => `\`/${ex}\``).join('\n'))
+      if(cmd.permissions) embed.addField(t('commands.help.permissions'), cmd.permissions.map(perm => `\`${permissions[perm]}\``).join(', '), true)
+      if(cmd.botPermissions) embed.addField(t('commands.help.bot_permissions'), cmd.botPermissions.map(perm => `\`${permissions[perm]}\``).join(', '), true)
+
+      return await ctx.reply(embed.build())
     }
-    else {
-      const embed = new EmbedBuilder()
+    
+    const embed = new EmbedBuilder()
       .setThumb(client.user.avatarURL())
       .setFields(
         {
-          name: t("commands.help.support.title"),
-          value: t("commands.help.support.desc")
+          name: t('commands.help.support.title'),
+          value: t('commands.help.support.desc')
         },
         {
-          name: t("commands.help.get.title"),
-          value: t("commands.help.get.desc")
+          name: t('commands.help.get.title'),
+          value: t('commands.help.get.desc')
         }
       )
-      const button = new ButtonBuilder()
-      .setLabel(t("commands.help.community"))
-      .setStyle("link")
-      .setURL("https://discord.gg/g5nmc376yh")
-      const privacyButton = new ButtonBuilder()
-      .setLabel(t("commands.help.privacy"))
-      .setStyle("link")
-      .setURL("https://sabinebot.xyz/privacy")
-      await ctx.reply(embed.build(
-        {
-          components: [
-            {
-              type: 1,
-              components: [button, privacyButton]
-            }
-          ]
-        }
-      ))
-    }
+
+    const button = new ButtonBuilder()
+      .setLabel(t('commands.help.community'))
+      .setStyle('link')
+      .setURL('https://discord.gg/g5nmc376yh')
+
+    const terms = new ButtonBuilder()
+      .setLabel(t('commands.help.privacy'))
+      .setStyle('link')
+      .setURL('https://sabinebot.xyz/terms')
+
+    await ctx.reply(embed.build(
+      {
+        components: [
+          {
+            type: 1,
+            components: [button, terms]
+          }
+        ]
+      }
+    ))
   },
   async createAutocompleteInteraction({ i, client }) {
     const commands = Array.from(client.commands).filter(c => {
       if(c[0].includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return c
     })
       .slice(0, 25)
+
     await i.result(commands.map(cmd => ({ name: cmd[0], value: cmd[0] })))
   }
 })
