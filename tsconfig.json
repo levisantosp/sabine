@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "ES2023",
     "module": "nodenext",
-    "outDir": "./dist",
     "lib": ["ES2023", "DOM"],
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -10,7 +9,8 @@
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "rewriteRelativeImportExtensions": true
+    "rewriteRelativeImportExtensions": true,
+    "noEmit": true
   },
   "include": [
     "src/**/*.json",
