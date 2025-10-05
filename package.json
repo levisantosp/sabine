@@ -28,7 +28,7 @@
     "humanize-duration": "^3.33.1",
     "moment": "^2.30.1",
     "oceanic.js": "^1.12.0",
-    "players": "github:levisantosp/sabine-players#348f89278f141ce40b48deb5bcee12a8a0034da7",
+    "players": "github:levisantosp/sabine-players",
     "redis": "^5.8.3"
   },
   "devDependencies": {
