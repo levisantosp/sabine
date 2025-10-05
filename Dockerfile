@@ -1,14 +1,12 @@
-FROM node:lts-alpine
-
-RUN npm i -g pnpm
+FROM oven/bun:1-alpine
 
 WORKDIR /app
 
-COPY package*.json /app
+COPY package*.json bun.lock ./
 COPY . .
 
-RUN pnpm i
-RUN pnpm build
-RUN pnpm push
+RUN bun i --frozen-lockfile
+RUN bun compile
+RUN bun push
 
-CMD ["pnpm", "start"]
+CMD ["bun", "start"]
