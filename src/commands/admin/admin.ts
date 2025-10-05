@@ -339,7 +339,12 @@ export default createCommand({
         catch{ }
       }
       try {
-        for(const d of data) {
+        for(
+          const d of data.map(body => ({
+            ...body,
+            when: new Date(body.when)
+          }))
+        ) {
           if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
           
           for(const e of guild.events) {
@@ -358,7 +363,7 @@ export default createCommand({
 								  iconURL: d.tournament.image,
 								  name: d.tournament.name
 								})
-								.setField(`${emoji1} **${d.teams[0].name}** <:versus:1349105624180330516> **${d.teams[1].name}** ${emoji2}`, `<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
+								.setField(`${emoji1} **${d.teams[0].name}** <:versus:1349105624180330516> **${d.teams[1].name}** ${emoji2}`, `<t:${d.when.getTime() / 1000}:F> | <t:${d.when.getTime() / 1000}:R>`)
 								.setFooter({
 								  text: d.stage
 								})
@@ -488,7 +493,12 @@ export default createCommand({
         catch{ }
       }
       try {
-        for(const d of data) {
+        for(
+          const d of data.map(body => ({
+            ...body,
+            when: new Date(body.when)
+          }))
+        ) {
           if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
 
           for(const e of guild.events) {
@@ -507,7 +517,7 @@ export default createCommand({
 								  iconURL: d.tournament.image,
 								  name: d.tournament.full_name!
 								})
-								.setField(`${emoji1} **${d.teams[0].name}** <:versus:1349105624180330516> **${d.teams[1].name}** ${emoji2}`, `<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`)
+								.setField(`${emoji1} **${d.teams[0].name}** <:versus:1349105624180330516> **${d.teams[1].name}** ${emoji2}`, `<t:${d.when.getTime() / 1000}:F> | <t:${d.when.getTime() / 1000}:R>`)
 								.setFooter({
 								  text: d.stage
 								})

@@ -22,6 +22,10 @@ export default async function(
         Type.Object(
           {
             id: Type.String(),
+            status: Type.String(),
+            stage: Type.String(),
+            when: Type.String(),
+            url: Type.String(),
             teams: Type.Array(
               Type.Object(
                 {
@@ -32,15 +36,12 @@ export default async function(
                 }
               )
             ),
-            status: Type.String(),
             tournament: Type.Object(
               {
                 name: Type.String(),
                 image: Type.String()
               }
             ),
-            stage: Type.String(),
-            when: Type.Number()
           }
         )
       )
@@ -79,10 +80,20 @@ export default async function(
       let data: ResultsData[]
 
       if(guild.events.length > 5 && !guild.key) {
-        data = req.body.filter(d => guild.events.reverse().slice(0, 5).some(e => e.name === d.tournament.name))
+        data = req.body
+          .map(body => ({
+            ...body,
+            when: new Date(body.when)
+          }))
+          .filter(d => guild.events.reverse().slice(0, 5).some(e => e.name === d.tournament.name))
       }
 
-      else data = req.body.filter(d => guild.events.some(e => e.name === d.tournament.name))
+      else data = req.body
+        .map(body => ({
+          ...body,
+          when: new Date(body.when)
+        }))
+        .filter(d => guild.events.some(e => e.name === d.tournament.name))
 
       if(!data || !data[0]) continue
 
@@ -102,7 +113,7 @@ export default async function(
               })
               .setField(
                 `${emoji1} ${d.teams[0].name} \`${d.teams[0].score}\` <:versus:1349105624180330516> \`${d.teams[1].score}\` ${d.teams[1].name} ${emoji2}`,
-                `<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`,
+                `<t:${d.when.getTime() / 1000}:F> | <t:${d.when.getTime() / 1000}:R>`,
                 true
               )
               .setFooter({ text: d.stage })
@@ -130,42 +141,58 @@ export default async function(
       }
     }
     if(!preds.length) return
+
     for(const data of req.body) {
       for(const pred of preds) {
         if(data.id !== pred.match) continue
+
         const user = await SabineUser.fetch(pred.userId)
+
         if(!user) continue
+
         if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
           await user.addCorrectPrediction('valorant', data.id)
+
           if(pred.bet) {
             const winnerIndex = data.teams.findIndex(t => t.winner)
+
             if(pred.teams[winnerIndex].winner) {
               let oddA = 0
               let oddB = 0
+
               for(const p of preds) {
                 if(p.teams[0].winner && p.bet) {
                   oddA += 1
                 }
+
                 else if(p.teams[1].winner && p.bet) {
                   oddB += 1
                 }
               }
+
               let odd: number
+
               if(pred.teams[0].winner) {
                 odd = calcOdd(oddA)
               }
+
               else {
                 odd = calcOdd(oddB)
               }
+
               let bonus = 0
+
               if(user.premium) {
                 bonus = Number(pred.bet) / 2
               }
+
               user.coins += BigInt(Number(pred.bet) * odd) + BigInt(bonus)
               user.fates += 10
+
               pred.odd = odd
+
               await Promise.all([
-                await prisma.prediction.update({
+                prisma.prediction.update({
                   where: {
                     id: pred.id
                   },

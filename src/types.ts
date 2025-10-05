@@ -23,7 +23,7 @@ export type MatchesData = {
   status?: string
   tournament: MatchTournament
   stage: string
-  when: number
+  when: string
   url?: string
 }
 
@@ -85,7 +85,7 @@ export type ResultsData = {
   status?: string
   tournament: MatchTournament
   stage: string
-  when: any
+  when: Date
   url?: string
 }
 

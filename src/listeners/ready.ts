@@ -107,7 +107,12 @@ const sendValorantMatches = async(client: App) => {
       catch{ }
     }
     try {
-      for(const d of data) {
+      for(
+        const d of data.map(body => ({
+          ...body,
+          when: new Date(body.when)
+        }))
+      ) {
         if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
 
         for(const e of guild.events) {
@@ -126,7 +131,7 @@ const sendValorantMatches = async(client: App) => {
                 iconURL: d.tournament.image,
                 name: d.tournament.name
               })
-              .setField(`${emoji1} ${d.teams[0].name} <:versus:1349105624180330516> ${d.teams[1].name} ${emoji2}`, `<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`, true)
+              .setField(`${emoji1} ${d.teams[0].name} <:versus:1349105624180330516> ${d.teams[1].name} ${emoji2}`, `<t:${d.when.getTime() / 1000}:F> | <t:${d.when.getTime() / 1000}:R>`, true)
               .setFooter({
                 text: d.stage
               })
@@ -194,7 +199,7 @@ const sendValorantMatches = async(client: App) => {
                 iconURL: d.tournament.image,
                 name: d.tournament.name
               })
-              .setField(`${emoji1} ${d.teams[0].name} <:versus:1349105624180330516> ${d.teams[1].name} ${emoji2}`, `<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`, true)
+              .setField(`${emoji1} ${d.teams[0].name} <:versus:1349105624180330516> ${d.teams[1].name} ${emoji2}`, `<t:${d.when.getTime() / 1000}:F> | <t:${d.when.getTime() / 1000}:R>`, true)
               .setFooter({
                 text: d.stage
               })
@@ -283,7 +288,12 @@ const sendValorantTBDMatches = async(client: App) => {
     if(!guild.tbd_matches.length) continue
 
     for(const match of guild.tbd_matches) {
-      const data = res.find(d => d.id === match.id)
+      const data = res
+        .map(body => ({
+          ...body,
+          when: new Date(body.when)
+        }))
+        .find(d => d.id === match.id)
 
       if(!data) continue
 
@@ -298,7 +308,7 @@ const sendValorantTBDMatches = async(client: App) => {
             name: data.tournament.name,
             iconURL: data.tournament.image
           })
-          .setField(`${emoji1} ${data.teams[0].name} <:versus:1349105624180330516> ${data.teams[1].name} ${emoji2}`, `<t:${data.when / 1000}:F> | <t:${data.when / 1000}:R>`, true)
+          .setField(`${emoji1} ${data.teams[0].name} <:versus:1349105624180330516> ${data.teams[1].name} ${emoji2}`, `<t:${data.when.getTime() / 1000}:F> | <t:${data.when.getTime() / 1000}:R>`, true)
           .setFooter({ text: data.stage })
 
         channel.createMessage({
@@ -396,7 +406,12 @@ const sendLolMatches = async(client: App) => {
       catch{}
     }
     try {
-      for(const d of data) {
+      for(
+        const d of data.map(body => ({
+          ...body,
+          when: new Date(body.when)
+        }))
+      ) {
         if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
 
         for(const e of guild.events) {
@@ -415,7 +430,7 @@ const sendLolMatches = async(client: App) => {
                 iconURL: d.tournament.image,
                 name: d.tournament.full_name!
               })
-              .setField(`${emoji1} ${d.teams[0].name} <:versus:1349105624180330516> ${d.teams[1].name} ${emoji2}`, `<t:${d.when / 1000}:F> | <t:${d.when / 1000}:R>`, true)
+              .setField(`${emoji1} ${d.teams[0].name} <:versus:1349105624180330516> ${d.teams[1].name} ${emoji2}`, `<t:${d.when.getTime() / 1000}:F> | <t:${d.when.getTime() / 1000}:R>`, true)
               .setFooter({
                 text: d.stage
               })
@@ -499,7 +514,12 @@ const sendLolTBDMatches = async(client: App) => {
     if(!guild.tbd_matches.length) continue
 
     for(const match of guild.tbd_matches) {
-      const data = res.find(d => d.id === match.id)
+      const data = res
+        .map(d => ({
+          ...d,
+          when: new Date(d.when)
+        }))
+        .find(d => d.id === match.id)
 
       if(!data) continue
 
@@ -514,7 +534,7 @@ const sendLolTBDMatches = async(client: App) => {
             name: data.tournament.full_name!,
             iconURL: data.tournament.image
           })
-          .setField(`${emoji1} ${data.teams[0].name} <:versus:1349105624180330516> ${data.teams[1].name} ${emoji2}`, `<t:${data.when / 1000}:F> | <t:${data.when / 1000}:R>`, true)
+          .setField(`${emoji1} ${data.teams[0].name} <:versus:1349105624180330516> ${data.teams[1].name} ${emoji2}`, `<t:${data.when.getTime() / 1000}:F> | <t:${data.when.getTime() / 1000}:R>`, true)
           .setFooter({ text: data.stage })
 
         channel.createMessage({
