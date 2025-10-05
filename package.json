@@ -5,9 +5,9 @@
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
-    "test": "bun --env-file=.env test.ts",
-    "start": "bun --env-file=.env .",
-    "dev": "bun --watch --env-file=.env .",
+    "test": "bun test.ts",
+    "start": "bun .",
+    "dev": "bun --watch .",
     "compile": "bun lint && rm -rf dist && bun tsc",
     "push": "bun prisma db push",
     "pull": "bun prisma db pull",
