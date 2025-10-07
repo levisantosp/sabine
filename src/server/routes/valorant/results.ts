@@ -10,6 +10,7 @@ import type { ResultsData } from '../../../types.ts'
 import type { IncomingMessage, ServerResponse } from 'http'
 import { PrismaClient } from '@prisma/client'
 import { SabineUser } from '../../../database/index.ts'
+import * as Oceanic from 'oceanic.js'
 
 const prisma = new PrismaClient()
 const tournaments: {[key: string]: RegExp[]} = {
@@ -89,112 +90,64 @@ export default async function(
 
     if(!guilds.length) return
 
-    for(const guild of guilds) {
-      let data: ResultsData[]
-
-      if(guild.events.length > 5 && !guild.key) {
-        if(guild.events.slice().reverse().slice(0, 5).some(e => Object.keys(tournaments).includes(e.name))) {
-          data = req.body
-            .map(body => ({
-              ...body,
-              when: new Date(body.when)
-            }))
-            .filter(body =>
-              guild.events.some(e => {
-                const tour = tournaments[e.name]
-
-                if(!tour) return false
-
-                return tour.some(regex =>
-                  regex.test(body.tournament.name.trim().replace(/\s+/g, ' ').toLowerCase())
-                )
-              })
-            )
-        }
-
-        else {
-          if(guild.events.some(e => Object.keys(tournaments).includes(e.name))) {
-            data = req.body
-              .map(body => ({
-                ...body,
-                when: new Date(body.when)
-              }))
-              .filter(body =>
-                guild.events.some(e => {
-                  const tour = tournaments[e.name]
-
-                  if(!tour) return false
-
-                  return tour.some(regex =>
-                    regex.test(body.tournament.name.trim().replace(/\s+/g, ' ').toLowerCase())
-                  )
-                })
-              )
-          }
-
-          else {
-            data = req.body
-              .map(body => ({
-                ...body,
-                when: new Date(body.when)
-              }))
-              .filter(body => guild.events.reverse().slice(0, 5).some(e => e.name === body.tournament.name))
-          }
-        }
-      }
-
-      else data = req.body
+    for(
+      const data of req.body
         .map(body => ({
           ...body,
           when: new Date(body.when)
         }))
-        .filter(d => guild.events.some(e => e.name === d.tournament.name))
+    ) {
+      for(const guild of guilds) {
+        const channel = client.getChannel(guild.events.filter(e =>
+          Object.keys(tournaments).includes(e.name))[0].channel2
+        )
 
-      if(!data || !data[0]) continue
+        if(!channel || channel.type !== Oceanic.ChannelTypes.GUILD_TEXT) continue
 
-      data.reverse()
+        if(
+          !guild.events.some(e => e.name === data.tournament.name) &&
+          !guild.events.some(e =>
+            tournaments[e.name]?.some(regex =>
+              regex.test(data.tournament.name.replace(/\s+/g, ' ').trim().toLowerCase())
+            )
+          )
+        ) continue
 
-      for(const d of data) {
-        for(const e of guild.events) {
-          if(e.name === d.tournament.name) {
-            const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
+        const emoji1 = emojis.find(e => e?.name === data.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
+        const emoji2 = emojis.find(e => e?.name === data.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
 
-            const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
-            
-            const embed = new EmbedBuilder()
-              .setAuthor({
-                name: d.tournament.name,
-                iconURL: d.tournament.image
-              })
-              .setField(
-                `${emoji1} ${d.teams[0].name} \`${d.teams[0].score}\` <:versus:1349105624180330516> \`${d.teams[1].score}\` ${d.teams[1].name} ${emoji2}`,
-                `<t:${d.when.getTime() / 1000}:F> | <t:${d.when.getTime() / 1000}:R>`,
-                true
-              )
-              .setFooter({ text: d.stage })
-              
-            client.rest.channels.createMessage(e.channel2, embed.build({
+        const embed = new EmbedBuilder()
+          .setAuthor({
+            name: data.tournament.name,
+            iconURL: data.tournament.image
+          })
+          .setField(
+            `${emoji1} ${data.teams[0].name} \`${data.teams[0].score}\` <:versus:1349105624180330516> \`${data.teams[1].score}\` ${data.teams[1].name} ${emoji2}`,
+            `<t:${data.when.getTime() / 1000}:F> | <t:${data.when.getTime() / 1000}:R>`,
+            true
+          )
+          .setFooter({ text: data.stage })
+        
+        channel.createMessage(embed.build({
+          components: [
+            {
+              type: 1,
               components: [
-                {
-                  type: 1,
-                  components: [
-                    new ButtonBuilder()
-                      .setLabel(locales(guild.lang ?? 'en', 'helper.stats'))
-                      .setStyle('link')
-                      .setURL(`https://vlr.gg/${d.id}`),
-                    new ButtonBuilder()
-                      .setLabel(locales(guild.lang ?? 'en', 'helper.pickem.label'))
-                      .setStyle('blue')
-                      .setCustomId('pickem')
-                  ]
-                }
+                new ButtonBuilder()
+                  .setLabel(locales(guild.lang, 'helper.stats'))
+                  .setStyle('link')
+                  .setURL(`https://vlr.gg/${data.id}`),
+                new ButtonBuilder()
+                  .setLabel(locales(guild.lang ?? 'en', 'helper.pickem.label'))
+                  .setStyle('blue')
+                  .setCustomId('pickem')
               ]
-            }))
-            .catch(() => {})
-          }
-        }
+            }
+          ]
+        }))
       }
     }
+
     if(!preds.length) return
 
     for(const data of req.body) {
