@@ -12,6 +12,19 @@ import { PrismaClient } from '@prisma/client'
 import { SabineUser } from '../../../database/index.ts'
 
 const prisma = new PrismaClient()
+const tournaments: {[key: string]: RegExp[]} = {
+  'Valorant Champions Tour': [
+    /valorant champions/,
+    /valorant masters/,
+    /vct \d{4}/
+  ],
+  'Valorant Challengers League': [
+    /challengers \d{4}/
+  ],
+  'Valorant Game Changers': [
+    /game changers \d{4}/
+  ]
+}
 
 export default async function(
   fastify: FastifyInstance<RawServerDefault, IncomingMessage, ServerResponse<IncomingMessage>, FastifyBaseLogger, TypeBoxTypeProvider>
@@ -80,12 +93,54 @@ export default async function(
       let data: ResultsData[]
 
       if(guild.events.length > 5 && !guild.key) {
-        data = req.body
-          .map(body => ({
-            ...body,
-            when: new Date(body.when)
-          }))
-          .filter(d => guild.events.reverse().slice(0, 5).some(e => e.name === d.tournament.name))
+        if(guild.events.slice().reverse().slice(0, 5).some(e => Object.keys(tournaments).includes(e.name))) {
+          data = req.body
+            .map(body => ({
+              ...body,
+              when: new Date(body.when)
+            }))
+            .filter(body =>
+              guild.events.some(e => {
+                const tour = tournaments[e.name]
+
+                if(!tour) return false
+
+                return tour.some(regex =>
+                  regex.test(body.tournament.name.trim().replace(/\s+/g, ' ').toLowerCase())
+                )
+              })
+            )
+        }
+
+        else {
+          if(guild.events.some(e => Object.keys(tournaments).includes(e.name))) {
+            data = req.body
+              .map(body => ({
+                ...body,
+                when: new Date(body.when)
+              }))
+              .filter(body =>
+                guild.events.some(e => {
+                  const tour = tournaments[e.name]
+
+                  if (!tour) return false
+
+                  return tour.some(regex =>
+                    regex.test(body.tournament.name.trim().replace(/\s+/g, ' ').toLowerCase())
+                  )
+                })
+              )
+          }
+
+          else {
+            data = req.body
+              .map(body => ({
+                ...body,
+                when: new Date(body.when)
+              }))
+              .filter(body => guild.events.reverse().slice(0, 5).some(e => e.name === body.tournament.name))
+          }
+        }
       }
 
       else data = req.body
