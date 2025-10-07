@@ -123,7 +123,7 @@ export default async function(
                 guild.events.some(e => {
                   const tour = tournaments[e.name]
 
-                  if (!tour) return false
+                  if(!tour) return false
 
                   return tour.some(regex =>
                     regex.test(body.tournament.name.trim().replace(/\s+/g, ' ').toLowerCase())
