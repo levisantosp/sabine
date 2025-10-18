@@ -62,7 +62,11 @@ const sendValorantMatches = async(client: App) => {
     let data: MatchesData[]
 
     if(guild.events.length > 5 && !guild.key) {
-      if(guild.events.slice().reverse().slice(0, 5).some(e => Object.keys(tournaments).includes(e.name))) {
+      if(!guild.events.slice().reverse().slice(0, 5).some(e => Object.keys(tournaments).includes(e.name))) {
+        data = res.filter(d => guild.events.slice().reverse().slice(0, 5).some(e => e.name === d.tournament.name))
+      }
+
+      else {
         data = res.filter(d =>
           guild.events.some(e => {
             const tour = tournaments[e.name]
@@ -73,11 +77,13 @@ const sendValorantMatches = async(client: App) => {
           })
         )
       }
-
-      else data = res.filter(d => guild.events.slice().reverse().slice(0, 5).some(e => e.name === d.tournament.name))
     }
     else {
-      if(guild.events.some(e => Object.keys(tournaments).includes(e.name))) {
+      if(!guild.events.some(e => Object.keys(tournaments).includes(e.name))) {
+        data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
+      }
+
+      else {
         data = res.filter(d =>
           guild.events.some(e => {
             const tour = tournaments[e.name]
@@ -88,9 +94,8 @@ const sendValorantMatches = async(client: App) => {
           })
         )
       }
-
-      else data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
     }
+    
     if(!data.length) continue
 
     for(const e of guild.events) {
