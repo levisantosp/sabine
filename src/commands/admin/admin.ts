@@ -542,12 +542,7 @@ export default createCommand({
           }))
         ) {
           if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
-
-          // if(
-          //   !guild.events.some(e => e.name === d.tournament.name) &&
-          //   !guild.events.some(e =>)
-          // )
-
+          
           for(const e of guild.events) {
             if(e.name === d.tournament.name) {
               const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
@@ -565,9 +560,9 @@ export default createCommand({
 								  name: d.tournament.full_name!
 								})
 								.setField(`${emoji1} **${d.teams[0].name}** <:versus:1349105624180330516> **${d.teams[1].name}** ${emoji2}`, `<t:${d.when.getTime() / 1000}:F> | <t:${d.when.getTime() / 1000}:R>`)
-  								.setFooter({
+  							.setFooter({
 								  text: d.stage
-								})
+  							})
 
 							const button = new ButtonBuilder()
 								.setLabel(t('helper.palpitate'))
