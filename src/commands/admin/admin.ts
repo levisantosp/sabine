@@ -8,6 +8,21 @@ import { emojis } from '../../util/emojis.ts'
 
 const service = new Service(process.env.AUTH)
 
+const tournaments: {[key: string]: RegExp[]} = {
+  'Valorant Champions Tour': [
+    /valorant champions/,
+    /valorant masters/,
+    /vct \d{4}/
+  ],
+  'Valorant Challengers League': [
+    /challengers \d{4}/,
+    /vct \d{4}: ascension/
+  ],
+  'Valorant Game Changers': [
+    /game changers \d{4}/
+  ]
+}
+
 export default createCommand({
   name: 'admin',
   category: 'admin',
@@ -79,7 +94,7 @@ export default createCommand({
     'admin language pt-BR',
     'admin language en-US'
   ],
-  messageComponentInteractionTime: 5 * 60 * 1000,
+  // messageComponentInteractionTime: 5 * 60 * 1000,
   async run({ ctx, t, id, client }) {
     if(!ctx.db.guild) return
 
@@ -307,7 +322,7 @@ export default createCommand({
 
       guild.valorant_matches = []
       guild.tbd_matches = []
-      guild.valorant_resend_time = new Date(Date.now() + 3600000)
+      // guild.valorant_resend_time = new Date(Date.now() + 3600000)
 
       await ctx.edit('commands.admin.resending')
 
@@ -321,10 +336,31 @@ export default createCommand({
       let data: MatchesData[]
 
       if(guild.events.length > 5 && !guild.key) {
-        data = res.filter(d => guild.events.reverse().slice(0, 5).some(e => e.name === d.tournament.name))
+        if(guild.events.slice().reverse().slice(0, 5).some(e => Object.keys(tournaments).includes(e.name))) {
+          data = res.filter(d =>
+            guild.events.some(e =>
+              tournaments[e.name]?.some(regex =>
+                regex.test(d.tournament.name.trim().replace(/\s+/g, ' ').toLowerCase())
+              )
+            )
+          )
+        }
+        else data = res.filter(d => guild.events.reverse().slice(0, 5).some(e => e.name === d.tournament.name))
       }
 
-      else data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
+      else {
+        if(guild.events.slice().reverse().slice(0, 5).some(e => Object.keys(tournaments).includes(e.name))) {
+          data = res.filter(d =>
+            guild.events.some(e =>
+              tournaments[e.name]?.some(regex =>
+                regex.test(d.tournament.name.trim().replace(/\s+/g, ' ').toLowerCase())
+              )
+            )
+          )
+        }
+        else data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
+      }
+
       for(const e of guild.events) {
         if(!ctx.client.getChannel(e.channel1)) continue
 
@@ -348,7 +384,12 @@ export default createCommand({
           if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
           
           for(const e of guild.events) {
-            if(e.name === d.tournament.name) {
+            if(
+              e.name === d.tournament.name
+              || tournaments[e.name]?.some(regex =>
+                regex.test(d.tournament.name.trim().replace(/\s+/g, ' ').toLowerCase())
+              )
+            ) {
               const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
               const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
 
@@ -492,6 +533,7 @@ export default createCommand({
         }
         catch{ }
       }
+
       try {
         for(
           const d of data.map(body => ({
@@ -500,6 +542,11 @@ export default createCommand({
           }))
         ) {
           if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
+
+          // if(
+          //   !guild.events.some(e => e.name === d.tournament.name) &&
+          //   !guild.events.some(e =>)
+          // )
 
           for(const e of guild.events) {
             if(e.name === d.tournament.name) {
@@ -518,7 +565,7 @@ export default createCommand({
 								  name: d.tournament.full_name!
 								})
 								.setField(`${emoji1} **${d.teams[0].name}** <:versus:1349105624180330516> **${d.teams[1].name}** ${emoji2}`, `<t:${d.when.getTime() / 1000}:F> | <t:${d.when.getTime() / 1000}:R>`)
-								.setFooter({
+  								.setFooter({
 								  text: d.stage
 								})
 
