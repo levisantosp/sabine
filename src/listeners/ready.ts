@@ -200,11 +200,14 @@ const sendValorantMatches = async(client: App) => {
       data: {
         valorant_matches: guild.valorant_matches,
         tbd_matches: {
-          create: matches.map(m => ({
-            type: m.type,
-            id: m.id,
-            channel: m.channel
-          }))
+          create: matches.length
+            ? matches.map(m => ({
+              type: m.type,
+              id: m.id,
+              channel: m.channel
+            }))
+            : undefined,
+          deleteMany: matches.length ? {} : undefined
         },
         live_messages: {
           deleteMany: {}
