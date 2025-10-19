@@ -200,7 +200,11 @@ const sendValorantMatches = async(client: App) => {
       data: {
         valorant_matches: guild.valorant_matches,
         tbd_matches: {
-          create: matches
+          create: matches.map(m => ({
+            type: m.type,
+            id: m.id,
+            channel: m.channel
+          }))
         },
         live_messages: {
           deleteMany: {}
@@ -295,6 +299,7 @@ const sendValorantTBDMatches = async(client: App) => {
     }
   }
 }
+
 const sendLolMatches = async(client: App) => {
   const res = await service.getMatches('lol')
   const res2 = await service.getResults('lol')
@@ -425,14 +430,18 @@ const sendLolMatches = async(client: App) => {
       data: {
         lol_matches: guild.lol_matches,
         tbd_matches: {
-          create: matches
+          create: matches.map(m => ({
+            type: m.type,
+            id: m.id,
+            channel: m.channel
+          }))
         },
         live_messages: {
           deleteMany: {}
         }
       }
     })
-  }
+  }j
 }
 
 const sendLolTBDMatches = async(client: App) => {
