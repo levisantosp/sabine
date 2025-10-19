@@ -322,7 +322,7 @@ export default createCommand({
 
       guild.valorant_matches = []
       guild.tbd_matches = []
-      // guild.valorant_resend_time = new Date(Date.now() + 3600000)
+      guild.valorant_resend_time = new Date(Date.now() + 3600000)
 
       await ctx.edit('commands.admin.resending')
 
