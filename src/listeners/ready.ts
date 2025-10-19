@@ -121,78 +121,15 @@ const sendValorantMatches = async(client: App) => {
         if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
 
         for(const e of guild.events) {
-          if(e.name === d.tournament.name) {
-            const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
-            const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
-
-            const index = guild.valorant_matches.findIndex((m) => m === d.id)
-
-            if(index > -1) guild.valorant_matches.splice(index, 1)
-
-            if(!d.stage.toLowerCase().includes('showmatch')) guild.valorant_matches.push(d.id!)
-
-            const embed = new EmbedBuilder()
-              .setAuthor({
-                iconURL: d.tournament.image,
-                name: d.tournament.name
-              })
-              .setField(`${emoji1} ${d.teams[0].name} <:versus:1349105624180330516> ${d.teams[1].name} ${emoji2}`, `<t:${d.when.getTime() / 1000}:F> | <t:${d.when.getTime() / 1000}:R>`, true)
-              .setFooter({
-                text: d.stage
-              })
-
-            const button = new ButtonBuilder()
-              .setLabel(t(guild.lang ?? 'en', 'helper.palpitate'))
-              .setCustomId(`predict;valorant;${d.id}`)
-              .setStyle('green')
-
-            const urlButton = new ButtonBuilder()
-              .setLabel(t(guild.lang ?? 'en', 'helper.stats'))
-              .setStyle('link')
-              .setURL(`https://vlr.gg/${d.id}`)
-
-            if(d.stage.toLowerCase().includes('showmatch')) continue
-
-            if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') await client.rest.channels.createMessage(e.channel1, {
-              embeds: [embed],
-              components: [
-                {
-                  type: 1,
-                  components: [
-                    button,
-                    new ButtonBuilder()
-                      .setLabel(t(guild.lang ?? 'en', 'helper.bet'))
-                      .setCustomId(`bet;valorant;${d.id}`)
-                      .setStyle('gray'),
-                    urlButton,
-                    new ButtonBuilder()
-                      .setLabel(t(guild.lang ?? 'en', 'helper.pickem.label'))
-                      .setStyle('blue')
-                      .setCustomId('pickem')
-                  ]
-                }
-              ]
-            }).catch(() => { })
-
-            else {
-              matches.push({
-                id: d.id!,
-                channel: e.channel1,
-                guildId: guild.id,
-                type: 'valorant'
-              })
-            }
-          }
-
-          else if(
-            tournaments[e.name] &&
-            tournaments[e.name].some(regex =>
-              regex.test(d.tournament.name.replace(/\s+/g, ' ').trim().toLowerCase())
+          if(
+            e.name === d.tournament.name
+            || tournaments[e.name]?.some(regex =>
+              regex.test(d.tournament.name.trim().replace(/\s+/g, ' ').toLowerCase())
             )
           ) {
             const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
             const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
-            
+
             const index = guild.valorant_matches.findIndex((m) => m === d.id)
 
             if(index > -1) guild.valorant_matches.splice(index, 1)
