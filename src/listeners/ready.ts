@@ -441,7 +441,7 @@ const sendLolMatches = async(client: App) => {
         }
       }
     })
-  }j
+  }
 }
 
 const sendLolTBDMatches = async(client: App) => {
