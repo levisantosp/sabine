@@ -100,6 +100,9 @@ export default async function(
         const channel = client.getChannel(guild.events.filter(e =>
           Object.keys(tournaments).includes(e.name))[0].channel2
         )
+          || client.getChannel(guild.events.filter(e =>
+            e.name === data.tournament.name)[0].channel2
+          )
 
         if(!channel || channel.type !== Oceanic.ChannelTypes.GUILD_TEXT) continue
 
