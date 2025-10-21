@@ -94,7 +94,7 @@ export default createCommand({
     'admin language pt-BR',
     'admin language en-US'
   ],
-  // messageComponentInteractionTime: 5 * 60 * 1000,
+  messageComponentInteractionTime: 5 * 60 * 1000,
   async run({ ctx, t, id, client }) {
     if(!ctx.db.guild) return
 
@@ -463,7 +463,13 @@ export default createCommand({
         data: {
           valorant_matches: guild.valorant_matches,
           tbd_matches: {
-            create: guild.tbd_matches
+            create: guild.tbd_matches.length
+              ? guild.tbd_matches.map(m => ({
+                type: m.type,
+                id: m.id,
+                channel: m.channel
+              }))
+              : undefined
           },
           valorant_resend_time: guild.valorant_resend_time
         }
