@@ -2,10 +2,15 @@ name: deploy
 on:
   push:
     branches:
-      - "master"
+      - 'master'
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - 'README*'
+      - 'LICENSE'
 jobs:
   deploy:
-    name: "Deploy to Production"
+    name: 'Deploy to Production'
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
