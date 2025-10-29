@@ -110,7 +110,7 @@ const sendValorantMatches = async(client: App) => {
         }
       }
 
-      catch {}
+      catch { }
     }
     try {
       for(
@@ -150,11 +150,11 @@ const sendValorantMatches = async(client: App) => {
             const button = new ButtonBuilder()
               .setLabel(t(guild.lang, 'helper.palpitate'))
               .setCustomId(`predict;valorant;${d.id}`)
-              .setStyle('green')
+              .defineStyle('green')
 
             const urlButton = new ButtonBuilder()
               .setLabel(t(guild.lang, 'helper.stats'))
-              .setStyle('link')
+              .defineStyle('link')
               .setURL(`https://vlr.gg/${d.id}`)
 
             if(d.stage.toLowerCase().includes('showmatch')) continue
@@ -173,11 +173,11 @@ const sendValorantMatches = async(client: App) => {
                     new ButtonBuilder()
                       .setLabel(t(guild.lang, 'helper.bet'))
                       .setCustomId(`bet;valorant;${d.id}`)
-                      .setStyle('gray'),
+                      .defineStyle('gray'),
                     urlButton,
                     new ButtonBuilder()
                       .setLabel(t(guild.lang, 'helper.pickem.label'))
-                      .setStyle('blue')
+                      .defineStyle('blue')
                       .setCustomId('pickem')
                   ]
                 }
@@ -274,14 +274,14 @@ const sendValorantTBDMatches = async(client: App) => {
                 new ButtonBuilder()
                   .setLabel(t(guild.lang, 'helper.palpitate'))
                   .setCustomId(`predict;valorant;${match.id}`)
-                  .setStyle('green'),
+                  .defineStyle('green'),
                 new ButtonBuilder()
                   .setLabel(t(guild.lang, 'helper.bet'))
                   .setCustomId(`bet;valorant;${data.id}`)
-                  .setStyle('gray'),
+                  .defineStyle('gray'),
                 new ButtonBuilder()
                   .setLabel(t(guild.lang, 'helper.stats'))
-                  .setStyle('link')
+                  .defineStyle('link')
                   .setURL(`https://vlr.gg/${data.id}`)
               ]
             }
@@ -358,7 +358,7 @@ const sendLolMatches = async(client: App) => {
           await channel.bulkDelete(messagesIds)
         }
       }
-      catch {}
+      catch { }
     }
 
     try {
@@ -394,7 +394,7 @@ const sendLolMatches = async(client: App) => {
             const button = new ButtonBuilder()
               .setLabel(t(guild.lang, 'helper.palpitate'))
               .setCustomId(`predict;lol;${d.id}`)
-              .setStyle('green')
+              .defineStyle('green')
 
             if(d.stage.toLowerCase().includes('showmatch')) continue
 
@@ -412,10 +412,10 @@ const sendLolMatches = async(client: App) => {
                     new ButtonBuilder()
                       .setLabel(t(guild.lang, 'helper.bet'))
                       .setCustomId(`bet;lol;${d.id}`)
-                      .setStyle('gray'),
+                      .defineStyle('gray'),
                     new ButtonBuilder()
                       .setLabel(t(guild.lang, 'helper.pickem.label'))
-                      .setStyle('blue')
+                      .defineStyle('blue')
                       .setCustomId('pickem')
                   ]
                 }
@@ -434,7 +434,7 @@ const sendLolMatches = async(client: App) => {
         }
       }
     }
-    catch {}
+    catch { }
 
     await client.prisma.guild.update({
       where: {
@@ -510,11 +510,11 @@ const sendLolTBDMatches = async(client: App) => {
                 new ButtonBuilder()
                   .setLabel(t(guild.lang, 'helper.palpitate'))
                   .setCustomId(`predict;lol;${match.id}`)
-                  .setStyle('green'),
+                  .defineStyle('green'),
                 new ButtonBuilder()
                   .setLabel(t(guild.lang, 'helper.bet'))
                   .setCustomId(`bet;lol;${data.id}`)
-                  .setStyle('gray')
+                  .defineStyle('gray')
               ]
             }
           ]
@@ -540,7 +540,7 @@ const sendLolTBDMatches = async(client: App) => {
   }
 }
 const runInBatches = async(client: App, tasks: any[], batch_size: number) => {
-  for(let i = 0; i < tasks.length; i += batch_size) {
+  for(let i = 0;i < tasks.length;i += batch_size) {
     const batch = tasks.slice(i, i + batch_size)
 
     await Promise.all(batch.map(task => task(client).catch((e: Error) => new Logger(client).error(e))))
