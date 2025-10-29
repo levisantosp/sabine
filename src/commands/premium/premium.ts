@@ -12,7 +12,7 @@ export default createCommand({
   userInstall: true,
   messageComponentInteractionTime: 5 * 60 * 1000,
   async run({ ctx, t }) {
-    if (!ctx.db.user.premium || ctx.db.user.premium.type !== 'PREMIUM') {
+    if(!ctx.db.user.premium || ctx.db.user.premium.type !== 'PREMIUM') {
       return await ctx.reply('commands.premium.you_dont_have_premium')
     }
 
@@ -41,14 +41,14 @@ export default createCommand({
       }
     })
 
-    if (!keys.length) {
+    if(!keys.length) {
       return await ctx.reply('commands.premium.you_dont_have_keys')
     }
 
     const embed = new EmbedBuilder()
 
-    for (const key of keys) {
-      if (key.expires_at) {
+    for(const key of keys) {
+      if(key.expires_at) {
         embed.addField(
           key.type,
           t(
