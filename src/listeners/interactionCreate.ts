@@ -1,29 +1,29 @@
 import {
   AutocompleteInteraction,
-  CommandInteraction,
-  ComponentInteraction,
-  InteractionTypes,
-  type AnyInteractionGateway,
-  ModalSubmitInteraction
-} from 'oceanic.js'
-import createListener from '../structures/client/createListener.ts'
+  ModalSubmitInteraction,
+  InteractionType,
+  ChatInputCommandInteraction,
+  MessageComponentInteraction,
+  type Interaction
+} from 'discord.js'
+import createListener from '../structures/app/createListener.ts'
 import CommandRunner from '../structures/command/CommandRunner.ts'
 import { SabineGuild, SabineUser } from '../database/index.ts'
 import locales, { type Args } from '../locales/index.ts'
 import ComponentInteractionRunner from '../structures/interaction/ComponentInteractionRunner.ts'
 import ModalSubmitInteractionRunner from '../structures/interaction/ModalSubmitInteractionRunner.ts'
-import App from '../structures/client/App.ts'
+import App from '../structures/app/App.ts'
 
-const interactionTypes: Record<number, (client: App, i: AnyInteractionGateway) => Promise<unknown>> = {
-  [InteractionTypes.APPLICATION_COMMAND]: async(client, interaction) => {
-    if(!(interaction instanceof CommandInteraction)) return
+const interactionType: Record<number, (client: App, i: Interaction) => Promise<unknown>> = {
+  [InteractionType.ApplicationCommand]: async(client, interaction) => {
+    if(!interaction.isChatInputCommand()) return
 
     return await new CommandRunner().run(client, interaction)
   },
-  [InteractionTypes.APPLICATION_COMMAND_AUTOCOMPLETE]: async(client, interaction) => {
-    if(!(interaction instanceof AutocompleteInteraction)) return
+  [InteractionType.ApplicationCommandAutocomplete]: async (client, interaction) => {
+    if(!interaction.isAutocomplete()) return
 
-    const command = client.commands.get(interaction.data.name)
+    const command = client.commands.get(interaction.commandName)
 
     if(!command) return
     if(!command.createAutocompleteInteraction) return
@@ -32,28 +32,30 @@ const interactionTypes: Record<number, (client: App, i: AnyInteractionGateway) =
 
     let guild: SabineGuild | undefined
 
-    if(interaction.guildID) {
-      guild = await SabineGuild.fetch(interaction.guildID) ?? new SabineGuild(interaction.guildID)
+    if(interaction.guildId) {
+      guild = await SabineGuild.fetch(interaction.guildId) ?? new SabineGuild(interaction.guildId)
     }
 
     const t = (content: string, args?: Args) => {
       return locales(user.lang ?? guild?.lang, content, args)
     }
 
-    const args: string[] = interaction.data.options.getSubCommand() ?? []
+    const args: string[] = []
 
-    for(const option of interaction.data.options.getOptions()) {
-      args.push(option.value.toString())
-    }
+    const sub = interaction.options.getSubcommand(false)
+    const group = interaction.options.getSubcommandGroup(false)
+
+    if(sub) args.push(sub)
+    if(group) args.push(group)
 
     return await command.createAutocompleteInteraction({ i: interaction, t, client, args })
   },
-  [InteractionTypes.MESSAGE_COMPONENT]: async(client, interaction) => {
-    if(!(interaction instanceof ComponentInteraction)) return
+  [InteractionType.MessageComponent]: async (client, interaction) => {
+    if(!interaction.isMessageComponent()) return
 
     return await new ComponentInteractionRunner().run(client, interaction)
   },
-  [InteractionTypes.MODAL_SUBMIT]: async(client, interaction) => {
+  [InteractionType.ModalSubmit]: async (client, interaction) => {
     if(!(interaction instanceof ModalSubmitInteraction)) return
 
     return await new ModalSubmitInteractionRunner().run(client, interaction)
@@ -62,6 +64,6 @@ const interactionTypes: Record<number, (client: App, i: AnyInteractionGateway) =
 export default createListener({
   name: 'interactionCreate',
   async run(client, interaction) {
-    await interactionTypes[interaction.type](client, interaction)
+    await interactionType[interaction.type](client, interaction)
   }
 })

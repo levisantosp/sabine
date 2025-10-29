@@ -1,29 +1,32 @@
-import type { TextChannel } from 'oceanic.js'
-import createListener from '../structures/client/createListener.ts'
+import { ChannelType } from 'discord.js'
+import createListener from '../structures/app/createListener.ts'
 import EmbedBuilder from '../structures/builders/EmbedBuilder.ts'
 
 export default createListener({
   name: 'shardDisconnect',
-  async run(client, err, shard) {
+  async run(client, close, shard) {
     const embed = new EmbedBuilder()
       .setTitle('Shard Disconnected')
-      .setDesc(`Shard ID: \`${shard}\` => \`Disconnected\`\nReason: \`${err?.message}\``)
+      .setDesc(`Shard ID: \`${shard}\` => \`Disconnected\`\nCode: \`${close.code}\``)
       .setFooter({
-        text: `Instance: ${client.user.tag}`,
-        iconURL: client.user.avatarURL()
+        text: `Instance: ${client.user?.tag}`,
+        iconURL: client.user?.displayAvatarURL({ size: 2048 })
       })
       .setTimestamp()
-    
-    const channel = await client.rest.channels.get(process.env.SHARD_LOG!) as TextChannel
-    const webhooks = await channel.getWebhooks()
 
-    let webhook = webhooks.find(w => w.name === `${client.user.username} Logger`)
+    const channel = await client.channels.fetch(process.env.SHARD_LOG!)
 
-    if(!webhook) webhook = await channel.createWebhook({ name: `${client.user.username} Logger` })
+    if(!channel || channel.type !== ChannelType.GuildText) return
 
-    await webhook.execute({
+    const webhooks = await channel.fetchWebhooks()
+
+    let webhook = webhooks.find(w => w.name === `${client.user?.username} Logger`)
+
+    if(!webhook) webhook = await channel.createWebhook({ name: `${client.user?.username} Logger` })
+
+    await webhook.send({
       embeds: [embed],
-      avatarURL: client.user.avatarURL()
-    }, webhook.token!)
+      avatarURL: client.user?.displayAvatarURL({ size: 2048 })
+    })
   }
 })

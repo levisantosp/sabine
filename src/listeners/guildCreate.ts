@@ -1,5 +1,5 @@
-import type { TextChannel } from 'oceanic.js'
-import createListener from '../structures/client/createListener.ts'
+import { ChannelType } from 'discord.js'
+import createListener from '../structures/app/createListener.ts'
 import EmbedBuilder from '../structures/builders/EmbedBuilder.ts'
 import { PrismaClient } from '@prisma/client'
 
@@ -13,23 +13,28 @@ export default createListener({
 
     if(ban) return await guild.leave()
 
+    const owner = client.users.cache.get(guild.ownerId)
+
     const embed = new EmbedBuilder()
       .setTitle(`I've been added to \`${guild.name} (${guild.id})\``)
-      .setDesc(`Now I'm on ${client.guilds.size} guilds`)
-      .addField('Owner', `\`${guild.owner?.username} (${guild.ownerID})`, true)
+      .setDesc(`Now I'm on ${client.guilds.cache.size} guilds`)
+      .addField('Owner', `\`${owner?.username} (${owner?.id})`, true)
       .addField('Member count', guild.memberCount.toString(), true)
       .setThumb(guild.iconURL()!)
 
-    const channel = await client.rest.channels.get(process.env.GUILDS_LOG!) as TextChannel
-    const webhooks = await channel.getWebhooks()
+    const channel = await client.channels.fetch(process.env.GUILDS_LOG!)
 
-    let webhook = webhooks.find(w => w.name === `${client.user.username} Logger`)
+    if(!channel || channel.type !== ChannelType.GuildText) return
 
-    if(!webhook) webhook = await channel.createWebhook({ name: `${client.user.username} Logger` })
+    const webhooks = await channel.fetchWebhooks()
 
-    await webhook.execute({
+    let webhook = webhooks.find(w => w.name === `${client.user?.username} Logger`)
+
+    if(!webhook) webhook = await channel.createWebhook({ name: `${client.user?.username} Logger` })
+
+    await webhook.send({
       embeds: [embed],
-      avatarURL: client.user.avatarURL()
-    }, webhook.token!)
+      avatarURL: client.user?.displayAvatarURL({ size: 2048 })
+    })
   }
 })
