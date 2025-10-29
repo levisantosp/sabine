@@ -178,7 +178,7 @@ export default class CommandRunner {
       })
     }
 
-    command.run({ ctx, app, t, id: interaction.id })
+    command.run({ ctx, app, t, id: interaction.commandId })
       .then(async() => {
         if(process.env.DEVS.includes(interaction.user.id)) return
 
