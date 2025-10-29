@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "bun test.ts",
-    "start": "bun .",
+    "start": "bun src/shard.ts",
     "dev": "bun --watch .",
     "compile": "bun lint && rm -rf dist && bun tsc",
     "push": "bun prisma db push",
