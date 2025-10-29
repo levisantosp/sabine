@@ -229,7 +229,7 @@ export default createComponentInteraction({
         await app.redis.del(key)
 
         try {
-          while (!match.finished) {
+          while(!match.finished) {
             await app.redis.set(`match:${ctx.db.user.id}`, 1)
             await app.redis.set(`match:${user.id}`, 1)
 
