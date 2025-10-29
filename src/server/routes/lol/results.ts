@@ -1,7 +1,7 @@
 import { Type, type TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 import type { FastifyBaseLogger, RawServerDefault, FastifyInstance } from 'fastify'
 import type { IncomingMessage, ServerResponse } from 'http'
-import { client } from '../../../structures/client/App.ts'
+import { app } from '../../../structures/app/App.ts'
 import { emojis } from '../../../util/emojis.ts'
 import EmbedBuilder from '../../../structures/builders/EmbedBuilder.ts'
 import locales from '../../../locales/index.ts'
@@ -13,7 +13,7 @@ import { SabineUser } from '../../../database/index.ts'
 
 const prisma = new PrismaClient()
 
-export default async function(
+export default async function (
   fastify: FastifyInstance<RawServerDefault, IncomingMessage, ServerResponse<IncomingMessage>, FastifyBaseLogger, TypeBoxTypeProvider>
 ) {
   fastify.post('/webhooks/results/lol', {
@@ -38,7 +38,7 @@ export default async function(
         })
       )
     }
-  }, async(req) => {
+  }, async (req) => {
     const guilds = await prisma.guild.findMany({
       where: {
         events: {
@@ -66,12 +66,12 @@ export default async function(
       }
     })
 
-    if(!guilds.length) return
+    if (!guilds.length) return
 
-    for(const guild of guilds) {
+    for (const guild of guilds) {
       let data: ResultsData[]
 
-      if(guild.events.length > 5 && !guild.key) {
+      if (guild.events.length > 5 && !guild.key) {
         data = req.body
           .map(body => ({
             ...body,
@@ -87,13 +87,13 @@ export default async function(
         }))
         .filter(d => guild.events.some(e => e.name === d.tournament.name))
 
-      if(!data || !data[0]) continue
+      if (!data || !data[0]) continue
 
       data.reverse()
 
-      for(const d of data) {
-        for(const e of guild.events) {
-          if(e.name === d.tournament.name) {
+      for (const d of data) {
+        for (const e of guild.events) {
+          if (e.name === d.tournament.name) {
             const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
             const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
 
@@ -108,7 +108,7 @@ export default async function(
                 true
               )
               .setFooter({ text: d.stage })
-              
+
             client.rest.channels.createMessage(e.channel2, embed.build({
               components: [
                 {
@@ -116,55 +116,55 @@ export default async function(
                   components: [
                     new ButtonBuilder()
                       .setLabel(locales(guild.lang ?? 'en', 'helper.stats'))
-                      .setStyle('link')
+                      .defineStyle('link')
                       .setURL(`https://vlr.gg/${d.id}`),
                     new ButtonBuilder()
                       .setLabel(locales(guild.lang ?? 'en', 'helper.pickem.label'))
-                      .setStyle('blue')
+                      .defineStyle('blue')
                       .setCustomId('pickem')
                   ]
                 }
               ]
             }))
-            .catch(() => {})
+              .catch(() => { })
           }
         }
       }
     }
 
-    if(!preds.length) return
+    if (!preds.length) return
 
-    for(const data of req.body) {
-      for(const pred of preds) {
-        if(data.id !== pred.match) continue
+    for (const data of req.body) {
+      for (const pred of preds) {
+        if (data.id !== pred.match) continue
 
         const user = await SabineUser.fetch(pred.userId)
 
-        if(!user) continue
+        if (!user) continue
 
-        if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
+        if (pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
           await user.addCorrectPrediction('lol', data.id)
 
-          if(pred.bet) {
+          if (pred.bet) {
             const winnerIndex = data.teams.findIndex(t => t.winner)
 
-            if(pred.teams[winnerIndex].winner) {
+            if (pred.teams[winnerIndex].winner) {
               let oddA = 0
               let oddB = 0
 
-              for(const p of preds) {
-                if(p.teams[0].winner && p.bet) {
+              for (const p of preds) {
+                if (p.teams[0].winner && p.bet) {
                   oddA += 1
                 }
 
-                else if(p.teams[1].winner && p.bet) {
+                else if (p.teams[1].winner && p.bet) {
                   oddB += 1
                 }
               }
 
               let odd: number
 
-              if(pred.teams[0].winner) {
+              if (pred.teams[0].winner) {
                 odd = calcOdd(oddA)
               }
 
@@ -174,13 +174,13 @@ export default async function(
 
               let bonus = 0
 
-              if(user.premium) {
+              if (user.premium) {
                 bonus = Number(pred.bet) / 2
               }
 
               user.coins += BigInt(Number(pred.bet) * odd) + BigInt(bonus)
               user.fates += 10
-              
+
               pred.odd = odd
 
               await Promise.all([

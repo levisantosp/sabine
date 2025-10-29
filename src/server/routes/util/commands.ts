@@ -1,8 +1,8 @@
 import type { FastifyInstance } from 'fastify'
-import { client } from '../../../structures/client/App.ts'
+import { app } from '../../../structures/app/App.ts'
 
-export default async function(fastify: FastifyInstance) {
-  fastify.get('/commands', async() => {
+export default async function (fastify: FastifyInstance) {
+  fastify.get('/commands', async () => {
     type Command = Pick<
       typeof client.commands extends Map<any, infer V> ? V : never,
       | 'name'
@@ -31,7 +31,7 @@ export default async function(fastify: FastifyInstance) {
         botPermissions: command.botPermissions
       })
     })
-    
+
     return commands
   })
 }
