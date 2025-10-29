@@ -1,6 +1,6 @@
 import colors from 'colors'
 import moment from 'moment'
-import { ChannelType, TextChannel } from 'discord.js'
+import { ChannelType } from 'discord.js'
 import App from '../structures/app/App.ts'
 import EmbedBuilder from '../structures/builders/EmbedBuilder.ts'
 

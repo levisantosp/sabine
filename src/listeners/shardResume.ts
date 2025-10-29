@@ -1,4 +1,4 @@
-import { ChannelType, type TextChannel } from 'discord.js'
+import { ChannelType } from 'discord.js'
 import createListener from '../structures/app/createListener.ts'
 import EmbedBuilder from '../structures/builders/EmbedBuilder.ts'
 

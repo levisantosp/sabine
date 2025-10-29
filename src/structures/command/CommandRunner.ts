@@ -1,4 +1,4 @@
-import { ChannelType, type ChatInputCommandInteraction, type CommandInteraction, type Guild, type PermissionResolvable, type TextChannel } from 'discord.js'
+import { ChannelType, type ChatInputCommandInteraction, type CommandInteraction, type Guild, type PermissionResolvable } from 'discord.js'
 import App from '../app/App.ts'
 import CommandContext from './CommandContext.ts'
 import locales from '../../i18n/index.ts'
