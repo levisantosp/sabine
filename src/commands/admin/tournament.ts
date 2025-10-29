@@ -445,9 +445,7 @@ export default createCommand({
   async createAutocompleteInteraction({ i, t, args, app }) {
     if(!args || !i.guild) return
 
-    const value = i.options.getString('tournament')
-
-    if(!value) return
+    const value = i.options.getString('tournament', true)
 
     if(args[1] === 'valorant') {
       const res = await service.getEvents('valorant')
