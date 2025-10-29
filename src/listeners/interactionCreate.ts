@@ -42,8 +42,8 @@ const interactionType: Record<number, (app: App, i: Interaction) => Promise<unkn
     const sub = interaction.options.getSubcommand(false)
     const group = interaction.options.getSubcommandGroup(false)
 
-    if(sub) args.push(sub)
     if(group) args.push(group)
+    if(sub) args.push(sub)
 
     return await command.createAutocompleteInteraction({ i: interaction, t, app, args })
   },
