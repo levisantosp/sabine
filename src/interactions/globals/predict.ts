@@ -7,10 +7,10 @@ export default createComponentInteraction({
   name: 'predict',
   flags: 64,
   global: true,
-  async run({ ctx, t, client }) {
+  async run({ ctx, t, app }) {
     const games = {
       valorant: async() => {
-        const pred = await client.prisma.prediction.findFirst({
+        const pred = await app.prisma.prediction.findFirst({
           where: {
             match: ctx.args[2],
             userId: ctx.db.user.id,
@@ -29,8 +29,8 @@ export default createComponentInteraction({
           return await ctx.reply('helper.started')
         }
 
-        await ctx.interaction.createModal({
-          customID: `prediction;valorant;${ctx.args[2]}`,
+        await ctx.interaction.showModal({
+          customId: `prediction;valorant;${ctx.args[2]}`,
           title: t('helper.prediction_modal.title'),
           components: [
             {
@@ -38,7 +38,7 @@ export default createComponentInteraction({
               components: [
                 {
                   type: 4,
-                  customID: 'response-modal-1',
+                  customId: 'response-modal-1',
                   label: data.teams[0].name,
                   style: 1,
                   minLength: 1,
@@ -53,7 +53,7 @@ export default createComponentInteraction({
               components: [
                 {
                   type: 4,
-                  customID: 'response-modal-2',
+                  customId: 'response-modal-2',
                   label: data.teams[1].name,
                   style: 1,
                   minLength: 1,
@@ -67,7 +67,7 @@ export default createComponentInteraction({
         })
       },
       lol: async() => {
-        const pred = await client.prisma.prediction.findFirst({
+        const pred = await app.prisma.prediction.findFirst({
           where: {
             match: ctx.args[2],
             userId: ctx.db.user.id,
@@ -86,8 +86,8 @@ export default createComponentInteraction({
           return await ctx.reply('helper.started')
         }
 
-        await ctx.interaction.createModal({
-          customID: `prediction;lol;${ctx.args[2]}`,
+        await ctx.interaction.showModal({
+          customId: `prediction;lol;${ctx.args[2]}`,
           title: t('helper.prediction_modal.title'),
           components: [
             {
@@ -95,7 +95,7 @@ export default createComponentInteraction({
               components: [
                 {
                   type: 4,
-                  customID: 'response-modal-1',
+                  customId: 'response-modal-1',
                   label: data.teams[0].name,
                   style: 1,
                   minLength: 1,
@@ -110,7 +110,7 @@ export default createComponentInteraction({
               components: [
                 {
                   type: 4,
-                  customID: 'response-modal-2',
+                  customId: 'response-modal-2',
                   label: data.teams[1].name,
                   style: 1,
                   minLength: 1,

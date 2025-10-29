@@ -1,10 +1,10 @@
 import type { FastifyInstance } from 'fastify'
-import { client } from '../../../structures/client/App.ts'
+import { app } from '../../../structures/app/App.ts'
 
 export default async function(fastify: FastifyInstance) {
   fastify.get('/commands', async() => {
     type Command = Pick<
-      typeof client.commands extends Map<any, infer V> ? V : never,
+      typeof app.commands extends Map<any, infer V> ? V : never,
       | 'name'
       | 'nameLocalizations'
       | 'description'
@@ -18,7 +18,7 @@ export default async function(fastify: FastifyInstance) {
 
     const commands: Command[] = []
 
-    client.commands.forEach(command => {
+    app.commands.forEach(command => {
       commands.push({
         name: command.name,
         nameLocalizations: command.nameLocalizations,
@@ -31,7 +31,7 @@ export default async function(fastify: FastifyInstance) {
         botPermissions: command.botPermissions
       })
     })
-    
+
     return commands
   })
 }

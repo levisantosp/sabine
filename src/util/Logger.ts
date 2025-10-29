@@ -1,7 +1,7 @@
 import colors from 'colors'
 import moment from 'moment'
-import { TextChannel } from 'oceanic.js'
-import App from '../structures/client/App.ts'
+import { ChannelType } from 'discord.js'
+import App from '../structures/app/App.ts'
 import EmbedBuilder from '../structures/builders/EmbedBuilder.ts'
 
 export default class Logger {
@@ -32,17 +32,20 @@ export default class Logger {
         .setTitle('An error has occurred')
         .setDesc(`Shard ID: \`${shardId}\`\n\`\`\`js\n${error}\`\`\``)
 
-      const channel = await this.client.rest.channels.get(process.env.ERROR_LOG) as TextChannel
-      const webhooks = await channel.getWebhooks()
+      const channel = await this.client.channels.fetch(process.env.GUILDS_LOG!)
 
-      let webhook = webhooks.filter(w => w.name === `${this.client.user.username} Logger`)[0]
+      if(!channel || channel.type !== ChannelType.GuildText) return
 
-      if(!webhook) webhook = await channel.createWebhook({ name: `${this.client.user.username} Logger` })
+      const webhooks = await channel.fetchWebhooks()
 
-      webhook.execute({
+      let webhook = webhooks.find(w => w.name === `${this.client.user?.username} Logger`)
+
+      if(!webhook) webhook = await channel.createWebhook({ name: `${this.client.user?.username} Logger` })
+
+      await webhook.send({
         embeds: [embed],
-        avatarURL: this.client.user.avatarURL()
-      }, webhook.token!)
+        avatarURL: this.client.user?.displayAvatarURL({ size: 2048 })
+      })
 
       return console.log(colors.red(`[${moment(Date.now()).format('hh:mm:ss')}] ${error}`))
     }
@@ -51,18 +54,21 @@ export default class Logger {
         .setTitle('An error has occurred')
         .setDesc(`Shard ID: \`${shardId}\`\n\`\`\`js\n${error.stack}\`\`\``)
 
-      const channel = await this.client.rest.channels.get(process.env.ERROR_LOG) as TextChannel
-      const webhooks = await channel.getWebhooks()
+      const channel = await this.client.channels.fetch(process.env.ERROR_LOG!)
 
-      let webhook = webhooks.filter(w => w.name === `${this.client.user.username} Logger`)[0]
+      if(!channel || channel.type !== ChannelType.GuildText) return
 
-      if(!webhook) webhook = await channel.createWebhook({ name: `${this.client.user.username} Logger` })
+      const webhooks = await channel.fetchWebhooks()
 
-      webhook.execute({
+      let webhook = webhooks.find(w => w.name === `${this.client.user?.username} Logger`)
+
+      if(!webhook) webhook = await channel.createWebhook({ name: `${this.client.user?.username} Logger` })
+
+      await webhook.send({
         embeds: [embed],
-        avatarURL: this.client.user.avatarURL()
-      }, webhook.token!)
-      
+        avatarURL: this.client.user?.displayAvatarURL({ size: 2048 })
+      })
+
       return console.log(colors.red(`[${moment(Date.now()).format('hh:mm:ss')}] ${error.stack ?? error}`))
     }
   }

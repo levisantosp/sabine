@@ -182,8 +182,8 @@ export default createCommand({
       ]
     }
   ],
-  permissions: ['MANAGE_GUILD', 'MANAGE_CHANNELS'],
-  botPermissions: ['MANAGE_MESSAGES', 'SEND_MESSAGES'],
+  permissions: ['ManageGuild', 'ManageChannels'],
+  botPermissions: ['ManageMessages', 'SendMessages'],
   syntaxes: [
     'tournament add valorant [tournament] [matches_channel] [results_channel]',
     'tournament add lol [tournament] [matches_channel] [results_channel]',
@@ -196,13 +196,13 @@ export default createCommand({
     'tournament remove valorant VCT Americas',
     'tournament remove lol Worlds'
   ],
-  async run({ ctx, id, t, client }) {
+  async run({ ctx, id, t, app }) {
     if(ctx.args[0].toString() === 'add') {
       const games = {
         valorant: async() => {
           if(!ctx.db.guild || !ctx.guild) return
 
-          const guild = await client.prisma.guild.findUnique({
+          const guild = await app.prisma.guild.findUnique({
             where: {
               id: ctx.db.guild.id
             },
@@ -222,13 +222,13 @@ export default createCommand({
           if(ctx.args[3].toString() === ctx.args[4].toString()) return ctx.reply('commands.tournament.channels_must_be_different')
             
           if(
-            ctx.guild.channels.get(ctx.args[3].toString())?.type !== 0 ||
-            ctx.guild.channels.get(ctx.args[4].toString())?.type !== 0
+            ctx.guild.channels.cache.get(ctx.args[3].toString())?.type !== 0 ||
+            ctx.guild.channels.cache.get(ctx.args[4].toString())?.type !== 0
           ) {
             return ctx.reply('commands.tournament.invalid_channel')
           }
 
-          await client.prisma.guild.upsert({
+          await app.prisma.guild.upsert({
             where: {
               id: guild.id
             },
@@ -267,7 +267,7 @@ export default createCommand({
         lol: async() => {
           if(!ctx.db.guild || !ctx.guild) return
 
-          const guild = await client.prisma.guild.findUnique({
+          const guild = await app.prisma.guild.findUnique({
             where: {
               id: ctx.db.guild.id
             },
@@ -285,11 +285,11 @@ export default createCommand({
           ) return ctx.reply('commands.tournament.limit_reached', { cmd: `</tournament remove lol:${id}>` })
           if(ctx.args[3].toString() === ctx.args[4].toString()) return ctx.reply('commands.tournament.channels_must_be_different')
           if(
-            ctx.guild.channels.get(ctx.args[3].toString())?.type !== 0 ||
-            ctx.guild.channels.get(ctx.args[4].toString())?.type !== 0
+            ctx.guild.channels.cache.get(ctx.args[3].toString())?.type !== 0 ||
+            ctx.guild.channels.cache.get(ctx.args[4].toString())?.type !== 0
           ) return ctx.reply('commands.tournament.invalid_channel')
 
-          await client.prisma.guild.upsert({
+          await app.prisma.guild.upsert({
             where: {
               id: guild.id
             },
@@ -334,14 +334,14 @@ export default createCommand({
           if(!ctx.db.guild) return
           
           if(ctx.args[2].toString() === t('commands.tournament.remove_all')) {
-            const guild = await client.prisma.guild.findUnique({
+            const guild = await app.prisma.guild.findUnique({
               where: {
                 id: ctx.db.guild.id
               }
             })
 
             if(guild) {
-              await client.prisma.guild.update({
+              await app.prisma.guild.update({
                 where: {
                   id: ctx.db.guild.id
                 },
@@ -358,14 +358,14 @@ export default createCommand({
             return await ctx.reply('commands.tournament.tournament_removed')
           }
 
-          const guild = await client.prisma.guild.findUnique({
+          const guild = await app.prisma.guild.findUnique({
             where: {
               id: ctx.db.guild.id
             }
           })
 
           if(guild) {
-            await client.prisma.guild.update({
+            await app.prisma.guild.update({
               where: {
                 id: ctx.db.guild.id
               },
@@ -387,14 +387,14 @@ export default createCommand({
         lol: async() => {
           if(!ctx.db.guild) return
           if(ctx.args[2].toString() === t('commands.tournament.remove_all')) {
-            const guild = await client.prisma.guild.findUnique({
+            const guild = await app.prisma.guild.findUnique({
               where: {
                 id: ctx.db.guild.id
               }
             })
 
             if(guild) {
-              await client.prisma.guild.update({
+              await app.prisma.guild.update({
                 where: {
                   id: ctx.db.guild.id
                 },
@@ -411,14 +411,14 @@ export default createCommand({
             return await ctx.reply('commands.tournament.tournament_removed')
           }
 
-          const guild = await client.prisma.guild.findUnique({
+          const guild = await app.prisma.guild.findUnique({
             where: {
               id: ctx.db.guild.id
             }
           })
 
           if(guild) {
-            await client.prisma.guild.update({
+            await app.prisma.guild.update({
               where: {
                 id: ctx.db.guild.id
               },
@@ -442,8 +442,10 @@ export default createCommand({
       await games[ctx.args[1].toString() as 'valorant' | 'lol']()
     }
   },
-  async createAutocompleteInteraction({ i, t, args, client }) {
+  async createAutocompleteInteraction({ i, t, args, app }) {
     if(!args || !i.guild) return
+
+    const value = i.options.getString('tournament', true)
 
     if(args[1] === 'valorant') {
       const res = await service.getEvents('valorant')
@@ -463,16 +465,16 @@ export default createCommand({
       const events = res.filter(e => e.status !== 'completed')
         .map(e => e.name)
         .filter(e => {
-          if(e.toLowerCase().includes(i.data.options.getOptions()[0].value.toString().toLowerCase())) return e
+          if(e.toLowerCase().includes(value.toLowerCase())) return e
         })
         .slice(0, 25)
 
       const actions = {
         add: async() => {
-          await i.result(events.map(e => ({ name: e, value: e })))
+          await i.respond(events.map(e => ({ name: e, value: e })))
         },
         remove: async() => {
-          const guild = await client.prisma.guild.findUnique({
+          const guild = await app.prisma.guild.findUnique({
             where: {
               id: i.guild!.id
             },
@@ -489,12 +491,12 @@ export default createCommand({
 
           const events = guild.events.map(e => e.name)
             .filter(e => {
-              if(e.toLowerCase().includes(i.data.options.getOptions()[0].value.toString().toLowerCase())) return e
+              if(e.toLowerCase().includes(value.toLowerCase())) return e
             })
 
           events.unshift(t('commands.tournament.remove_all'))
 
-          await i.result(events.map(e => ({ name: e, value: e })))
+          await i.respond(events.map(e => ({ name: e, value: e })))
         }
       }
 
@@ -505,16 +507,16 @@ export default createCommand({
 
       const events = res.map(e => e.name)
         .filter(e => {
-          if(e.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e
+          if(e.toLowerCase().includes(value.toLowerCase())) return e
         })
         .slice(0, 25)
 
       const actions = {
         add: async() => {
-          await i.result(events.map(e => ({ name: e, value: e })))
+          await i.respond(events.map(e => ({ name: e, value: e })))
         },
         remove: async() => {
-          const guild = await client.prisma.guild.findUnique({
+          const guild = await app.prisma.guild.findUnique({
             where: {
               id: i.guild!.id
             },
@@ -531,12 +533,12 @@ export default createCommand({
 
           const events = guild.events.filter(e => e.type === 'lol').map(e => e.name)
             .filter(e => {
-              if(e.toLowerCase().includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return e
+              if(e.toLowerCase().includes(value.toLowerCase())) return e
             })
 
           events.unshift(t('commands.tournament.remove_all'))
 
-          await i.result(events.map(e => ({ name: e, value: e })))
+          await i.respond(events.map(e => ({ name: e, value: e })))
         }
       }
       

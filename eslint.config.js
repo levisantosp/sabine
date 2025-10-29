@@ -36,7 +36,6 @@ export default defineConfig([
           for: { after: false },
           while: { after: false },
           switch: { after: false },
-          catch: { after: false }
         }
       }],
       'space-before-function-paren': ['error', {
@@ -46,7 +45,8 @@ export default defineConfig([
       }],
       '@typescript-eslint/no-explicit-any': 'off',
       'no-empty': 'off',
-      '@typescript-eslint/no-unused-expressions': 'off'
+      '@typescript-eslint/no-unused-expressions': 'off',
+      '@typescript-eslint/no-non-null-asserted-optional-chain': 'off'
     }
   }
 ])

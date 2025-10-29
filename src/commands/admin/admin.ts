@@ -1,14 +1,15 @@
 import type { MatchesData } from '../../types.ts'
 import Service from '../../api/index.ts'
-import locales from '../../locales/index.ts'
+import locales from '../../i18n/index.ts'
 import createCommand from '../../structures/command/createCommand.ts'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
 import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
 import { emojis } from '../../util/emojis.ts'
+import { ChannelType, TextChannel } from 'discord.js'
 
 const service = new Service(process.env.AUTH)
 
-const tournaments: {[key: string]: RegExp[]} = {
+const tournaments: { [key: string]: RegExp[] } = {
   'Valorant Champions Tour': [
     /valorant champions/,
     /valorant masters/,
@@ -83,8 +84,8 @@ export default createCommand({
       }
     }
   ],
-  permissions: ['MANAGE_GUILD', 'MANAGE_CHANNELS'],
-  botPermissions: ['MANAGE_MESSAGES', 'SEND_MESSAGES'],
+  permissions: ['ManageGuild', 'ManageChannels'],
+  botPermissions: ['ManageMessages', 'SendMessages'],
   syntaxes: [
     'admin dashboard',
     'adming language [lang]',
@@ -95,11 +96,11 @@ export default createCommand({
     'admin language en-US'
   ],
   messageComponentInteractionTime: 5 * 60 * 1000,
-  async run({ ctx, t, id, client }) {
+  async run({ ctx, t, id, app }) {
     if(!ctx.db.guild) return
-
+    
     if(ctx.args[0] === 'dashboard') {
-      const guild = (await client.prisma.guild.findUnique({
+      const guild = (await app.prisma.guild.findUnique({
         where: {
           id: ctx.db.guild.id
         },
@@ -109,43 +110,43 @@ export default createCommand({
       }))!
 
       const embed = new EmbedBuilder()
-				.setTitle(t('commands.admin.dashboard'))
-				.setDesc(t('commands.admin.desc', {
-				  lang: ctx.db.guild!.lang.replace('en', 'English').replace('pt', 'Português'),
-				  limit: ctx.db.guild!.tournaments_length === Infinity ? '`Infinity`' : `${guild.events.length}/${ctx.db.guild!.tournaments_length}`,
-				  id,
-				  vlr_news: !ctx.db.guild!.valorant_news_channel ? '`undefined`' : `<#${ctx.db.guild!.valorant_news_channel}>`,
-				  vlr_live: !ctx.db.guild!.valorant_live_feed_channel ? '`undefined`' : `<#${ctx.db.guild!.valorant_live_feed_channel}>`,
-				  lol_news: !ctx.db.guild!.lol_news_channel ? '`undefined`' : `<#${ctx.db.guild!.lol_news_channel}>`,
-				  lol_live: !ctx.db.guild!.lol_live_feed_channel ? '`undefined`' : `<#${ctx.db.guild!.lol_live_feed_channel}>`,
-				}))
+        .setTitle(t('commands.admin.dashboard'))
+        .setDesc(t('commands.admin.desc', {
+          lang: ctx.db.guild!.lang.replace('en', 'English').replace('pt', 'Português'),
+          limit: ctx.db.guild!.tournaments_length === Infinity ? '`Infinity`' : `${guild.events.length}/${ctx.db.guild!.tournaments_length}`,
+          id,
+          vlr_news: !ctx.db.guild!.valorant_news_channel ? '`undefined`' : `<#${ctx.db.guild!.valorant_news_channel}>`,
+          vlr_live: !ctx.db.guild!.valorant_live_feed_channel ? '`undefined`' : `<#${ctx.db.guild!.valorant_live_feed_channel}>`,
+          lol_news: !ctx.db.guild!.lol_news_channel ? '`undefined`' : `<#${ctx.db.guild!.lol_news_channel}>`,
+          lol_live: !ctx.db.guild!.lol_live_feed_channel ? '`undefined`' : `<#${ctx.db.guild!.lol_live_feed_channel}>`,
+        }))
 
       await ctx.reply(embed.build({
         components: [
           {
             type: 1,
             components: [
-							new ButtonBuilder()
-								.setStyle('blue')
-								.setLabel(t('commands.admin.vlr_esports_coverage'))
-								.setCustomId(`admin;${ctx.interaction.user.id};vlr`),
-							new ButtonBuilder()
-								.setStyle('blue')
-								.setLabel(t('commands.admin.lol_esports_coverage'))
-								.setCustomId(`admin;${ctx.interaction.user.id};lol`)
+              new ButtonBuilder()
+                .defineStyle('blue')
+                .setLabel(t('commands.admin.vlr_esports_coverage'))
+                .setCustomId(`admin;${ctx.interaction.user.id};vlr`),
+              new ButtonBuilder()
+                .defineStyle('blue')
+                .setLabel(t('commands.admin.lol_esports_coverage'))
+                .setCustomId(`admin;${ctx.interaction.user.id};lol`)
             ]
           },
           {
             type: 1,
             components: [
-							new ButtonBuilder()
-								.setLabel(t('commands.admin.resend', { game: 'VALORANT' }))
-								.setStyle('red')
-								.setCustomId(`admin;${ctx.interaction.user.id};resend;vlr`),
-							new ButtonBuilder()
-								.setLabel(t('commands.admin.resend', { game: 'League of Legends' }))
-								.setStyle('red')
-								.setCustomId(`admin;${ctx.interaction.user.id};resend;lol`)
+              new ButtonBuilder()
+                .setLabel(t('commands.admin.resend', { game: 'VALORANT' }))
+                .defineStyle('red')
+                .setCustomId(`admin;${ctx.interaction.user.id};resend;vlr`),
+              new ButtonBuilder()
+                .setLabel(t('commands.admin.resend', { game: 'League of Legends' }))
+                .defineStyle('red')
+                .setCustomId(`admin;${ctx.interaction.user.id};resend;lol`)
             ]
           }
         ]
@@ -176,7 +177,7 @@ export default createCommand({
         return await ctx.reply('commands.admin.no_premium')
       }
 
-      const key = await client.prisma.guildKey.findUnique({
+      const key = await app.prisma.guildKey.findUnique({
         where: {
           guildId: ctx.db.guild.id
         },
@@ -190,22 +191,22 @@ export default createCommand({
       }
 
       const embed = new EmbedBuilder()
-				.setTitle('Premium')
-				.setDesc(t('commands.admin.premium', {
-				  key: key.key.type,
-				  expiresAt: `<t:${(key.key.expires_at.getTime() / 1000).toFixed(0)}:R>`
-				}))
+        .setTitle('Premium')
+        .setDesc(t('commands.admin.premium', {
+          key: key.key.type,
+          expiresAt: `<t:${(key.key.expires_at.getTime() / 1000).toFixed(0)}:R>`
+        }))
 
       await ctx.reply(embed.build())
     }
   },
-  async createMessageComponentInteraction({ ctx, t, client }) {
+  async createMessageComponentInteraction({ ctx, t, app }) {
     if(!ctx.db.guild) return
 
     if(ctx.args[2] === 'vlr') {
       ctx.setFlags(64)
 
-      const guild = (await client.prisma.guild.findUnique({
+      const guild = (await app.prisma.guild.findUnique({
         where: {
           id: ctx.db.guild.id
         },
@@ -219,13 +220,13 @@ export default createCommand({
       }))!
 
       const embed = new EmbedBuilder()
-				.setDesc(t('commands.admin.tournaments', { game: 'VALORANT' }))
+        .setDesc(t('commands.admin.tournaments', { game: 'VALORANT' }))
 
       for(const event of guild.events) {
-				embed.addField(event.name, t('commands.admin.event_channels', {
-				  ch1: `<#${event.channel1}>`,
-				  ch2: `<#${event.channel2}>`
-				}), true)
+        embed.addField(event.name, t('commands.admin.event_channels', {
+          ch1: `<#${event.channel1}>`,
+          ch2: `<#${event.channel2}>`
+        }), true)
       }
 
       await ctx.reply(embed.build())
@@ -233,7 +234,7 @@ export default createCommand({
     else if(ctx.args[2] === 'lol') {
       ctx.setFlags(64)
 
-      const guild = (await client.prisma.guild.findUnique({
+      const guild = (await app.prisma.guild.findUnique({
         where: {
           id: ctx.db.guild.id
         },
@@ -247,13 +248,13 @@ export default createCommand({
       }))!
 
       const embed = new EmbedBuilder()
-				.setDesc(t('commands.admin.tournaments', { game: 'League of Legends' }))
+        .setDesc(t('commands.admin.tournaments', { game: 'League of Legends' }))
 
       for(const event of guild.events) {
-				embed.addField(event.name, t('commands.admin.event_channels', {
-				  ch1: `<#${event.channel1}>`,
-				  ch2: `<#${event.channel2}>`
-				}), true)
+        embed.addField(event.name, t('commands.admin.event_channels', {
+          ch1: `<#${event.channel1}>`,
+          ch2: `<#${event.channel2}>`
+        }), true)
       }
 
       await ctx.reply(embed.build())
@@ -269,9 +270,9 @@ export default createCommand({
       }
 
       const button = new ButtonBuilder()
-				.setLabel(t('commands.admin.continue'))
-				.setStyle('red')
-				.setCustomId(`admin;${ctx.interaction.user.id};continue;vlr`)
+        .setLabel(t('commands.admin.continue'))
+        .defineStyle('red')
+        .setCustomId(`admin;${ctx.interaction.user.id};continue;vlr`)
 
       await ctx.reply(button.build(t('commands.admin.confirm')))
     }
@@ -287,9 +288,9 @@ export default createCommand({
       }
 
       const button = new ButtonBuilder()
-				.setLabel(t('commands.admin.continue'))
-				.setStyle('red')
-				.setCustomId(`admin;${ctx.interaction.user.id};continue;lol`)
+        .setLabel(t('commands.admin.continue'))
+        .defineStyle('red')
+        .setCustomId(`admin;${ctx.interaction.user.id};continue;lol`)
 
       await ctx.reply(button.build(t('commands.admin.confirm')))
     }
@@ -301,7 +302,7 @@ export default createCommand({
         return await ctx.edit('commands.admin.resend_time', { t: `<t:${(ctx.db.guild.valorant_resend_time.getTime() / 1000).toFixed(0)}:R>` })
       }
 
-      const guild = (await client.prisma.guild.findUnique({
+      const guild = (await app.prisma.guild.findUnique({
         where: {
           id: ctx.db.guild.id
         },
@@ -362,17 +363,18 @@ export default createCommand({
       }
 
       for(const e of guild.events) {
-        if(!ctx.client.getChannel(e.channel1)) continue
+        const channel = await app.channels.fetch(e.channel1)
+        if(!channel || channel.type !== ChannelType.GuildText) continue
 
         try {
-          const messages = await ctx.client.rest.channels.getMessages(e.channel1, { limit: 100 })
-          const messagesIds = messages.filter(m => m.author.id === ctx.client.user.id).map(m => m.id)
-
+          const messages = await channel.messages.fetch({ limit: 100 })
+          const messagesIds = messages.filter(m => m.author.id === app.user?.id).map(m => m.id)
           if(messagesIds.length) {
-            await ctx.client.rest.channels.deleteMessages(e.channel1, messagesIds).catch(() => { })
+            await channel.bulkDelete(messagesIds)
           }
         }
-        catch{ }
+
+        catch { }
       }
       try {
         for(
@@ -382,7 +384,7 @@ export default createCommand({
           }))
         ) {
           if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
-          
+
           for(const e of guild.events) {
             if(
               e.name === d.tournament.name
@@ -397,68 +399,72 @@ export default createCommand({
 
               if(index > -1) guild.valorant_matches.splice(index, 1)
 
-							guild.valorant_matches.push(d.id!)
+              guild.valorant_matches.push(d.id!)
 
-							const embed = new EmbedBuilder()
-								.setAuthor({
-								  iconURL: d.tournament.image,
-								  name: d.tournament.name
-								})
-								.setField(`${emoji1} **${d.teams[0].name}** <:versus:1349105624180330516> **${d.teams[1].name}** ${emoji2}`, `<t:${d.when.getTime() / 1000}:F> | <t:${d.when.getTime() / 1000}:R>`)
-								.setFooter({
-								  text: d.stage
-								})
+              const embed = new EmbedBuilder()
+                .setAuthor({
+                  iconURL: d.tournament.image,
+                  name: d.tournament.name
+                })
+                .setField(`${emoji1} **${d.teams[0].name}** <:versus:1349105624180330516> **${d.teams[1].name}** ${emoji2}`, `<t:${d.when.getTime() / 1000}:F> | <t:${d.when.getTime() / 1000}:R>`)
+                .setFooter({
+                  text: d.stage
+                })
 
-							const button = new ButtonBuilder()
-								.setLabel(locales(guild.lang!, 'helper.palpitate'))
-								.setCustomId(`predict;valorant;${d.id}`)
-								.setStyle('green')
+              const button = new ButtonBuilder()
+                .setLabel(locales(guild.lang!, 'helper.palpitate'))
+                .setCustomId(`predict;valorant;${d.id}`)
+                .defineStyle('green')
 
-							const urlButton = new ButtonBuilder()
-								.setLabel(locales(guild.lang!, 'helper.stats'))
-								.setStyle('link')
-								.setURL(`https://vlr.gg/${d.id}`)
+              const urlButton = new ButtonBuilder()
+                .setLabel(locales(guild.lang!, 'helper.stats'))
+                .defineStyle('link')
+                .setURL(`https://vlr.gg/${d.id}`)
 
-							if(d.stage.toLowerCase().includes('showmatch')) continue
+              if(d.stage.toLowerCase().includes('showmatch')) continue
 
-							if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') await ctx.client.rest.channels.createMessage(e.channel1, {
-							  embeds: [embed],
-							  components: [
-							    {
-							      type: 1,
-							      components: [
-							        button,
-											new ButtonBuilder()
-												.setLabel(locales(guild.lang!, 'helper.bet'))
-												.setCustomId(`bet;valorant;${d.id}`)
-												.setStyle('gray'),
-											urlButton,
-											new ButtonBuilder()
-												.setLabel(locales(guild.lang!, 'helper.pickem.label'))
-												.setStyle('blue')
-												.setCustomId('pickem')
-							      ]
-							    }
-							  ]
-							}).catch(() => { })
+              const channel = ctx.app.channels.cache.get(e.channel1) as TextChannel
 
-							else {
-								guild.tbd_matches.push({
-								  id: d.id!,
-								  channel: e.channel1,
-								  guildId: guild.id,
-								  type: 'valorant'
-								})
-							}
+              if(!channel) return
+
+              if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') await channel.send({
+                embeds: [embed],
+                components: [
+                  {
+                    type: 1,
+                    components: [
+                      button,
+                      new ButtonBuilder()
+                        .setLabel(locales(guild.lang!, 'helper.bet'))
+                        .setCustomId(`bet;valorant;${d.id}`)
+                        .defineStyle('gray'),
+                      urlButton,
+                      new ButtonBuilder()
+                        .setLabel(locales(guild.lang!, 'helper.pickem.label'))
+                        .defineStyle('blue')
+                        .setCustomId('pickem')
+                    ]
+                  }
+                ]
+              }).catch(() => { })
+
+              else {
+                guild.tbd_matches.push({
+                  id: d.id!,
+                  channel: e.channel1,
+                  guildId: guild.id,
+                  type: 'valorant'
+                })
+              }
             }
           }
         }
       }
-      catch{ }
+      catch { }
 
-      await client.prisma.guild.update({
+      await app.prisma.guild.update({
         where: {
-          id: ctx.interaction.guildID!
+          id: ctx.interaction.guildId!
         },
         data: {
           valorant_matches: guild.valorant_matches,
@@ -485,7 +491,7 @@ export default createCommand({
         return await ctx.edit('commands.admin.resend_time', { t: `<t:${(ctx.db.guild.lol_resend_time.getTime() / 1000).toFixed(0)}:R>` })
       }
 
-      const guild = (await client.prisma.guild.findUnique({
+      const guild = (await app.prisma.guild.findUnique({
         where: {
           id: ctx.db.guild.id
         },
@@ -519,7 +525,7 @@ export default createCommand({
       if(guild.lol_matches.length && !res2.some(d => d.id === guild.lol_matches[guild.lol_matches.length - 1])) return
 
       let data: MatchesData[]
-      
+
       if(guild.events.length > 5 && !guild.key) {
         data = res.filter(d => guild.events.reverse().slice(0, 5).some(e => e.name === d.tournament.name))
       }
@@ -527,17 +533,18 @@ export default createCommand({
       else data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
 
       for(const e of guild.events) {
-        if(!ctx.client.getChannel(e.channel1)) continue
+        const channel = await app.channels.fetch(e.channel1)
+        if(!channel || channel.type !== ChannelType.GuildText) continue
 
         try {
-          const messages = await ctx.client.rest.channels.getMessages(e.channel1, { limit: 100 })
-          const messagesIds = messages.filter(m => m.author.id === ctx.client.user.id).map(m => m.id)
-
+          const messages = await channel.messages.fetch({ limit: 100 })
+          const messagesIds = messages.filter(m => m.author.id === app.user?.id).map(m => m.id)
           if(messagesIds.length) {
-						ctx.client.rest.channels.deleteMessages(e.channel1, messagesIds).catch(() => { })
+            await channel.bulkDelete(messagesIds)
           }
         }
-        catch{ }
+
+        catch { }
       }
 
       try {
@@ -548,7 +555,7 @@ export default createCommand({
           }))
         ) {
           if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
-          
+
           for(const e of guild.events) {
             if(e.name === d.tournament.name) {
               const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
@@ -558,62 +565,66 @@ export default createCommand({
 
               if(index > -1) guild.lol_matches.splice(index, 1)
 
-							guild.lol_matches.push(d.id!)
+              guild.lol_matches.push(d.id!)
 
-							const embed = new EmbedBuilder()
-								.setAuthor({
-								  iconURL: d.tournament.image,
-								  name: d.tournament.full_name!
-								})
-								.setField(`${emoji1} **${d.teams[0].name}** <:versus:1349105624180330516> **${d.teams[1].name}** ${emoji2}`, `<t:${d.when.getTime() / 1000}:F> | <t:${d.when.getTime() / 1000}:R>`)
-  							.setFooter({
-								  text: d.stage
-  							})
+              const embed = new EmbedBuilder()
+                .setAuthor({
+                  iconURL: d.tournament.image,
+                  name: d.tournament.full_name!
+                })
+                .setField(`${emoji1} **${d.teams[0].name}** <:versus:1349105624180330516> **${d.teams[1].name}** ${emoji2}`, `<t:${d.when.getTime() / 1000}:F> | <t:${d.when.getTime() / 1000}:R>`)
+                .setFooter({
+                  text: d.stage
+                })
 
-							const button = new ButtonBuilder()
-								.setLabel(t('helper.palpitate'))
-								.setCustomId(`predict;lol;${d.id}`)
-								.setStyle('green')
+              const button = new ButtonBuilder()
+                .setLabel(t('helper.palpitate'))
+                .setCustomId(`predict;lol;${d.id}`)
+                .defineStyle('green')
 
-							if(d.stage.toLowerCase().includes('showmatch')) continue
+              if(d.stage.toLowerCase().includes('showmatch')) continue
 
-							if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') await ctx.client.rest.channels.createMessage(e.channel1, {
-							  embeds: [embed],
-							  components: [
-							    {
-							      type: 1,
-							      components: [
-							        button,
-											new ButtonBuilder()
-												.setLabel(locales(guild.lang!, 'helper.bet'))
-												.setCustomId(`bet;lol;${d.id}`)
-												.setStyle('gray'),
-											new ButtonBuilder()
-												.setLabel(locales(guild.lang!, 'helper.pickem.label'))
-												.setStyle('blue')
-												.setCustomId('pickem')
-							      ]
-							    }
-							  ]
-							}).catch(() => { })
+              const channel = ctx.app.channels.cache.get(e.channel1) as TextChannel
 
-							else {
-								guild.tbd_matches.push({
-								  id: d.id!,
-								  channel: e.channel1,
-								  guildId: guild.id,
-								  type: 'lol'
-								})
-							}
+              if(!channel) return
+
+              if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') await channel.send({
+                embeds: [embed],
+                components: [
+                  {
+                    type: 1,
+                    components: [
+                      button,
+                      new ButtonBuilder()
+                        .setLabel(locales(guild.lang!, 'helper.bet'))
+                        .setCustomId(`bet;lol;${d.id}`)
+                        .defineStyle('gray'),
+                      new ButtonBuilder()
+                        .setLabel(locales(guild.lang!, 'helper.pickem.label'))
+                        .defineStyle('blue')
+                        .setCustomId('pickem')
+                    ]
+                  }
+                ]
+              }).catch(() => { })
+
+              else {
+                guild.tbd_matches.push({
+                  id: d.id!,
+                  channel: e.channel1,
+                  guildId: guild.id,
+                  type: 'lol'
+                })
+              }
             }
           }
         }
       }
-      catch{ }
+      catch { }
 
-      await client.prisma.guild.update({
+      await app.prisma.guild.update({
         where: {
-          id: ctx.interaction.guildID!
+          id: ctx.interaction.guildId!
         },
         data: {
           lol_matches: guild.lol_matches,

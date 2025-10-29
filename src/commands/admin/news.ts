@@ -98,13 +98,14 @@ export default createCommand({
       ]
     }
   ],
+  permissions: ['ManageChannels'],
   async run({ ctx }) {
     if(ctx.args[0] === 'enable') {
       const games = {
         valorant: async() => {
           if(!ctx.guild || !ctx.db.guild) return
 
-          const channel = ctx.guild.channels.get(ctx.args[2].toString())!
+          const channel = ctx.guild.channels.cache.get(ctx.args[2].toString())!
 
           if(![0, 5].some(t => t === channel.type)) return await ctx.reply('commands.news.invalid_channel')
             
@@ -112,12 +113,12 @@ export default createCommand({
 
           await ctx.db.guild.save()
 
-          await ctx.reply('commands.news.news_enabled', { ch: channel.mention })
+          await ctx.reply('commands.news.news_enabled', { ch: channel.toString() })
         },
         lol: async() => {
           if(!ctx.guild || !ctx.db.guild) return
 
-          const channel = ctx.guild.channels.get(ctx.args[2].toString())!
+          const channel = ctx.guild.channels.cache.get(ctx.args[2].toString())!
 
           if(![0, 5].some(t => t === channel.type)) return await ctx.reply('commands.news.invalid_channel')
 
@@ -125,7 +126,7 @@ export default createCommand({
 
           await ctx.db.guild.save()
 
-          await ctx.reply('commands.news.news_enabled', { ch: channel.mention })
+          await ctx.reply('commands.news.news_enabled', { ch: channel.toString() })
         }
       }
 

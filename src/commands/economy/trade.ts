@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionTypes } from 'oceanic.js'
+import { ApplicationCommandOptionType } from 'discord.js'
 import createCommand from '../../structures/command/createCommand.ts'
 import { SabineUser } from '../../database/index.ts'
 import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
@@ -16,7 +16,7 @@ export default createCommand({
   userInstall: true,
   options: [
     {
-      type: ApplicationCommandOptionTypes.USER,
+      type: ApplicationCommandOptionType.User,
       name: 'user',
       nameLocalizations: {
         'pt-BR': 'usuário'
@@ -28,7 +28,7 @@ export default createCommand({
       required: true
     },
     {
-      type: ApplicationCommandOptionTypes.STRING,
+      type: ApplicationCommandOptionType.String,
       name: 'player',
       nameLocalizations: {
         'pt-BR': 'jogador'
@@ -41,7 +41,7 @@ export default createCommand({
       required: true
     },
     {
-      type: ApplicationCommandOptionTypes.INTEGER,
+      type: ApplicationCommandOptionType.Integer,
       name: 'price',
       nameLocalizations: {
         'pt-BR': 'preço'
@@ -55,7 +55,7 @@ export default createCommand({
   ],
   messageComponentInteractionTime: 5 * 60 * 1000,
   cooldown: true,
-  async run({ ctx, t, client }) {
+  async run({ ctx, t, app }) {
     if(
       ctx.db.user.trade_time &&
       ctx.db.user.trade_time.getTime() > Date.now()
@@ -67,7 +67,7 @@ export default createCommand({
 
     const user = await SabineUser.fetch(ctx.args[0].toString())
 
-    const player = client.players.get(ctx.args[1].toString())
+    const player = app.players.get(ctx.args[1].toString())
 
     if(BigInt(ctx.args[2]) < 0) {
       return await ctx.reply('commands.trade.invalid_value')
@@ -83,7 +83,7 @@ export default createCommand({
         user: `<@${ctx.args[0]}>`
       })
     }
-    
+
     if(!player) {
       return await ctx.reply('commands.trade.player_not_found')
     }
@@ -93,7 +93,7 @@ export default createCommand({
         player: `${player.name} (${player.ovr})`,
         collection: player.collection,
         user: `<@${ctx.args[0]}>`,
-        author: ctx.interaction.user.mention,
+        author: ctx.interaction.user.toString(),
         coins: BigInt(ctx.args[2]).toLocaleString()
       }),
       components: [
@@ -101,11 +101,11 @@ export default createCommand({
           type: 1,
           components: [
             new ButtonBuilder()
-              .setStyle('green')
+              .defineStyle('green')
               .setLabel(t('commands.trade.make_purchase'))
               .setCustomId(`trade;${ctx.args[0]};buy;${ctx.interaction.user.id};${player.id};${ctx.args[2]}`),
             new ButtonBuilder()
-              .setStyle('red')
+              .defineStyle('red')
               .setLabel(t('commands.trade.cancel'))
               .setCustomId(`trade;${ctx.interaction.user.id};cancel`)
           ]
@@ -113,13 +113,15 @@ export default createCommand({
       ]
     })
   },
-  async createAutocompleteInteraction({ i, client }) {
+  async createAutocompleteInteraction({ i, app }) {
     const user = (await SabineUser.fetch(i.user.id)) ?? new SabineUser(i.user.id)
 
     const players: Array<{ name: string, ovr: number, id: string }> = []
 
+    const value = i.options.getString('player', true)
+
     for(const p_id of user.reserve_players) {
-      const p = client.players.get(p_id)
+      const p = app.players.get(p_id)
 
       if(!p) continue
 
@@ -132,16 +134,16 @@ export default createCommand({
       })
     }
 
-    await i.result(
+    await i.respond(
       players.sort((a, b) => a.ovr - b.ovr)
         .filter(p => {
-          if(p.name.toLowerCase().includes(i.data.options.getOptions()[1].value.toString().toLowerCase())) return p
+          if(p.name.toLowerCase().includes(value.toLowerCase())) return p
         })
         .slice(0, 25)
         .map(p => ({ name: p.name, value: p.id }))
     )
   },
-  async createMessageComponentInteraction({ ctx, client }) {
+  async createMessageComponentInteraction({ ctx, app }) {
     if(
       ctx.db.user.trade_time &&
       ctx.db.user.trade_time.getTime() > Date.now()
@@ -156,7 +158,7 @@ export default createCommand({
     if(ctx.args[2] === 'buy') {
       const user = await SabineUser.fetch(ctx.args[3])
 
-      const player = client.players.get(ctx.args[4])
+      const player = app.players.get(ctx.args[4])
 
       if(!user || !player) return
 
@@ -167,7 +169,7 @@ export default createCommand({
       if(ctx.db.user.coins < BigInt(ctx.args[5])) {
         return await ctx.edit('commands.trade.missing_coins', {
           coins: (BigInt(ctx.args[5]) - ctx.db.user.coins).toLocaleString(),
-          user: `<@${ctx.interaction.user.mention}>`          
+          user: `<@${ctx.interaction.user}>`
         })
       }
 
@@ -179,7 +181,7 @@ export default createCommand({
       ctx.db.user.coins -= BigInt(ctx.args[5])
       ctx.db.user.trade_time = new Date(Date.now() + (60 * 60 * 1000))
 
-      await client.prisma.transaction.createMany({
+      await app.prisma.transaction.createMany({
         data: [
           {
             type: 'TRADE_PLAYER',
@@ -204,7 +206,7 @@ export default createCommand({
       await ctx.edit('commands.trade.res', {
         player: `${player.name} (${player.ovr})`,
         collection: player.collection,
-        user: ctx.interaction.user.mention,
+        user: ctx.interaction.user.toString(),
         coins: BigInt(ctx.args[5]).toLocaleString()
       })
     }

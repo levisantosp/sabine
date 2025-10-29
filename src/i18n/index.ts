@@ -1,9 +1,16 @@
-import * as Oceanic from 'oceanic.js'
+import * as Discord from 'discord.js'
 import pt from './pt.json' with { type: 'json' }
 import en from './en.json' with { type: 'json' }
 
 export type Args = {
-  [key: string]: string | Error | number | Oceanic.File[] | undefined | null | bigint
+  [key: string]: 
+    | string
+    | Error
+    | number
+    | (Discord.AttachmentBuilder | Discord.AttachmentPayload)[]
+    | undefined
+    | null
+    | bigint
 }
 
 export type Content = Keys<Locale> | (string & {})

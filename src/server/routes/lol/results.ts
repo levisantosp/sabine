@@ -1,17 +1,15 @@
 import { Type, type TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 import type { FastifyBaseLogger, RawServerDefault, FastifyInstance } from 'fastify'
 import type { IncomingMessage, ServerResponse } from 'http'
-import { client } from '../../../structures/client/App.ts'
+import { app } from '../../../structures/app/App.ts'
 import { emojis } from '../../../util/emojis.ts'
 import EmbedBuilder from '../../../structures/builders/EmbedBuilder.ts'
-import locales from '../../../locales/index.ts'
+import locales from '../../../i18n/index.ts'
 import ButtonBuilder from '../../../structures/builders/ButtonBuilder.ts'
 import { type ResultsData } from '../../../types.ts'
 import calcOdd from '../../../util/calcOdd.ts'
-import { PrismaClient } from '@prisma/client'
 import { SabineUser } from '../../../database/index.ts'
-
-const prisma = new PrismaClient()
+import type { MessageCreateOptions, TextChannel } from 'discord.js'
 
 export default async function(
   fastify: FastifyInstance<RawServerDefault, IncomingMessage, ServerResponse<IncomingMessage>, FastifyBaseLogger, TypeBoxTypeProvider>
@@ -39,7 +37,7 @@ export default async function(
       )
     }
   }, async(req) => {
-    const guilds = await prisma.guild.findMany({
+    const guilds = await app.prisma.guild.findMany({
       where: {
         events: {
           some: {
@@ -57,7 +55,7 @@ export default async function(
       }
     })
 
-    const preds = await prisma.prediction.findMany({
+    const preds = await app.prisma.prediction.findMany({
       where: {
         game: 'lol'
       },
@@ -108,25 +106,23 @@ export default async function(
                 true
               )
               .setFooter({ text: d.stage })
-              
-            client.rest.channels.createMessage(e.channel2, embed.build({
+
+            const channel = app.channels.cache.get(e.channel2) as TextChannel
+
+            channel.send(embed.build({
               components: [
                 {
                   type: 1,
                   components: [
                     new ButtonBuilder()
-                      .setLabel(locales(guild.lang ?? 'en', 'helper.stats'))
-                      .setStyle('link')
-                      .setURL(`https://vlr.gg/${d.id}`),
-                    new ButtonBuilder()
                       .setLabel(locales(guild.lang ?? 'en', 'helper.pickem.label'))
-                      .setStyle('blue')
+                      .defineStyle('blue')
                       .setCustomId('pickem')
                   ]
                 }
               ]
-            }))
-            .catch(() => {})
+            }) as MessageCreateOptions)
+              .catch(() => { })
           }
         }
       }
@@ -180,11 +176,11 @@ export default async function(
 
               user.coins += BigInt(Number(pred.bet) * odd) + BigInt(bonus)
               user.fates += 10
-              
+
               pred.odd = odd
 
               await Promise.all([
-                prisma.prediction.update({
+                app.prisma.prediction.update({
                   where: {
                     id: pred.id
                   },

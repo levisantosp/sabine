@@ -1,51 +1,51 @@
-import * as Oceanic from 'oceanic.js'
-import App from '../client/App.ts'
+import * as Discord from 'discord.js'
+import App from '../app/App.ts'
 import CommandContext from './CommandContext.ts'
-import type { Args } from '../../locales/index.ts'
+import type { Args } from '../../i18n/index.ts'
 import ComponentInteractionContext from '../interaction/ComponentInteractionContext.ts'
 import ModalSubmitInteractionContext from '../interaction/ModalSubmitInteractionContext.ts'
 
 type CommandOptions = {
   ctx: CommandContext
-  client: App
+  app: App
   t: (content: string, args?: Args) => string
   id: string
 }
 
 type CreateAutocompleteInteractionOptions = {
-  i: Oceanic.AutocompleteInteraction
+  i: Discord.AutocompleteInteraction
   t: (content: string, args?: Args) => string
-  client: App
+  app: App
   args?: string[]
 }
 
 type CreateComponentInteractionOptions = {
   ctx: ComponentInteractionContext
   t: (content: string, args?: Args) => string
-  i: Oceanic.ComponentInteraction
-  client: App
+  i: Discord.MessageComponentInteraction
+  app: App
 }
 
 type CreateModalSubmitInteractionOptions = {
   ctx: ModalSubmitInteractionContext
-  client: App
+  app: App
   t: (content: string, args?: Args) => string
-  i: Oceanic.ModalSubmitInteraction
+  i: Discord.ModalSubmitInteraction
 }
 
 export type Command = {
   name: string
-  nameLocalizations?: Partial<Record<Oceanic.Locale, string>>
+  nameLocalizations?: Partial<Record<Discord.Locale, string>>
   description: string
   category: 'economy' | 'admin' | 'esports' | 'misc' | 'premium'
-  descriptionLocalizations?: Partial<Record<Oceanic.Locale, string>>
-  options?: Oceanic.ApplicationCommandOptions[]
+  descriptionLocalizations?: Partial<Record<Discord.Locale, string>>
+  options?: Discord.ApplicationCommandOptionData[]
   syntax?: string
   syntaxes?: string[]
   examples?: string[]
   client?: App
-  permissions?: Oceanic.Constants.PermissionName[]
-  botPermissions?: Oceanic.Constants.PermissionName[]
+  permissions?: Discord.PermissionResolvable[]
+  botPermissions?: Discord.PermissionResolvable[]
   onlyDev?: boolean
   ephemeral?: boolean
   userInstall?: boolean
@@ -53,10 +53,10 @@ export type Command = {
   messageComponentInteractionTime?: number
   modalSubmitInteractionTime?: number
   cooldown?: boolean
-  run: (options: CommandOptions) => Promise<any>
-  createAutocompleteInteraction?: (options: CreateAutocompleteInteractionOptions) => Promise<any>
-  createMessageComponentInteraction?: (options: CreateComponentInteractionOptions) => Promise<any>
-  createModalSubmitInteraction?: (options: CreateModalSubmitInteractionOptions) => Promise<any>
+  run: (props: CommandOptions) => Promise<unknown>
+  createAutocompleteInteraction?: (options: CreateAutocompleteInteractionOptions) => Promise<unknown>
+  createMessageComponentInteraction?: (options: CreateComponentInteractionOptions) => Promise<unknown>
+  createModalSubmitInteraction?: (options: CreateModalSubmitInteractionOptions) => Promise<unknown>
 }
 
 export default function(command: Command) {

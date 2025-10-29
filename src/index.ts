@@ -1,15 +1,15 @@
-import { client } from './structures/client/App.ts'
+import { app } from './structures/app/App.ts'
 import { server } from './server/index.ts'
 
-await client.redis.connect()
+await app.redis.connect()
 
 const updateRedis = async() => {
-  const users = await client.prisma.user.findMany()
-  const blacklist = await client.prisma.blacklist.findMany()
-  
-  await client.redis.set('blacklist', JSON.stringify(blacklist))
+  const users = await app.prisma.user.findMany()
+  const blacklist = await app.prisma.blacklist.findMany()
 
-  await client.redis.set(
+  await app.redis.set('blacklist', JSON.stringify(blacklist))
+
+  await app.redis.set(
     'leaderboard:coins',
     JSON.stringify(
       {
@@ -18,13 +18,13 @@ const updateRedis = async() => {
           id: user.id,
           coins: user.coins
         }))
-        .filter(user => user.coins > 0)
+          .filter(user => user.coins > 0)
       },
       (_, value) => typeof value === 'bigint' ? value.toString() : value
     )
   )
 
-  await client.redis.set(
+  await app.redis.set(
     'leaderboard:predictions',
     JSON.stringify(
       {
@@ -33,12 +33,12 @@ const updateRedis = async() => {
           id: user.id,
           correct_predictions: user.correct_predictions
         }))
-        .filter(user => user.correct_predictions > 0)
+          .filter(user => user.correct_predictions > 0)
       }
     )
   )
 
-  await client.redis.set(
+  await app.redis.set(
     'leaderboard:rating',
     JSON.stringify(
       {
@@ -55,18 +55,18 @@ const updateRedis = async() => {
   setTimeout(updateRedis, 10 * 60 * 1000)
 }
 
-const keys = await client.redis.keys('*leaderboard:*')
+const keys = await app.redis.keys('*leaderboard:*')
 
 if(keys.length) {
-  await client.redis.del(keys)
+  await app.redis.del(keys)
 }
 
 await updateRedis()
 
-await client.connect()
+await app.connect()
 
 server.listen({
   host: process.env.HOST,
   port: process.env.PORT
 })
-.then(() => console.log(`HTTP server running at ${process.env.PORT}`))
+  .then(() => console.log(`HTTP server running at ${process.env.PORT}`))

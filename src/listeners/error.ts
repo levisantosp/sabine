@@ -1,9 +1,9 @@
-import createListener from '../structures/client/createListener.ts'
+import createListener from '../structures/app/createListener.ts'
 import Logger from '../util/Logger.ts'
 
 export default createListener({
   name: 'error',
-  async run(client, info, shard) {
-    new Logger(client).error(info, shard)
+  async run(client, error) {
+    new Logger(client).error(error)
   }
 })

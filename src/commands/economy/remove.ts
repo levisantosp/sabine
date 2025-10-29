@@ -27,8 +27,8 @@ export default createCommand({
     }
   ],
   userInstall: true,
-  async run({ ctx, client }) {
-    const p = client.players.get(ctx.args[0].toString())
+  async run({ ctx, app }) {
+    const p = app.players.get(ctx.args[0].toString())
 
     if(!ctx.db.user.active_players.includes(ctx.args[0].toString()) || !p) {
       return await ctx.reply('commands.remove.player_not_found')
@@ -43,13 +43,15 @@ export default createCommand({
 
     return await ctx.reply('commands.remove.player_removed', { p: p.name })
   },
-  async createAutocompleteInteraction({ i, client }) {
+  async createAutocompleteInteraction({ i, app }) {
     const user = (await SabineUser.fetch(i.user.id))!
+
+    const value = i.options.getString('player', true)
 
     const players: Array<{ name: string, ovr: number, id: string }> = []
 
     for(const p_id of user.active_players) {
-      const p = client.players.get(p_id)
+      const p = app.players.get(p_id)
 
       if(!p) break
 
@@ -62,10 +64,10 @@ export default createCommand({
       })
     }
 
-    await i.result(
+    await i.respond(
       players.sort((a, b) => a.ovr - b.ovr)
         .filter(p => {
-          if(p.name.toLowerCase().includes(i.data.options.getOptions()[0].value.toString().toLowerCase())) return p
+          if(p.name.toLowerCase().includes(value.toLowerCase())) return p
         })
         .map(p => ({ name: p.name, value: p.id }))
     )

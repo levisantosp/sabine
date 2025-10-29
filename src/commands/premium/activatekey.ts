@@ -29,12 +29,12 @@ export default createCommand({
   examples: [
     'activatekey ABCD-1234-AB12-abcdf'
   ],
-  permissions: ['ADMINISTRATOR'],
+  permissions: ['Administrator'],
   ephemeral: true,
-  async run({ ctx, t, client }) {
+  async run({ ctx, t, app }) {
     if(!ctx.guild) return
 
-    const key = await client.prisma.key.findFirst({
+    const key = await app.prisma.key.findFirst({
       where: {
         id: ctx.args[0].toString()
       },
@@ -59,23 +59,23 @@ export default createCommand({
       return await ctx.reply('commands.activatekey.limit_reached')
     }
 
-    const guildKey = await client.prisma.guildKey.findUnique({
+    const guildKey = await app.prisma.guildKey.findUnique({
       where: {
         guildId: ctx.guild.id,
         keyId: key.id
       }
     })
-    
+
     if(guildKey) {
       const button = new ButtonBuilder()
-        .setStyle('red')
+        .defineStyle('red')
         .setLabel(t('commands.activatekey.button'))
         .setCustomId(`activatekey;${ctx.interaction.user.id};${key.type};${ctx.args[0]}`)
 
       await ctx.reply(button.build(t('commands.activatekey.would_like_to_continue', { key: key.type })))
     }
     else {
-      await client.prisma.guildKey.create({
+      await app.prisma.guildKey.create({
         data: {
           guildId: ctx.guild.id,
           keyId: key.id
@@ -86,12 +86,12 @@ export default createCommand({
     }
   },
   messageComponentInteractionTime: 60 * 1000,
-  async createMessageComponentInteraction({ ctx, client }) {
+  async createMessageComponentInteraction({ ctx, app }) {
     if(!ctx.guild) return
 
-    await ctx.interaction.defer(64)
+    await ctx.interaction.deferReply({ flags: 64 })
 
-    const key = await client.prisma.key.findFirst({
+    const key = await app.prisma.key.findFirst({
       where: {
         id: ctx.args[3]
       },
@@ -116,13 +116,13 @@ export default createCommand({
       return await ctx.reply('commands.activatekey.limit_reached')
     }
 
-    await client.prisma.guildKey.create({
+    await app.prisma.guildKey.create({
       data: {
         guildId: ctx.guild.id,
         keyId: key.id
       }
     })
-    
+
     return await ctx.reply('commands.activatekey.key_activated')
   }
 })

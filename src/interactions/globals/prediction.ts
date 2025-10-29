@@ -1,5 +1,5 @@
 import Service from '../../api/index.ts'
-import { client } from '../../structures/client/App.ts'
+import { app } from '../../structures/app/App.ts'
 import createModalSubmitInteraction from '../../structures/interaction/createModalSubmitInteraction.ts'
 
 const service = new Service(process.env.AUTH)
@@ -11,7 +11,7 @@ export default createModalSubmitInteraction({
   async run({ ctx }) {
     const games = {
       valorant: async() => {
-        const pred = await client.prisma.prediction.findFirst({
+        const pred = await app.prisma.prediction.findFirst({
           where: {
             match: ctx.args[2],
             userId: ctx.db.user.id,
@@ -61,7 +61,7 @@ export default createModalSubmitInteraction({
         })
       },
       lol: async() => {
-        const pred = await client.prisma.prediction.findFirst({
+        const pred = await app.prisma.prediction.findFirst({
           where: {
             match: ctx.args[2],
             userId: ctx.db.user.id,
@@ -102,7 +102,7 @@ export default createModalSubmitInteraction({
           bet: null,
           odd: null
         })
-        
+
         await ctx.reply('helper.palpitate_response', {
           t1: data.teams[0].name,
           t2: data.teams[1].name,
@@ -111,7 +111,7 @@ export default createModalSubmitInteraction({
         })
       }
     }
-    
+
     await games[ctx.args[1] as 'valorant' | 'lol']()
   }
 })

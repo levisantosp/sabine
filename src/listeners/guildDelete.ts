@@ -1,35 +1,32 @@
-import type { Guild, TextChannel } from 'oceanic.js'
-import createListener from '../structures/client/createListener.ts'
+import { ChannelType } from 'discord.js'
+import createListener from '../structures/app/createListener.ts'
 import EmbedBuilder from '../structures/builders/EmbedBuilder.ts'
 
 export default createListener({
   name: 'guildDelete',
   async run(client, guild) {
+    const owner = client.users.cache.get(guild.ownerId)
+
     const embed = new EmbedBuilder()
-      .setTitle(`I've been removed from \`${(guild as Guild).name} (${(guild as Guild).id})\``)
-      .setDesc(`Now I'm on ${client.guilds.size} guilds`)
-      .addField('Owner', `\`${(guild as Guild).owner?.username} (${(guild as Guild).ownerID})`, true)
-      .addField('Member count', (guild as Guild).memberCount.toString(), true)
-      .setThumb((guild as Guild).iconURL()!)
+      .setTitle(`I've been removed from \`${guild.name} (${guild.id})\``)
+      .setDesc(`Now I'm on ${client.guilds.cache.size} guilds`)
+      .addField('Owner', `\`${owner?.username} (${owner?.id})`, true)
+      .addField('Member count', guild.memberCount.toString(), true)
+      .setThumb(guild.iconURL()!)
 
-    const channel = await client.rest.channels.get(process.env.GUILDS_LOG!) as TextChannel
-    const webhooks = await channel.getWebhooks()
+    const channel = await client.channels.fetch(process.env.GUILDS_LOG!)
 
-    let webhook = webhooks.find(w => w.name === `${client.user.username} Logger`)
+    if(!channel || channel.type !== ChannelType.GuildText) return
 
-    if(!webhook) webhook = await channel.createWebhook({ name: `${client.user.username} Logger` })
+    const webhooks = await channel.fetchWebhooks()
 
-    if(await client.prisma.guild.findUnique({ where: { id: guild.id } })) {
-      await client.prisma.guild.delete({
-        where: {
-          id: guild.id
-        }
-      })
-    }
-    
-    await webhook.execute({
+    let webhook = webhooks.find(w => w.name === `${client.user?.username} Logger`)
+
+    if(!webhook) webhook = await channel.createWebhook({ name: `${client.user?.username} Logger` })
+
+    await webhook.send({
       embeds: [embed],
-      avatarURL: client.user.avatarURL()
-    }, webhook.token!)
+      avatarURL: client.user?.displayAvatarURL({ size: 2048 })
+    })
   }
 })

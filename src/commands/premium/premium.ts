@@ -18,7 +18,7 @@ export default createCommand({
 
     const button = new ButtonBuilder()
       .setLabel(t('commands.premium.button.label'))
-      .setStyle('blue')
+      .defineStyle('blue')
       .setCustomId(`premium;${ctx.interaction.user.id}`)
 
     const embed = new EmbedBuilder()
@@ -32,10 +32,10 @@ export default createCommand({
 
     await ctx.reply(button.build({ embeds: [embed] }))
   },
-  async createMessageComponentInteraction({ ctx, t, client }) {
-    await ctx.interaction.defer(64)
+  async createMessageComponentInteraction({ ctx, t, app }) {
+    await ctx.interaction.deferReply({ flags: 64 })
 
-    const keys = await client.prisma.key.findMany({
+    const keys = await app.prisma.key.findMany({
       where: {
         user: ctx.args[1]
       }
@@ -73,7 +73,7 @@ export default createCommand({
         )
       }
     }
-    
+
     await ctx.reply(embed.build())
   }
 })

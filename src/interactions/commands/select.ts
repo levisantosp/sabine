@@ -1,4 +1,4 @@
-import { ComponentTypes } from 'oceanic.js'
+import { ComponentType } from 'discord.js'
 import { valorant_agents } from '../../config.ts'
 import createComponentInteraction from '../../structures/interaction/createComponentInteraction.ts'
 import SelectMenuBuilder from '../../structures/builders/SelectMenuBuilder.ts'
@@ -7,10 +7,10 @@ export default createComponentInteraction({
   name: 'select',
   time: 6 * 60 * 1000,
   flags: 64,
-  async run({ ctx, t, client }) {
-    if(ctx.interaction.data.componentType !== ComponentTypes.STRING_SELECT) return
+  async run({ ctx, t, app }) {
+    if(!ctx.interaction.isStringSelectMenu()) return
 
-    const player = client.players.get(ctx.interaction.data.values.getStrings()[0])
+    const player = app.players.get(ctx.interaction.values[0])
 
     if(!player) return
 
@@ -69,23 +69,23 @@ export default createComponentInteraction({
             }
           })
       )
-      
+
     return await ctx.reply({
       components: [
         {
-          type: ComponentTypes.ACTION_ROW,
+          type: ComponentType.ActionRow,
           components: [controllers]
         },
         {
-          type: ComponentTypes.ACTION_ROW,
+          type: ComponentType.ActionRow,
           components: [duelists]
         },
         {
-          type: ComponentTypes.ACTION_ROW,
+          type: ComponentType.ActionRow,
           components: [initiators]
         },
         {
-          type: ComponentTypes.ACTION_ROW,
+          type: ComponentType.ActionRow,
           components: [sentinels]
         }
       ]

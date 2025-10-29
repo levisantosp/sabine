@@ -1,25 +1,22 @@
-import * as Oceanic from 'oceanic.js'
+import { 
+  ButtonBuilder as DJSButtonBuilder, 
+  ButtonStyle, 
+  ActionRowBuilder,
+  type InteractionReplyOptions,
+} from 'discord.js'
 
-export default class ButtonBuilder {
-  public type: number = 2
-  public style!: 1 | 2 | 3 | 4 | 5
-  public label?: string
-  public customID!: string
-  public emoji?: Oceanic.NullablePartialEmoji
-  public url!: string
-  public disabled?: boolean
-
-  public setStyle(style: 'blue' | 'gray' | 'green' | 'red' | 'link') {
+export default class ButtonBuilder extends DJSButtonBuilder {
+  public defineStyle(style: 'blue' | 'gray' | 'green' | 'red' | 'link') {
     switch(style.toLowerCase()) {
-      case 'blue': this.style = Oceanic.Constants.ButtonStyles.PRIMARY
+      case 'blue': super.setStyle(ButtonStyle.Primary)
         break
-      case 'gray': this.style = Oceanic.Constants.ButtonStyles.SECONDARY
+      case 'gray': super.setStyle(ButtonStyle.Secondary)
         break
-      case 'green': this.style = Oceanic.Constants.ButtonStyles.SUCCESS
+      case 'green': super.setStyle(ButtonStyle.Success)
         break
-      case 'red': this.style = Oceanic.Constants.ButtonStyles.DANGER
+      case 'red': super.setStyle(ButtonStyle.Danger)
         break
-      case 'link': this.style = Oceanic.Constants.ButtonStyles.LINK
+      case 'link': super.setStyle(ButtonStyle.Link)
         break
       default: throw new Error('Invalid style! Please, choose: "BLUE", "GRAY", "GREEN", "RED", "LINK"')
     }
@@ -28,68 +25,56 @@ export default class ButtonBuilder {
   }
 
   public setLabel(label: string) {
-    this.label = label
+    super.setLabel(label)
 
     return this
   }
 
   public setCustomId(id: string) {
-    this.customID = id
+    super.setCustomId(id)
 
     return this
   }
 
-  public setEmoji(emoji: string) {
-    if(isNaN(Number(emoji))) this.emoji = {
-      name: emoji
-    }
+  public setEmoji(emoji: string, animated?: boolean) {
+    if(isNaN(Number(emoji))) super.setEmoji({ name: emoji })
 
-    else this.emoji = {
-      id: emoji
-    }
+    else super.setEmoji({ id: emoji , animated})
 
     return this
   }
 
   public setURL(url: string) {
-    this.url = url
+    super.setURL(url)
 
-    return this as unknown as Oceanic.URLButton
+    return this
   }
 
   public setDisabled() {
-    this.disabled = true
+    super.setDisabled(true)
 
     return this
   }
 
   public setEnabled() {
-    this.disabled = false
+    super.setDisabled(false)
     
     return this
   }
 
-  public build(content?: string | Oceanic.InteractionContent): Oceanic.InteractionContent {
+  public build(content?: string | InteractionReplyOptions) {
+    const row = new ActionRowBuilder<DJSButtonBuilder>().addComponents(this)
+    
     if(typeof content === 'string') {
       return {
         content: content ?? '',
-        components: [
-          {
-            type: 1,
-            components: [this]
-          }
-        ]
+        components: [row]
       }
     }
 
     else {
       return {
-        components: [
-          {
-            type: 1,
-            components: [this]
-          }
-        ],
+        components: [row],
         ...content
       }
     }

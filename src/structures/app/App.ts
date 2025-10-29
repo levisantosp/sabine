@@ -1,4 +1,4 @@
-import * as Oceanic from 'oceanic.js'
+import * as Discord from 'discord.js'
 import { readdirSync } from 'node:fs'
 import path from 'node:path'
 import type { Command } from '../command/createCommand.ts'
@@ -14,6 +14,7 @@ import {
   getPlayers,
   type Player
 } from 'players'
+import type { Listener } from './createListener.ts'
 
 type Reminder = {
   user: string
@@ -33,7 +34,9 @@ const queue = new Queue<Reminder>('reminder', {
   redis: process.env.REDIS_URL
 })
 
-export default class App extends Oceanic.Client {
+const rest = new Discord.REST().setToken(process.env.BOT_TOKEN)
+
+export default class App extends Discord.Client {
   public commands: Map<string, Command> = new Map()
   public _uptime: number = Date.now()
   public prisma: typeof prisma
@@ -42,14 +45,14 @@ export default class App extends Oceanic.Client {
   public interactions: Map<string, CreateInteractionOptions & CreateModalSubmitInteractionOptions> = new Map()
   public players: Map<string, Player> = new Map()
   
-  public constructor(options?: Oceanic.ClientOptions) {
+  public constructor(options: Discord.ClientOptions) {
     super(options)
     this.prisma = prisma
     this.redis = redis
     this.queue = queue
   }
 
-  public override async connect() {
+  public async connect() {
     const start = Date.now()
     
     Logger.warn('Connecting to database...')
@@ -66,7 +69,7 @@ export default class App extends Oceanic.Client {
     }
 
     for(const file of readdirSync(path.resolve(__dirname, '../../listeners'))) {
-      const listener = (await import(`../../listeners/${file}`)).default
+      const listener: Listener = (await import(`../../listeners/${file}`)).default
 
       if(listener.name === 'ready') this.once('ready', () => listener.run(this).catch((e: Error) => new Logger(this).error(e)))
 
@@ -75,7 +78,7 @@ export default class App extends Oceanic.Client {
 
     for(const folder of readdirSync(path.resolve(__dirname, '../../commands'))) {
       for(const file of readdirSync(path.resolve(__dirname, `../../commands/${folder}`))) {
-        const command = (await import(`../../commands/${folder}/${file}`)).default
+        const command: Command = (await import(`../../commands/${folder}/${file}`)).default
 
         if(this.commands.get(command.name)) {
           Logger.warn(`There is already an interaction named '${command.name}'`)
@@ -84,6 +87,7 @@ export default class App extends Oceanic.Client {
         this.commands.set(command.name, command)
       }
     }
+
     for(const folder of readdirSync(path.resolve(__dirname, '../../interactions'))) {
       for(const file of readdirSync(path.resolve(__dirname, `../../interactions/${folder}`))) {
         const interaction = (await import(`../../interactions/${folder}/${file}`)).default
@@ -96,25 +100,25 @@ export default class App extends Oceanic.Client {
       }
     }
 
-    await super.connect()
+    await super.login(process.env.BOT_TOKEN)
   }
-  public async bulkEditGlobalCommands() {
-    const commands: Oceanic.CreateApplicationCommandOptions[] = []
+  public async postCommands() {
+    const commands: Discord.ApplicationCommandData[] = []
 
     this.commands.forEach(cmd => {
       const integrationTypes = [
-        Oceanic.ApplicationIntegrationTypes.GUILD_INSTALL
+        Discord.ApplicationIntegrationType.GuildInstall
       ]
 
       const contexts = [
-        Oceanic.InteractionContextTypes.GUILD
+        Discord.InteractionContextType.Guild
       ]
 
       if(cmd.userInstall) {
-        integrationTypes.push(Oceanic.ApplicationIntegrationTypes.USER_INSTALL)
+        integrationTypes.push(Discord.ApplicationIntegrationType.UserInstall)
         contexts.push(
-          Oceanic.InteractionContextTypes.BOT_DM,
-          Oceanic.InteractionContextTypes.PRIVATE_CHANNEL
+          Discord.InteractionContextType.BotDM,
+          Discord.InteractionContextType.PrivateChannel
         )
       }
 
@@ -130,22 +134,17 @@ export default class App extends Oceanic.Client {
       })
     })
     
-    await this.application.bulkEditGlobalCommands(commands)
+    await rest.put(Discord.Routes.applicationCommands(this.user!.id), {
+      body: commands
+    })
   }
 }
-export const client = new App({
-  auth: 'Bot ' + process.env.BOT_TOKEN,
-  gateway: {
-    intents: ['ALL'],
-    autoReconnect: true,
-    maxShards: 'auto'
-  },
+
+export const app = new App({
+  intents: ['GuildMessages', 'Guilds', 'GuildMembers'],
   allowedMentions: {
-    everyone: false,
-    users: true,
     repliedUser: true,
-    roles: false
+    parse: ['users', 'roles']
   },
-  defaultImageFormat: 'png',
-  defaultImageSize: 2048
+  shards: 'auto'
 })

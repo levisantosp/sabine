@@ -2,17 +2,17 @@ import { calcPlayerPrice, type Player } from 'players'
 import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
 import createCommand from '../../structures/command/createCommand.ts'
-import { client } from '../../structures/client/App.ts'
+import { app } from '../../structures/app/App.ts'
 
 const tier = (() => {
-  const tier: {[key: string]: Player[]} = {
+  const tier: { [key: string]: Player[] } = {
     s: [] as Player[], // ovr 85+ (0.1%)
     a: [] as Player[], // ovr 80-84 (0.9%)
     b: [] as Player[], // ovr 70-79 (14%)
     c: [] as Player[] // ovr 69- (85%)
   }
 
-  for(const p of client.players.values()) {
+  for(const p of app.players.values()) {
     if(!p.ovr) continue
     if(p.ovr >= 85) tier.s.push(p)
     else if(p.ovr >= 80) tier.a.push(p)
@@ -82,7 +82,7 @@ export default createCommand({
     }
 
     await ctx.db.user.addPlayerToRoster(player.id.toString(), 'CLAIM_PLAYER_BY_CLAIM_COMMAND', channel)
-    
+
     const embed = new EmbedBuilder()
       .setTitle(player.name)
       .setDesc(
@@ -102,13 +102,13 @@ export default createCommand({
           type: 1,
           components: [
             new ButtonBuilder()
-            .setStyle('green')
-            .setLabel(t('commands.claim.promote'))
-            .setCustomId(`claim;${ctx.interaction.user.id};promote;${player.id}`),
+              .defineStyle('green')
+              .setLabel(t('commands.claim.promote'))
+              .setCustomId(`claim;${ctx.interaction.user.id};promote;${player.id}`),
             new ButtonBuilder()
-            .setStyle('red')
-            .setLabel(t('commands.claim.sell'))
-            .setCustomId(`claim;${ctx.interaction.user.id};sell;${player.id}`)
+              .defineStyle('red')
+              .setLabel(t('commands.claim.sell'))
+              .setCustomId(`claim;${ctx.interaction.user.id};sell;${player.id}`)
           ]
         }
       ]
@@ -124,7 +124,7 @@ export default createCommand({
     const i = ctx.db.user.reserve_players.findIndex(p => p === ctx.args[3])
 
     if(ctx.args[2] === 'promote') {
-      if(ctx.db.user.active_players.length >= 5 ) {
+      if(ctx.db.user.active_players.length >= 5) {
         ctx.db.user.reserve_players.push(ctx.db.user.active_players.at(-1)!)
         ctx.db.user.active_players.splice(-1, 1)
       }
@@ -134,10 +134,10 @@ export default createCommand({
 
       await ctx.db.user.save()
 
-      await ctx.reply('commands.promote.player_promoted', { p: client.players.get(ctx.args[3])?.name })
+      await ctx.reply('commands.promote.player_promoted', { p: app.players.get(ctx.args[3])?.name })
     }
     else if(ctx.args[2] === 'sell') {
-      const player = client.players.get(ctx.args[3])
+      const player = app.players.get(ctx.args[3])
 
       if(!player) {
         return await ctx.reply('commands.sell.player_not_found')

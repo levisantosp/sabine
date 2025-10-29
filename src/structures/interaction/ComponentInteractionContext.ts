@@ -1,6 +1,6 @@
-import * as Oceanic from 'oceanic.js'
-import App from '../client/App.ts'
-import locales, { type Content, type Args } from '../../locales/index.ts'
+import * as Discord from 'discord.js'
+import App from '../app/App.ts'
+import locales, { type Content, type Args } from '../../i18n/index.ts'
 import { SabineGuild, SabineUser } from '../../database/index.ts'
 
 type Database = {
@@ -9,25 +9,25 @@ type Database = {
 }
 
 type ComponentInteractionContextOptions = {
-  client: App
-  guild?: Oceanic.Guild | null
-  interaction: Oceanic.ComponentInteraction
+  app: App
+  guild?: Discord.Guild | null
+  interaction: Discord.MessageComponentInteraction
   locale: string
   db: Database
   args: string[]
 }
 
 export default class ComponentInteractionContext {
-  public client: App
-  public guild?: Oceanic.Guild | null
-  public interaction: Oceanic.ComponentInteraction
+  public app: App
+  public guild?: Discord.Guild | null
+  public interaction: Discord.MessageComponentInteraction
   public locale: string
   public db: Database
   public args: string[]
   public flags?: number
 
   public constructor(options: ComponentInteractionContextOptions) {
-    this.client = options.client
+    this.app = options.app
     this.guild = options.guild
     this.interaction = options.interaction
     this.locale = options.locale
@@ -40,7 +40,7 @@ export default class ComponentInteractionContext {
     return this
   }
 
-  public async reply(content: Content | Oceanic.InteractionContent, options?: Args): Promise<Oceanic.Message> {
+  public async reply(content: Content | Discord.InteractionReplyOptions, options?: Args): Promise<Discord.Message | null | undefined> {
     if(typeof content === 'string') {
       content = {
         content: locales(this.locale, content, options)
@@ -50,7 +50,7 @@ export default class ComponentInteractionContext {
     if(options && options.files) {
       content = {
         ...content,
-        files: options.files as Oceanic.File[]
+        files: options.files as (Discord.AttachmentBuilder | Discord.AttachmentPayload)[]
       }
     }
 
@@ -61,14 +61,19 @@ export default class ComponentInteractionContext {
       }
     }
 
-    if(this.interaction.acknowledged) {
-      return await (await this.interaction.createFollowup(content)).getMessage()
+    if(this.interaction.replied || this.interaction.deferred) {
+      return await this.interaction.followUp(content)
     }
 
-    else return await (await this.interaction.createMessage(content)).getMessage()
+    else return (await this.interaction.reply({ ...content, withResponse: true })).resource?.message
   }
 
-  public async edit(content: Content | Oceanic.EditInteractionContent, options?: Args): Promise<Oceanic.Message | Oceanic.InteractionCallbackResponse> {
+  public async edit(
+    content:
+      | Content
+      | Discord.InteractionEditReplyOptions,
+    options?: Args
+  ): Promise<Discord.Message | Discord.InteractionCallbackResponse> {
     if(typeof content === 'string') {
       content = {
         content: locales(this.locale, content, options)
@@ -78,7 +83,7 @@ export default class ComponentInteractionContext {
     if(options && options.files) {
       content = {
         ...content,
-        files: options.files as Oceanic.File[]
+        files: options.files as (Discord.AttachmentBuilder | Discord.AttachmentPayload)[]
       }
     }
 
@@ -89,10 +94,10 @@ export default class ComponentInteractionContext {
       }
     }
 
-    if(this.interaction.acknowledged) {
-      return await this.interaction.editOriginal(content)
+    if(this.interaction.replied || this.interaction.deferred) {
+      return await this.interaction.editReply(content)
     }
 
-    else return await this.interaction.editParent(content as Oceanic.InteractionContent)
+    else return await this.interaction.update({ ...content, withResponse: true })
   }
 }

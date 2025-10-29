@@ -2,17 +2,15 @@ import { Type, type TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 import type { FastifyBaseLogger, FastifyInstance, RawServerDefault } from 'fastify'
 import calcOdd from '../../../util/calcOdd.ts'
 import ButtonBuilder from '../../../structures/builders/ButtonBuilder.ts'
-import locales from '../../../locales/index.ts'
+import locales from '../../../i18n/index.ts'
 import EmbedBuilder from '../../../structures/builders/EmbedBuilder.ts'
 import { emojis } from '../../../util/emojis.ts'
-import { client } from '../../../structures/client/App.ts'
+import { app } from '../../../structures/app/App.ts'
 import type { IncomingMessage, ServerResponse } from 'http'
-import { PrismaClient } from '@prisma/client'
 import { SabineUser } from '../../../database/index.ts'
-import * as Oceanic from 'oceanic.js'
+import * as Discord from 'discord.js'
 
-const prisma = new PrismaClient()
-const tournaments: {[key: string]: RegExp[]} = {
+const tournaments: { [key: string]: RegExp[] } = {
   'Valorant Champions Tour': [
     /valorant champions/,
     /valorant masters/,
@@ -60,7 +58,7 @@ export default async function(
       )
     }
   }, async(req) => {
-    const guilds = await prisma.guild.findMany({
+    const guilds = await app.prisma.guild.findMany({
       where: {
         events: {
           some: {
@@ -78,7 +76,7 @@ export default async function(
       }
     })
 
-    const preds = await prisma.prediction.findMany({
+    const preds = await app.prisma.prediction.findMany({
       where: {
         game: 'valorant'
       },
@@ -97,14 +95,14 @@ export default async function(
         }))
     ) {
       for(const guild of guilds) {
-        const channel = client.getChannel(guild.events.filter(e =>
+        const channel = app.channels.cache.get(guild.events.filter(e =>
           Object.keys(tournaments).includes(e.name))[0].channel2
         )
-          || client.getChannel(guild.events.filter(e =>
+          || app.channels.cache.get(guild.events.filter(e =>
             e.name === data.tournament.name)[0].channel2
           )
 
-        if(!channel || channel.type !== Oceanic.ChannelTypes.GUILD_TEXT) continue
+        if(!channel || channel.type !== Discord.ChannelType.GuildText) continue
 
         if(
           !guild.events.some(e => e.name === data.tournament.name) &&
@@ -129,24 +127,25 @@ export default async function(
             true
           )
           .setFooter({ text: data.stage })
-        
-        channel.createMessage(embed.build({
+
+        await channel.send({
+          embeds: [embed],
           components: [
             {
               type: 1,
               components: [
                 new ButtonBuilder()
                   .setLabel(locales(guild.lang, 'helper.stats'))
-                  .setStyle('link')
+                  .defineStyle('link')
                   .setURL(`https://vlr.gg/${data.id}`),
                 new ButtonBuilder()
                   .setLabel(locales(guild.lang ?? 'en', 'helper.pickem.label'))
-                  .setStyle('blue')
+                  .defineStyle('blue')
                   .setCustomId('pickem')
               ]
             }
           ]
-        }))
+        })
       }
     }
 
@@ -202,7 +201,7 @@ export default async function(
               pred.odd = odd
 
               await Promise.all([
-                prisma.prediction.update({
+                app.prisma.prediction.update({
                   where: {
                     id: pred.id
                   },

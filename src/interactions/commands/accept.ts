@@ -1,24 +1,24 @@
 import { SabineUser } from '../../database/index.ts'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
 import createComponentInteraction from '../../structures/interaction/createComponentInteraction.ts'
-import { ComponentTypes } from 'oceanic.js'
+import { ComponentType, Message } from 'discord.js'
 import SelectMenuBuilder from '../../structures/builders/SelectMenuBuilder.ts'
 import { valorant_agents, valorant_maps } from '../../config.ts'
 
 export default createComponentInteraction({
   name: 'accept',
   time: 60 * 1000,
-  async run({ ctx, client, t }) {
+  async run({ ctx, app, t }) {
     const user = await SabineUser.fetch(ctx.args[2])
 
-    const keys = await client.redis.keys('agent_selection*')
+    const keys = await app.redis.keys('agent_selection*')
 
     if(!ctx.db.user.team_name || !ctx.db.user.team_tag) {
       return await ctx.reply('commands.duel.needed_team_name')
     }
 
     if(ctx.db.user.active_players.length < 5) {
-      return await  ctx.reply('commands.duel.team_not_completed_1')
+      return await ctx.reply('commands.duel.team_not_completed_1')
     }
 
     if(!user || user.active_players.length < 5) {
@@ -29,11 +29,11 @@ export default createComponentInteraction({
       return await ctx.reply('commands.duel.needed_team_name_2')
     }
 
-    if(await client.redis.get(`match:${ctx.interaction.user.id}`) || keys.some(key => key.includes(ctx.interaction.user.id))) {
+    if(await app.redis.get(`match:${ctx.interaction.user.id}`) || keys.some(key => key.includes(ctx.interaction.user.id))) {
       return await ctx.reply('commands.duel.already_in_match')
     }
 
-    if(await client.redis.get(`match:${user.id}`) || keys.some(key => key.includes(user.id))) {
+    if(await app.redis.get(`match:${user.id}`) || keys.some(key => key.includes(user.id))) {
       return await ctx.reply('commands.duel.already_in_match_2')
     }
 
@@ -56,7 +56,7 @@ export default createComponentInteraction({
         {
           name: user.team_name,
           value: user.active_players.map(id => {
-            const player = client.players.get(id)!
+            const player = app.players.get(id)!
             const ovr = parseInt(player.ovr.toString())
             return `<a:loading:809221866434199634> ${player.name} (${ovr})`
           }).join('\n'),
@@ -65,7 +65,7 @@ export default createComponentInteraction({
         {
           name: ctx.db.user.team_name,
           value: ctx.db.user.active_players.map(id => {
-            const player = client.players.get(id)!
+            const player = app.players.get(id)!
             const ovr = parseInt(player.ovr.toString())
             return `<a:loading:809221866434199634> ${player.name} (${ovr})`
           }).join('\n'),
@@ -79,7 +79,7 @@ export default createComponentInteraction({
       .setPlaceholder(user.team_name)
       .setOptions(
         ...user.active_players.map(id => {
-          const player = client.players.get(id)!
+          const player = app.players.get(id)!
           return {
             label: `${player.name}`,
             value: player.id.toString()
@@ -92,7 +92,7 @@ export default createComponentInteraction({
       .setPlaceholder(ctx.db.user.team_name!)
       .setOptions(
         ...ctx.db.user.active_players.map(id => {
-          const player = client.players.get(id)!
+          const player = app.players.get(id)!
           return {
             label: `${player.name}`,
             value: player.id.toString()
@@ -101,19 +101,20 @@ export default createComponentInteraction({
       )
       .setCustomId(`select;${ctx.interaction.user.id};${user.id}`)
 
-    const msg: any = await ctx.edit(embed.build({
-      content: `${ctx.interaction.user.mention} <@${user.id}>`,
+    const msg = await ctx.edit({
+      embeds: [embed],
+      content: `${ctx.interaction.user} <@${user.id}>`,
       components: [
         {
-          type: ComponentTypes.ACTION_ROW,
+          type: ComponentType.ActionRow,
           components: [menu1]
         },
         {
-          type: ComponentTypes.ACTION_ROW,
+          type: ComponentType.ActionRow,
           components: [menu2]
         }
       ]
-    }))
+    }) as Message
 
     const data: {
       [key: string]: {
@@ -135,7 +136,7 @@ export default createComponentInteraction({
     } = {}
 
     data[ctx.db.user.id] = ctx.db.user.active_players.map(id => {
-      const p = client.players.get(id)!
+      const p = app.players.get(id)!
       const ovr = p.ovr
       return {
         ...p,
@@ -145,7 +146,7 @@ export default createComponentInteraction({
     })
 
     data[user.id] = user.active_players.map(id => {
-      const p = client.players.get(id)!
+      const p = app.players.get(id)!
       const ovr = p.ovr
       return {
         ...p,
@@ -154,11 +155,11 @@ export default createComponentInteraction({
       }
     })
 
-    await client.redis.set(`agent_selection:${user.id}:${ctx.interaction.user.id}`, JSON.stringify(
+    await app.redis.set(`agent_selection:${user.id}:${ctx.interaction.user.id}`, JSON.stringify(
       {
         ...data,
-        messageId: msg.resource.message.id,
-        channelId: msg.resource.message.channelID,
+        messageId: msg.id,
+        channelId: msg.channelId,
         map: map.name,
         image: map.image,
         mode: ctx.args[3] === 'tournament' ? 'tournament' : ctx.args.slice(3).join(':')

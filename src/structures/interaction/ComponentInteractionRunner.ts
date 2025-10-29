@@ -1,36 +1,36 @@
-import type { ComponentInteraction } from 'oceanic.js'
-import App from '../client/App.ts'
+import type { MessageComponentInteraction } from 'discord.js'
+import App from '../app/App.ts'
 import ComponentInteractionContext from './ComponentInteractionContext.ts'
 import { SabineGuild, SabineUser } from '../../database/index.ts'
-import locales, { type Args, type Content } from '../../locales/index.ts'
+import locales, { type Args, type Content } from '../../i18n/index.ts'
 import type { Blacklist } from '@prisma/client'
 import type ModalSubmitInteractionContext from './ModalSubmitInteractionContext.ts'
 
 export default class ComponentInteractionRunner {
   public async run(
-    client: App,
-    interaction: ComponentInteraction
+    app: App,
+    interaction: MessageComponentInteraction
   ): Promise<unknown> {
-    const args = interaction.data.customID.split(';')
-    const i = client.interactions.get(args[0])
-    const command = client.commands.get(args[0])
+    const args = interaction.customId.split(';')
+    const i = app.interactions.get(args[0])
+    const command = app.commands.get(args[0])
 
-    const rawBlacklist = await client.redis.get('blacklist')
+    const rawBlacklist = await app.redis.get('blacklist')
     const value: Blacklist[] = rawBlacklist ? JSON.parse(rawBlacklist) : []
     const blacklist = new Map<string | null, Blacklist>(value.map(b => [b.id, b]))
 
     if(blacklist.get(interaction.user.id)) return
-    if(blacklist.get(interaction.guildID)) return
+    if(blacklist.get(interaction.guildId)) return
 
     if(i?.global && !command) {
-      if(!interaction.guild || !interaction.guildID) return
+      if(!interaction.guild || !interaction.guildId) return
 
-      const guild = await SabineGuild.fetch(interaction.guildID) ?? new SabineGuild(interaction.guildID)
+      const guild = await SabineGuild.fetch(interaction.guildId) ?? new SabineGuild(interaction.guildId)
       const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
 
       const ctx = new ComponentInteractionContext({
         args,
-        client,
+        app: app,
         guild: interaction.guild,
         locale: user.lang,
         db: {
@@ -45,11 +45,11 @@ export default class ComponentInteractionRunner {
       }
 
       if(i.ephemeral) {
-        await interaction.defer(64)
+        await interaction.deferReply({ flags: 64 })
       }
 
       else if(i.isThinking) {
-        await interaction.defer()
+        await interaction.deferReply()
       }
 
       else if(i.flags) {
@@ -59,7 +59,7 @@ export default class ComponentInteractionRunner {
       return await i.run({
         ctx: ctx as ComponentInteractionContext & ModalSubmitInteractionContext,
         t,
-        client
+        app
       })
     }
 
@@ -68,15 +68,15 @@ export default class ComponentInteractionRunner {
 
       let guild: SabineGuild | undefined
 
-      if(interaction.guildID) {
-        guild = await SabineGuild.fetch(interaction.guildID) ?? new SabineGuild(interaction.guildID)
+      if(interaction.guildId) {
+        guild = await SabineGuild.fetch(interaction.guildId) ?? new SabineGuild(interaction.guildId)
       }
 
       const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
 
       const ctx = new ComponentInteractionContext({
         args,
-        client,
+        app: app,
         guild: interaction.guild,
         locale: user.lang,
         db: {
@@ -109,7 +109,7 @@ export default class ComponentInteractionRunner {
         ctx,
         t,
         i: interaction,
-        client
+        app
       })
     }
 
@@ -119,13 +119,13 @@ export default class ComponentInteractionRunner {
 
     let guild: SabineGuild | undefined
 
-    if(interaction.guildID) {
-      guild = await SabineGuild.fetch(interaction.guildID) ?? new SabineGuild(interaction.guildID)
+    if(interaction.guildId) {
+      guild = await SabineGuild.fetch(interaction.guildId) ?? new SabineGuild(interaction.guildId)
     }
 
     const ctx = new ComponentInteractionContext({
       args,
-      client,
+      app,
       guild: interaction.guild,
       locale: user.lang,
       db: {
@@ -157,14 +157,15 @@ export default class ComponentInteractionRunner {
     if(i.flags) {
       ctx.setFlags(i.flags)
     }
+
     else if(i.ephemeral) {
-      await interaction.defer(64)
+      await interaction.deferReply({ flags: 64 })
     }
 
     else if(i.isThinking) {
-      await interaction.defer()
+      await interaction.deferReply()
     }
 
-    await i.run({ ctx, t, client })
+    await i.run({ ctx, t, app })
   }
 }

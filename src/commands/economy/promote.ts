@@ -1,4 +1,4 @@
-import type { SelectOption } from 'oceanic.js'
+import type { APISelectMenuOption } from 'discord.js'
 import SelectMenuBuilder from '../../structures/builders/SelectMenuBuilder.ts'
 import createCommand from '../../structures/command/createCommand.ts'
 import { SabineUser } from '../../database/index.ts'
@@ -30,14 +30,14 @@ export default createCommand({
   ],
   userInstall: true,
   messageComponentInteractionTime: 5 * 60 * 1000,
-  async run({ ctx, t, client }) {
-    const p = client.players.get(ctx.args[0].toString())
+  async run({ ctx, t, app }) {
+    const p = app.players.get(ctx.args[0].toString())
 
     if(!p) {
       return await ctx.reply('commands.promote.player_not_found')
     }
 
-    const options: SelectOption[] = []
+    const options: APISelectMenuOption[] = []
 
     const players = ctx.db.user.active_players
 
@@ -56,7 +56,7 @@ export default createCommand({
     for(const p_id of players) {
       i++
 
-      const p = client.players.get(p_id)
+      const p = app.players.get(p_id)
 
       if(!p) break
 
@@ -75,13 +75,15 @@ export default createCommand({
 
     await ctx.reply(menu.build(t('commands.promote.select_player')))
   },
-  async createAutocompleteInteraction({ i, client }) {
+  async createAutocompleteInteraction({ i, app }) {
     const user = (await SabineUser.fetch(i.user.id))!
+
+    const value = i.options.getString('player', true)
 
     const players: Array<{ name: string, ovr: number, id: string }> = []
 
     for(const p_id of user.reserve_players) {
-      const p = client.players.get(p_id)
+      const p = app.players.get(p_id)
 
       if(!p) break
 
@@ -93,34 +95,34 @@ export default createCommand({
         id: p_id
       })
     }
-    await i.result(
+    await i.respond(
       players.sort((a, b) => a.ovr - b.ovr)
         .filter(p => {
-          if(p.name.toLowerCase().includes(i.data.options.getOptions()[0].value.toString().toLowerCase())) return p
+          if(p.name.toLowerCase().includes(value.toLowerCase())) return p
         })
         .slice(0, 25)
         .map(p => ({ name: p.name, value: p.id }))
     )
   },
-  async createMessageComponentInteraction({ ctx, i, client }) {
-    if(i.data.componentType === 3) {
-      const id = i.data.values.getStrings()[0].split('_')[1]
+  async createMessageComponentInteraction({ ctx, i, app }) {
+    if(!i.isStringSelectMenu()) return
 
-      let index = ctx.db.user.active_players.findIndex(p => p === id)
+    const id = i.values[0].split('_')[1]
 
-      ctx.db.user.active_players.splice(index, 1)
-      ctx.db.user.reserve_players.push(id)
+    let index = ctx.db.user.active_players.findIndex(p => p === id)
 
-      index = ctx.db.user.reserve_players.findIndex(p => p === ctx.args[2])
+    ctx.db.user.active_players.splice(index, 1)
+    ctx.db.user.reserve_players.push(id)
 
-      ctx.db.user.reserve_players.splice(index, 1)
-      ctx.db.user.active_players.push(ctx.args[2])
+    index = ctx.db.user.reserve_players.findIndex(p => p === ctx.args[2])
 
-      await ctx.db.user.save()
+    ctx.db.user.reserve_players.splice(index, 1)
+    ctx.db.user.active_players.push(ctx.args[2])
 
-      const p = client.players.get(ctx.args[2])!
+    await ctx.db.user.save()
 
-      await ctx.edit('commands.promote.player_promoted', { p: p.name })
-    }
+    const p = app.players.get(ctx.args[2])!
+
+    await ctx.edit('commands.promote.player_promoted', { p: p.name })
   }
 })

@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionTypes } from 'oceanic.js'
+import { ApplicationCommandOptionType } from 'discord.js'
 import createCommand from '../../structures/command/createCommand.ts'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
 import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
@@ -15,7 +15,7 @@ export default createCommand({
   category: 'economy',
   options: [
     {
-      type: ApplicationCommandOptionTypes.INTEGER,
+      type: ApplicationCommandOptionType.Integer,
       name: 'page',
       nameLocalizations: {
         'pt-BR': 'página'
@@ -28,8 +28,8 @@ export default createCommand({
   ],
   userInstall: true,
   messageComponentInteractionTime: 5 * 60 * 1000,
-  async run({ ctx, t, client }) {
-    const matches = await client.prisma.match.findMany({
+  async run({ ctx, t, app }) {
+    const matches = await app.prisma.match.findMany({
       where: {
         userId: ctx.db.user.id
       },
@@ -89,7 +89,7 @@ export default createCommand({
     const embed = new EmbedBuilder()
       .setAuthor({
         name: t('commands.career.embed.author'),
-        iconURL: ctx.interaction.user.avatarURL()
+        iconURL: ctx.interaction.user.displayAvatarURL({ size: 2048 })
       })
       .setFooter({
         text: t('commands.career.embed.footer', {
@@ -99,7 +99,7 @@ export default createCommand({
       })
 
     for(const match of career) {
-      if(match.mode.toLowerCase().includes('ranked') && match.mode.toLowerCase() !== 'unranked')  {
+      if(match.mode.toLowerCase().includes('ranked') && match.mode.toLowerCase() !== 'unranked') {
         const timestamp = (match.when.getTime() / 1000).toFixed(0)
 
         const type = match.winner ? 'win' : 'defeat'
@@ -125,12 +125,12 @@ export default createCommand({
     embed.setDesc(content)
 
     const previous = new ButtonBuilder()
-      .setStyle('blue')
+      .defineStyle('blue')
       .setEmoji('1404176223621611572')
       .setCustomId(`career;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous`)
 
     const next = new ButtonBuilder()
-      .setStyle('blue')
+      .defineStyle('blue')
       .setEmoji('1404176291829121028')
       .setCustomId(`career;${ctx.interaction.user.id};${page + 1 > pages ? pages : page + 1};next`)
 
@@ -151,8 +151,8 @@ export default createCommand({
       ]
     }))
   },
-  async createMessageComponentInteraction({ ctx, t, client }) {
-    const matches = await client.prisma.match.findMany({
+  async createMessageComponentInteraction({ ctx, t, app }) {
+    const matches = await app.prisma.match.findMany({
       where: {
         userId: ctx.db.user.id
       },
@@ -212,7 +212,7 @@ export default createCommand({
     const embed = new EmbedBuilder()
       .setAuthor({
         name: t('commands.career.embed.author'),
-        iconURL: ctx.interaction.user.avatarURL()
+        iconURL: ctx.interaction.user.displayAvatarURL({ size: 2048 })
       })
       .setFooter({
         text: t('commands.career.embed.footer', {
@@ -222,7 +222,7 @@ export default createCommand({
       })
 
     for(const match of career) {
-      if(match.mode.toLowerCase().includes('ranked') && match.mode.toLowerCase() !== 'unranked')  {
+      if(match.mode.toLowerCase().includes('ranked') && match.mode.toLowerCase() !== 'unranked') {
         const timestamp = (match.when.getTime() / 1000).toFixed(0)
 
         const type = match.winner ? 'win' : 'defeat'
@@ -237,7 +237,7 @@ export default createCommand({
         const timestamp = (match.when.getTime() / 1000).toFixed(0)
 
         const type = match.winner ? 'win' : 'defeat'
-        
+
         content += `- [<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] **[${t(`commands.career.mode.${match.mode}`)}]** ${t(`commands.career.type.unranked_${type}`, {
           score: `${match.teams[0].score}-${match.teams[1].score}`,
           user: `<@${match.teams[1].user}>`
@@ -248,12 +248,12 @@ export default createCommand({
     embed.setDesc(content)
 
     const previous = new ButtonBuilder()
-      .setStyle('blue')
+      .defineStyle('blue')
       .setEmoji('1404176223621611572')
       .setCustomId(`career;${ctx.interaction.user.id};${page - 1};previous`)
 
     const next = new ButtonBuilder()
-      .setStyle('blue')
+      .defineStyle('blue')
       .setEmoji('1404176291829121028')
       .setCustomId(`career;${ctx.interaction.user.id};${page + 1};next`)
 
@@ -264,14 +264,15 @@ export default createCommand({
     if(page >= pages) {
       next.setDisabled()
     }
-    
-    await ctx.edit(embed.build({
+
+    await ctx.edit({
+      embeds: [embed],
       components: [
         {
           type: 1,
           components: [previous, next]
         }
       ]
-    }))
+    })
   }
 })

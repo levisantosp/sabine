@@ -29,8 +29,8 @@ export default createCommand({
   ],
   userInstall: true,
   cooldown: true,
-  async run({ ctx, client }) {
-    const player = client.players.get(ctx.args[0].toString())
+  async run({ ctx, app }) {
+    const player = app.players.get(ctx.args[0].toString())
 
     const i = ctx.db.user.reserve_players.findIndex(p => p === ctx.args[0])
 
@@ -42,15 +42,17 @@ export default createCommand({
 
     await ctx.reply('commands.sell.sold', { p: player.name, price: calcPlayerPrice(player, true).toLocaleString() })
   },
-  async createAutocompleteInteraction({ i, client }) {
+  async createAutocompleteInteraction({ i, app }) {
     const user = await SabineUser.fetch(i.user.id)
 
     if(!user) return
 
+    const value = i.options.getString('player', true)
+
     const players: Array<{ name: string, ovr: number, id: string }> = []
 
     for(const p_id of user.reserve_players) {
-      const p = client.players.get(p_id)
+      const p = app.players.get(p_id)
 
       if(!p) break
 
@@ -63,10 +65,10 @@ export default createCommand({
       })
     }
 
-    await i.result(
+    await i.respond(
       players.sort((a, b) => a.ovr - b.ovr)
         .filter(p => {
-          if(p.name.toLowerCase().includes(i.data.options.getOptions()[0].value.toString().toLowerCase())) return p
+          if(p.name.toLowerCase().includes(value.toLowerCase())) return p
         })
         .slice(0, 25)
         .map(p => ({ name: p.name, value: p.id }))

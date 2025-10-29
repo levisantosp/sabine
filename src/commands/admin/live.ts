@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionTypes } from 'oceanic.js'
+import { ApplicationCommandOptionType } from 'discord.js'
 import createCommand from '../../structures/command/createCommand.ts'
 
 export default createCommand({
@@ -41,7 +41,7 @@ export default createCommand({
               required: true
             },
             {
-              type: ApplicationCommandOptionTypes.BOOLEAN,
+              type: ApplicationCommandOptionType.Boolean,
               name: 'spam',
               description: 'Select whether you want the bot to spam messages from live matches or not',
               descriptionLocalizations: {
@@ -71,7 +71,7 @@ export default createCommand({
               required: true
             },
             {
-              type: ApplicationCommandOptionTypes.BOOLEAN,
+              type: ApplicationCommandOptionType.Boolean,
               name: 'spam',
               description: 'Select whether you want the bot to spam messages from live matches or not',
               descriptionLocalizations: {
@@ -110,8 +110,9 @@ export default createCommand({
           }
         }
       ]
-    }
+    },
   ],
+  permissions: ['ManageChannels'],
   async run({ ctx }) {
     if(!ctx.db.guild) return
 
@@ -120,7 +121,7 @@ export default createCommand({
         valorant: async() => {
           if(!ctx.guild || !ctx.db.guild) return
 
-          const channel = ctx.guild.channels.get(ctx.args[2].toString())!
+          const channel = ctx.guild.channels.cache.get(ctx.args[2].toString())!
 
           if(![0, 5].some(t => t === channel.type)) return await ctx.reply('commands.live.invalid_channel')
 
@@ -132,12 +133,12 @@ export default createCommand({
 
           await ctx.db.guild.save()
 
-          await ctx.reply('commands.live.live_enabled', { ch: channel.mention })
+          await ctx.reply('commands.live.live_enabled', { ch: channel.toString() })
         },
         lol: async() => {
           if(!ctx.guild || !ctx.db.guild) return
 
-          const channel = ctx.guild.channels.get(ctx.args[2].toString())!
+          const channel = ctx.guild.channels.cache.get(ctx.args[2].toString())!
 
           if(![0, 5].some(t => t === channel.type)) return await ctx.reply('commands.live.invalid_channel')
 
@@ -151,7 +152,7 @@ export default createCommand({
 
           await ctx.db.guild.save()
 
-          await ctx.reply('commands.live.live_enabled', { ch: channel.mention })
+          await ctx.reply('commands.live.live_enabled', { ch: channel.toString() })
         }
       }
 
@@ -172,13 +173,13 @@ export default createCommand({
           if(!ctx.db.guild) return
 
           ctx.db.guild.lol_live_feed_channel = null
-          
+
           await ctx.db.guild.save()
 
           await ctx.reply('commands.live.live_disabled')
         }
       }
-      
+
       await games[ctx.args[1] as 'valorant' | 'lol']()
     }
   }
