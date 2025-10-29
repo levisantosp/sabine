@@ -179,7 +179,7 @@ export default class CommandRunner {
     }
 
     command.run({ ctx, app, t, id: interaction.id })
-      .then(async () => {
+      .then(async() => {
         if(process.env.DEVS.includes(interaction.user.id)) return
 
         const cmd = [group, sub].filter(Boolean).join(' ')

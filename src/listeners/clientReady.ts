@@ -25,7 +25,7 @@ const tournaments: { [key: string]: RegExp[] } = {
   ]
 }
 
-const sendValorantMatches = async (client: App) => {
+const sendValorantMatches = async(client: App) => {
   const res = await service.getMatches('valorant')
   const res2 = await service.getResults('valorant')
 
@@ -221,7 +221,7 @@ const sendValorantMatches = async (client: App) => {
     })
   }
 }
-const sendValorantTBDMatches = async (client: App) => {
+const sendValorantTBDMatches = async(client: App) => {
   const res = await service.getMatches('valorant')
 
   if(!res || !res.length) return
@@ -308,7 +308,7 @@ const sendValorantTBDMatches = async (client: App) => {
   }
 }
 
-const sendLolMatches = async (client: App) => {
+const sendLolMatches = async(client: App) => {
   const res = await service.getMatches('lol')
   const res2 = await service.getResults('lol')
 
@@ -457,7 +457,7 @@ const sendLolMatches = async (client: App) => {
   }
 }
 
-const sendLolTBDMatches = async (client: App) => {
+const sendLolTBDMatches = async(client: App) => {
   const res = await service.getMatches('lol')
 
   if(!res || !res.length) return
@@ -539,14 +539,14 @@ const sendLolTBDMatches = async (client: App) => {
     }
   }
 }
-const runInBatches = async (client: App, tasks: any[], batch_size: number) => {
+const runInBatches = async(client: App, tasks: any[], batch_size: number) => {
   for(let i = 0;i < tasks.length;i += batch_size) {
     const batch = tasks.slice(i, i + batch_size)
 
     await Promise.all(batch.map(task => task(client).catch((e: Error) => new Logger(client).error(e))))
   }
 }
-const runTasks = async (client: App) => {
+const runTasks = async(client: App) => {
   const tasks = [
     sendValorantMatches,
     sendValorantTBDMatches,
@@ -556,7 +556,7 @@ const runTasks = async (client: App) => {
 
   await runInBatches(client, tasks, 2)
 
-  setTimeout(async () => await runTasks(client), process.env.INTERVAL ?? 5 * 60 * 1000)
+  setTimeout(async() => await runTasks(client), process.env.INTERVAL ?? 5 * 60 * 1000)
 }
 
 export default createListener({
