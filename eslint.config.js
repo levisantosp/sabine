@@ -45,7 +45,8 @@ export default defineConfig([
       }],
       '@typescript-eslint/no-explicit-any': 'off',
       'no-empty': 'off',
-      '@typescript-eslint/no-unused-expressions': 'off'
+      '@typescript-eslint/no-unused-expressions': 'off',
+      '@typescript-eslint/no-non-null-asserted-optional-chain': 'off'
     }
   }
 ])
