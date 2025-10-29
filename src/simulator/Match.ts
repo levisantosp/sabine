@@ -3,7 +3,7 @@ import { valorant_agents, valorant_maps, valorant_weapons } from '../config.ts'
 import type { Args } from '../locales/index.ts'
 import EmbedBuilder from '../structures/builders/EmbedBuilder.ts'
 import type { PlayerWeapon } from './Player.ts'
-import type { AnyTextableChannel, Message } from 'oceanic.js'
+import type { Message, MessageEditOptions } from 'discord.js'
 
 export type PlayerStats = {
   aim: number
@@ -84,7 +84,7 @@ type RoundResult = {
 
 type MatchOptions = {
   teams: Team[]
-  ctx: Message<AnyTextableChannel>
+  ctx: Message
   t: (content: string, args?: Args) => string
   mode: 'unranked' | 'ranked' | 'swiftplay:unranked' | 'swiftplay:ranked' | 'tournament'
   map: string
@@ -96,7 +96,7 @@ export default class Match {
   public rounds: RoundResult[] = []
   public teams: Team[] = []
   public finished: boolean = false
-  public readonly ctx: Message<AnyTextableChannel>
+  public readonly ctx: Message
   public content: string = ''
   public t: (content: string, args?: Args) => string
   public readonly mode: 'unranked' | 'ranked' | 'swiftplay:unranked' | 'swiftplay:ranked' | 'tournament'
@@ -190,7 +190,7 @@ export default class Match {
 
         if(roles['duelist'] >= 3) {
           const count = roles['duelist']
-          
+
           const debuff = 1 - Math.min(min + (count - 3) * increment, 0.10)
 
           p.aim *= debuff
@@ -257,7 +257,7 @@ export default class Match {
     this.teams[0].side = side
     this.teams[1].side = side === 'ATTACK' ? 'DEFENSE' : 'ATTACK'
   }
-  
+
   public async wait(time: number) {
     return await new Promise(r => setTimeout(r, time))
   }
@@ -320,8 +320,8 @@ export default class Match {
         }
       )
 
-    await this.ctx.edit(embed.build(this.mentions))
-    
+    await this.ctx.edit(embed.build(this.mentions) as MessageEditOptions)
+
     await this.wait(3000)
   }
 }

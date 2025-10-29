@@ -1,3 +1,4 @@
+import type { MessageEditOptions, TextChannel } from 'discord.js'
 import { valorant_agents, valorant_maps, valorant_weapons } from '../config.ts'
 import { prisma, SabineUser } from '../database/index.ts'
 import EmbedBuilder from '../structures/builders/EmbedBuilder.ts'
@@ -70,7 +71,7 @@ export default class Round extends Match {
         }
       )
 
-    await this.ctx.edit(embed.build(this.mentions))
+    await this.ctx.edit(embed.build(this.mentions) as MessageEditOptions)
 
     for(const t of this.teams) {
       const teamCredits = t.roster.reduce((sum, p) => sum + p.credits, 0) / 5
@@ -128,21 +129,26 @@ export default class Round extends Match {
   }
   private async finish(score1: number, score2: number) {
     this.finished = true
+
     const user1 = await SabineUser.fetch(this.teams[0].user) || new SabineUser(this.teams[0].user)
     const user2 = await SabineUser.fetch(this.teams[1].user) || new SabineUser(this.teams[1].user)
+
     if(this.mode === 'ranked') {
       const max = Math.max(score1, score2)
+
       if(max === 13 && score1 === max) {
         const diff = score1 - score2
         const maxDiff = 13
         const minPts = 10
         const maxPts = 40
         const pts = Math.round(minPts + (diff - 1) * ((maxPts - minPts) / (maxDiff - 1)))
+
         user1.ranked_wins += 1
         user1.rank_rating += pts
         user1.fates += 5
         user2.ranked_defeats += 1
         user2.rank_rating -= pts - 5
+
         if(user2.rank_rating < 0 && user2.elo > 0) {
           user2.elo -= 1
           user2.rank_rating = 80
@@ -171,6 +177,7 @@ export default class Round extends Match {
             }
           }
         }
+
         await Promise.all([
           prisma.match.create({
             data: {
@@ -212,7 +219,9 @@ export default class Round extends Match {
               }
             }
           })])
+
         await Promise.all([user1.save(), user2.save()])
+
         const embed = new EmbedBuilder()
         .setTitle(this.t(`simulator.mode.${this.mode}`))
         .setDesc(
@@ -236,16 +245,17 @@ export default class Round extends Match {
             inline: true
           }
         )
-        await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.channel.createMessage(
+        
+        await this.ctx.edit(embed.build(this.mentions) as MessageEditOptions)
+        await (this.ctx.channel as TextChannel).send(
           {
             content: this.t('simulator.winner',
               {
                 t: this.teams[0].name,
                 users: this.mentions
               }),
-            messageReference: {
-              messageID: this.ctx.id
+            reply: {
+              messageReference: this.ctx.id
             }
           }
         )
@@ -355,16 +365,16 @@ export default class Round extends Match {
             inline: true
           }
         )
-        await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.channel.createMessage(
+        await this.ctx.edit(embed.build(this.mentions) as MessageEditOptions)
+        await (this.ctx.channel as TextChannel).send(
           {
             content: this.t('simulator.winner',
               {
                 t: this.teams[1].name,
                 users: this.mentions
               }),
-            messageReference: {
-              messageID: this.ctx.id
+            reply: {
+              messageReference: this.ctx.id
             }
           }
         )
@@ -474,16 +484,16 @@ export default class Round extends Match {
             inline: true
           }
         )
-        await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.channel.createMessage(
+        await this.ctx.edit(embed.build(this.mentions) as MessageEditOptions)
+        await (this.ctx.channel as TextChannel).send(
           {
             content: this.t('simulator.winner',
               {
                 t: this.teams[0].name,
                 users: this.mentions
               }),
-            messageReference: {
-              messageID: this.ctx.id
+            reply: {
+              messageReference: this.ctx.id
             }
           }
         )
@@ -593,16 +603,16 @@ export default class Round extends Match {
             inline: true
           }
         )
-        await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.channel.createMessage(
+        await this.ctx.edit(embed.build(this.mentions) as MessageEditOptions)
+        await (this.ctx.channel as TextChannel).send(
           {
             content: this.t('simulator.winner',
               {
                 t: this.teams[1].name,
                 users: this.mentions
               }),
-            messageReference: {
-              messageID: this.ctx.id
+            reply: {
+              messageReference: this.ctx.id
             }
           }
         )
@@ -715,16 +725,16 @@ export default class Round extends Match {
             inline: true
           }
         )
-        await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.channel.createMessage(
+        await this.ctx.edit(embed.build(this.mentions) as MessageEditOptions)
+        await (this.ctx.channel as TextChannel).send(
           {
             content: this.t('simulator.winner',
               {
                 t: this.teams[0].name,
                 users: this.mentions
               }),
-            messageReference: {
-              messageID: this.ctx.id
+            reply: {
+              messageReference: this.ctx.id
             }
           }
         )
@@ -834,16 +844,16 @@ export default class Round extends Match {
             inline: true
           }
         )
-        await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.channel.createMessage(
+        await this.ctx.edit(embed.build(this.mentions) as MessageEditOptions)
+        await (this.ctx.channel as TextChannel).send(
           {
             content: this.t('simulator.winner',
               {
                 t: this.teams[1].name,
                 users: this.mentions
               }),
-            messageReference: {
-              messageID: this.ctx.id
+            reply: {
+              messageReference: this.ctx.id
             }
           }
         )
@@ -918,16 +928,16 @@ export default class Round extends Match {
             inline: true
           }
         )
-        await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.channel.createMessage(
+        await this.ctx.edit(embed.build(this.mentions) as MessageEditOptions)
+        await (this.ctx.channel as TextChannel).send(
           {
             content: this.t('simulator.winner',
               {
                 t: this.teams[0].name,
                 users: this.mentions
               }),
-            messageReference: {
-              messageID: this.ctx.id
+            reply: {
+              messageReference: this.ctx.id
             }
           }
         )
@@ -999,16 +1009,16 @@ export default class Round extends Match {
             inline: true
           }
         )
-        await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.channel.createMessage(
+        await this.ctx.edit(embed.build(this.mentions) as MessageEditOptions)
+        await (this.ctx.channel as TextChannel).send(
           {
             content: this.t('simulator.winner',
               {
                 t: this.teams[1].name,
                 users: this.mentions
               }),
-            messageReference: {
-              messageID: this.ctx.id
+            reply: {
+              messageReference: this.ctx.id
             }
           }
         )
@@ -1083,16 +1093,16 @@ export default class Round extends Match {
             inline: true
           }
         )
-        await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.channel.createMessage(
+        await this.ctx.edit(embed.build(this.mentions) as MessageEditOptions)
+        await (this.ctx.channel as TextChannel).send(
           {
             content: this.t('simulator.winner',
               {
                 t: this.teams[0].name,
                 users: this.mentions
               }),
-            messageReference: {
-              messageID: this.ctx.id
+            reply: {
+              messageReference: this.ctx.id
             }
           }
         )
@@ -1164,16 +1174,16 @@ export default class Round extends Match {
             inline: true
           }
         )
-        await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.channel.createMessage(
+        await this.ctx.edit(embed.build(this.mentions) as MessageEditOptions)
+        await (this.ctx.channel as TextChannel).send(
           {
             content: this.t('simulator.winner',
               {
                 t: this.teams[1].name,
                 users: this.mentions
               }),
-            messageReference: {
-              messageID: this.ctx.id
+            reply: {
+              messageReference: this.ctx.id
             }
           }
         )
@@ -1246,16 +1256,16 @@ export default class Round extends Match {
             inline: true
           }
         )
-        await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.channel.createMessage(
+        await this.ctx.edit(embed.build(this.mentions) as MessageEditOptions)
+        await (this.ctx.channel as TextChannel).send(
           {
             content: this.t('simulator.winner',
               {
                 t: this.teams[0].name,
                 users: this.mentions
               }),
-            messageReference: {
-              messageID: this.ctx.id
+            reply: {
+              messageReference: this.ctx.id
             }
           }
         )
@@ -1325,16 +1335,16 @@ export default class Round extends Match {
             inline: true
           }
         )
-        await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.channel.createMessage(
+        await this.ctx.edit(embed.build(this.mentions) as MessageEditOptions)
+        await (this.ctx.channel as TextChannel).send(
           {
             content: this.t('simulator.winner',
               {
                 t: this.teams[1].name,
                 users: this.mentions
               }),
-            messageReference: {
-              messageID: this.ctx.id
+            reply: {
+              messageReference: this.ctx.id
             }
           }
         )
@@ -1395,16 +1405,16 @@ export default class Round extends Match {
             inline: true
           }
         )
-        await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.channel.createMessage(
+        await this.ctx.edit(embed.build(this.mentions) as MessageEditOptions)
+        await (this.ctx.channel as TextChannel).send(
           {
             content: this.t('simulator.winner',
               {
                 t: this.teams[0].name,
                 users: this.mentions
               }),
-            messageReference: {
-              messageID: this.ctx.id
+            reply: {
+              messageReference: this.ctx.id
             }
           }
         )
@@ -1474,16 +1484,16 @@ export default class Round extends Match {
             inline: true
           }
         )
-        await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.channel.createMessage(
+        await this.ctx.edit(embed.build(this.mentions) as MessageEditOptions)
+        await (this.ctx.channel as TextChannel).send(
           {
             content: this.t('simulator.winner',
               {
                 t: this.teams[1].name,
                 users: this.mentions
               }),
-            messageReference: {
-              messageID: this.ctx.id
+            reply: {
+              messageReference: this.ctx.id
             }
           }
         )
@@ -1553,16 +1563,16 @@ export default class Round extends Match {
             inline: true
           }
         )
-        await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.channel.createMessage(
+        await this.ctx.edit(embed.build(this.mentions) as MessageEditOptions)
+        await (this.ctx.channel as TextChannel).send(
           {
             content: this.t('simulator.winner',
               {
                 t: this.teams[0].name,
                 users: this.mentions
               }),
-            messageReference: {
-              messageID: this.ctx.id
+            reply: {
+              messageReference: this.ctx.id
             }
           }
         )
@@ -1632,16 +1642,16 @@ export default class Round extends Match {
             inline: true
           }
         )
-        await this.ctx.edit(embed.build(this.mentions))
-        await this.ctx.channel.createMessage({
+        await this.ctx.edit(embed.build(this.mentions) as MessageEditOptions)
+        await (this.ctx.channel as TextChannel).send({
           content: this.t('simulator.winner',
             {
               t: this.teams[1].name,
               users: this.mentions
             }),
-          messageReference: {
-            messageID: this.ctx.id
-          }
+          reply: {
+              messageReference: this.ctx.id
+            }
         })
       }
     }
@@ -1711,7 +1721,7 @@ export default class Round extends Match {
         inline: true
       }
     )
-    await this.ctx.edit(embed.build(this.mentions))
+    await this.ctx.edit(embed.build(this.mentions) as MessageEditOptions)
     const playersAlive1 = this.teams[0].roster.filter(p => p.life > 0).length > 0
     const playersAlive2 = this.teams[1].roster.filter(p => p.life > 0).length > 0
     if(!playersAlive1 || !playersAlive2) {
@@ -1764,7 +1774,7 @@ export default class Round extends Match {
           inline: true
         }
       )
-      await this.ctx.edit(embed.build(this.mentions))
+      await this.ctx.edit(embed.build(this.mentions) as MessageEditOptions)
       return await this.wait(3000)
     }
     else {
@@ -1808,7 +1818,7 @@ export default class Round extends Match {
           }
         )
         await this.wait(1500)
-        await this.ctx.edit(embed.build(this.mentions))
+        await this.ctx.edit(embed.build(this.mentions) as MessageEditOptions)
         return await this.secondStep(true)
       }
       else {
@@ -1947,7 +1957,7 @@ export default class Round extends Match {
           inline: true
         }
       )
-      await this.ctx.edit(embed.build(this.mentions))
+      await this.ctx.edit(embed.build(this.mentions) as MessageEditOptions)
       await this.wait(3000)
     }
     else if(win_type === 'BOMB') {
@@ -2050,7 +2060,7 @@ export default class Round extends Match {
           inline: true
         }
       )
-      await this.ctx.edit(embed.build(this.mentions))
+      await this.ctx.edit(embed.build(this.mentions) as MessageEditOptions)
       await this.wait(3000)
     }
     else if(win_type === 'DEFUSE') {
@@ -2153,7 +2163,7 @@ export default class Round extends Match {
           inline: true
         }
       )
-      await this.ctx.edit(embed.build(this.mentions))
+      await this.ctx.edit(embed.build(this.mentions) as MessageEditOptions)
       await this.wait(3000)
     }
     else if(win_type === 'TIME') {
@@ -2256,7 +2266,7 @@ export default class Round extends Match {
           inline: true
         }
       )
-      await this.ctx.edit(embed.build(this.mentions))
+      await this.ctx.edit(embed.build(this.mentions) as MessageEditOptions)
       await this.wait(3000)
     }
   }
