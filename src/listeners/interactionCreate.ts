@@ -1,9 +1,6 @@
 import {
-  AutocompleteInteraction,
   ModalSubmitInteraction,
   InteractionType,
-  ChatInputCommandInteraction,
-  MessageComponentInteraction,
   type Interaction
 } from 'discord.js'
 import createListener from '../structures/app/createListener.ts'
@@ -14,16 +11,16 @@ import ComponentInteractionRunner from '../structures/interaction/ComponentInter
 import ModalSubmitInteractionRunner from '../structures/interaction/ModalSubmitInteractionRunner.ts'
 import App from '../structures/app/App.ts'
 
-const interactionType: Record<number, (client: App, i: Interaction) => Promise<unknown>> = {
-  [InteractionType.ApplicationCommand]: async(client, interaction) => {
+const interactionType: Record<number, (app: App, i: Interaction) => Promise<unknown>> = {
+  [InteractionType.ApplicationCommand]: async(app, interaction) => {
     if(!interaction.isChatInputCommand()) return
 
-    return await new CommandRunner().run(client, interaction)
+    return await new CommandRunner().run(app, interaction)
   },
-  [InteractionType.ApplicationCommandAutocomplete]: async (client, interaction) => {
+  [InteractionType.ApplicationCommandAutocomplete]: async(app, interaction) => {
     if(!interaction.isAutocomplete()) return
 
-    const command = client.commands.get(interaction.commandName)
+    const command = app.commands.get(interaction.commandName)
 
     if(!command) return
     if(!command.createAutocompleteInteraction) return
@@ -48,22 +45,22 @@ const interactionType: Record<number, (client: App, i: Interaction) => Promise<u
     if(sub) args.push(sub)
     if(group) args.push(group)
 
-    return await command.createAutocompleteInteraction({ i: interaction, t, client, args })
+    return await command.createAutocompleteInteraction({ i: interaction, t, app, args })
   },
-  [InteractionType.MessageComponent]: async (client, interaction) => {
+  [InteractionType.MessageComponent]: async(app, interaction) => {
     if(!interaction.isMessageComponent()) return
 
-    return await new ComponentInteractionRunner().run(client, interaction)
+    return await new ComponentInteractionRunner().run(app, interaction)
   },
-  [InteractionType.ModalSubmit]: async (client, interaction) => {
+  [InteractionType.ModalSubmit]: async(app, interaction) => {
     if(!(interaction instanceof ModalSubmitInteraction)) return
 
-    return await new ModalSubmitInteractionRunner().run(client, interaction)
+    return await new ModalSubmitInteractionRunner().run(app, interaction)
   }
 }
 export default createListener({
   name: 'interactionCreate',
-  async run(client, interaction) {
-    await interactionType[interaction.type](client, interaction)
+  async run(app, interaction) {
+    await interactionType[interaction.type](app, interaction)
   }
 })
