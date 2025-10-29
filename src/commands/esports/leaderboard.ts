@@ -215,7 +215,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.predictions.title'))
-          .setThumb((app.users.cache.get(array[0].id!))!.avatarURL()!)
+          .setThumb((app.users.cache.get(array[0].id!))?.avatarURL()!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -300,7 +300,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.coins.title'))
-          .setThumb((app.users.cache.get(array[0].id!))!.avatarURL()!)
+          .setThumb((app.users.cache.get(array[0].id!))?.avatarURL()!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -391,7 +391,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.rating.title'))
-          .setThumb((app.users.cache.get(array[0].id!))!.avatarURL()!)
+          .setThumb((app.users.cache.get(array[0].id!))?.avatarURL()!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -477,7 +477,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.predictions.title'))
-          .setThumb((app.users.cache.get(array[0].id!))!.avatarURL()!)
+          .setThumb((app.users.cache.get(array[0].id!))?.avatarURL()!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -560,7 +560,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.coins.title'))
-          .setThumb((app.users.cache.get(array[0].id!))!.avatarURL()!)
+          .setThumb((app.users.cache.get(array[0].id!))?.avatarURL()!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -649,7 +649,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.rating.title'))
-          .setThumb((app.users.cache.get(array[0].id!))!.avatarURL()!)
+          .setThumb((app.users.cache.get(array[0].id!))?.avatarURL()!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -736,7 +736,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.predictions.title'))
-          .setThumb(app.users.cache.get(array[0].id!)!.avatarURL()!)
+          .setThumb(app.users.cache.get(array[0].id!)?.avatarURL()!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -818,7 +818,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.coins.title'))
-          .setThumb(app.users.cache.get(array[0].id!)!.avatarURL()!)
+          .setThumb(app.users.cache.get(array[0].id!)?.avatarURL()!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -906,7 +906,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.rating.title'))
-          .setThumb(app.users.cache.get(array[0].id!)!.avatarURL()!)
+          .setThumb(app.users.cache.get(array[0].id!)?.avatarURL()!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -989,7 +989,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.predictions.title'))
-          .setThumb(app.users.cache.get(array[0].id!)!.avatarURL()!)
+          .setThumb(app.users.cache.get(array[0].id!)?.avatarURL()!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -1069,7 +1069,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.coins.title'))
-          .setThumb(app.users.cache.get(array[0].id!)!.avatarURL()!)
+          .setThumb(app.users.cache.get(array[0].id!)?.avatarURL()!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -1155,7 +1155,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.rating.title'))
-          .setThumb(app.users.cache.get(array[0].id!)!.avatarURL()!)
+          .setThumb(app.users.cache.get(array[0].id!)?.avatarURL()!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
