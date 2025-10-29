@@ -98,9 +98,7 @@ export default createCommand({
   messageComponentInteractionTime: 5 * 60 * 1000,
   async run({ ctx, t, id, app }) {
     if(!ctx.db.guild) return
-
-    console.log(id)
-
+    
     if(ctx.args[0] === 'dashboard') {
       const guild = (await app.prisma.guild.findUnique({
         where: {
