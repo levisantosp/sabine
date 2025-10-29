@@ -80,8 +80,8 @@ export default class CommandRunner {
     const sub = interaction.options.getSubcommand(false)
     const group = interaction.options.getSubcommandGroup(false)
 
-    if(sub) args.push(sub)
     if(group) args.push(group)
+    if(sub) args.push(sub)
 
     for(const option of (interaction.options as any)._hoistedOptions) {
       if(
