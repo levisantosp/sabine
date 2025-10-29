@@ -44,9 +44,9 @@ export default createCommand({
     'help player'
   ],
   userInstall: true,
-  async run({ ctx, client, t }) {
+  async run({ ctx, app, t }) {
     if(ctx.args[0]?.toString()) {
-      const cmd = client.commands.get(ctx.args[0].toString())
+      const cmd = app.commands.get(ctx.args[0].toString())
 
       if(!cmd || cmd.onlyDev) {
         return await ctx.reply('commands.help.command_not_found')
@@ -61,19 +61,19 @@ export default createCommand({
         })).text)
         .addField(t('commands.help.name'), `\`${cmd.name}\``)
         .setFooter({ text: t('commands.help.footer') })
-        .setThumb(client.user.avatarURL())
+        .setThumb(app.user!.displayAvatarURL({ size: 2048 }))
 
       if(cmd.syntax) embed.addField(t('commands.help.syntax'), `\`/${cmd.syntax}\``)
       if(cmd.syntaxes) embed.addField(t('commands.help.syntax'), cmd.syntaxes.map(syntax => `\`/${syntax}\``).join('\n'))
       if(cmd.examples) embed.addField(t('commands.help.examples'), cmd.examples.map(ex => `\`/${ex}\``).join('\n'))
-      if(cmd.permissions) embed.addField(t('commands.help.permissions'), cmd.permissions.map(perm => `\`${permissions[perm]}\``).join(', '), true)
-      if(cmd.botPermissions) embed.addField(t('commands.help.bot_permissions'), cmd.botPermissions.map(perm => `\`${permissions[perm]}\``).join(', '), true)
+      if(cmd.permissions) embed.addField(t('commands.help.permissions'), cmd.permissions.map(perm => `\`${permissions[perm.toString()]}\``).join(', '), true)
+      if(cmd.botPermissions) embed.addField(t('commands.help.bot_permissions'), cmd.botPermissions.map(perm => `\`${permissions[perm.toString()]}\``).join(', '), true)
 
       return await ctx.reply(embed.build())
     }
-    
+
     const embed = new EmbedBuilder()
-      .setThumb(client.user.avatarURL())
+      .setThumb(app.user!.displayAvatarURL({ size: 2048 }))
       .setFields(
         {
           name: t('commands.help.support.title'),
@@ -87,12 +87,12 @@ export default createCommand({
 
     const button = new ButtonBuilder()
       .setLabel(t('commands.help.community'))
-      .setStyle('link')
+      .defineStyle('link')
       .setURL('https://discord.gg/g5nmc376yh')
 
     const terms = new ButtonBuilder()
       .setLabel(t('commands.help.privacy'))
-      .setStyle('link')
+      .defineStyle('link')
       .setURL('https://sabinebot.xyz/terms')
 
     await ctx.reply(embed.build(
@@ -106,12 +106,14 @@ export default createCommand({
       }
     ))
   },
-  async createAutocompleteInteraction({ i, client }) {
-    const commands = Array.from(client.commands).filter(c => {
-      if(c[0].includes((i.data.options.getOptions()[0].value as string).toLowerCase())) return c
+  async createAutocompleteInteraction({ i, app }) {
+    const value = i.options.getString('command', true)
+
+    const commands = Array.from(app.commands).filter(c => {
+      if(c[0].includes(value.toLowerCase())) return c
     })
       .slice(0, 25)
 
-    await i.result(commands.map(cmd => ({ name: cmd[0], value: cmd[0] })))
+    await i.respond(commands.map(cmd => ({ name: cmd[0], value: cmd[0] })))
   }
 })

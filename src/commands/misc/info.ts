@@ -2,15 +2,7 @@ import ms from 'humanize-duration'
 import createCommand from '../../structures/command/createCommand.ts'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
 import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
-import { fileURLToPath } from 'url'
-import path from 'path'
-import { readFileSync } from 'fs'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-
-const pkgFile = path.resolve(__dirname, '../../../package.json')
-const pkg = JSON.parse(readFileSync(pkgFile, 'utf-8'))
+import pkg from '../../../package.json' with { type: 'json' }
 
 export default createCommand({
   name: 'info',
@@ -20,15 +12,15 @@ export default createCommand({
     'pt-BR': 'Mostra as informações do bot'
   },
   userInstall: true,
-  async run({ ctx, client, t }) {
-    const creator = client.users.get('441932495693414410')!
+  async run({ ctx, app, t }) {
+    const creator = app.users.cache.get('441932495693414410')!
 
     const embed = new EmbedBuilder()
       .setAuthor({
-        name: client.user.username,
-        iconURL: client.user.avatarURL()
+        name: app.user!.username,
+        iconURL: app.user!.displayAvatarURL({ size: 2048 })
       })
-      .setThumb(creator.avatarURL())
+      .setThumb(creator.displayAvatarURL({ size: 2048 }))
       .setTitle(t('commands.info.embed.title'))
       .setFields(
         {
@@ -38,7 +30,7 @@ export default createCommand({
         },
         {
           name: t('commands.info.lib'),
-          value: '[oceanic.js](https://oceanic.ws/)',
+          value: '[discord.js](https://discord.js.org/)',
           inline: true
         },
         {
@@ -48,21 +40,21 @@ export default createCommand({
         },
         {
           name: t('commands.info.guilds'),
-          value: client.guilds.size.toString(),
+          value: app.guilds.cache.size.toString(),
           inline: true
         },
         {
           name: t('commands.info.users'),
-          value: client.users.filter(user => !user.bot).length.toString(),
+          value: app.users.cache.filter(user => !user.bot).size.toString(),
           inline: true
         },
         {
-          name: 'Client',
-          value: `Shards: \`${client.shards.size}\`\nShard ID: \`${ctx.guild?.shard.id}\`\nShard Uptime: \`${ms(client.uptime, { language: ctx.db.user.lang ?? ctx.db.guild!.lang, round: true })}\`\nClient Uptime: \`${ms(Date.now() - client._uptime, { language: ctx.db.user.lang ?? ctx.db.guild!.lang, round: true })}\``,
+          name: 'App',
+          value: `Shards: \`${app.shard?.count}\`\nShard ID: \`${ctx.guild?.shard.id}\`\nShard Uptime: \`${ms(app.uptime ?? 0, { language: ctx.db.user.lang ?? ctx.db.guild!.lang, round: true })}\`\nApp Uptime: \`${ms(Date.now() - app._uptime, { language: ctx.db.user.lang ?? ctx.db.guild!.lang, round: true })}\``,
           inline: true
         }
       )
-      
+
     await ctx.reply(embed.build(
       {
         components: [
@@ -71,12 +63,12 @@ export default createCommand({
             components: [
               new ButtonBuilder()
                 .setLabel(t('commands.help.community'))
-                .setStyle('link')
+                .defineStyle('link')
                 .setURL('https://discord.gg/g5nmc376yh'),
               new ButtonBuilder()
                 .setLabel(t('commands.info.invite'))
-                .setStyle('link')
-                .setURL('https://discord.com/oauth2/authorize?client_id=1235576817683922954&scope=bot&permissions=388096')
+                .defineStyle('link')
+                .setURL('https://discord.com/oauth2/authorize?app_id=1235576817683922954&scope=bot&permissions=388096')
             ]
           }
         ]

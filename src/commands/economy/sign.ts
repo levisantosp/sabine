@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionTypes } from 'oceanic.js'
+import { ApplicationCommandOptionType } from 'discord.js'
 import createCommand from '../../structures/command/createCommand.ts'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
 import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
@@ -15,7 +15,7 @@ export default createCommand({
   category: 'economy',
   options: [
     {
-      type: ApplicationCommandOptionTypes.STRING,
+      type: ApplicationCommandOptionType.String,
       name: 'player',
       nameLocalizations: {
         'pt-BR': 'jogador'
@@ -30,8 +30,8 @@ export default createCommand({
   ],
   userInstall: true,
   messageComponentInteractionTime: 5 * 60 * 1000,
-  async run({ ctx, t, client }) {
-    const player = client.players.get(ctx.args[0].toString())
+  async run({ ctx, t, app }) {
+    const player = app.players.get(ctx.args[0].toString())
 
     if(!player || !player.purchaseable) return await ctx.reply('commands.sign.player_not_found')
 
@@ -48,16 +48,18 @@ export default createCommand({
       .setImage(`${process.env.CDN_URL}/cards/${player.id}.png`)
 
     const button = new ButtonBuilder()
-      .setStyle('green')
+      .defineStyle('green')
       .setLabel(t('commands.sign.buy'))
       .setCustomId(`sign;${ctx.interaction.user.id};${player.id}`)
 
     await ctx.reply(embed.build(button.build()))
   },
-  async createAutocompleteInteraction({ i, client }) {
+  async createAutocompleteInteraction({ i, app }) {
     const players: Array<{ name: string, ovr: number, id: number }> = []
 
-    for(const p of client.players.values()) {
+    const value = i.options.getString('player', true)
+
+    for(const p of app.players.values()) {
       if(!p.purchaseable) continue
 
       const ovr = Math.floor(p.ovr)
@@ -69,19 +71,19 @@ export default createCommand({
       })
     }
 
-    await i.result(
+    await i.respond(
       players.sort((a, b) => b.ovr - a.ovr)
         .filter(p => {
-          if(p.name.toLowerCase().includes(i.data.options.getOptions()[0].value.toString().toLowerCase())) return p
+          if(p.name.toLowerCase().includes(value.toLowerCase())) return p
         })
         .slice(0, 25)
         .map(p => ({ name: p.name, value: p.id.toString() }))
     )
   },
-  async createMessageComponentInteraction({ ctx, i, client }) {
-    await i.defer(64)
+  async createMessageComponentInteraction({ ctx, i, app }) {
+    await i.deferReply({ flags: 64 })
 
-    const player = client.players.get(ctx.args[2])
+    const player = app.players.get(ctx.args[2])
 
     if(!player) return
 
@@ -92,7 +94,7 @@ export default createCommand({
     ctx.db.user.coins -= BigInt(price)
     ctx.db.user.reserve_players.push(player.id.toString())
 
-    await client.prisma.transaction.create({
+    await app.prisma.transaction.create({
       data: {
         userId: ctx.db.user.id,
         player: player.id,

@@ -8,8 +8,8 @@ export default createCommand({
   },
   category: 'economy',
   userInstall: true,
-  async run({ ctx, client }) {
-    const value = await client.redis.get('leaderboard:coins')
+  async run({ ctx, app }) {
+    const value = await app.redis.get('leaderboard:coins')
 
     const users = JSON.parse(value!)
 

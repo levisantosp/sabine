@@ -12,13 +12,13 @@ export default createCommand({
   userInstall: true,
   messageComponentInteractionTime: 5 * 60 * 1000,
   async run({ ctx, t }) {
-    if(!ctx.db.user.premium || ctx.db.user.premium.type !== 'PREMIUM') {
+    if (!ctx.db.user.premium || ctx.db.user.premium.type !== 'PREMIUM') {
       return await ctx.reply('commands.premium.you_dont_have_premium')
     }
 
     const button = new ButtonBuilder()
       .setLabel(t('commands.premium.button.label'))
-      .setStyle('blue')
+      .defineStyle('blue')
       .setCustomId(`premium;${ctx.interaction.user.id}`)
 
     const embed = new EmbedBuilder()
@@ -32,23 +32,23 @@ export default createCommand({
 
     await ctx.reply(button.build({ embeds: [embed] }))
   },
-  async createMessageComponentInteraction({ ctx, t, client }) {
-    await ctx.interaction.defer(64)
+  async createMessageComponentInteraction({ ctx, t, app }) {
+    await ctx.interaction.deferReply({ flags: 64 })
 
-    const keys = await client.prisma.key.findMany({
+    const keys = await app.prisma.key.findMany({
       where: {
         user: ctx.args[1]
       }
     })
 
-    if(!keys.length) {
+    if (!keys.length) {
       return await ctx.reply('commands.premium.you_dont_have_keys')
     }
 
     const embed = new EmbedBuilder()
 
-    for(const key of keys) {
-      if(key.expires_at) {
+    for (const key of keys) {
+      if (key.expires_at) {
         embed.addField(
           key.type,
           t(
@@ -73,7 +73,7 @@ export default createCommand({
         )
       }
     }
-    
+
     await ctx.reply(embed.build())
   }
 })

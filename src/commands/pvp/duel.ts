@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionTypes } from 'oceanic.js'
+import { ApplicationCommandOptionType } from 'discord.js'
 import createCommand from '../../structures/command/createCommand.ts'
 import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
 import { SabineUser } from '../../database/index.ts'
@@ -16,7 +16,7 @@ export default createCommand({
   },
   options: [
     {
-      type: ApplicationCommandOptionTypes.SUB_COMMAND,
+      type: ApplicationCommandOptionType.Subcommand,
       name: 'unranked',
       description: 'Start a unranked duel',
       descriptionLocalizations: {
@@ -24,7 +24,7 @@ export default createCommand({
       },
       options: [
         {
-          type: ApplicationCommandOptionTypes.USER,
+          type: ApplicationCommandOptionType.User,
           name: 'user',
           nameLocalizations: {
             'pt-BR': 'usuário'
@@ -38,7 +38,7 @@ export default createCommand({
       ]
     },
     {
-      type: ApplicationCommandOptionTypes.SUB_COMMAND,
+      type: ApplicationCommandOptionType.Subcommand,
       name: 'ranked',
       description: 'Start a ranked duel',
       descriptionLocalizations: {
@@ -46,7 +46,7 @@ export default createCommand({
       },
       options: [
         {
-          type: ApplicationCommandOptionTypes.USER,
+          type: ApplicationCommandOptionType.User,
           name: 'user',
           nameLocalizations: {
             'pt-BR': 'usuário'
@@ -60,7 +60,7 @@ export default createCommand({
       ]
     },
     {
-      type: ApplicationCommandOptionTypes.SUB_COMMAND_GROUP,
+      type: ApplicationCommandOptionType.SubcommandGroup,
       name: 'swiftplay',
       nameLocalizations: {
         'pt-BR': 'frenético'
@@ -71,7 +71,7 @@ export default createCommand({
       },
       options: [
         {
-          type: ApplicationCommandOptionTypes.SUB_COMMAND,
+          type: ApplicationCommandOptionType.Subcommand,
           name: 'unranked',
           description: 'Start a unranked swiftplay duel',
           descriptionLocalizations: {
@@ -79,7 +79,7 @@ export default createCommand({
           },
           options: [
             {
-              type: ApplicationCommandOptionTypes.USER,
+              type: ApplicationCommandOptionType.User,
               name: 'user',
               nameLocalizations: {
                 'pt-BR': 'usuário'
@@ -93,7 +93,7 @@ export default createCommand({
           ]
         },
         {
-          type: ApplicationCommandOptionTypes.SUB_COMMAND,
+          type: ApplicationCommandOptionType.Subcommand,
           name: 'ranked',
           description: 'Start a ranked swiftplay duel',
           descriptionLocalizations: {
@@ -101,7 +101,7 @@ export default createCommand({
           },
           options: [
             {
-              type: ApplicationCommandOptionTypes.USER,
+              type: ApplicationCommandOptionType.User,
               name: 'user',
               nameLocalizations: {
                 'pt-BR': 'usuário'
@@ -117,7 +117,7 @@ export default createCommand({
       ]
     },
     {
-      type: ApplicationCommandOptionTypes.SUB_COMMAND,
+      type: ApplicationCommandOptionType.Subcommand,
       name: 'tournament',
       nameLocalizations: {
         'pt-BR': 'torneio'
@@ -128,7 +128,7 @@ export default createCommand({
       },
       options: [
         {
-          type: ApplicationCommandOptionTypes.USER,
+          type: ApplicationCommandOptionType.User,
           name: 'user',
           nameLocalizations: {
             'pt-BR': 'usuário'
@@ -140,7 +140,7 @@ export default createCommand({
           required: true
         },
         {
-          type: ApplicationCommandOptionTypes.STRING,
+          type: ApplicationCommandOptionType.String,
           name: 'map',
           nameLocalizations: {
             'pt-BR': 'mapa'
@@ -158,7 +158,7 @@ export default createCommand({
       ]
     }
   ],
-  async run({ ctx, t, client }) {
+  async run({ ctx, t, app }) {
     let id: string
 
     if(ctx.args.length === 2) {
@@ -173,8 +173,8 @@ export default createCommand({
 
     const user = await SabineUser.fetch(id)
 
-    const authorCounts: {[key: string]: number} = {}
-    const userCounts: {[key: string]: number} = {}
+    const authorCounts: { [key: string]: number } = {}
+    const userCounts: { [key: string]: number } = {}
 
     for(const p of ctx.db.user.active_players) {
       authorCounts[p] = (authorCounts[p] || 0) + 1
@@ -182,7 +182,7 @@ export default createCommand({
 
     const authorDuplicates = Object.values(authorCounts).filter(count => count > 1).length
 
-    const keys = await client.redis.keys('agent_selection*')
+    const keys = await app.redis.keys('agent_selection*')
 
     if(!ctx.db.user.team_name || !ctx.db.user.team_tag) {
       return await ctx.reply('commands.duel.needed_team_name')
@@ -204,11 +204,11 @@ export default createCommand({
       return await ctx.reply('commands.duel.needed_team_name_2')
     }
 
-    if(await client.redis.get(`match:${ctx.interaction.user.id}`) || keys.some(key => key.includes(ctx.interaction.user.id))) {
+    if(await app.redis.get(`match:${ctx.interaction.user.id}`) || keys.some(key => key.includes(ctx.interaction.user.id))) {
       return await ctx.reply('commands.duel.already_in_match')
     }
 
-    if(await client.redis.get(`match:${user.id}`) || keys.some(key => key.includes(user.id))) {
+    if(await app.redis.get(`match:${user.id}`) || keys.some(key => key.includes(user.id))) {
       return await ctx.reply('commands.duel.already_in_match_2')
     }
 
@@ -246,12 +246,12 @@ export default createCommand({
     }
 
     const button = new ButtonBuilder()
-      .setStyle('green')
+      .defineStyle('green')
       .setLabel(t('commands.duel.button'))
       .setCustomId(`accept;${id};${ctx.interaction.user.id};${mode}${map}`)
-      
+
     await ctx.reply(button.build(t('commands.duel.request', {
-      author: ctx.interaction.user.mention,
+      author: ctx.interaction.user.toString(),
       opponent: `<@${id}>`,
       mode: t(`commands.duel.mode.${mode}`)
     })))

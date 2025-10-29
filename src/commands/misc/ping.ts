@@ -8,15 +8,15 @@ export default createCommand({
     'pt-BR': 'Mostra a latência do bot'
   },
   userInstall: true,
-  async run({ ctx }) {
+  async run({ ctx, app }) {
     const start = Date.now()
 
-    if(ctx.guild) {
-      return await ctx.reply(`🏓 Pong! \`${ctx.guild.shard.latency}ms\` (Shard \`${ctx.guild.shard.id}\`)`)
-    }
+    let voltaraqui = ''
 
-    await (await fetch('https://discord.com/api/v10/gateway')).json()
+    if(ctx.guild) {
+      return await ctx.reply(`🏓 Pong! \`${ctx.guild.shard.ping}ms\` (Shard \`${ctx.guild.shard.id}\`)`)
+    }
     
-    await ctx.reply(`🏓 Pong! \`${Date.now() - start}ms\``)
+    await ctx.reply(`🏓 Pong! \`${app.ws.ping}ms\``)
   }
 })

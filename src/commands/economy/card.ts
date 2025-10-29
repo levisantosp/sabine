@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionTypes } from 'oceanic.js'
+import { ApplicationCommandOptionType } from 'discord.js'
 import createCommand from '../../structures/command/createCommand.ts'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
 import { calcPlayerPrice } from 'players'
@@ -17,7 +17,7 @@ export default createCommand({
   userInstall: true,
   options: [
     {
-      type: ApplicationCommandOptionTypes.STRING,
+      type: ApplicationCommandOptionType.String,
       name: 'card',
       nameLocalizations: {
         'pt-BR': 'carta'
@@ -30,8 +30,8 @@ export default createCommand({
       required: true
     }
   ],
-  async run({ ctx, t, client }) {
-    const player = client.players.get(ctx.args[0].toString())
+  async run({ ctx, t, app }) {
+    const player = app.players.get(ctx.args[0].toString())
 
     if(!player) return await ctx.reply('commands.card.player_not_found')
 
@@ -67,10 +67,12 @@ export default createCommand({
 
     await ctx.reply(embed.build())
   },
-  async createAutocompleteInteraction({ i, client }) {
+  async createAutocompleteInteraction({ i, app }) {
+    const value = i.options.getString('card', true)
+
     const players: Array<{ name: string, ovr: number, id: number }> = []
 
-    for(const p of client.players.values()) {
+    for(const p of app.players.values()) {
       const ovr = Math.floor(p.ovr)
 
       players.push({
@@ -79,14 +81,14 @@ export default createCommand({
         id: p.id
       })
     }
-    
-    await i.result(
+
+    await i.respond(
       players.sort((a, b) => b.ovr - a.ovr)
-      .filter(p => {
-        if(p.name.toLowerCase().includes(i.data.options.getOptions()[0].value.toString().toLowerCase())) return p
-      })
-      .slice(0, 25)
-      .map(p => ({ name: p.name, value: p.id.toString() }))
+        .filter(p => {
+          if(p.name.toLowerCase().includes(value.toLowerCase())) return p
+        })
+        .slice(0, 25)
+        .map(p => ({ name: p.name, value: p.id.toString() }))
     )
   }
 })

@@ -15,7 +15,7 @@ export default createCommand({
   },
   userInstall: true,
   messageComponentInteractionTime: 5 * 60 * 1000,
-  async run({ ctx, t, client }) {
+  async run({ ctx, t, app }) {
     const active_players = ctx.db.user.active_players
     const reserve_players = ctx.db.user.reserve_players
 
@@ -23,15 +23,15 @@ export default createCommand({
     let ovr = 0
 
     for(const p of active_players) {
-      const player = client.players.get(p)
+      const player = app.players.get(p)
 
       if(!player || !player.price) break
-      
+
       ovr += player.ovr
       value += player.price
     }
     for(const p of reserve_players) {
-      const player = client.players.get(p)
+      const player = app.players.get(p)
 
       if(!player || !player.price) break
 
@@ -49,13 +49,13 @@ export default createCommand({
           name: ctx.db.user.team_name ? `${ctx.db.user.team_name} (${ctx.db.user.team_tag})` : '`undefined`'
         }
       ))
-      .setThumb(ctx.interaction.user.avatarURL())
+      .setThumb(ctx.interaction.user.displayAvatarURL({ size: 2048 }))
 
     let active_content = ''
     let reserve_content = ''
 
     for(const p_id of active_players) {
-      const player = client.players.get(p_id)
+      const player = app.players.get(p_id)
 
       if(!player) break
 
@@ -69,7 +69,7 @@ export default createCommand({
 
       if(i >= 10) break
 
-      const player = client.players.get(p_id)
+      const player = app.players.get(p_id)
 
       if(!player) break
 
@@ -111,12 +111,12 @@ export default createCommand({
     const button = new ButtonBuilder()
       .setLabel(t('commands.roster.generate_file'))
       .setCustomId(`roster;${ctx.interaction.user.id};file`)
-      .setStyle('blue')
+      .defineStyle('blue')
 
     const button2 = new ButtonBuilder()
       .setLabel(t('commands.roster.change_team'))
       .setCustomId(`roster;${ctx.interaction.user.id};team`)
-      .setStyle('green')
+      .defineStyle('green')
 
     await ctx.reply(embed.build({
       components: [
@@ -127,9 +127,9 @@ export default createCommand({
       ]
     }))
   },
-  async createMessageComponentInteraction({ ctx, i, t, client }) {
+  async createMessageComponentInteraction({ ctx, i, t, app }) {
     if(ctx.args[2] === 'file') {
-      await ctx.interaction.defer(64)
+      await ctx.interaction.deferReply({ flags: 64 })
 
       let playersContent = ''
 
@@ -139,16 +139,16 @@ export default createCommand({
       for(const p of active_players) {
         if(!active_players.length) break
 
-        const player = client.players.get(p)
+        const player = app.players.get(p)
 
         if(!player) continue
-        
+
         playersContent += `${player.name} (${Math.floor(player.ovr)}) — ${player.collection}\n`
       }
       for(const p of reserve_players) {
         if(!reserve_players.length) break
 
-        const player = client.players.get(p)
+        const player = app.players.get(p)
 
         if(!player) continue
 
@@ -160,14 +160,14 @@ export default createCommand({
         files: [
           {
             name: `roster_${ctx.interaction.user.id}.txt`,
-            contents: txt
+            attachment: txt
           }
         ]
       })
     }
     else {
-      await i.createModal({
-        customID: `roster;${i.user.id};modal`,
+      await i.showModal({
+        customId: `roster;${i.user.id};modal`,
         title: t('commands.roster.modal.title'),
         components: [
           {
@@ -175,7 +175,7 @@ export default createCommand({
             components: [
               {
                 type: 4,
-                customID: `roster;${i.user.id};modal;response-1`,
+                customId: `roster;${i.user.id};modal;response-1`,
                 label: t('commands.roster.modal.team_name'),
                 style: 1,
                 minLength: 2,
@@ -189,7 +189,7 @@ export default createCommand({
             components: [
               {
                 type: 4,
-                customID: `roster;${i.user.id};modal;response-2`,
+                customId: `roster;${i.user.id};modal;response-2`,
                 label: t('commands.roster.modal.team_tag'),
                 style: 1,
                 minLength: 2,
@@ -203,14 +203,16 @@ export default createCommand({
     }
   },
   async createModalSubmitInteraction({ ctx, i }) {
-    await i.defer(64)
-    const responses = i.data.components.getComponents()
-    ctx.db.user.team_name = responses[0].value
-    ctx.db.user.team_tag = responses[1].value
+    await i.deferReply({ flags: 64 })
+
+    const name = i.fields.getTextInputValue(`roster;${i.user.id};modal;response-1`)
+    const tag = i.fields.getTextInputValue(`roster;${i.user.id};modal;response-2`)
+
+    ctx.db.user.team_name = name
+    ctx.db.user.team_tag = tag
+
     await ctx.db.user.save()
-    await ctx.reply('commands.roster.team_info_changed', {
-      name: responses[0].value,
-      tag: responses[1].value
-    })
+
+    await ctx.reply('commands.roster.team_info_changed', { name, tag })
   }
 })
