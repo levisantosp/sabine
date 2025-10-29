@@ -26,18 +26,17 @@ const raw: {
 
 export default class CommandRunner {
   public async run(
-    app: App, interaction: ChatInputCommandInteraction
+    app: App,
+    interaction: ChatInputCommandInteraction
   ): Promise<unknown> {
-    if (!interaction.command) return
+    const command = app.commands.get(interaction.commandName)
 
-    const command = app.commands.get(interaction.command.name)
-
-    if (!command) return
+    if(!command) return
 
     let guild: SabineGuild | undefined
     let g: Guild | undefined
 
-    if (interaction.guildId) {
+    if(interaction.guildId) {
       guild = await SabineGuild.fetch(interaction.guildId) ?? new SabineGuild(interaction.guildId)
       g = app.guilds.cache.get(interaction.guildId)
     }
@@ -50,11 +49,11 @@ export default class CommandRunner {
 
     const ban = blacklist.get(interaction.user.id)
 
-    if (blacklist.get(interaction.guildId)) {
+    if(blacklist.get(interaction.guildId)) {
       return await interaction.guild?.leave()
     }
 
-    if (ban) {
+    if(ban) {
       return await interaction.reply({
         content: locales(guild?.lang ?? 'en', 'helper.banned', {
           reason: ban.reason,
@@ -81,8 +80,18 @@ export default class CommandRunner {
     const sub = interaction.options.getSubcommand(false)
     const group = interaction.options.getSubcommandGroup(false)
 
-    if (sub) args.push(sub)
-    if (group) args.push(group)
+    if(sub) args.push(sub)
+    if(group) args.push(group)
+
+    for(const option of (interaction.options as any)._hoistedOptions) {
+      if(
+        typeof option.value === 'string'
+        || typeof option.value === 'number'
+        || typeof option.value === 'boolean'
+      ) {
+        args.push(option.value)
+      }
+    }
 
     const ctx = new CommandContext({
       app,
@@ -98,49 +107,49 @@ export default class CommandRunner {
 
     const { permissions } = raw[ctx.locale]
 
-    if (command.permissions) {
+    if(command.permissions) {
       const perms: PermissionResolvable[] = []
 
-      for (const perm of command.permissions) {
-        if (!interaction.memberPermissions?.has(perm)) perms.push(perm)
+      for(const perm of command.permissions) {
+        if(!interaction.memberPermissions?.has(perm)) perms.push(perm)
       }
 
-      if (perms[0]) return await ctx.reply('helper.permissions.user', {
+      if(perms[0]) return await ctx.reply('helper.permissions.user', {
         permissions: perms.map(p => `\`${permissions[p.toString()]}\``).join(', ')
       })
     }
-    if (command.botPermissions && guild) {
+    if(command.botPermissions && guild) {
       const perms: PermissionResolvable[] = []
 
       const member = app.guilds.cache.get(guild.id)?.members.cache.get(app.user!.id)
 
-      for (const perm of command.botPermissions) {
-        if (!member?.permissions.has(perm)) perms.push(perm)
+      for(const perm of command.botPermissions) {
+        if(!member?.permissions.has(perm)) perms.push(perm)
       }
 
-      if (perms[0]) return await ctx.reply('helper.permissions.bot', {
+      if(perms[0]) return await ctx.reply('helper.permissions.bot', {
         permissions: perms.map(p => `\`${permissions[p.toString()]}\``).join(', ')
       })
     }
 
-    if (command.ephemeral) {
+    if(command.ephemeral) {
       await interaction.deferReply({ flags: 64, withResponse: true })
     }
 
-    else if (command.isThinking) {
+    else if(command.isThinking) {
       await interaction.deferReply({ withResponse: true })
     }
 
     const t = ctx.t.bind(ctx)
 
-    if (user.warn) {
+    if(user.warn) {
       const update = await app.prisma.update.findFirst({
         orderBy: {
           published_at: 'desc'
         }
       })
 
-      if (update) {
+      if(update) {
         const button = new ButtonBuilder()
           .setLabel(t('helper.dont_show_again'))
           .defineStyle('red')
@@ -152,10 +161,10 @@ export default class CommandRunner {
         await ctx.reply(button)
       }
     }
-    if (command.cooldown) {
+    if(command.cooldown) {
       const cooldown = await app.redis.get(`cooldown:${interaction.user.id}`)
 
-      if (cooldown) {
+      if(cooldown) {
         return await ctx.reply('helper.cooldown', {
           cooldown: `<t:${(Number(cooldown) / 1000).toFixed(0)}:R>`
         })
@@ -168,15 +177,16 @@ export default class CommandRunner {
         }
       })
     }
+
     command.run({ ctx, app, t, id: interaction.id })
       .then(async () => {
-        if (process.env.DEVS.includes(interaction.user.id)) return
+        if(process.env.DEVS.includes(interaction.user.id)) return
 
         const cmd = [group, sub].filter(Boolean).join(' ')
 
         const embed = new EmbedBuilder()
 
-        if (ctx.guild) {
+        if(ctx.guild) {
           const owner = app.users.cache.get(ctx.guild.ownerId)
 
           embed
@@ -202,19 +212,19 @@ export default class CommandRunner {
             .addField('Command author', `\`${ctx.interaction.user.username}\` (\`${ctx.interaction.user.id}\`)`)
         }
 
-        if (ctx.guild) {
+        if(ctx.guild) {
           embed.setThumb(ctx.guild.iconURL()!)
         }
 
         const channel = await app.channels.fetch(process.env.COMMAND_LOG!)
 
-        if (!channel || channel.type !== ChannelType.GuildText) return
+        if(!channel || channel.type !== ChannelType.GuildText) return
 
         const webhooks = await channel.fetchWebhooks()
 
         let webhook = webhooks.find(w => w.name === `${app.user?.username} Logger`)
 
-        if (!webhook) webhook = await channel.createWebhook({ name: `${app.user?.username} Logger` })
+        if(!webhook) webhook = await channel.createWebhook({ name: `${app.user?.username} Logger` })
 
         await webhook.send({
           embeds: [embed],
