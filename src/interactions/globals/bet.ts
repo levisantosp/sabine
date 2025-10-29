@@ -7,12 +7,12 @@ export default createComponentInteraction({
   name: 'bet',
   flags: 64,
   global: true,
-  async run({ ctx, t, client }) {
+  async run({ ctx, t, app }) {
     if(ctx.db.user.coins < 500) return await ctx.reply('helper.coins_needed')
 
     const options = {
       valorant: async() => {
-        const pred = await client.prisma.prediction.findFirst({
+        const pred = await app.prisma.prediction.findFirst({
           where: {
             match: ctx.args[2],
             game: 'valorant',
@@ -43,8 +43,8 @@ export default createComponentInteraction({
           title = title.slice(0, 42) + '...'
         }
 
-        await ctx.interaction.createModal({
-          customID: `betting;valorant;${ctx.args[2]}`,
+        await ctx.interaction.showModal({
+          customId: `betting;valorant;${ctx.args[2]}`,
           title,
           components: [
             {
@@ -52,7 +52,7 @@ export default createComponentInteraction({
               components: [
                 {
                   type: 4,
-                  customID: 'response-1',
+                  customId: 'response-1',
                   label: t('helper.bet_modal.label'),
                   style: 1,
                   minLength: 3,
@@ -65,7 +65,7 @@ export default createComponentInteraction({
         })
       },
       lol: async() => {
-        const pred = await client.prisma.prediction.findFirst({
+        const pred = await app.prisma.prediction.findFirst({
           where: {
             match: ctx.args[2],
             game: 'lol',
@@ -85,8 +85,8 @@ export default createComponentInteraction({
           return await ctx.reply('helper.started')
         }
 
-        await ctx.interaction.createModal({
-          customID: `betting;valorant;${ctx.args[2]}`,
+        await ctx.interaction.showModal({
+          customId: `betting;valorant;${ctx.args[2]}`,
           title: t(
             'helper.bet_modal.title',
             {
@@ -99,7 +99,7 @@ export default createComponentInteraction({
               components: [
                 {
                   type: 4,
-                  customID: 'response-1',
+                  customId: 'response-1',
                   label: t('helper.bet_modal.label'),
                   style: 1,
                   minLength: 3,

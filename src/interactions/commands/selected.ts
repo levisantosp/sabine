@@ -1,4 +1,4 @@
-import { type AnyTextableChannel, ComponentTypes, Message } from 'oceanic.js'
+import { ChannelType } from 'discord.js'
 import createComponentInteraction from '../../structures/interaction/createComponentInteraction.ts'
 import { valorant_agents, valorant_maps } from '../../config.ts'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
@@ -10,20 +10,20 @@ export default createComponentInteraction({
   name: 'selected',
   time: 7 * 60 * 1000,
   flags: 64,
-  async run({ ctx, client, t }) {
-    if(ctx.interaction.data.componentType !== ComponentTypes.STRING_SELECT) return
+  async run({ ctx, app, t }) {
+    if(!ctx.interaction.isStringSelectMenu()) return
 
-    const agentName = ctx.interaction.data.values.getStrings()[0]
+    const agentName = ctx.interaction.values[0]
 
-    const keys = await client.redis.keys('agent_selection*')
+    const keys = await app.redis.keys('agent_selection*')
     const key = keys.find(key => key.includes(ctx.interaction.user.id))
 
     if(!key) return
 
-    const value = await client.redis.get(key)
+    const value = await app.redis.get(key)
 
     if(!value) return
-    
+
     let data = JSON.parse(value)
 
     let duplicatedAgent = false
@@ -48,14 +48,14 @@ export default createComponentInteraction({
       }
     }
 
-    await client.redis.set(key, JSON.stringify(data), {
+    await app.redis.set(key, JSON.stringify(data), {
       expiration: {
         type: 'EX',
         value: 600
       }
     })
 
-    data = JSON.parse((await client.redis.get(key))!)
+    data = JSON.parse((await app.redis.get(key))!)
 
     const user = await SabineUser.fetch(ctx.args.at(-1)!)
 
@@ -72,7 +72,7 @@ export default createComponentInteraction({
             user.team_name!,
           value: key.split(':')[1] === ctx.interaction.user.id ?
             ctx.db.user.active_players.map(id => {
-              const player = client.players.get(id)!
+              const player = app.players.get(id)!
 
               let emoji: string | undefined = '<a:loading:809221866434199634>'
 
@@ -91,7 +91,7 @@ export default createComponentInteraction({
               return `${emoji} ${player.name} (${ovr})`
             }).join('\n') :
             user.active_players.map(id => {
-              const player = client.players.get(id)!
+              const player = app.players.get(id)!
 
               let emoji: string | undefined = '<a:loading:809221866434199634>'
 
@@ -117,7 +117,7 @@ export default createComponentInteraction({
             user.team_name!,
           value: key.split(':')[1] !== ctx.interaction.user.id ?
             ctx.db.user.active_players.map(id => {
-              const player = client.players.get(id)!
+              const player = app.players.get(id)!
 
               let emoji: string | undefined = '<a:loading:809221866434199634>'
 
@@ -136,7 +136,7 @@ export default createComponentInteraction({
               return `${emoji} ${player.name} (${ovr})`
             }).join('\n') :
             user.active_players.map(id => {
-              const player = client.players.get(id)!
+              const player = app.players.get(id)!
 
               let emoji: string | undefined = '<a:loading:809221866434199634>'
 
@@ -159,12 +159,19 @@ export default createComponentInteraction({
       )
       .setFooter({ text: t('commands.duel.time') })
 
-    const message: Message<AnyTextableChannel> = await client.rest.channels.getMessage(data.channelId, data.messageId)
+    const channel = app.channels.cache.get(data.channelId)
+
+    if(
+      !channel
+      || channel.type !== ChannelType.GuildText
+    ) return
+
+    const message = channel.messages.cache.get(data.messageId)
 
     if(!message) return
 
     await ctx.edit('commands.duel.agent_selected', {
-      p: client.players.get(ctx.args[2])!.name,
+      p: app.players.get(ctx.args[2])!.name,
       agent: agentName
     })
 
@@ -214,41 +221,41 @@ export default createComponentInteraction({
           )
           .setImage(valorant_maps.filter(map => map.name === match.map)[0].image)
 
-        await message.edit(embed.build())
+        await message.edit({ embeds: [embed] })
 
-        const keys = await client.redis.keys('agent_selection*')
+        const keys = await app.redis.keys('agent_selection*')
         const key = keys.filter(k => k.includes(ctx.interaction.user.id))[0]
 
-        await client.redis.del(key)
+        await app.redis.del(key)
 
         try {
-          while(!match.finished) {
-            await client.redis.set(`match:${ctx.db.user.id}`, 1)
-            await client.redis.set(`match:${user.id}`, 1)
+          while (!match.finished) {
+            await app.redis.set(`match:${ctx.db.user.id}`, 1)
+            await app.redis.set(`match:${user.id}`, 1)
 
             await match.wait(2500)
 
             match = await match.start()
           }
         }
-        catch(e) {
-          await client.redis.del(`match:${ctx.db.user.id}`)
-          await client.redis.del(`match:${user.id}`)
+        catch (e) {
+          await app.redis.del(`match:${ctx.db.user.id}`)
+          await app.redis.del(`match:${user.id}`)
 
           await ctx.reply('commands.duel.error', {
-            users: `${ctx.interaction.user.mention} <@${match.teams[1].user}>`,
+            users: `${ctx.interaction.user} <@${match.teams[1].user}>`,
             e: e as Error
           })
 
-          await new Logger(client).error(e as Error)
+          await new Logger(app).error(e as Error)
         }
         finally {
-          await client.redis.del(`match:${ctx.db.user.id}`)
-          await client.redis.del(`match:${user.id}`)
+          await app.redis.del(`match:${ctx.db.user.id}`)
+          await app.redis.del(`match:${user.id}`)
         }
       }, timeout)
     }
-    
+
     else {
       await message.edit({
         embeds: [embed],

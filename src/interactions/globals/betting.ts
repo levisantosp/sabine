@@ -1,4 +1,4 @@
-import { client } from '../../structures/client/App.ts'
+import { app } from '../../structures/app/App.ts'
 import createModalSubmitInteraction from '../../structures/interaction/createModalSubmitInteraction.ts'
 import calcOdd from '../../util/calcOdd.ts'
 
@@ -9,7 +9,7 @@ export default createModalSubmitInteraction({
   async run({ ctx }) {
     const games = {
       valorant: async() => {
-        const preds = await ctx.client.prisma.prediction.findMany({
+        const preds = await ctx.app.prisma.prediction.findMany({
           where: {
             game: 'valorant',
             match: ctx.args[2]
@@ -30,7 +30,7 @@ export default createModalSubmitInteraction({
         let oddA = 0
         let oddB = 0
 
-        for(const pred of preds) {
+        for (const pred of preds) {
           if(pred.teams[0].winner && pred.bet) {
             oddA += 1
           }
@@ -54,7 +54,7 @@ export default createModalSubmitInteraction({
 
         ctx.db.user.coins -= value
 
-        const pred = await client.prisma.prediction.findFirst({
+        const pred = await app.prisma.prediction.findFirst({
           where: {
             match: ctx.args[2],
             userId: ctx.interaction.user.id,
@@ -67,7 +67,7 @@ export default createModalSubmitInteraction({
 
         if(!pred) return await ctx.reply('helper.prediction_needed')
 
-        await client.prisma.prediction.update({
+        await app.prisma.prediction.update({
           where: {
             id: pred.id
           },
@@ -88,10 +88,9 @@ export default createModalSubmitInteraction({
             odd
           }
         )
-
       },
       lol: async() => {
-        const preds = await ctx.client.prisma.prediction.findMany({
+        const preds = await ctx.app.prisma.prediction.findMany({
           where: {
             game: 'lol',
             match: ctx.args[2]
@@ -112,7 +111,7 @@ export default createModalSubmitInteraction({
         let oddA = 0
         let oddB = 0
 
-        for(const pred of preds) {
+        for (const pred of preds) {
           if(pred.teams[0].winner && pred.bet) {
             oddA += 1
           }
@@ -136,7 +135,7 @@ export default createModalSubmitInteraction({
 
         ctx.db.user.coins -= value
 
-        const pred = await client.prisma.prediction.findFirst({
+        const pred = await app.prisma.prediction.findFirst({
           where: {
             match: ctx.args[2],
             userId: ctx.interaction.user.id,
@@ -149,7 +148,7 @@ export default createModalSubmitInteraction({
 
         if(!pred) return await ctx.reply('helper.prediction_needed')
 
-        await client.prisma.prediction.update({
+        await app.prisma.prediction.update({
           where: {
             id: pred.id
           },
