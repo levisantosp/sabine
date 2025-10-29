@@ -1,5 +1,5 @@
-import type { ModalSubmitInteraction } from 'oceanic.js'
-import App from '../client/App.ts'
+import type { ModalSubmitInteraction } from 'discord.js'
+import App from '../app/App.ts'
 import ModalSubmitInteractionContext from './ModalSubmitInteractionContext.ts'
 import { SabineGuild, SabineUser } from '../../database/index.ts'
 import locales, { type Args, type Content } from '../../locales/index.ts'
@@ -7,29 +7,29 @@ import type { Blacklist } from '@prisma/client'
 
 export default class ModalSubmitInteractionRunner {
   public async run(
-    client: App,
+    app: App,
     interaction: ModalSubmitInteraction
   ): Promise<unknown> {
-    const args = interaction.data.customID.split(';')
-    const i = client.interactions.get(args[0])
-    const command = client.commands.get(args[0])
+    const args = interaction.customId.split(';')
+    const i = app.interactions.get(args[0])
+    const command = app.commands.get(args[0])
 
-    const rawBlacklist = await client.redis.get('blacklist')
+    const rawBlacklist = await app.redis.get('blacklist')
     const value: Blacklist[] = rawBlacklist ? JSON.parse(rawBlacklist) : []
     const blacklist = new Map<string | null, Blacklist>(value.map(b => [b.id, b]))
 
     if(blacklist.get(interaction.user.id)) return
-    if(blacklist.get(interaction.guildID)) return
+    if(blacklist.get(interaction.guildId)) return
 
     if(i?.global && !command) {
-      if(!interaction.guild || !interaction.guildID) return
+      if(!interaction.guild || !interaction.guildId) return
 
-      const guild = await SabineGuild.fetch(interaction.guildID) ?? new SabineGuild(interaction.guildID)
+      const guild = await SabineGuild.fetch(interaction.guildId) ?? new SabineGuild(interaction.guildId)
       const user = await SabineUser.fetch(interaction.user.id) ?? new SabineUser(interaction.user.id)
 
       const ctx = new ModalSubmitInteractionContext({
         args,
-        client,
+        app: app,
         guild: interaction.guild,
         locale: user.lang,
         db: {
@@ -39,8 +39,10 @@ export default class ModalSubmitInteractionRunner {
         interaction
       })
 
-      for(const component of interaction.data.components.getComponents()) {
-        args.push(component.value)
+      for(const component of interaction.fields.fields.values()) {
+        const value = interaction.fields.getTextInputValue(component.customId)
+
+        args.push(value)
       }
 
       const t = <T extends Content>(content: T, args?: Args) => {
@@ -48,11 +50,11 @@ export default class ModalSubmitInteractionRunner {
       }
 
       if(i.ephemeral) {
-        await interaction.defer(64)
+        await interaction.deferReply({ flags: 64 })
       }
 
       else if(i.isThinking) {
-        await interaction.defer()
+        await interaction.deferReply()
       }
 
       else if(i.flags) {
@@ -68,13 +70,13 @@ export default class ModalSubmitInteractionRunner {
 
     let guild: SabineGuild | undefined
 
-    if(interaction.guildID) {
-      guild = await SabineGuild.fetch(interaction.guildID) ?? new SabineGuild(interaction.guildID)
+    if(interaction.guildId) {
+      guild = await SabineGuild.fetch(interaction.guildId) ?? new SabineGuild(interaction.guildId)
     }
 
     const ctx = new ModalSubmitInteractionContext({
       args,
-      client,
+      app,
       guild: interaction.guild,
       locale: user.lang,
       db: {
@@ -88,6 +90,6 @@ export default class ModalSubmitInteractionRunner {
       return locales(ctx.locale, content, args)
     }
 
-    await command.createModalSubmitInteraction({ ctx, t, client, i: interaction })
+    await command.createModalSubmitInteraction({ ctx, t, app, i: interaction })
   }
 }
