@@ -70,21 +70,6 @@ manager.on('shardCreate', shard => {
     })
   })
 
-  shard.on('ready', async() => {
-    const embed = new EmbedBuilder()
-      .setTitle('Shard Ready')
-      .setDesc(`Shard ID: \`${shard.id}\` => \`Ready\``)
-      .setTimestamp()
-
-    const route = Routes.webhook(webhook.id, webhook.token)
-
-    await rest.post(route, {
-      body: {
-        embeds: [embed]
-      }
-    })
-  })
-
   shard.on('reconnecting', async() => {
     const embed = new EmbedBuilder()
       .setTitle('Shard Reconnecting')
