@@ -8,10 +8,8 @@ import locales from '../../../i18n/index.ts'
 import ButtonBuilder from '../../../structures/builders/ButtonBuilder.ts'
 import { type ResultsData } from '../../../types.ts'
 import calcOdd from '../../../util/calcOdd.ts'
-import { PrismaClient } from '@prisma/client'
 import { SabineUser } from '../../../database/index.ts'
-
-const prisma = new PrismaClient()
+import type { MessageCreateOptions, TextChannel } from 'discord.js'
 
 export default async function(
   fastify: FastifyInstance<RawServerDefault, IncomingMessage, ServerResponse<IncomingMessage>, FastifyBaseLogger, TypeBoxTypeProvider>
@@ -39,7 +37,7 @@ export default async function(
       )
     }
   }, async(req) => {
-    const guilds = await prisma.guild.findMany({
+    const guilds = await app.prisma.guild.findMany({
       where: {
         events: {
           some: {
@@ -57,7 +55,7 @@ export default async function(
       }
     })
 
-    const preds = await prisma.prediction.findMany({
+    const preds = await app.prisma.prediction.findMany({
       where: {
         game: 'lol'
       },
@@ -109,15 +107,13 @@ export default async function(
               )
               .setFooter({ text: d.stage })
 
-            client.rest.channels.createMessage(e.channel2, embed.build({
+            const channel = app.channels.cache.get(e.channel2) as TextChannel
+
+            channel.send(embed.build({
               components: [
                 {
                   type: 1,
                   components: [
-                    new ButtonBuilder()
-                      .setLabel(locales(guild.lang ?? 'en', 'helper.stats'))
-                      .defineStyle('link')
-                      .setURL(`https://vlr.gg/${d.id}`),
                     new ButtonBuilder()
                       .setLabel(locales(guild.lang ?? 'en', 'helper.pickem.label'))
                       .defineStyle('blue')
@@ -125,7 +121,7 @@ export default async function(
                   ]
                 }
               ]
-            }))
+            }) as MessageCreateOptions)
               .catch(() => { })
           }
         }
@@ -184,7 +180,7 @@ export default async function(
               pred.odd = odd
 
               await Promise.all([
-                prisma.prediction.update({
+                app.prisma.prediction.update({
                   where: {
                     id: pred.id
                   },

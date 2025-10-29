@@ -7,9 +7,6 @@ import { emojis } from '../../../util/emojis.ts'
 import EmbedBuilder from '../../../structures/builders/EmbedBuilder.ts'
 import locales from '../../../i18n/index.ts'
 import ButtonBuilder from '../../../structures/builders/ButtonBuilder.ts'
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
 
 export default async function(
   fastify: FastifyInstance<RawServerDefault, IncomingMessage, ServerResponse<IncomingMessage>, FastifyBaseLogger, TypeBoxTypeProvider>
@@ -47,7 +44,7 @@ export default async function(
       )
     }
   }, async(req) => {
-    const guilds = await prisma.guild.findMany({
+    const guilds = await app.prisma.guild.findMany({
       where: {
         lol_live_feed_channel: {
           not: null
@@ -67,7 +64,7 @@ export default async function(
 
     for(const data of req.body) {
       for(const guild of guilds) {
-        const channel = client.getChannel(guild.lol_live_feed_channel!) as TextChannel
+        const channel = app.channels.cache.get(guild.lol_live_feed_channel!) as TextChannel
 
         if(!channel) continue
 
@@ -94,7 +91,7 @@ export default async function(
           .setLabel(locales(guild.lang ?? 'en', 'helper.streams'))
           .setCustomId(`stream;lol;${data.id}`)
 
-        const messages = await channel.getMessages({ limit: 7 })
+        const messages = await channel.messages.fetch({ limit: 10 })
         const message = messages.find(m =>
           guild.live_messages.some(msg =>
             msg.message === m.id &&
@@ -103,18 +100,19 @@ export default async function(
         )
 
         if(!message || guild.spam_live_messages) {
-          const msg = await channel.createMessage(embed.build({
+          const msg = await channel.send({
+            embeds: [embed],
             components: [
               {
                 type: 1,
                 components: [button]
               }
             ]
-          }))
+          })
 
           const liveMessage = guild.live_messages.filter(m => m.event === data.tournament.name)[0]
 
-          await prisma.guild.update({
+          await app.prisma.guild.update({
             where: {
               id: guild.id
             },
@@ -139,14 +137,15 @@ export default async function(
         }
 
         else {
-          await message.edit(embed.build({
+          await message.edit({
+            embeds: [embed],
             components: [
               {
                 type: 1,
                 components: [button]
               }
             ]
-          }))
+          })
         }
       }
     }
