@@ -9,9 +9,6 @@ export default createCommand({
   },
   userInstall: true,
   async run({ ctx, app }) {
-    const start = Date.now()
-
-    let voltaraqui = ''
 
     if(ctx.guild) {
       return await ctx.reply(`🏓 Pong! \`${ctx.guild.shard.ping}ms\` (Shard \`${ctx.guild.shard.id}\`)`)
