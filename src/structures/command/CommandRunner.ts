@@ -1,7 +1,7 @@
 import { ChannelType, type ChatInputCommandInteraction, type CommandInteraction, type Guild, type PermissionResolvable, type TextChannel } from 'discord.js'
 import App from '../app/App.ts'
 import CommandContext from './CommandContext.ts'
-import locales from '../../locales/index.ts'
+import locales from '../../i18n/index.ts'
 import ButtonBuilder from '../builders/ButtonBuilder.ts'
 import EmbedBuilder from '../builders/EmbedBuilder.ts'
 import { SabineGuild, SabineUser } from '../../database/index.ts'
@@ -20,8 +20,8 @@ const locale: {
 const raw: {
   [key: string]: any
 } = {
-  pt: JSON.parse(readFileSync(path.resolve('src/locales/pt.json'), 'utf-8')),
-  en: JSON.parse(readFileSync(path.resolve('src/locales/en.json'), 'utf-8'))
+  pt: JSON.parse(readFileSync(path.resolve('src/i18n/pt.json'), 'utf-8')),
+  en: JSON.parse(readFileSync(path.resolve('src/i18n/en.json'), 'utf-8'))
 }
 
 export default class CommandRunner {

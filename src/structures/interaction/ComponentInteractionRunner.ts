@@ -2,7 +2,7 @@ import type { MessageComponentInteraction } from 'discord.js'
 import App from '../app/App.ts'
 import ComponentInteractionContext from './ComponentInteractionContext.ts'
 import { SabineGuild, SabineUser } from '../../database/index.ts'
-import locales, { type Args, type Content } from '../../locales/index.ts'
+import locales, { type Args, type Content } from '../../i18n/index.ts'
 import type { Blacklist } from '@prisma/client'
 import type ModalSubmitInteractionContext from './ModalSubmitInteractionContext.ts'
 

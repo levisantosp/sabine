@@ -5,13 +5,13 @@ import { TextChannel } from 'discord.js'
 import { app } from '../../../structures/app/App.ts'
 import { emojis } from '../../../util/emojis.ts'
 import EmbedBuilder from '../../../structures/builders/EmbedBuilder.ts'
-import locales from '../../../locales/index.ts'
+import locales from '../../../i18n/index.ts'
 import ButtonBuilder from '../../../structures/builders/ButtonBuilder.ts'
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-export default async function (
+export default async function(
   fastify: FastifyInstance<RawServerDefault, IncomingMessage, ServerResponse<IncomingMessage>, FastifyBaseLogger, TypeBoxTypeProvider>
 ) {
   fastify.post('/webhooks/live/lol', {
@@ -46,7 +46,7 @@ export default async function (
         })
       )
     }
-  }, async (req) => {
+  }, async(req) => {
     const guilds = await prisma.guild.findMany({
       where: {
         lol_live_feed_channel: {
@@ -63,15 +63,15 @@ export default async function (
       }
     })
 
-    if (!guilds.length) return
+    if(!guilds.length) return
 
-    for (const data of req.body) {
-      for (const guild of guilds) {
+    for(const data of req.body) {
+      for(const guild of guilds) {
         const channel = client.getChannel(guild.lol_live_feed_channel!) as TextChannel
 
-        if (!channel) continue
+        if(!channel) continue
 
-        if (!guild.events.some(e => e.name === data.tournament.name)) continue
+        if(!guild.events.some(e => e.name === data.tournament.name)) continue
 
         const emoji1 = emojis.find(e => e?.name === data.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
         const emoji2 = emojis.find(e => e?.name === data.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
@@ -87,7 +87,7 @@ export default async function (
             ''
           )
 
-        if (data.stage) embed.setFooter({ text: data.stage })
+        if(data.stage) embed.setFooter({ text: data.stage })
 
         const button = new ButtonBuilder()
           .defineStyle('blue')
@@ -102,7 +102,7 @@ export default async function (
           )
         )
 
-        if (!message || guild.spam_live_messages) {
+        if(!message || guild.spam_live_messages) {
           const msg = await channel.createMessage(embed.build({
             components: [
               {

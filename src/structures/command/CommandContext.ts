@@ -1,7 +1,7 @@
 import * as Discord from 'discord.js'
 import App from '../app/App.ts'
-import locales from '../../locales/index.ts'
-import type { Args, Content } from '../../locales/index.ts'
+import locales from '../../i18n/index.ts'
+import type { Args, Content } from '../../i18n/index.ts'
 import { SabineGuild, SabineUser } from '../../database/index.ts'
 
 type Database = {

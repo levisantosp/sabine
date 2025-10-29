@@ -1,6 +1,6 @@
 import * as Discord from 'discord.js'
 import App from '../app/App.ts'
-import locales, { type Content, type Args } from '../../locales/index.ts'
+import locales, { type Content, type Args } from '../../i18n/index.ts'
 import { SabineGuild, SabineUser } from '../../database/index.ts'
 
 type Database = {
@@ -70,8 +70,8 @@ export default class ModalSubmitInteractionContext {
 
   public async edit(
     content:
-    | Content
-    | Discord.InteractionEditReplyOptions,
+      | Content
+      | Discord.InteractionEditReplyOptions,
     options?: Args
   ): Promise<Discord.Message> {
     if(typeof content === 'string') {

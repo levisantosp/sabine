@@ -1,6 +1,6 @@
 import { calcPlayerOvr, type Player } from 'players'
 import { valorant_agents, valorant_maps, valorant_weapons } from '../config.ts'
-import type { Args } from '../locales/index.ts'
+import type { Args } from '../i18n/index.ts'
 import EmbedBuilder from '../structures/builders/EmbedBuilder.ts'
 import type { PlayerWeapon } from './Player.ts'
 import type { Message, MessageEditOptions } from 'discord.js'

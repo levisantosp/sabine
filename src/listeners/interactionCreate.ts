@@ -6,7 +6,7 @@ import {
 import createListener from '../structures/app/createListener.ts'
 import CommandRunner from '../structures/command/CommandRunner.ts'
 import { SabineGuild, SabineUser } from '../database/index.ts'
-import locales, { type Args } from '../locales/index.ts'
+import locales, { type Args } from '../i18n/index.ts'
 import ComponentInteractionRunner from '../structures/interaction/ComponentInteractionRunner.ts'
 import ModalSubmitInteractionRunner from '../structures/interaction/ModalSubmitInteractionRunner.ts'
 import App from '../structures/app/App.ts'

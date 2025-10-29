@@ -5,7 +5,7 @@ import { TextChannel } from 'discord.js'
 import { app } from '../../../structures/app/App.ts'
 import { emojis } from '../../../util/emojis.ts'
 import EmbedBuilder from '../../../structures/builders/EmbedBuilder.ts'
-import locales from '../../../locales/index.ts'
+import locales from '../../../i18n/index.ts'
 import ButtonBuilder from '../../../structures/builders/ButtonBuilder.ts'
 
 const tournaments: { [key: string]: RegExp[] } = {

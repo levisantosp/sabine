@@ -1,11 +1,11 @@
-import type { Args } from '../../locales/index.ts'
-import App from '../client/App.ts'
+import type { Args } from '../../i18n/index.ts'
+import App from '../app/App.ts'
 import ComponentInteractionContext from './ComponentInteractionContext.ts'
 
 type CreateInteractionProps = {
   ctx: ComponentInteractionContext
   t: (content: string, args?: Args) => string
-  client: App
+  app: App
 }
 
 export type CreateInteractionOptions = {

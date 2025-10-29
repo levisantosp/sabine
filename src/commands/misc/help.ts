@@ -8,8 +8,8 @@ import fs from 'node:fs'
 const raw: {
   [key: string]: any
 } = {
-  pt: JSON.parse(fs.readFileSync(path.resolve('src/locales/pt.json'), 'utf-8')),
-  en: JSON.parse(fs.readFileSync(path.resolve('src/locales/en.json'), 'utf-8'))
+  pt: JSON.parse(fs.readFileSync(path.resolve('src/i18n/pt.json'), 'utf-8')),
+  en: JSON.parse(fs.readFileSync(path.resolve('src/i18n/en.json'), 'utf-8'))
 }
 
 export default createCommand({
