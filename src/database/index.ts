@@ -8,7 +8,7 @@ import {
   type TBDMatch,
   type User
 } from '@prisma/client'
-import { client } from '../structures/client/App.ts'
+import { app } from '../structures/app/App.ts'
 
 export const prisma = new PrismaClient()
 
@@ -78,7 +78,7 @@ export class SabineUser implements User {
 
       (data as any)[key] = this[key]
     }
-    
+
     const { premium, ...cleanData } = data as any
 
     if(premium) {
@@ -114,7 +114,7 @@ export class SabineUser implements User {
 
     return user
   }
-  
+
   public async addPrediction(game: 'valorant' | 'lol', prediction: Prediction) {
     await prisma.prediction.create({
       data: {
@@ -210,7 +210,7 @@ export class SabineUser implements User {
         this.remind_in = channel
 
         if(this.remind) {
-          await client.queue.add('reminder', {
+          await app.queue.add('reminder', {
             channel: this.remind_in,
             user: this.id
           }, {
@@ -221,7 +221,7 @@ export class SabineUser implements User {
         }
       }
 
-      if(client.players.get(player)!.ovr >= 85) {
+      if(app.players.get(player)!.ovr >= 85) {
         this.pity = 0
       }
     }
@@ -293,7 +293,7 @@ export class SabineGuild implements Guild {
 
       if(
         ['tbd_matches', 'events', 'live_messages']
-        .includes(key)
+          .includes(key)
       ) {
         (data as any)[key] = {
           [key]: Array.isArray(this[key]) &&
