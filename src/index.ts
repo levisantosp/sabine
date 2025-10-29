@@ -1,5 +1,4 @@
 import { app } from './structures/app/App.ts'
-import { server } from './server/index.ts'
 
 await app.redis.connect()
 
@@ -64,9 +63,3 @@ if(keys.length) {
 await updateRedis()
 
 await app.connect()
-
-server.listen({
-  host: process.env.HOST,
-  port: process.env.PORT
-})
-  .then(() => console.log(`HTTP server running at ${process.env.PORT}`))

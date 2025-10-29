@@ -562,7 +562,7 @@ const runTasks = async(client: App) => {
 export default createListener({
   name: 'clientReady',
   async run(client) {
-    Logger.send(`${client.user?.tag} online!`)
+    Logger.send(`${client.user?.tag} online on Shard ${client.shard?.ids}!`)
 
     if(client.user?.id !== '1235576817683922954') {
       client.user?.setStatus('dnd')
@@ -571,7 +571,7 @@ export default createListener({
     else {
       client.user.setActivity({
         name: 'status',
-        state: 'Join support server! Link on about me',
+        state: `[Shard ${client.shard?.ids}] Join support server! Link on about me`,
         type: 4
       })
     }

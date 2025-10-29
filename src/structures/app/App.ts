@@ -53,14 +53,6 @@ export default class App extends Discord.Client {
   }
 
   public async connect() {
-    const start = Date.now()
-    
-    Logger.warn('Connecting to database...')
-
-    await prisma.$connect()
-
-    Logger.send(`Database connected in ${((Date.now() - start) / 1000).toFixed(1)}s!`)
-
     for(const player of getPlayers()) {
       this.players.set(player.id.toString(), {
         ...player,
@@ -145,6 +137,5 @@ export const app = new App({
   allowedMentions: {
     repliedUser: true,
     parse: ['users', 'roles']
-  },
-  shards: 'auto'
+  }
 })
