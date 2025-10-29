@@ -1650,8 +1650,8 @@ export default class Round extends Match {
               users: this.mentions
             }),
           reply: {
-              messageReference: this.ctx.id
-            }
+            messageReference: this.ctx.id
+          }
         })
       }
     }
