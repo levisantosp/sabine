@@ -30,7 +30,7 @@ export default createModalSubmitInteraction({
         let oddA = 0
         let oddB = 0
 
-        for (const pred of preds) {
+        for(const pred of preds) {
           if(pred.teams[0].winner && pred.bet) {
             oddA += 1
           }
@@ -111,7 +111,7 @@ export default createModalSubmitInteraction({
         let oddA = 0
         let oddB = 0
 
-        for (const pred of preds) {
+        for(const pred of preds) {
           if(pred.teams[0].winner && pred.bet) {
             oddA += 1
           }
