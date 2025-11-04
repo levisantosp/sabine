@@ -1,14 +1,14 @@
 {
   "name": "sabine",
-  "version": "2.9.1",
-  "description": "your esports coverage discord bot",
+  "version": "2.9.2",
+  "description": "your valorant simulator and esports coverage discord bot",
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
     "test": "bun test.ts",
     "start": "bun src/shard.ts",
     "dev": "bun --watch .",
-    "compile": "bun lint && rm -rf dist && bun tsc",
+    "compile": "bun lint && tsc",
     "push": "bun prisma db push",
     "pull": "bun prisma db pull",
     "pull:force": "bun prisma db pull --force",
