@@ -5,7 +5,7 @@ import EmbedBuilder from '../structures/builders/EmbedBuilder.ts'
 export default createListener({
   name: 'guildDelete',
   async run(client, guild) {
-    const owner = client.users.cache.get(guild.ownerId)
+    const owner = await client.getUser(guild.ownerId)
 
     const embed = new EmbedBuilder()
       .setTitle(`I've been removed from \`${guild.name} (${guild.id})\``)

@@ -190,7 +190,7 @@ export default class CommandRunner {
         const embed = new EmbedBuilder()
 
         if(ctx.guild) {
-          const owner = app.users.cache.get(ctx.guild.ownerId)
+          const owner = await app.getUser(ctx.guild.ownerId)
 
           embed
             .setAuthor({

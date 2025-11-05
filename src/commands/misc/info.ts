@@ -13,7 +13,7 @@ export default createCommand({
   },
   userInstall: true,
   async run({ ctx, app, t }) {
-    const creator = app.users.cache.get('441932495693414410')!
+    const creator = await app.getUser('441932495693414410')
 
     const embed = new EmbedBuilder()
       .setAuthor({

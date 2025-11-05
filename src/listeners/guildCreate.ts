@@ -13,7 +13,7 @@ export default createListener({
 
     if(ban) return await guild.leave()
 
-    const owner = client.users.cache.get(guild.ownerId)
+    const owner = await client.getUser(guild.ownerId)
 
     const embed = new EmbedBuilder()
       .setTitle(`I've been added to \`${guild.name} (${guild.id})\``)

@@ -134,6 +134,16 @@ export default class App extends Discord.Client {
       body: commands
     })
   }
+
+  public async getUser(id: string) {
+    let user = this.users.cache.get(id)
+
+    if(!user) {
+      user = await this.users.fetch(id, { cache: true })
+    }
+
+    return user
+  }
 }
 
 export const app = new App({

@@ -215,7 +215,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.predictions.title'))
-          .setThumb((app.users.cache.get(array[0].id!))?.avatarURL()!)
+          .setThumb((await app.getUser(array[0].id!))?.avatarURL()!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -227,7 +227,7 @@ export default createCommand({
         for(const user of users) {
           pos++
 
-          const u = app.users.cache.get(user.id)
+          const u = await app.getUser(user.id)
 
           let field = `${pos} - ${!u ? '*unknown*' : u.username}`
 
@@ -300,7 +300,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.coins.title'))
-          .setThumb((app.users.cache.get(array[0].id!))?.avatarURL()!)
+          .setThumb((await app.getUser(array[0].id!))?.avatarURL()!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -312,7 +312,7 @@ export default createCommand({
         for(const user of users) {
           pos++
 
-          const u = app.users.cache.get(user.id)
+          const u = await app.getUser(user.id)
 
           let field = `${pos} - ${!u ? '*unknown*' : u.username}`
 
@@ -391,7 +391,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.rating.title'))
-          .setThumb((app.users.cache.get(array[0].id!))?.avatarURL()!)
+          .setThumb((await app.getUser(array[0].id!))?.avatarURL()!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -403,7 +403,7 @@ export default createCommand({
         for(const user of users) {
           pos++
 
-          const u = app.users.cache.get(user.id)
+          const u = await app.getUser(user.id)
 
           let field = `${pos} - ${!u ? '*unknown*' : u.username}`
 
@@ -477,7 +477,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.predictions.title'))
-          .setThumb((app.users.cache.get(array[0].id!))?.avatarURL()!)
+          .setThumb((await app.getUser(array[0].id!))?.avatarURL()!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -489,7 +489,7 @@ export default createCommand({
         for(const user of users) {
           pos++
 
-          const u = app.users.cache.get(user.id)
+          const u = await app.getUser(user.id)
 
           let field = `${pos} - ${!u ? '*unknown*' : u.username}`
           if(pos === 1) field = `🥇 - ${!u ? '*unknown*' : u.username}`
@@ -560,7 +560,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.coins.title'))
-          .setThumb((app.users.cache.get(array[0].id!))?.avatarURL()!)
+          .setThumb((await app.getUser(array[0].id!))?.avatarURL()!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -572,7 +572,7 @@ export default createCommand({
         for(const user of users) {
           pos++
 
-          const u = app.users.cache.get(user.id)
+          const u = await app.getUser(user.id)
 
           let field = `${pos} - ${!u ? '*unknown*' : u.username}`
           if(pos === 1) field = `🥇 - ${!u ? '*unknown*' : u.username}`
@@ -649,7 +649,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.rating.title'))
-          .setThumb((app.users.cache.get(array[0].id!))?.avatarURL()!)
+          .setThumb((await app.getUser(array[0].id!))?.avatarURL()!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -661,7 +661,7 @@ export default createCommand({
         for(const user of users) {
           pos++
 
-          const u = app.users.cache.get(user.id)
+          const u = await app.getUser(user.id)
 
           let field = `${pos} - ${!u ? '*unknown*' : u.username}`
           if(pos === 1) field = `🥇 - ${!u ? '*unknown*' : u.username}`
@@ -736,7 +736,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.predictions.title'))
-          .setThumb(app.users.cache.get(array[0].id!)?.avatarURL()!)
+          .setThumb((await app.getUser(array[0].id!))?.avatarURL()!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -748,7 +748,7 @@ export default createCommand({
         for(const user of users) {
           pos++
 
-          const u = app.users.cache.get(user.id)
+          const u = await app.getUser(user.id)
 
           let field = `${pos} - ${!u ? '*unknown*' : u.username}`
 
@@ -818,7 +818,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.coins.title'))
-          .setThumb(app.users.cache.get(array[0].id!)?.avatarURL()!)
+          .setThumb((await app.getUser(array[0].id!))?.avatarURL()!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -830,7 +830,7 @@ export default createCommand({
         for(const user of users) {
           pos++
 
-          const u = app.users.cache.get(user.id)
+          const u = await app.getUser(user.id)
 
           let field = `${pos} - ${!u ? '*unknown*' : u.username}`
 
@@ -906,7 +906,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.rating.title'))
-          .setThumb(app.users.cache.get(array[0].id!)?.avatarURL()!)
+          .setThumb((await app.getUser(array[0].id!))?.avatarURL()!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -918,7 +918,7 @@ export default createCommand({
         for(const user of users) {
           pos++
 
-          const u = app.users.cache.get(user.id)
+          const u = await app.getUser(user.id)
 
           let field = `${pos} - ${!u ? '*unknown*' : u.username}`
 
@@ -989,7 +989,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.predictions.title'))
-          .setThumb(app.users.cache.get(array[0].id!)?.avatarURL()!)
+          .setThumb((await app.getUser(array[0].id!))?.avatarURL()!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -1001,7 +1001,7 @@ export default createCommand({
         for(const user of users) {
           pos++
 
-          const u = app.users.cache.get(user.id)
+          const u = await app.getUser(user.id)
 
           let field = `${pos} - ${!u ? '*unknown*' : u.username}`
 
@@ -1069,7 +1069,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.coins.title'))
-          .setThumb(app.users.cache.get(array[0].id!)?.avatarURL()!)
+          .setThumb((await app.getUser(array[0].id!))?.avatarURL()!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -1081,7 +1081,7 @@ export default createCommand({
         for(const user of users) {
           pos++
 
-          const u = app.users.cache.get(user.id)
+          const u = await app.getUser(user.id)
 
           let field = `${pos} - ${!u ? '*unknown*' : u.username}`
 
@@ -1155,7 +1155,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.rating.title'))
-          .setThumb(app.users.cache.get(array[0].id!)?.avatarURL()!)
+          .setThumb((await app.getUser(array[0].id!))?.avatarURL()!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -1167,7 +1167,7 @@ export default createCommand({
         for(const user of users) {
           pos++
 
-          const u = app.users.cache.get(user.id)
+          const u = await app.getUser(user.id)
 
           let field = `${pos} - ${!u ? '*unknown*' : u.username}`
 
