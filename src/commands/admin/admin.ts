@@ -338,26 +338,52 @@ export default createCommand({
 
       if(guild.events.length > 5 && !guild.key) {
         if(guild.events.slice().reverse().slice(0, 5).some(e => Object.keys(tournaments).includes(e.name))) {
-          data = res.filter(d =>
-            guild.events.some(e =>
-              tournaments[e.name]?.some(regex =>
-                regex.test(d.tournament.name.trim().replace(/\s+/g, ' ').toLowerCase())
-              )
-            )
-          )
+          data = res.filter(d => {
+            const events1 = guild.events.slice()
+              .reverse()
+              .slice(0, 5)
+              .some(e => e.name === d.tournament.name)
+
+            if(events1) return true
+
+            const events2 = guild.events.slice()
+              .reverse()
+              .slice(0, 5)
+              .some(e => {
+                const tour = tournaments[e.name]
+                if(!tour) return false
+                return tour.some(regex =>
+                  regex.test(d.tournament.name.replace(/\s+/g, ' ').trim().toLowerCase())
+                )
+              })
+
+            if(events2) return true
+
+            return false
+          })
         }
         else data = res.filter(d => guild.events.reverse().slice(0, 5).some(e => e.name === d.tournament.name))
       }
 
       else {
         if(guild.events.slice().reverse().slice(0, 5).some(e => Object.keys(tournaments).includes(e.name))) {
-          data = res.filter(d =>
-            guild.events.some(e =>
-              tournaments[e.name]?.some(regex =>
-                regex.test(d.tournament.name.trim().replace(/\s+/g, ' ').toLowerCase())
+          data = res.filter(d => {
+            const events1 = guild.events.some(e => e.name === d.tournament.name)
+
+            if(events1) return true
+
+            const events2 = guild.events.some(e => {
+              const tour = tournaments[e.name]
+              if(!tour) return false
+              return tour.some(regex =>
+                regex.test(d.tournament.name.replace(/\s+/g, ' ').trim().toLowerCase())
               )
-            )
-          )
+            })
+
+            if(events2) return true
+
+            return false
+          })
         }
         else data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
       }
