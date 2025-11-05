@@ -182,7 +182,10 @@ export default class CommandRunner {
       .then(async() => {
         if(process.env.DEVS.includes(interaction.user.id)) return
 
-        const cmd = [group, sub].filter(Boolean).join(' ')
+        const cmd: string[] = [command.name]
+
+        if(group) cmd.push(group)
+        if(sub) cmd.push(sub)
 
         const embed = new EmbedBuilder()
 
@@ -195,7 +198,7 @@ export default class CommandRunner {
               iconURL: ctx.interaction.user.displayAvatarURL({ size: 2048 })
             })
             .setTitle('New slash command executed')
-            .setDesc(`The command \`${cmd}\` has been executed in \`${ctx.guild?.name}\``)
+            .setDesc(`The command \`${cmd.join(' ')}\` has been executed in \`${ctx.guild?.name}\``)
             .addField('Server ID', `\`${ctx.guild?.id}\``)
             .addField('Owner', `\`${owner?.username}\` (\`${owner?.id}\`)`)
             .addField('Command author', `\`${ctx.interaction.user.username}\` (\`${ctx.interaction.user.id}\`)`)
@@ -208,7 +211,7 @@ export default class CommandRunner {
               iconURL: ctx.interaction.user.displayAvatarURL({ size: 2048 })
             })
             .setTitle('New slash command executed')
-            .setDesc(`The command \`${cmd}\` has been executed in DM`)
+            .setDesc(`The command \`${cmd.join(' ')}\` has been executed in DM`)
             .addField('Command author', `\`${ctx.interaction.user.username}\` (\`${ctx.interaction.user.id}\`)`)
         }
 
