@@ -1,7 +1,7 @@
 import { SabineUser } from '../../database/index.ts'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
 import createComponentInteraction from '../../structures/interaction/createComponentInteraction.ts'
-import { ComponentType, Message } from 'discord.js'
+import { ComponentType, InteractionCallbackResponse } from 'discord.js'
 import SelectMenuBuilder from '../../structures/builders/SelectMenuBuilder.ts'
 import { valorant_agents, valorant_maps } from '../../config.ts'
 
@@ -101,7 +101,7 @@ export default createComponentInteraction({
       )
       .setCustomId(`select;${ctx.interaction.user.id};${user.id}`)
 
-    const msg = await ctx.edit({
+    const interaction = await ctx.edit({
       embeds: [embed],
       content: `${ctx.interaction.user} <@${user.id}>`,
       components: [
@@ -114,7 +114,7 @@ export default createComponentInteraction({
           components: [menu2]
         }
       ]
-    }) as Message
+    }) as InteractionCallbackResponse
 
     const data: {
       [key: string]: {
@@ -158,8 +158,8 @@ export default createComponentInteraction({
     await app.redis.set(`agent_selection:${user.id}:${ctx.interaction.user.id}`, JSON.stringify(
       {
         ...data,
-        messageId: msg.id,
-        channelId: msg.channelId,
+        messageId: interaction.resource?.message?.id,
+        channelId: interaction.resource?.message?.channelId,
         map: map.name,
         image: map.image,
         mode: ctx.args[3] === 'tournament' ? 'tournament' : ctx.args.slice(3).join(':')
