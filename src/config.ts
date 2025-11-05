@@ -348,7 +348,6 @@ export const valorant_maps: {
       'Cypher',
       'Chamber'
     ],
-    current_map_pool: true,
     image: 'https://imgur.com/HUdWHux.png',
     sides: ['A', 'B']
   },
@@ -453,7 +452,8 @@ export const valorant_maps: {
       'Sova'
     ],
     image: 'https://imgur.com/P1189zs.png',
-    sides: ['A', 'B']
+    sides: ['A', 'B'],
+    current_map_pool: true
   },
   {
     name: 'Split',
