@@ -1,6 +1,6 @@
 {
   "name": "sabine",
-  "version": "2.9.2",
+  "version": "2.9.3",
   "description": "your valorant simulator and esports coverage discord bot",
   "main": "src/index.ts",
   "type": "module",
