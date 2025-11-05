@@ -470,7 +470,8 @@ export const valorant_maps: {
       'Cypher'
     ],
     image: 'https://imgur.com/36tar4S.png',
-    sides: ['A', 'B']
+    sides: ['A', 'B'],
+    current_map_pool: true
   },
   {
     name: 'Lotus',
@@ -487,7 +488,6 @@ export const valorant_maps: {
       'Viper',
       'Omen'
     ],
-    current_map_pool: true,
     image: 'https://imgur.com/CLq6LKn.png',
     sides: ['A', 'B', 'C']
   },
