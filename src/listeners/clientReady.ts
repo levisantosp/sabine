@@ -67,15 +67,29 @@ const sendValorantMatches = async(client: App) => {
       }
 
       else {
-        data = res.filter(d =>
-          guild.events.some(e => {
-            const tour = tournaments[e.name]
-            if(!tour) return false
-            return tour.some(regex =>
-              regex.test(d.tournament.name.replace(/\s+/g, ' ').trim().toLowerCase())
-            )
-          })
-        )
+        data = res.filter(d => {
+          const events1 = guild.events.slice()
+            .reverse()
+            .slice(0, 5)
+            .some(e => e.name === d.tournament.name)
+
+          if(events1) return true
+
+          const events2 = guild.events.slice()
+            .reverse()
+            .slice(0, 5)
+            .some(e => {
+              const tour = tournaments[e.name]
+              if(!tour) return false
+              return tour.some(regex =>
+                regex.test(d.tournament.name.replace(/\s+/g, ' ').trim().toLowerCase())
+              )
+            })
+
+          if(events2) return true
+
+          return false
+        })
       }
     }
     else {
@@ -84,15 +98,23 @@ const sendValorantMatches = async(client: App) => {
       }
 
       else {
-        data = res.filter(d =>
-          guild.events.some(e => {
+        data = res.filter(d => {
+          const events1 = guild.events.some(e => e.name === d.tournament.name)
+
+          if(events1) return true
+
+          const events2 = guild.events.some(e => {
             const tour = tournaments[e.name]
             if(!tour) return false
             return tour.some(regex =>
               regex.test(d.tournament.name.replace(/\s+/g, ' ').trim().toLowerCase())
             )
           })
-        )
+
+          if(events2) return true
+
+          return false
+        })
       }
     }
 
@@ -100,11 +122,13 @@ const sendValorantMatches = async(client: App) => {
 
     for(const e of guild.events) {
       const channel = await client.channels.fetch(e.channel1)
+
       if(!channel || channel.type !== ChannelType.GuildText) continue
 
       try {
         const messages = await channel.messages.fetch({ limit: 100 })
         const messagesIds = messages.filter(m => m.author.id === client.user?.id).map(m => m.id)
+
         if(messagesIds.length) {
           await channel.bulkDelete(messagesIds)
         }
