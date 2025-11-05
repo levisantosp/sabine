@@ -52,14 +52,7 @@ export default class App extends Discord.Client {
     this.queue = queue
   }
 
-  public async connect() {
-    for(const player of getPlayers()) {
-      this.players.set(player.id.toString(), {
-        ...player,
-        price: calcPlayerPrice(player)
-      })
-    }
-
+  public async load() {
     for(const file of readdirSync(path.resolve(__dirname, '../../listeners'))) {
       const listener: Listener = (await import(`../../listeners/${file}`)).default
 
@@ -91,6 +84,17 @@ export default class App extends Discord.Client {
         this.interactions.set(interaction.name, interaction)
       }
     }
+  }
+
+  public async connect() {
+    for(const player of getPlayers()) {
+      this.players.set(player.id.toString(), {
+        ...player,
+        price: calcPlayerPrice(player)
+      })
+    }
+
+    await this.load()
 
     await super.login(process.env.BOT_TOKEN)
   }
