@@ -24,6 +24,8 @@ const tournaments: { [key: string]: RegExp[] } = {
   ]
 }
 
+const rest = new Discord.REST().setToken(process.env.BOT_TOKEN)
+
 export default async function(
   fastify: FastifyInstance<RawServerDefault, IncomingMessage, ServerResponse<IncomingMessage>, FastifyBaseLogger, TypeBoxTypeProvider>
 ) {
@@ -87,6 +89,8 @@ export default async function(
 
     if(!guilds.length) return
 
+    const messages: Promise<unknown>[] = []
+
     for(
       const data of req.body
         .map(body => ({
@@ -95,14 +99,14 @@ export default async function(
         }))
     ) {
       for(const guild of guilds) {
-        const channel = app.channels.cache.get(guild.events.filter(e =>
-          Object.keys(tournaments).includes(e.name))[0].channel2
-        )
-          || app.channels.cache.get(guild.events.filter(e =>
-            e.name === data.tournament.name)[0].channel2
+        const event = guild.events.find(e =>
+          e.name === data.tournament.name ||
+          tournaments[e.name]?.some(regex =>
+            regex.test(data.tournament.name.replace(/\s+/g, ' ').trim().toLowerCase())
           )
+        )
 
-        if(!channel || channel.type !== Discord.ChannelType.GuildText) continue
+        if(!event) continue
 
         if(
           !guild.events.some(e => e.name === data.tournament.name) &&
@@ -128,24 +132,28 @@ export default async function(
           )
           .setFooter({ text: data.stage })
 
-        await channel.send({
-          embeds: [embed],
-          components: [
-            {
-              type: 1,
+        messages.push(
+          rest.post(Discord.Routes.channelMessages(event.channel2), {
+            body: {
+              embeds: [embed.toJSON()],
               components: [
-                new ButtonBuilder()
-                  .setLabel(locales(guild.lang, 'helper.stats'))
-                  .defineStyle('link')
-                  .setURL(`https://vlr.gg/${data.id}`),
-                new ButtonBuilder()
-                  .setLabel(locales(guild.lang ?? 'en', 'helper.pickem.label'))
-                  .defineStyle('blue')
-                  .setCustomId('pickem')
+                {
+                  type: 1,
+                  components: [
+                    new ButtonBuilder()
+                      .setLabel(locales(guild.lang, 'helper.stats'))
+                      .defineStyle('link')
+                      .setURL(`https://vlr.gg/${data.id}`),
+                    new ButtonBuilder()
+                      .setLabel(locales(guild.lang, 'helper.pickem.label'))
+                      .defineStyle('blue')
+                      .setCustomId('pickem')
+                  ]
+                }
               ]
             }
-          ]
-        })
+          })
+        )
       }
     }
 
@@ -219,5 +227,7 @@ export default async function(
         }
       }
     }
+
+    await Promise.all(messages)
   })
 }

@@ -275,7 +275,6 @@ export class SabineGuild implements Guild {
   public tournaments_length: number = 5
   public partner: boolean | null = null
   public invite: string | null = null
-  public spam_live_messages: boolean | null = null
 
   public constructor(id: string) {
     this.id = id

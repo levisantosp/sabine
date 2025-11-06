@@ -6,10 +6,11 @@ import { emojis } from '../../../util/emojis.ts'
 import EmbedBuilder from '../../../structures/builders/EmbedBuilder.ts'
 import locales from '../../../i18n/index.ts'
 import ButtonBuilder from '../../../structures/builders/ButtonBuilder.ts'
-import { type ResultsData } from '../../../types.ts'
 import calcOdd from '../../../util/calcOdd.ts'
 import { SabineUser } from '../../../database/index.ts'
-import type { MessageCreateOptions, TextChannel } from 'discord.js'
+import { REST, Routes } from 'discord.js'
+
+const rest = new REST().setToken(process.env.BOT_TOKEN)
 
 export default async function(
   fastify: FastifyInstance<RawServerDefault, IncomingMessage, ServerResponse<IncomingMessage>, FastifyBaseLogger, TypeBoxTypeProvider>
@@ -66,65 +67,59 @@ export default async function(
 
     if(!guilds.length) return
 
-    for(const guild of guilds) {
-      let data: ResultsData[]
+    const messages: Promise<unknown>[] = []
 
-      if(guild.events.length > 5 && !guild.key) {
-        data = req.body
-          .map(body => ({
-            ...body,
-            when: new Date(body.when)
-          }))
-          .filter(d => guild.events.reverse().slice(0, 5).some(e => e.name === d.tournament.name))
-      }
-
-      else data = req.body
+    for(
+      const data of req.body
         .map(body => ({
           ...body,
           when: new Date(body.when)
         }))
-        .filter(d => guild.events.some(e => e.name === d.tournament.name))
+    ) {
+      for(const guild of guilds) {
+        const event = guild.events.find(e => e.name === data.tournament.name)
 
-      if(!data || !data[0]) continue
+        if(!event) continue
 
-      data.reverse()
+        if(!guild.events.some(e => e.name === data.tournament.name)) continue
 
-      for(const d of data) {
-        for(const e of guild.events) {
-          if(e.name === d.tournament.name) {
-            const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
-            const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
+        const emoji1 = emojis.find(e => e?.name === data.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
+        const emoji2 = emojis.find(e => e?.name === data.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
 
-            const embed = new EmbedBuilder()
-              .setAuthor({
-                name: d.tournament.name,
-                iconURL: d.tournament.image
-              })
-              .setField(
-                `${emoji1} ${d.teams[0].name} \`${d.teams[0].score}\` <:versus:1349105624180330516> \`${d.teams[1].score}\` ${d.teams[1].name} ${emoji2}`,
-                `<t:${d.when.getTime() / 1000}:F> | <t:${d.when.getTime() / 1000}:R>`,
-                true
-              )
-              .setFooter({ text: d.stage })
+        const embed = new EmbedBuilder()
+          .setAuthor({
+            name: data.tournament.name,
+            iconURL: data.tournament.image
+          })
+          .setField(
+            `${emoji1} ${data.teams[0].name} \`${data.teams[0].score}\` <:versus:1349105624180330516> \`${data.teams[1].score}\` ${data.teams[1].name} ${emoji2}`,
+            `<t:${data.when.getTime() / 1000}:F> | <t:${data.when.getTime() / 1000}:R>`,
+            true
+          )
+          .setFooter({ text: data.stage })
 
-            const channel = app.channels.cache.get(e.channel2) as TextChannel
-
-            channel.send(embed.build({
+        messages.push(
+          rest.post(Routes.channelMessages(event.channel2), {
+            body: {
+              embeds: [embed.toJSON()],
               components: [
                 {
                   type: 1,
                   components: [
                     new ButtonBuilder()
-                      .setLabel(locales(guild.lang ?? 'en', 'helper.pickem.label'))
+                      .setLabel(locales(guild.lang, 'helper.stats'))
+                      .defineStyle('link')
+                      .setURL(`https://vlr.gg/${data.id}`),
+                    new ButtonBuilder()
+                      .setLabel(locales(guild.lang, 'helper.pickem.label'))
                       .defineStyle('blue')
                       .setCustomId('pickem')
                   ]
                 }
               ]
-            }) as MessageCreateOptions)
-              .catch(() => { })
-          }
-        }
+            }
+          })
+        )
       }
     }
 
@@ -198,5 +193,7 @@ export default async function(
         }
       }
     }
+
+    await Promise.all(messages)
   })
 }

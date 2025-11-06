@@ -69,14 +69,6 @@ export default createCommand({
                 'pt-BR': 'Informe o canal'
               },
               required: true
-            },
-            {
-              type: ApplicationCommandOptionType.Boolean,
-              name: 'spam',
-              description: 'Select whether you want the bot to spam messages from live matches or not',
-              descriptionLocalizations: {
-                'pt-BR': 'Selecione se você deseja que bot envie mensagens de spam de partidas ao vivo ou não'
-              }
             }
           ]
         }
@@ -125,10 +117,6 @@ export default createCommand({
 
           if(![0, 5].some(t => t === channel.type)) return await ctx.reply('commands.live.invalid_channel')
 
-          if(typeof ctx.args[3] === 'boolean') {
-            ctx.db.guild.spam_live_messages = ctx.args[3]
-          }
-
           ctx.db.guild.valorant_live_feed_channel = channel.id
 
           await ctx.db.guild.save()
@@ -141,12 +129,6 @@ export default createCommand({
           const channel = ctx.guild.channels.cache.get(ctx.args[2].toString())!
 
           if(![0, 5].some(t => t === channel.type)) return await ctx.reply('commands.live.invalid_channel')
-
-          if(ctx.args[3] === true) {
-            ctx.db.guild.spam_live_messages = ctx.args[3]
-          }
-
-          else ctx.db.guild.spam_live_messages = false
 
           ctx.db.guild.lol_live_feed_channel = channel.id
 

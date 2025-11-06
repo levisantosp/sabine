@@ -164,7 +164,6 @@ model Guild {
   partner                    Boolean?
   invite                     String?
   live_messages              LiveMessage[]
-  spam_live_messages         Boolean?
   guildKeyId                 String?
 }
 
