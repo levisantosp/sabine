@@ -8,7 +8,7 @@ import locales from '../../../i18n/index.ts'
 import ButtonBuilder from '../../../structures/builders/ButtonBuilder.ts'
 import calcOdd from '../../../util/calcOdd.ts'
 import { SabineUser } from '../../../database/index.ts'
-import { REST, Routes, type TextChannel } from 'discord.js'
+import { REST, Routes } from 'discord.js'
 
 const rest = new REST().setToken(process.env.BOT_TOKEN)
 
