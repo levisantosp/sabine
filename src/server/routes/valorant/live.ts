@@ -57,8 +57,6 @@ export default async function(
       )
     }
   }, async(req) => {
-    console.log(await app.channels.fetch('1279615475881607188'))
-
     const guilds = await app.prisma.guild.findMany({
       where: {
         valorant_live_feed_channel: {
