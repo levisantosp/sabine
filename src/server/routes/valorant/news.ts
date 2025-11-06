@@ -1,11 +1,13 @@
 import { Type, type TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 import type { FastifyBaseLogger, RawServerDefault, FastifyInstance } from 'fastify'
 import type { IncomingMessage, ServerResponse } from 'http'
-import { TextChannel } from 'discord.js'
+import { REST, Routes } from 'discord.js'
 import { app } from '../../../structures/app/App.ts'
 import EmbedBuilder from '../../../structures/builders/EmbedBuilder.ts'
 import locales from '../../../i18n/index.ts'
 import ButtonBuilder from '../../../structures/builders/ButtonBuilder.ts'
+
+const rest = new REST().setToken(process.env.BOT_TOKEN)
 
 export default async function(
   fastify: FastifyInstance<RawServerDefault, IncomingMessage, ServerResponse<IncomingMessage>, FastifyBaseLogger, TypeBoxTypeProvider>
@@ -32,11 +34,9 @@ export default async function(
 
     if(!guilds.length) return
 
+    const messages: Promise<unknown>[] = []
+
     for(const guild of guilds) {
-      const channel = app.channels.cache.get(guild.valorant_news_channel!) as TextChannel
-
-      if(!channel) continue
-
       for(const data of req.body) {
         const embed = new EmbedBuilder()
           .setTitle(data.title)
@@ -50,16 +50,22 @@ export default async function(
           .setLabel(locales(guild.lang ?? 'en', 'helper.source'))
           .setURL(data.url)
 
-        await channel.send({
-          embeds: [embed],
-          components: [
-            {
-              type: 1,
-              components: [button]
+        messages.push(
+          rest.post(Routes.channelMessages(guild.valorant_news_channel!), {
+            body: {
+              embeds: [embed.toJSON()],
+              components: [
+                {
+                  type: 1,
+                  components: [button]
+                }
+              ]
             }
-          ]
-        })
+          })
+        )
       }
     }
+
+    await Promise.all(messages)
   })
 }

@@ -1,7 +1,7 @@
 import { Type, type TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 import type { FastifyBaseLogger, RawServerDefault, FastifyInstance } from 'fastify'
 import type { IncomingMessage, ServerResponse } from 'http'
-import { TextChannel } from 'discord.js'
+import { REST, Routes, TextChannel } from 'discord.js'
 import { app } from '../../../structures/app/App.ts'
 import { emojis } from '../../../util/emojis.ts'
 import EmbedBuilder from '../../../structures/builders/EmbedBuilder.ts'
@@ -21,6 +21,8 @@ const tournaments: { [key: string]: RegExp[] } = {
     /game changers \d{4}/
   ]
 }
+
+const rest = new REST().setToken(process.env.BOT_TOKEN)
 
 export default async function(
   fastify: FastifyInstance<
@@ -55,6 +57,8 @@ export default async function(
       )
     }
   }, async(req) => {
+    console.log(await app.channels.fetch('1279615475881607188'))
+
     const guilds = await app.prisma.guild.findMany({
       where: {
         valorant_live_feed_channel: {
@@ -73,12 +77,10 @@ export default async function(
 
     if(!guilds.length) return
 
+    const messages: Promise<unknown>[] = []
+
     for(const data of req.body) {
       for(const guild of guilds) {
-        const channel = app.channels.cache.get(guild.valorant_live_feed_channel!) as TextChannel
-
-        if(!channel) continue
-
         if(
           !guild.events.some(e => e.name === data.tournament.name) &&
           !guild.events.some(e =>
@@ -111,63 +113,22 @@ export default async function(
           .setLabel(locales(guild.lang ?? 'en', 'helper.stats'))
           .setURL(data.url)
 
-        const messages = await channel.messages.fetch({ limit: 10 })
-        const message = messages.find(m =>
-          guild.live_messages.some(msg =>
-            msg.message === m.id &&
-            msg.event === data.tournament.name
-          )
-        )
-
-        if(!message || guild.spam_live_messages) {
-          const msg = await channel.send({
-            embeds: [embed],
-            components: [
-              {
-                type: 1,
-                components: [button]
-              }
-            ]
-          })
-
-          const liveMessage = guild.live_messages.filter(m => m.event === data.tournament.name)[0]
-
-          await app.prisma.guild.update({
-            where: {
-              id: guild.id
-            },
-            data: {
-              live_messages: {
-                upsert: {
-                  where: {
-                    id: liveMessage.id
-                  },
-                  update: {
-                    event: data.tournament.name,
-                    message: msg.id
-                  },
-                  create: {
-                    event: data.tournament.name,
-                    message: msg.id
-                  }
+        messages.push(
+          rest.post(Routes.channelMessages(guild.valorant_live_feed_channel!), {
+            body: {
+              embeds: [embed.toJSON()],
+              components: [
+                {
+                  type: 1,
+                  components: [button]
                 }
-              }
+              ]
             }
           })
-        }
-
-        else {
-          await message.edit({
-            embeds: [embed],
-            components: [
-              {
-                type: 1,
-                components: [button]
-              }
-            ]
-          })
-        }
+        )
       }
     }
+
+    await Promise.all(messages)
   })
 }
