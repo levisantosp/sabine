@@ -13,7 +13,7 @@ import {
   calcPlayerPrice,
   getPlayers,
   type Player
-} from 'players'
+} from '@sabinelab/players'
 import type { Listener } from './createListener.ts'
 
 type Reminder = {
@@ -44,7 +44,7 @@ export default class App extends Discord.Client {
   public queue: typeof queue
   public interactions: Map<string, CreateInteractionOptions & CreateModalSubmitInteractionOptions> = new Map()
   public players: Map<string, Player> = new Map()
-  
+
   public constructor(options: Discord.ClientOptions) {
     super(options)
     this.prisma = prisma
@@ -129,7 +129,7 @@ export default class App extends Discord.Client {
         contexts
       })
     })
-    
+
     await rest.put(Discord.Routes.applicationCommands(this.user!.id), {
       body: commands
     })

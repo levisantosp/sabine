@@ -1,4 +1,4 @@
-import { calcPlayerOvr, type Player } from 'players'
+import { calcPlayerOvr, type Player } from '@sabinelab/players'
 import { valorant_agents, valorant_maps, valorant_weapons } from '../config.ts'
 import type { Args } from '../i18n/index.ts'
 import EmbedBuilder from '../structures/builders/EmbedBuilder.ts'

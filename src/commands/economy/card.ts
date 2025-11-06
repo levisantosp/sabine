@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType } from 'discord.js'
 import createCommand from '../../structures/command/createCommand.ts'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
-import { calcPlayerPrice } from 'players'
+import { calcPlayerPrice } from '@sabinelab/players'
 
 const date = Date.now()
 export default createCommand({

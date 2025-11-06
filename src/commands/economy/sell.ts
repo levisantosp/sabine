@@ -1,4 +1,4 @@
-import { calcPlayerPrice } from 'players'
+import { calcPlayerPrice } from '@sabinelab/players'
 import { SabineUser } from '../../database/index.ts'
 import createCommand from '../../structures/command/createCommand.ts'
 

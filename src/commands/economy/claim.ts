@@ -1,4 +1,4 @@
-import { calcPlayerPrice, type Player } from 'players'
+import { calcPlayerPrice, type Player } from '@sabinelab/players'
 import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
 import createCommand from '../../structures/command/createCommand.ts'
