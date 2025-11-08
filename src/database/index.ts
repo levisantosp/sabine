@@ -9,6 +9,7 @@ import {
   type User
 } from '@prisma/client'
 import { app } from '../structures/app/App.ts'
+import type { Pack } from '../server/routes/util/vote.ts'
 
 export const prisma = new PrismaClient()
 
@@ -58,8 +59,18 @@ export class SabineUser implements User {
   public remind: boolean | null = null
   public remind_in: string | null = null
   public reminded: boolean = true
-  public boxes: $Enums.Box[] = []
   public warned: boolean | null = null
+  public iron_packs: number = 0
+  public bronze_packs: number = 0
+  public silver_packs: number = 0
+  public gold_packs: number = 0
+  public platinum_packs: number = 0
+  public diamond_packs: number = 0
+  public ascendant_packs: number = 0
+  public immortal_packs: number = 0
+  public radiant_packs: number = 0
+  public last_vote: Date | null = null
+  public vote_streak: number = 0
 
   public constructor(id: string) {
     this.id = id
@@ -239,6 +250,23 @@ export class SabineUser implements User {
     return this
   }
 
+  public async addPlayersToRoster(players: string[]) {
+    this.reserve_players.push(...players)
+    
+    await Promise.all([
+      this.save(),
+      prisma.transaction.createMany({
+        data: players.map(p => ({
+          type: 'CLAIM_PLAYER_BY_PACK',
+          player: Number(p),
+          userId: this.id
+        }))
+      })
+    ])
+
+    return this
+  }
+
   public async sellPlayer(id: string, price: bigint, i: number) {
     this.reserve_players.splice(i, 1)
     this.coins += price
@@ -256,7 +284,65 @@ export class SabineUser implements User {
 
     return this
   }
+
+  public async addPack(pack: Pack, increaseVoteStreak?: boolean) {
+    switch(pack) {
+      case 'IRON': {
+        this.iron_packs += 1
+      }
+        break
+      case 'BRONZE': {
+        this.bronze_packs += 1
+      }
+        break
+      case 'SILVER': {
+        this.silver_packs += 1
+      }
+        break
+      case 'GOLD': {
+        this.gold_packs += 1
+      }
+        break
+      case 'PLATINUM': {
+        this.platinum_packs += 1
+      }
+        break
+      case 'DIAMOND': {
+        this.diamond_packs += 1
+      }
+        break
+      case 'ASCENDANT': {
+        this.ascendant_packs += 1
+      }
+        break
+      case 'IMMORTAL': {
+        this.immortal_packs += 1
+      }
+        break
+      case 'RADIANT': {
+        this.radiant_packs += 1
+      }
+    }
+
+    if(increaseVoteStreak) {
+      this.vote_streak += 1
+      this.last_vote = new Date()
+    }
+
+    await prisma.transaction.create({
+      data: {
+        userId: this.id,
+        type: 'CLAIM_PACK_BY_VOTE',
+        pack
+      }
+    })
+
+    await this.save()
+
+    return this
+  }
 }
+
 export class SabineGuild implements Guild {
   public id: string
   public lang: $Enums.Language = 'en'
