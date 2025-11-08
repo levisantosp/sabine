@@ -212,9 +212,10 @@ model Key {
 }
 
 model TBDMatch {
-  id      String    @id
+  id      String    @id @default(uuid())
   guild   Guild     @relation(fields: [guildId], references: [id], onDelete: Cascade)
   guildId String
+  matchId String
   type    EventType
   channel String
 

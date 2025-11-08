@@ -6,6 +6,7 @@ import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
 import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
 import { emojis } from '../../util/emojis.ts'
 import { ChannelType, TextChannel } from 'discord.js'
+import type { $Enums } from '@prisma/client'
 
 const service = new Service(process.env.AUTH)
 
@@ -322,7 +323,6 @@ export default createCommand({
       }))!
 
       guild.valorant_matches = []
-      guild.tbd_matches = []
       guild.valorant_resend_time = new Date(Date.now() + 3600000)
 
       await ctx.edit('commands.admin.resending')
@@ -333,6 +333,13 @@ export default createCommand({
 
       const res2 = await service.getResults('valorant')
       if(guild.valorant_matches.length && !res2.some(d => d.id === guild.valorant_matches[guild.valorant_matches.length - 1])) return
+
+      const matches: {
+        matchId: string
+        guildId: string
+        channel: string
+        type: $Enums.EventType
+      }[] = []
 
       let data: MatchesData[]
 
@@ -475,8 +482,8 @@ export default createCommand({
               }).catch(() => { })
 
               else {
-                guild.tbd_matches.push({
-                  id: d.id!,
+                matches.push({
+                  matchId: d.id!,
                   channel: e.channel1,
                   guildId: guild.id,
                   type: 'valorant'
@@ -495,10 +502,13 @@ export default createCommand({
         data: {
           valorant_matches: guild.valorant_matches,
           tbd_matches: {
-            create: guild.tbd_matches.length
-              ? guild.tbd_matches.map(m => ({
+            deleteMany: {
+              type: 'valorant'
+            },
+            create: matches.length
+              ? matches.map(m => ({
                 type: m.type,
-                id: m.id,
+                matchId: m.matchId,
                 channel: m.channel
               }))
               : undefined
@@ -549,6 +559,13 @@ export default createCommand({
       const res2 = await service.getResults('lol')
 
       if(guild.lol_matches.length && !res2.some(d => d.id === guild.lol_matches[guild.lol_matches.length - 1])) return
+
+      const matches: {
+        matchId: string
+        guildId: string
+        channel: string
+        type: $Enums.EventType
+      }[] = []
 
       let data: MatchesData[]
 
@@ -635,8 +652,8 @@ export default createCommand({
               }).catch(() => { })
 
               else {
-                guild.tbd_matches.push({
-                  id: d.id!,
+                matches.push({
+                  matchId: d.id!,
                   channel: e.channel1,
                   guildId: guild.id,
                   type: 'lol'

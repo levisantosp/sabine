@@ -9,6 +9,7 @@ import EmbedBuilder from '../structures/builders/EmbedBuilder.ts'
 import ButtonBuilder from '../structures/builders/ButtonBuilder.ts'
 import App from '../structures/app/App.ts'
 import { SabineUser } from '../database/index.ts'
+import type { $Enums } from '@prisma/client'
 const service = new Service(process.env.AUTH)
 
 const tournaments: { [key: string]: RegExp[] } = {
@@ -25,13 +26,13 @@ const tournaments: { [key: string]: RegExp[] } = {
   ]
 }
 
-const sendValorantMatches = async(client: App) => {
+const sendValorantMatches = async(app: App) => {
   const res = await service.getMatches('valorant')
   const res2 = await service.getResults('valorant')
 
   if(!res || !res.length) return
 
-  const guilds = await client.prisma.guild.findMany({
+  const guilds = await app.prisma.guild.findMany({
     include: {
       events: {
         where: {
@@ -50,7 +51,12 @@ const sendValorantMatches = async(client: App) => {
   if(!guilds.length) return
 
   for(const guild of guilds) {
-    const matches: typeof guild.tbd_matches = []
+    const matches: {
+      matchId: string
+      guildId: string
+      channel: string
+      type: $Enums.EventType
+    }[] = []
 
     if(
       guild.valorant_matches.length &&
@@ -121,13 +127,13 @@ const sendValorantMatches = async(client: App) => {
     if(!data.length) continue
 
     for(const e of guild.events) {
-      const channel = await client.channels.fetch(e.channel1)
+      const channel = await app.channels.fetch(e.channel1)
 
       if(!channel || channel.type !== ChannelType.GuildText) continue
 
       try {
         const messages = await channel.messages.fetch({ limit: 100 })
-        const messagesIds = messages.filter(m => m.author.id === client.user?.id).map(m => m.id)
+        const messagesIds = messages.filter(m => m.author.id === app.user?.id).map(m => m.id)
 
         if(messagesIds.length) {
           await channel.bulkDelete(messagesIds)
@@ -183,7 +189,7 @@ const sendValorantMatches = async(client: App) => {
 
             if(d.stage.toLowerCase().includes('showmatch')) continue
 
-            const channel = await client.channels.fetch(e.channel1)
+            const channel = await app.channels.fetch(e.channel1)
 
             if(!channel || channel.type !== ChannelType.GuildText) continue
 
@@ -209,31 +215,37 @@ const sendValorantMatches = async(client: App) => {
             }).catch(() => { })
 
             else {
-              matches.push({
-                id: d.id!,
-                channel: e.channel1,
-                guildId: guild.id,
-                type: 'valorant'
-              })
+              if(!matches.some(m => m.matchId === d.id)) {
+                matches.push({
+                  matchId: d.id!,
+                  channel: e.channel1,
+                  guildId: guild.id,
+                  type: 'valorant'
+                })
+              }
             }
+
+            break
           }
         }
       }
     }
     catch { }
 
-    await client.prisma.guild.update({
+    await app.prisma.guild.update({
       where: {
         id: guild.id
       },
       data: {
         valorant_matches: guild.valorant_matches,
         tbd_matches: {
-          deleteMany: matches.length ? {} : undefined,
+          deleteMany: {
+            type: 'valorant'
+          },
           create: matches.length
             ? matches.map(m => ({
               type: m.type,
-              id: m.id,
+              matchId: m.matchId,
               channel: m.channel
             }))
             : undefined
@@ -245,12 +257,12 @@ const sendValorantMatches = async(client: App) => {
     })
   }
 }
-const sendValorantTBDMatches = async(client: App) => {
+const sendValorantTBDMatches = async(app: App) => {
   const res = await service.getMatches('valorant')
 
   if(!res || !res.length) return
 
-  const guilds = await client.prisma.guild.findMany({
+  const guilds = await app.prisma.guild.findMany({
     include: {
       tbd_matches: {
         where: {
@@ -279,7 +291,7 @@ const sendValorantTBDMatches = async(client: App) => {
         const emoji1 = emojis.find(e => e?.name === data.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
         const emoji2 = emojis.find(e => e?.name === data.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
 
-        const channel = await client.channels.fetch(match.channel) as TextChannel
+        const channel = await app.channels.fetch(match.channel) as TextChannel
 
         const embed = new EmbedBuilder()
           .setAuthor({
@@ -315,7 +327,7 @@ const sendValorantTBDMatches = async(client: App) => {
 
         const m = guild.tbd_matches.filter((m) => m.id === match.id)[0]
 
-        await client.prisma.guild.update({
+        await app.prisma.guild.update({
           where: {
             id: guild.id
           },
@@ -332,13 +344,13 @@ const sendValorantTBDMatches = async(client: App) => {
   }
 }
 
-const sendLolMatches = async(client: App) => {
+const sendLolMatches = async(app: App) => {
   const res = await service.getMatches('lol')
   const res2 = await service.getResults('lol')
 
   if(!res || !res.length) return
 
-  const guilds = await client.prisma.guild.findMany({
+  const guilds = await app.prisma.guild.findMany({
     include: {
       events: {
         where: {
@@ -357,7 +369,12 @@ const sendLolMatches = async(client: App) => {
   if(!guilds.length) return
 
   for(const guild of guilds) {
-    const matches: typeof guild.tbd_matches = []
+    const matches: {
+      matchId: string
+      guildId: string
+      channel: string
+      type: $Enums.EventType
+    }[] = []
 
     if(guild.lol_matches.length && !res2.some(d => d.id === guild.lol_matches[guild.lol_matches.length - 1])) continue
 
@@ -372,12 +389,12 @@ const sendLolMatches = async(client: App) => {
     else data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
 
     for(const e of guild.events) {
-      const channel = await client.channels.fetch(e.channel1)
+      const channel = await app.channels.fetch(e.channel1)
       if(!channel || channel.type !== ChannelType.GuildText) continue
 
       try {
         const messages = await channel.messages.fetch({ limit: 100 })
-        const messagesIds = messages.filter(m => m.author.id === client.user?.id).map(m => m.id)
+        const messagesIds = messages.filter(m => m.author.id === app.user?.id).map(m => m.id)
         if(messagesIds.length) {
           await channel.bulkDelete(messagesIds)
         }
@@ -422,7 +439,7 @@ const sendLolMatches = async(client: App) => {
 
             if(d.stage.toLowerCase().includes('showmatch')) continue
 
-            const channel = await client.channels.fetch(e.channel1)
+            const channel = await app.channels.fetch(e.channel1)
 
             if(!channel || channel.type !== ChannelType.GuildText) continue
 
@@ -448,28 +465,33 @@ const sendLolMatches = async(client: App) => {
 
             else {
               matches.push({
-                id: d.id!,
+                matchId: d.id!,
                 channel: e.channel1,
                 guildId: guild.id,
                 type: 'lol'
               })
             }
+
+            break
           }
         }
       }
     }
     catch { }
 
-    await client.prisma.guild.update({
+    await app.prisma.guild.update({
       where: {
         id: guild.id
       },
       data: {
         lol_matches: guild.lol_matches,
         tbd_matches: {
+          deleteMany: {
+            type: 'lol'
+          },
           create: matches.map(m => ({
             type: m.type,
-            id: m.id,
+            matchId: m.matchId,
             channel: m.channel
           }))
         },
@@ -481,12 +503,12 @@ const sendLolMatches = async(client: App) => {
   }
 }
 
-const sendLolTBDMatches = async(client: App) => {
+const sendLolTBDMatches = async(app: App) => {
   const res = await service.getMatches('lol')
 
   if(!res || !res.length) return
 
-  const guilds = await client.prisma.guild.findMany({
+  const guilds = await app.prisma.guild.findMany({
     include: {
       tbd_matches: {
         where: {
@@ -515,7 +537,7 @@ const sendLolTBDMatches = async(client: App) => {
         const emoji1 = emojis.find(e => e?.name === data.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
         const emoji2 = emojis.find(e => e?.name === data.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
 
-        const channel = await client.channels.fetch(match.channel) as TextChannel
+        const channel = await app.channels.fetch(match.channel) as TextChannel
 
         const embed = new EmbedBuilder()
           .setAuthor({
@@ -547,7 +569,7 @@ const sendLolTBDMatches = async(client: App) => {
 
         const m = guild.tbd_matches.filter((m) => m.id === match.id)[0]
 
-        await client.prisma.guild.update({
+        await app.prisma.guild.update({
           where: {
             id: guild.id
           },
@@ -563,14 +585,14 @@ const sendLolTBDMatches = async(client: App) => {
     }
   }
 }
-const runInBatches = async(client: App, tasks: any[], batch_size: number) => {
+const runInBatches = async(app: App, tasks: any[], batch_size: number) => {
   for(let i = 0;i < tasks.length;i += batch_size) {
     const batch = tasks.slice(i, i + batch_size)
 
-    await Promise.all(batch.map(task => task(client).catch((e: Error) => new Logger(client).error(e))))
+    await Promise.all(batch.map(task => task(app).catch((e: Error) => new Logger(app).error(e))))
   }
 }
-const runTasks = async(client: App) => {
+const runTasks = async(app: App) => {
   const tasks = [
     sendValorantMatches,
     sendValorantTBDMatches,
@@ -578,31 +600,31 @@ const runTasks = async(client: App) => {
     sendLolTBDMatches
   ]
 
-  await runInBatches(client, tasks, 2)
+  await runInBatches(app, tasks, 2)
 
-  setTimeout(async() => await runTasks(client), process.env.INTERVAL ?? 5 * 60 * 1000)
+  setTimeout(async() => await runTasks(app), process.env.INTERVAL ?? 5 * 60 * 1000)
 }
 
 export default createListener({
   name: 'clientReady',
-  async run(client) {
-    Logger.send(`${client.user?.tag} online on Shard ${client.shard?.ids}!`)
+  async run(app) {
+    Logger.send(`${app.user?.tag} online on Shard ${app.shard?.ids}!`)
 
-    if(client.user?.id !== '1235576817683922954') {
-      client.user?.setStatus('dnd')
+    if(app.user?.id !== '1235576817683922954') {
+      app.user?.setStatus('dnd')
     }
 
     else {
-      client.user.setActivity({
+      app.user.setActivity({
         name: 'status',
-        state: `[Shard ${client.shard?.ids}] Join support server! Link on about me`,
+        state: `[Shard ${app.shard?.ids}] Join support server! Link on about me`,
         type: 4
       })
     }
 
-    await client.postCommands()
+    await app.postCommands()
 
-    client.queue.process('reminder', async job => {
+    app.queue.process('reminder', async job => {
       const user = await SabineUser.fetch(job.data.user)
 
       if(!user) return
@@ -613,7 +635,7 @@ export default createListener({
         !user.remind_in
       ) return
 
-      const channel = await client.channels.fetch(job.data.channel) as TextChannel
+      const channel = await app.channels.fetch(job.data.channel) as TextChannel
 
       await channel.send(t(user.lang, 'helper.reminder', { user: `<@${user.id}>` }))
 
@@ -621,8 +643,8 @@ export default createListener({
 
       await user.save()
     })
-      .catch(e => new Logger(client).error(e))
+      .catch(e => new Logger(app).error(e))
 
-    await runTasks(client)
+    await runTasks(app)
   }
 })
