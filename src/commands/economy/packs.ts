@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, ButtonStyle, ContainerBuilder, TextDisplayBuilder } from 'discord.js'
+import { ButtonStyle, ContainerBuilder, TextDisplayBuilder } from 'discord.js'
 import createCommand from '../../structures/command/createCommand.ts'
 import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
 import type { Player } from '@sabinelab/players'
