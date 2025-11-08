@@ -367,10 +367,10 @@ export default createCommand({
       })
     }
     else {
-const packs: {[key: string]: () => Promise<unknown>} = {
+      const packs: {[key: string]: () => Promise<unknown>} = {
         iron: async() => {
           if(ctx.db.user.iron_packs <= 0) return await ctx.reply('commands.packs.you_dont_have_this_pack')
-          
+
           const players = getRandomPlayers('iron')
 
           ctx.db.user.iron_packs -= 1
