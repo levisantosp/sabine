@@ -65,11 +65,21 @@ model User {
   remind                   Boolean?
   remind_in                String?
   reminded                 Boolean       @default(true)
-  boxes                    Box[]
   transactions             Transaction[]
   career                   Match[]
   trade_time               DateTime?
   warned                   Boolean?
+  iron_packs               Int           @default(0)
+  bronze_packs             Int           @default(0)
+  silver_packs             Int           @default(0)
+  gold_packs               Int           @default(0)
+  platinum_packs           Int           @default(0)
+  diamond_packs            Int           @default(0)
+  ascendant_packs          Int           @default(0)
+  immortal_packs           Int           @default(0)
+  radiant_packs            Int           @default(0)
+  last_vote                DateTime?
+  vote_streak              Int           @default(0)
 
   @@index([coins, correct_predictions, rank_rating, elo])
 }
@@ -102,7 +112,8 @@ model Transaction {
   user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     String
   type       TransactionType
-  player     Int             @db.SmallInt
+  player     Int?            @db.SmallInt
+  pack       Pack?
   price      BigInt?
   to         String?
   created_at DateTime        @default(now())
@@ -249,6 +260,18 @@ model Blacklist {
   @@index([type])
 }
 
+enum Pack {
+  IRON
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+  DIAMOND
+  ASCENDANT
+  IMMORTAL
+  RADIANT
+}
+
 enum BlacklistType {
   USER
   GUILD
@@ -278,18 +301,8 @@ enum TransactionType {
   SELL_PLAYER
   TRADE_PLAYER
   SIGN_PLAYER
-}
-
-enum Box {
-  IRON
-  BRONZE
-  SILVER
-  GOLD
-  PLATINUM
-  DIAMOND
-  ASCENDANT
-  IMMORTAL
-  RADIANT
+  CLAIM_PACK_BY_VOTE
+  CLAIM_PLAYER_BY_PACK
 }
 
 enum PremiumType {
