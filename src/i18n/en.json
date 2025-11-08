@@ -310,10 +310,12 @@
         "CLAIM_PLAYER_BY_CLAIM_COMMAND": "Claimed **{player}** by `/claim` command",
         "CLAIM_PLAYER_BY_COMMAND": "Received **{player}** from the system (`.giveplayer` command)",
         "SELL_PLAYER": "Sold **{player}** for **{price}** coins",
-        "TRADE_PLAYER": "Traded **{player}** with {user} for **{price}** coins"
+        "TRADE_PLAYER": "Traded **{player}** with {user} for **{price}** coins",
+        "CLAIM_PACK_BY_VOTE": "Received one **{pack} pack** by [voting for the bot](https://discordbotlist.com/bots/sabine/upvote)",
+        "CLAIM_PLAYER_BY_PACK": "Claimed **{player}** opening a pack"
       },
       "embed": {
-        "title": "Your Player Transactions",
+        "title": "Your Transactions",
         "footer": "Page {page}/{pages}"
       },
       "none_yet": "You don't have any transaction to show."
@@ -321,6 +323,26 @@
     "remind": {
       "enabled": "Now I'll notify you when your `/claim` is ready!",
       "disabled": "Now I won't notify you when your `/claim` is ready!"
+    },
+    "packs": {
+      "container": {
+        "title": "### Your Packs",
+        "button": "Open"
+      },
+      "type": {
+        "iron": "Iron Packs: `{count}`",
+        "bronze": "Bronze Packs: `{count}`",
+        "silver": "Silver Packs: `{count}`",
+        "gold": "Gold Packs: `{count}`",
+        "platinum": "Platinum Packs: `{count}`",
+        "diamond": "Diamond  Packs: `{count}`",
+        "ascendant": "Ascendant Packs: `{count}`",
+        "immortal": "Immortal Packs: `{count}`",
+        "radiant": "Radiant Packs: `{count}`"
+      },
+      "you_dont_have_this_pack": "You don't have this pack.",
+      "pack_opened": "You opened one **{pack} pack** successfully!\nYou received: {players}",
+      "back": "Back"
     }
   },
   "simulator": {
