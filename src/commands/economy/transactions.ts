@@ -65,11 +65,23 @@ export default createCommand({
     for(const transaction of transactions) {
       const timestamp = (transaction.created_at.getTime() / 1000).toFixed(0)
 
-      const player = app.players.get(transaction.player.toString())
+      if(transaction.player) {
+        const player = app.players.get(transaction.player.toString())
 
-      if(!player) continue
+        if(!player) continue
 
-      description += `- [<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] ${t(`commands.transactions.type.${transaction.type}`, { player: `${player.name} (${player.collection})`, price: transaction.price?.toLocaleString(), user: `<@${transaction.to}>` })}\n`
+        description += `- [<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] ${t(`commands.transactions.type.${transaction.type}`, {
+          player: `${player.name} (${player.collection})`,
+          price: transaction.price?.toLocaleString(),
+          user: `<@${transaction.to}>`
+        })}\n`
+      }
+
+      else if(transaction.pack) {
+        description += `- [<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] ${t(`commands.transactions.type.${transaction.type}`, {
+          pack: transaction.pack
+        })}\n`
+      }
     }
 
     embed.setDesc(description)
@@ -132,11 +144,23 @@ export default createCommand({
     for(const transaction of transactions) {
       const timestamp = (transaction.created_at.getTime() / 1000).toFixed(0)
 
-      const player = app.players.get(transaction.player.toString())
+      if(transaction.player) {
+        const player = app.players.get(transaction.player.toString())
 
-      if(!player) continue
+        if(!player) continue
 
-      description += `- [<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] ${t(`commands.transactions.type.${transaction.type}`, { player: `${player.name} (${player.collection})`, price: transaction.price?.toLocaleString(), user: `<@${transaction.to}>` })}\n`
+        description += `- [<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] ${t(`commands.transactions.type.${transaction.type}`, {
+          player: `${player.name} (${player.collection})`,
+          price: transaction.price?.toLocaleString(),
+          user: `<@${transaction.to}>`
+        })}\n`
+      }
+
+      else if(transaction.pack) {
+        description += `- [<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] ${t(`commands.transactions.type.${transaction.type}`, {
+          pack: transaction.pack
+        })}\n`
+      }
     }
 
     embed.setDesc(description)
