@@ -11,10 +11,11 @@
     "resolveJsonModule": true,
     "rewriteRelativeImportExtensions": true,
     "verbatimModuleSyntax": true,
-    "noEmit": true
+    "outDir": "./dist",
+    "rootDir": "./src"
   },
   "include": [
-    "src/**/*.json",
+    // "src/**/*.json",
     "env.d.ts",
     "src"
   ],

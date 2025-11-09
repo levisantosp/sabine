@@ -3,6 +3,8 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
+      args:
+        - GITHUB_AUTH_TOKEN=${GITHUB_AUTH_TOKEN}
     image: sabine
     container_name: sabine
     restart: unless-stopped
@@ -15,6 +17,7 @@ services:
       - .env
     environment:
       - REDIS_URL=redis://redis:6379
+
   redis:
     image: redis:latest
     container_name: redis

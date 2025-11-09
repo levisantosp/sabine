@@ -1,12 +1,16 @@
-FROM oven/bun:1-alpine
+FROM node:24.11.0-alpine
+
+ARG GITHUB_AUTH_TOKEN
+
+RUN corepack enable pnpm
 
 WORKDIR /app
 
-COPY package*.json bun.lock ./
+COPY package.json pnpm*.yaml .npmrc /app/
 COPY . .
 
-RUN bun i --frozen-lockfile
-RUN bun compile
-RUN bun push
+RUN GITHUB_AUTH_TOKEN=${GITHUB_AUTH_TOKEN} pnpm i --frozen-lockfile
+RUN pnpm build
+RUN pnpm push
 
-CMD ["bun", "start"]
+CMD ["pnpm", "start"]
