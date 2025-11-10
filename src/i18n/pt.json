@@ -343,6 +343,12 @@
       "you_dont_have_this_pack": "Você não possui este pacote.",
       "pack_opened": "Você abriu um **pacote {pack}** com sucesso!\nVocê recebeu: {players}",
       "back": "Voltar"
+    },
+    "arena": {
+      "is_already_in_queue": "Você já está na fila da Arena.",
+      "joined": "Você entrou na fila com sucesso!",
+      "left": "Você saiu da fila com sucesso!",
+      "is_not_in_queue": "Você não está em uma fila."
     }
   },
   "simulator": {

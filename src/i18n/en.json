@@ -343,6 +343,12 @@
       "you_dont_have_this_pack": "You don't have this pack.",
       "pack_opened": "You opened one **{pack} pack** successfully!\nYou received: {players}",
       "back": "Back"
+    },
+    "arena": {
+      "is_already_in_queue": "You are already in the Arena queue.",
+      "joined": "You joined the queue successfully!",
+      "left": "You left the queue succesfully!",
+      "is_not_in_queue": "You are not in the Arena queue."
     }
   },
   "simulator": {
