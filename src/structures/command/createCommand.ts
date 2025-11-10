@@ -35,10 +35,10 @@ type CreateModalSubmitInteractionOptions = {
 
 export type Command = {
   name: string
-  nameLocalizations?: Partial<Record<Discord.Locale, string>>
+  nameLocalizations?: Discord.LocalizationMap
   description: string
-  category: 'economy' | 'admin' | 'esports' | 'misc' | 'premium'
-  descriptionLocalizations?: Partial<Record<Discord.Locale, string>>
+  category: 'economy' | 'admin' | 'esports' | 'misc' | 'premium' | 'pvp'
+  descriptionLocalizations?: Discord.LocalizationMap
   options?: Discord.ApplicationCommandOptionData[]
   syntax?: string
   syntaxes?: string[]
