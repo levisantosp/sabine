@@ -4,6 +4,15 @@ import { server } from './server/index.ts'
 import Logger from './util/Logger.ts'
 import EmbedBuilder from './structures/builders/EmbedBuilder.ts'
 import { prisma } from './database/prisma.ts'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+const isProd = process.env.NODE_ENV === 'production'
+
+const file = path.join(__dirname, isProd ? 'index.js' : 'index.ts')
 
 const redis: Redis.RedisClientType = Redis.createClient({
   url: process.env.REDIS_URL
@@ -89,10 +98,10 @@ server.listen({
 })
   .then(() => console.log(`HTTP server running at ${process.env.PORT}`))
 
-const manager = new ShardingManager('src/index.ts', {
+const manager = new ShardingManager(file, {
   token: process.env.BOT_TOKEN,
   mode: 'process',
-  totalShards: 'auto'
+  totalShards: 2
 })
 
 const rest = new REST().setToken(process.env.BOT_TOKEN)

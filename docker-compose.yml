@@ -17,6 +17,7 @@ services:
       - .env
     environment:
       - REDIS_URL=redis://redis:6379
+      - NODE_ENV=production
 
   redis:
     image: redis:latest
