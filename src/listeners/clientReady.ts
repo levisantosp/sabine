@@ -1,4 +1,4 @@
-import { ChannelType, type TextChannel } from 'discord.js'
+import { Collection, Message, REST, Routes } from 'discord.js'
 import Service from '../api/index.ts'
 import t from '../i18n/index.ts'
 import type { MatchesData } from '../types.ts'
@@ -10,6 +10,8 @@ import ButtonBuilder from '../structures/builders/ButtonBuilder.ts'
 import App from '../structures/app/App.ts'
 import { SabineUser } from '../database/index.ts'
 import type { $Enums } from '@prisma/client'
+
+const rest = new REST().setToken(process.env.BOT_TOKEN)
 const service = new Service(process.env.AUTH)
 
 const tournaments: { [key: string]: RegExp[] } = {
@@ -27,8 +29,10 @@ const tournaments: { [key: string]: RegExp[] } = {
 }
 
 const sendValorantMatches = async(app: App) => {
-  const res = await service.getMatches('valorant')
-  const res2 = await service.getResults('valorant')
+  const [res, res2] = await Promise.all([
+    service.getMatches('valorant'),
+    service.getResults('valorant')
+  ])
 
   if(!res || !res.length) return
 
@@ -49,6 +53,10 @@ const sendValorantMatches = async(app: App) => {
   })
 
   if(!guilds.length) return
+
+  const bulkDeleteThunks: (() => Promise<unknown>)[] = []
+  const updateGuildThunks: (() => Promise<unknown>)[] = []
+  const sendMessageThunks: (() => Promise<unknown>)[] = []
 
   for(const guild of guilds) {
     const matches: {
@@ -127,21 +135,28 @@ const sendValorantMatches = async(app: App) => {
     if(!data.length) continue
 
     for(const e of guild.events) {
-      const channel = await app.channels.fetch(e.channel1)
+      const thunk = async() => {
+        try {
+          const messages = await rest.get(Routes.channelMessages(e.channel1), {
+            query: new URLSearchParams({ limit: '100' })
+          }) as Collection<string, Message>
 
-      if(!channel || channel.type !== ChannelType.GuildText) continue
+          const messagesIds = messages.filter(m => m.author.id === app.user?.id).map(m => m.id)
 
-      try {
-        const messages = await channel.messages.fetch({ limit: 100 })
-        const messagesIds = messages.filter(m => m.author.id === app.user?.id).map(m => m.id)
-
-        if(messagesIds.length) {
-          await channel.bulkDelete(messagesIds)
+          if(messagesIds.length) {
+            await rest.post(Routes.channelBulkDelete(e.channel1), {
+              body: {
+                messages: messagesIds
+              }
+            })
+          }
         }
+        catch {}
       }
 
-      catch { }
+      bulkDeleteThunks.push(thunk)
     }
+
     try {
       for(
         const d of data.map(body => ({
@@ -189,31 +204,34 @@ const sendValorantMatches = async(app: App) => {
 
             if(d.stage.toLowerCase().includes('showmatch')) continue
 
-            const channel = await app.channels.fetch(e.channel1)
-
-            if(!channel || channel.type !== ChannelType.GuildText) continue
-
-            if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') await channel.send({
-              embeds: [embed],
-              components: [
-                {
-                  type: 1,
-                  components: [
-                    button,
-                    new ButtonBuilder()
-                      .setLabel(t(guild.lang, 'helper.bet'))
-                      .setCustomId(`bet;valorant;${d.id}`)
-                      .defineStyle('gray'),
-                    urlButton,
-                    new ButtonBuilder()
-                      .setLabel(t(guild.lang, 'helper.pickem.label'))
-                      .defineStyle('blue')
-                      .setCustomId('pickem')
-                  ]
-                }
-              ]
-            }).catch(() => { })
-
+            if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') {
+              const thunk = async() => {
+                await rest.post(Routes.channelMessages(e.channel1), {
+                  body: {
+                    embeds: [embed],
+                    components: [
+                      {
+                        type: 1,
+                        components: [
+                          button,
+                          new ButtonBuilder()
+                            .setLabel(t(guild.lang, 'helper.bet'))
+                            .setCustomId(`bet;valorant;${d.id}`)
+                            .defineStyle('gray'),
+                          urlButton,
+                          new ButtonBuilder()
+                            .setLabel(t(guild.lang, 'helper.pickem.label'))
+                            .defineStyle('blue')
+                            .setCustomId('pickem')
+                        ]
+                      }
+                    ]
+                  }
+                })
+              }
+              
+              sendMessageThunks.push(thunk)
+            }
             else {
               if(!matches.some(m => m.matchId === d.id)) {
                 matches.push({
@@ -230,33 +248,42 @@ const sendValorantMatches = async(app: App) => {
         }
       }
     }
-    catch { }
+    catch {}
 
-    await app.prisma.guild.update({
-      where: {
-        id: guild.id
-      },
-      data: {
-        valorant_matches: guild.valorant_matches,
-        tbd_matches: {
-          deleteMany: {
-            type: 'valorant'
-          },
-          create: matches.length
-            ? matches.map(m => ({
-              type: m.type,
-              matchId: m.matchId,
-              channel: m.channel
-            }))
-            : undefined
+    const thunk = async() => {
+      await app.prisma.guild.update({
+        where: {
+          id: guild.id
         },
-        live_messages: {
-          deleteMany: {}
+        data: {
+          valorant_matches: guild.valorant_matches,
+          tbd_matches: {
+            deleteMany: {
+              type: 'valorant'
+            },
+            create: matches.length
+              ? matches.map(m => ({
+                type: m.type,
+                matchId: m.matchId,
+                channel: m.channel
+              }))
+              : undefined
+          },
+          live_messages: {
+            deleteMany: {}
+          }
         }
-      }
-    })
+      })
+    }
+
+    updateGuildThunks.push(thunk)
   }
+
+  await Promise.allSettled(bulkDeleteThunks.map(task => task()))
+  await Promise.allSettled(updateGuildThunks.map(task => task()))
+  await Promise.allSettled(sendMessageThunks.map(task => task()))
 }
+
 const sendValorantTBDMatches = async(app: App) => {
   const res = await service.getMatches('valorant')
 
@@ -273,6 +300,9 @@ const sendValorantTBDMatches = async(app: App) => {
   })
 
   if(!guilds.length) return
+
+  const sendMessageThunks: (() => Promise<unknown>)[] = []
+  const updateGuildThunks: (() => Promise<unknown>)[] = []
 
   for(const guild of guilds) {
     if(!guild.tbd_matches.length) continue
@@ -291,8 +321,6 @@ const sendValorantTBDMatches = async(app: App) => {
         const emoji1 = emojis.find(e => e?.name === data.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
         const emoji2 = emojis.find(e => e?.name === data.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
 
-        const channel = await app.channels.fetch(match.channel) as TextChannel
-
         const embed = new EmbedBuilder()
           .setAuthor({
             name: data.tournament.name,
@@ -301,47 +329,59 @@ const sendValorantTBDMatches = async(app: App) => {
           .setField(`${emoji1} ${data.teams[0].name} <:versus:1349105624180330516> ${data.teams[1].name} ${emoji2}`, `<t:${data.when.getTime() / 1000}:F> | <t:${data.when.getTime() / 1000}:R>`, true)
           .setFooter({ text: data.stage })
 
-        channel.send({
-          embeds: [embed],
-          components: [
-            {
-              type: 1,
+        let thunk = async() => {
+          await rest.post(Routes.channelMessages(match.channel), {
+            body: {
+              embeds: [embed],
               components: [
-                new ButtonBuilder()
-                  .setLabel(t(guild.lang, 'helper.palpitate'))
-                  .setCustomId(`predict;valorant;${match.id}`)
-                  .defineStyle('green'),
-                new ButtonBuilder()
-                  .setLabel(t(guild.lang, 'helper.bet'))
-                  .setCustomId(`bet;valorant;${data.id}`)
-                  .defineStyle('gray'),
-                new ButtonBuilder()
-                  .setLabel(t(guild.lang, 'helper.stats'))
-                  .defineStyle('link')
-                  .setURL(`https://vlr.gg/${data.id}`)
+                {
+                  type: 1,
+                  components: [
+                    new ButtonBuilder()
+                      .setLabel(t(guild.lang, 'helper.palpitate'))
+                      .setCustomId(`predict;valorant;${match.id}`)
+                      .defineStyle('green'),
+                    new ButtonBuilder()
+                      .setLabel(t(guild.lang, 'helper.bet'))
+                      .setCustomId(`bet;valorant;${data.id}`)
+                      .defineStyle('gray'),
+                    new ButtonBuilder()
+                      .setLabel(t(guild.lang, 'helper.stats'))
+                      .defineStyle('link')
+                      .setURL(`https://vlr.gg/${data.id}`)
+                  ]
+                }
               ]
             }
-          ]
-        })
-          .catch(() => { })
+          })
+        }
+
+        sendMessageThunks.push(thunk)
 
         const m = guild.tbd_matches.filter((m) => m.id === match.id)[0]
 
-        await app.prisma.guild.update({
-          where: {
-            id: guild.id
-          },
-          data: {
-            tbd_matches: {
-              delete: {
-                id: m.id
+        thunk = async() => {
+          await app.prisma.guild.update({
+            where: {
+              id: guild.id
+            },
+            data: {
+              tbd_matches: {
+                delete: {
+                  id: m.id
+                }
               }
             }
-          }
-        })
+          })
+        }
+
+        updateGuildThunks.push(thunk)
       }
     }
   }
+
+  await Promise.allSettled(updateGuildThunks.map(task => task()))
+  await Promise.allSettled(sendMessageThunks.map(task => task()))
 }
 
 const sendLolMatches = async(app: App) => {
@@ -368,6 +408,10 @@ const sendLolMatches = async(app: App) => {
 
   if(!guilds.length) return
 
+  const bulkDeleteThunks: (() => Promise<unknown>)[] = []
+  const updateGuildThunks: (() => Promise<unknown>)[] = []
+  const sendMessageThunks: (() => Promise<unknown>)[] = []
+
   for(const guild of guilds) {
     const matches: {
       matchId: string
@@ -389,17 +433,26 @@ const sendLolMatches = async(app: App) => {
     else data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
 
     for(const e of guild.events) {
-      const channel = await app.channels.fetch(e.channel1)
-      if(!channel || channel.type !== ChannelType.GuildText) continue
+      const thunk = async() => {
+        try {
+          const messages = await rest.get(Routes.channelMessages(e.channel1), {
+            query: new URLSearchParams({ limit: '100' })
+          }) as Collection<string, Message>
 
-      try {
-        const messages = await channel.messages.fetch({ limit: 100 })
-        const messagesIds = messages.filter(m => m.author.id === app.user?.id).map(m => m.id)
-        if(messagesIds.length) {
-          await channel.bulkDelete(messagesIds)
+          const messagesIds = messages.filter(m => m.author.id === app.user?.id).map(m => m.id)
+
+          if(messagesIds.length) {
+            await rest.post(Routes.channelBulkDelete(e.channel1), {
+              body: {
+                messages: messagesIds
+              }
+            })
+          }
         }
+        catch {}
       }
-      catch { }
+
+      bulkDeleteThunks.push(thunk)
     }
 
     try {
@@ -439,30 +492,33 @@ const sendLolMatches = async(app: App) => {
 
             if(d.stage.toLowerCase().includes('showmatch')) continue
 
-            const channel = await app.channels.fetch(e.channel1)
+            if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') {
+              const thunk = async() => {
+                rest.post(Routes.channelMessages(e.channel1), {
+                  body: {
+                    embeds: [embed],
+                    components: [
+                      {
+                        type: 1,
+                        components: [
+                          button,
+                          new ButtonBuilder()
+                            .setLabel(t(guild.lang, 'helper.bet'))
+                            .setCustomId(`bet;lol;${d.id}`)
+                            .defineStyle('gray'),
+                          new ButtonBuilder()
+                            .setLabel(t(guild.lang, 'helper.pickem.label'))
+                            .defineStyle('blue')
+                            .setCustomId('pickem')
+                        ]
+                      }
+                    ]
+                  }
+                })
+              }
 
-            if(!channel || channel.type !== ChannelType.GuildText) continue
-
-            if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') await channel.send({
-              embeds: [embed],
-              components: [
-                {
-                  type: 1,
-                  components: [
-                    button,
-                    new ButtonBuilder()
-                      .setLabel(t(guild.lang, 'helper.bet'))
-                      .setCustomId(`bet;lol;${d.id}`)
-                      .defineStyle('gray'),
-                    new ButtonBuilder()
-                      .setLabel(t(guild.lang, 'helper.pickem.label'))
-                      .defineStyle('blue')
-                      .setCustomId('pickem')
-                  ]
-                }
-              ]
-            }).catch(() => { })
-
+              sendMessageThunks.push(thunk)
+            }
             else {
               matches.push({
                 matchId: d.id!,
@@ -479,128 +535,48 @@ const sendLolMatches = async(app: App) => {
     }
     catch { }
 
-    await app.prisma.guild.update({
-      where: {
-        id: guild.id
-      },
-      data: {
-        lol_matches: guild.lol_matches,
-        tbd_matches: {
-          deleteMany: {
-            type: 'lol'
-          },
-          create: matches.map(m => ({
-            type: m.type,
-            matchId: m.matchId,
-            channel: m.channel
-          }))
-        },
-        live_messages: {
-          deleteMany: {}
-        }
-      }
-    })
-  }
-}
-
-const sendLolTBDMatches = async(app: App) => {
-  const res = await service.getMatches('lol')
-
-  if(!res || !res.length) return
-
-  const guilds = await app.prisma.guild.findMany({
-    include: {
-      tbd_matches: {
+    const thunk = async() => {
+      await app.prisma.guild.update({
         where: {
-          type: 'lol'
-        }
-      }
-    }
-  })
-
-  if(!guilds.length) return
-
-  for(const guild of guilds) {
-    if(!guild.tbd_matches.length) continue
-
-    for(const match of guild.tbd_matches) {
-      const data = res
-        .map(d => ({
-          ...d,
-          when: new Date(d.when)
-        }))
-        .find(d => d.id === match.id)
-
-      if(!data) continue
-
-      if(data.teams[0].name !== 'TBD' && data.teams[1].name !== 'TBD') {
-        const emoji1 = emojis.find(e => e?.name === data.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
-        const emoji2 = emojis.find(e => e?.name === data.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
-
-        const channel = await app.channels.fetch(match.channel) as TextChannel
-
-        const embed = new EmbedBuilder()
-          .setAuthor({
-            name: data.tournament.full_name!,
-            iconURL: data.tournament.image
-          })
-          .setField(`${emoji1} ${data.teams[0].name} <:versus:1349105624180330516> ${data.teams[1].name} ${emoji2}`, `<t:${data.when.getTime() / 1000}:F> | <t:${data.when.getTime() / 1000}:R>`, true)
-          .setFooter({ text: data.stage })
-
-        await channel.send({
-          embeds: [embed],
-          components: [
-            {
-              type: 1,
-              components: [
-                new ButtonBuilder()
-                  .setLabel(t(guild.lang, 'helper.palpitate'))
-                  .setCustomId(`predict;lol;${match.id}`)
-                  .defineStyle('green'),
-                new ButtonBuilder()
-                  .setLabel(t(guild.lang, 'helper.bet'))
-                  .setCustomId(`bet;lol;${data.id}`)
-                  .defineStyle('gray')
-              ]
-            }
-          ]
-        })
-          .catch(() => { })
-
-        const m = guild.tbd_matches.filter((m) => m.id === match.id)[0]
-
-        await app.prisma.guild.update({
-          where: {
-            id: guild.id
+          id: guild.id
+        },
+        data: {
+          lol_matches: guild.lol_matches,
+          tbd_matches: {
+            deleteMany: {
+              type: 'lol'
+            },
+            create: matches.map(m => ({
+              type: m.type,
+              matchId: m.matchId,
+              channel: m.channel
+            }))
           },
-          data: {
-            tbd_matches: {
-              delete: {
-                id: m.id
-              }
-            }
+          live_messages: {
+            deleteMany: {}
           }
-        })
-      }
+        }
+      })
     }
-  }
-}
-const runInBatches = async(app: App, tasks: any[], batch_size: number) => {
-  for(let i = 0;i < tasks.length;i += batch_size) {
-    const batch = tasks.slice(i, i + batch_size)
 
-    await Promise.all(batch.map(task => task(app).catch((e: Error) => new Logger(app).error(e))))
+    updateGuildThunks.push(thunk)
   }
+
+  await Promise.allSettled(bulkDeleteThunks.map(task => task()))
+  await Promise.allSettled(updateGuildThunks.map(task => task()))
+  await Promise.allSettled(sendMessageThunks.map(task => task()))
 }
+
 const runTasks = async(app: App) => {
   const tasks = [
     sendValorantMatches,
     sendValorantTBDMatches,
-    sendLolMatches,
-    sendLolTBDMatches
+    sendLolMatches
   ]
 
-  await runInBatches(app, tasks, 2)
+  await Promise.allSettled(
+    tasks.map(task => task(app).catch(e => Logger.error(e)))
+  )
 
   setTimeout(async() => await runTasks(app), process.env.INTERVAL ?? 5 * 60 * 1000)
 }
@@ -623,28 +599,32 @@ export default createListener({
     }
 
     await app.postCommands()
+    
+    if(!app.shard || !app.shard.ids[0]) {
+      app.queue.process('reminder', async job => {
+        const user = await SabineUser.fetch(job.data.user)
 
-    app.queue.process('reminder', async job => {
-      const user = await SabineUser.fetch(job.data.user)
+        if(!user) return
 
-      if(!user) return
+        if(
+          !user.remind ||
+          user.reminded ||
+          !user.remind_in
+        ) return
 
-      if(
-        !user.remind ||
-        user.reminded ||
-        !user.remind_in
-      ) return
+        await rest.post(Routes.channelMessages(user.remind_in), {
+          body: {
+            content: t(user.lang, 'helper.reminder', { user: `<@${user.id}>` })
+          }
+        })
 
-      const channel = await app.channels.fetch(job.data.channel) as TextChannel
+        user.reminded = true
 
-      await channel.send(t(user.lang, 'helper.reminder', { user: `<@${user.id}>` }))
+        await user.save()
+      })
+        .catch(e => new Logger(app).error(e))
 
-      user.reminded = true
-
-      await user.save()
-    })
-      .catch(e => new Logger(app).error(e))
-
-    await runTasks(app)
+      await runTasks(app)
+    }
   }
 })
