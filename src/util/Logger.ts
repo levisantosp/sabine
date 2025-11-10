@@ -12,11 +12,15 @@ export default class Logger {
   }
 
   public static send(message: string) {
-    return console.log(colors.green(`[${moment(Date.now()).format('hh:mm:ss')}] ${message}`))
+    return console.log(colors.green(`[${moment(Date.now()).format('hh:mm:ss A')}] ${message}`))
   }
 
   public static warn(message: string) {
-    return console.log(colors.yellow(`[${moment(Date.now()).format('hh:mm:ss')}] ${message}`))
+    return console.log(colors.yellow(`[${moment(Date.now()).format('hh:mm:ss A')}] ${message}`))
+  }
+
+  public static error(error: Error) {
+    return console.log(colors.red(`[${moment(Date.now()).format('hh:mm:ss A')}] ${error.stack ?? error}`))
   }
 
   public async error(error: Error | string, shardId?: number) {
