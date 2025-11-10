@@ -6,6 +6,8 @@ import EmbedBuilder from './structures/builders/EmbedBuilder.ts'
 import { prisma } from './database/prisma.ts'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import Bull from 'bull'
+import type { ArenaQueue } from './listeners/clientReady.ts'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -19,6 +21,63 @@ const redis: Redis.RedisClientType = Redis.createClient({
 })
 
 await redis.connect()
+
+const arenaMatchQueue = new Bull<ArenaQueue>('arena', { redis: process.env.REDIS_URL })
+
+const processArenaQueue = async() => {
+  try {
+    const queueLength = await redis.lLen('arena:queue')
+
+    console.log(queueLength)
+
+    if(queueLength < 2) return
+
+    const payload1 = await redis.rPop('arena:queue')
+    const payload2 = await redis.rPop('arena:queue')
+
+    if(!payload1 || !payload2) {
+      if(payload1) await redis.lPush('arena:queue', payload1)
+
+      return
+    }
+
+    const parsedData1 = JSON.parse(payload1)
+    const parsedData2 = JSON.parse(payload2)
+
+    const p1InQueue = await redis.get(`arena:in_queue:${parsedData1.userId}`)
+    const p2InQueue = await redis.get(`arena:in_queue:${parsedData2.userId}`)
+
+    if(!p1InQueue) {
+      if(p2InQueue) {
+        await redis.lPush('arena:queue', payload2)
+      }
+
+      return await redis.del(`arena:in_queue:${parsedData1.userId}`)
+    }
+
+    if(!p2InQueue) {
+      if(p1InQueue) {
+        await redis.lPush('arena:queue', payload1)
+      }
+
+      return await redis.del(`arena:in_queue:${parsedData2.userId}`)
+    }
+
+    await redis.del([
+      `arena:in_queue:${parsedData1.userId}`,
+      `arena:in_queue:${parsedData2.userId}`
+    ])
+
+    await arenaMatchQueue.add('arena', { parsedData1, parsedData2 })
+
+    if(queueLength - 2 >= 2) {
+      await processArenaQueue()
+    }
+  }
+  catch(e) {
+    Logger.error(e as Error)
+  }
+}
 
 const updateRedis = async() => {
   const users = await prisma.user.findMany()
@@ -62,7 +121,6 @@ const updateRedis = async() => {
         updated_at: Date.now(),
         data: users.map(user => ({
           id: user.id,
-          elo: user.elo,
           rank_rating: user.rank_rating
         }))
       }
@@ -114,6 +172,10 @@ if(!webhook) {
 }
 
 manager.on('shardCreate', shard => {
+  if(shard.id === 0) {
+    setInterval(processArenaQueue, 5000)
+  }
+
   shard.on('disconnect', async() => {
     const embed = new EmbedBuilder()
       .setTitle('Shard Disconnected')

@@ -10,9 +10,22 @@ import ButtonBuilder from '../structures/builders/ButtonBuilder.ts'
 import App from '../structures/app/App.ts'
 import { SabineUser } from '../database/index.ts'
 import type { $Enums } from '@prisma/client'
+import Bull from 'bull'
 
 const rest = new REST().setToken(process.env.BOT_TOKEN)
 const service = new Service(process.env.AUTH)
+
+export type ArenaQueue = {
+  parsedData1: {
+    userId: string
+    channelId?: string
+  },
+  parsedData2: {
+    userId: string
+    channelId?: string
+  }
+}
+const arenaMatchQueue = new Bull<ArenaQueue>('arena', { redis: process.env.REDIS_URL })
 
 const tournaments: { [key: string]: RegExp[] } = {
   'Valorant Champions Tour': [
@@ -601,6 +614,10 @@ export default createListener({
     await app.postCommands()
     
     if(!app.shard || !app.shard.ids[0]) {
+      arenaMatchQueue.process('arena', async job => {
+        
+      })
+
       app.queue.process('reminder', async job => {
         const user = await SabineUser.fetch(job.data.user)
 
