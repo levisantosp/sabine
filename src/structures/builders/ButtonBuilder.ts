@@ -1,7 +1,6 @@
 import { 
   ButtonBuilder as DJSButtonBuilder, 
-  ButtonStyle, 
-  ActionRowBuilder,
+  ButtonStyle,
   type InteractionReplyOptions,
 } from 'discord.js'
 
@@ -63,18 +62,16 @@ export default class ButtonBuilder extends DJSButtonBuilder {
   }
 
   public build(content?: string | InteractionReplyOptions) {
-    const row = new ActionRowBuilder<DJSButtonBuilder>().addComponents(this)
-    
     if(typeof content === 'string') {
       return {
         content: content ?? '',
-        components: [row]
+        components: [this.toJSON()]
       }
     }
 
     else {
       return {
-        components: [row],
+        components: [this.toJSON()],
         ...content
       }
     }

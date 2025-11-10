@@ -86,14 +86,14 @@ export default class EmbedBuilder extends DJSEmbedBuilder {
     if(typeof content === 'string' || !content) {
       return {
         content: content ?? '',
-        embeds: [this],
+        embeds: [this.toJSON()],
         components: []
       }
     }
 
     else {
       return {
-        embeds: [this],
+        embeds: [this.toJSON()],
         ...content
       }
     }
