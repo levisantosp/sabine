@@ -1,4 +1,4 @@
-import { valorant_weapons } from '../config.ts'
+import { valorant_weapons } from '../../config.ts'
 
 type WeaponDamage = {
   head: number
