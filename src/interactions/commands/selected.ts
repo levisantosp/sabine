@@ -3,7 +3,7 @@ import createComponentInteraction from '../../structures/interaction/createCompo
 import { valorant_agents, valorant_maps } from '../../config.ts'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
 import { SabineUser } from '../../database/index.ts'
-import Match from '../../simulator/Match.ts'
+import Match from '../../simulator/vanilla/Match.ts'
 import Logger from '../../util/Logger.ts'
 
 export default createComponentInteraction({
