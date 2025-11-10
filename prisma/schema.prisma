@@ -20,6 +20,7 @@ model User {
   coins                    BigInt        @default(0)
   team_name                String?       @db.VarChar(20)
   team_tag                 String?       @db.VarChar(4)
+  arena_wins               Int           @default(0) @db.SmallInt
   ranked_wins              Int           @default(0) @db.SmallInt
   unranked_wins            Int           @default(0) @db.SmallInt
   swiftplay_wins           Int           @default(0) @db.SmallInt
@@ -34,34 +35,7 @@ model User {
   pity                     Int           @default(0) @db.SmallInt
   claims                   Int           @default(0)
   fates                    Int           @default(0) @db.SmallInt
-  rank_rating              Int           @default(50) @db.SmallInt
-  elo                      Int           @default(0) @db.SmallInt
-  // UNRANKED 0
-  // IRON 1
-  // IRON 2
-  // IRON 3
-  // BRONZE 4
-  // BRONZE 5
-  // BRONZE 6
-  // SILVER 7
-  // SILVER 8
-  // SILVER 9
-  // GOLD 10
-  // GOLD 11
-  // GOLD 12
-  // PLATINUM 13
-  // PLATINUM 14
-  // PLATINUM 15
-  // DIAMOND 16
-  // DIAMOND 17
-  // DIAMOND 18
-  // ASCENDANT 19
-  // ASCENDANT 20
-  // ASCENDANT 21
-  // IMMORTAL 22
-  // IMMORTAL 23
-  // IMMORTAL 24
-  // RADIANT 25
+  rank_rating              Int           @default(0)
   remind                   Boolean?
   remind_in                String?
   reminded                 Boolean       @default(true)
@@ -81,18 +55,20 @@ model User {
   last_vote                DateTime?
   vote_streak              Int           @default(0)
 
-  @@index([coins, correct_predictions, rank_rating, elo])
+  @@index([coins, correct_predictions, rank_rating, arena_wins])
 }
 
 model Match {
-  id     String       @id @default(uuid())
-  user   User         @relation(fields: [userId], references: [id])
-  userId String
-  mode   MatchMode
-  winner Boolean
-  teams  CareerTeam[]
-  points Int?         @db.SmallInt
-  when   DateTime     @default(now())
+  id       BigInt       @id @default(autoincrement())
+  user     User         @relation(fields: [userId], references: [id])
+  userId   String
+  mode     MatchMode
+  winner   Boolean
+  teams    CareerTeam[]
+  points   Int?         @db.SmallInt
+  arena    Boolean?
+  metadata Json?
+  when     DateTime     @default(now())
 
   @@index([userId])
 }
@@ -100,7 +76,7 @@ model Match {
 model CareerTeam {
   id      String @id @default(uuid())
   match   Match  @relation(fields: [matchId], references: [id])
-  matchId String
+  matchId BigInt
   user    String
   score   Int    @db.SmallInt
 

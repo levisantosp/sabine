@@ -39,6 +39,7 @@ export class SabineUser implements User {
   public coins: bigint = 0n
   public team_name: string | null = null
   public team_tag: string | null = null
+  public arena_wins: number = 0
   public ranked_wins: number = 0
   public unranked_wins: number = 0
   public swiftplay_wins: number = 0
@@ -55,7 +56,6 @@ export class SabineUser implements User {
   public claims: number = 0
   public fates: number = 0
   public rank_rating: number = 50
-  public elo: number = 0
   public remind: boolean | null = null
   public remind_in: string | null = null
   public reminded: boolean = true
