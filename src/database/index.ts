@@ -10,6 +10,7 @@ import {
 } from '@prisma/client'
 import { app } from '../structures/app/App.ts'
 import type { Pack } from '../server/routes/util/vote.ts'
+import { valorant_agents } from '../config.ts'
 
 export const prisma = new PrismaClient()
 
@@ -25,6 +26,19 @@ type Prediction = {
   status: 'pending' | 'correct' | 'wrong'
   bet: bigint | null
   odd: number | null
+}
+
+type ArenaLineup = {
+  player: string
+  agent: {
+    name: string
+    role: typeof valorant_agents[number]['role']
+  }
+}
+
+type ArenaMetadata = {
+  map: string
+  lineup: ArenaLineup[]
 }
 
 export class SabineUser implements User {
@@ -48,6 +62,7 @@ export class SabineUser implements User {
   public unranked_defeats: number = 0
   public swiftplay_defeats: number = 0
   public ranked_swiftplay_defeats: number = 0
+  public arena_metadata: ArenaMetadata | null = null
   public daily_time: Date | null = null
   public claim_time: Date | null = null
   public trade_time: Date | null = null
