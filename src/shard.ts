@@ -8,6 +8,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import Bull from 'bull'
 import type { ArenaQueue } from './listeners/clientReady.ts'
+import { valorant_maps } from './config.ts'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -22,13 +23,24 @@ const redis: Redis.RedisClientType = Redis.createClient({
 
 await redis.connect()
 
+const currentMap = await redis.get('arena:map')
+const mapIndex = valorant_maps.findIndex(m => m.name === currentMap)
+const maps = valorant_maps.filter(m => m.current_map_pool).map(m => m.name)
+
+if(mapIndex >= 0) {
+  maps.splice(mapIndex, 1)
+}
+
+const map = maps[Math.floor(Math.random() * maps.length)]
+
+// await redis.set('arena:map', map)
+await redis.set('arena:map', 'Ascent')
+
 const arenaMatchQueue = new Bull<ArenaQueue>('arena', { redis: process.env.REDIS_URL })
 
 const processArenaQueue = async() => {
   try {
     const queueLength = await redis.lLen('arena:queue')
-
-    console.log(queueLength)
 
     if(queueLength < 2) return
 
