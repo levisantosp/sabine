@@ -29,6 +29,7 @@ model User {
   unranked_defeats         Int           @default(0) @db.SmallInt
   swiftplay_defeats        Int           @default(0) @db.SmallInt
   ranked_swiftplay_defeats Int           @default(0) @db.SmallInt
+  arena_metadata           Json?
   daily_time               DateTime?
   claim_time               DateTime?
   warn                     Boolean       @default(false)
@@ -66,7 +67,6 @@ model Match {
   winner   Boolean
   teams    CareerTeam[]
   points   Int?         @db.SmallInt
-  arena    Boolean?
   metadata Json?
   when     DateTime     @default(now())
 
@@ -270,6 +270,7 @@ enum MatchMode {
   RANKED_SWIFTPLAY
   SWIFTPLAY
   TOURNAMENT
+  ARENA
 }
 
 enum TransactionType {
