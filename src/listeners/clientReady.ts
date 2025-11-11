@@ -1,6 +1,6 @@
 import { Collection, Message, REST, Routes } from 'discord.js'
 import Service from '../api/index.ts'
-import t from '../i18n/index.ts'
+import t, { type Args, type Content } from '../i18n/index.ts'
 import type { MatchesData } from '../types.ts'
 import createListener from '../structures/app/createListener.ts'
 import Logger from '../util/Logger.ts'
@@ -11,6 +11,7 @@ import App from '../structures/app/App.ts'
 import { SabineUser } from '../database/index.ts'
 import type { $Enums } from '@prisma/client'
 import Bull from 'bull'
+import Match from '../simulator/arena/Match.ts'
 
 const rest = new REST().setToken(process.env.BOT_TOKEN)
 const service = new Service(process.env.AUTH)
@@ -615,7 +616,99 @@ export default createListener({
     
     if(!app.shard || !app.shard.ids[0]) {
       arenaMatchQueue.process('arena', async job => {
-        
+        const player1 = await SabineUser.fetch(job.data.parsedData1.userId)
+        const player2 = await SabineUser.fetch(job.data.parsedData2.userId)
+
+        if((!player1 || !player1.arena_metadata) || (!player2 || !player2.arena_metadata)) return
+
+        if(
+          player1.arena_metadata.lineup.length < 5 &&
+          player2.arena_metadata.lineup.length === 5
+        ) {
+          player1.rank_rating -= 15
+          player2.rank_rating += 10
+
+          if(player1.rank_rating < 0) player1.rank_rating = 0
+
+          await Promise.allSettled([player1.save(), player2.save()])
+        }
+        else if(
+          player1.arena_metadata.lineup.length === 5 &&
+          player2.arena_metadata.lineup.length < 5
+        ) {
+          player1.rank_rating += 15
+          player2.rank_rating -= 10
+
+          if(player2.rank_rating < 0) player2.rank_rating = 0
+
+          await Promise.allSettled([player1.save(), player2.save()])
+        }
+        else if(
+          player1.arena_metadata.lineup.length < 5 &&
+          player2.arena_metadata.lineup.length < 5
+        ) {
+          player1.rank_rating -= 15
+          player2.rank_rating -= 15
+
+          if(player1.rank_rating < 0) player1.rank_rating = 0
+          if(player2.rank_rating < 0) player2.rank_rating = 0
+
+          await Promise.allSettled([player1.save(), player2.save()])
+        }
+
+        const translate = (content: Content, args?: Args) => {
+          return t(
+            player1.lang === player2.lang
+            ? player1.lang
+            : 'en',
+            content,
+            args
+          )
+        }
+
+        const match = new Match({
+          teams: [
+            {
+              roster: player1.arena_metadata.lineup.map(l => {
+                const player = app.players.get(l.player)!
+
+                return {
+                  ...player,
+                  agent: l.agent,
+                  credits: 800,
+                  life: 100
+                }
+              }),
+              name: player1.team_name!,
+              tag: player1.team_tag!,
+              user: player1.id
+            },
+            {
+              roster: player2.arena_metadata.lineup.map(l => {
+                const player = app.players.get(l.player)!
+
+                return {
+                  ...player,
+                  agent: l.agent,
+                  credits: 800,
+                  life: 100
+                }
+              }),
+              name: player2.team_name!,
+              tag: player2.team_tag!,
+              user: player2.id
+            }
+          ],
+          map: (await app.redis.get('map'))!,
+          mode: 'arena',
+          t: translate
+        })
+
+        while(!match.finished) {
+          await match.start()
+        }
+
+        console.log(`match finished with ${match.rounds.length} rounds`)
       })
 
       app.queue.process('reminder', async job => {
@@ -640,7 +733,7 @@ export default createListener({
         await user.save()
       })
         .catch(e => new Logger(app).error(e))
-
+ 
       await runTasks(app)
     }
   }
