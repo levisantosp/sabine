@@ -222,7 +222,7 @@
       "no_pages": "Nada pra mostrar aqui.",
       "embed": {
         "author": "Sua Carreira",
-        "desc": "**Classificação:** `{elo}` — `{rr}RR`\n**Vitórias/Derrotas** (ranqueado): `{ranked_wins}/{ranked_defeats}`\n**Vitórias/Derrotas** (sem classificação): `{unranked_wins}/{unranked_defeats}`\n**Vitórias/Derrotas** (frenético ranqueado): `{ranked_swiftplay_wins}/{ranked_swiftplay_defeats}`\n**Vitórias/Derrotas** (frenético): `{swiftplay_wins}/{swiftplay_defeats}`\n**Vitórias Totais:** `{total_wins}`\n**Derrotas Totais:** `{total_defeats}`\n**Partidas Jogadas:** `{total}`",
+        "desc": "**Pontos:** `{rr}RR`\n**Vitórias/Derrotas** (arena): `{arena_wins}/{arena_defeats}`\n**Vitórias/Derrotas** (ranqueado): `{ranked_wins}/{ranked_defeats}`\n**Vitórias/Derrotas** (sem classificação): `{unranked_wins}/{unranked_defeats}`\n**Vitórias/Derrotas** (frenético ranqueado): `{ranked_swiftplay_wins}/{ranked_swiftplay_defeats}`\n**Vitórias/Derrotas** (frenético): `{swiftplay_wins}/{swiftplay_defeats}`\n**Vitórias Totais:** `{total_wins}`\n**Derrotas Totais:** `{total_defeats}`\n**Partidas Jogadas:** `{total}`",
         "footer": "Página {page}/{pages}"
       },
       "type": {
@@ -236,35 +236,8 @@
         "UNRANKED": "Sem classificação",
         "RANKED_SWIFTPLAY": "Frenético Ranqueado",
         "SWIFTPLAY": "Frenético",
-        "TOURNAMENT": "Torneio"
-      },
-      "elo": {
-        "0": "Sem Classificação",
-        "1": "Ferro 1",
-        "2": "Ferro 2",
-        "3": "Ferro 3",
-        "4": "Bronze 1",
-        "5": "Bronze 2",
-        "6": "Bronze 3",
-        "7": "Prata 1",
-        "8": "Prata 2",
-        "9": "Prata 3",
-        "10": "Ouro 1",
-        "11": "Ouro 2",
-        "12": "Ouro 3",
-        "13": "Platina 1",
-        "14": "Platina 2",
-        "15": "Platina 3",
-        "16": "Diamante 1",
-        "17": "Diamante 2",
-        "18": "Diamante 3",
-        "19": "Ascendente 1",
-        "20": "Ascendente 2",
-        "21": "Ascendente 3",
-        "22": "Imortal 1",
-        "23": "Imortal 2",
-        "24": "Imortal 3",
-        "25": "Radiante"
+        "TOURNAMENT": "Torneio",
+        "ARENA": "Arena"
       }
     },
     "daily": {
@@ -382,7 +355,8 @@
     },
     "match_started": "Partida Iniciada",
     "processing": "<a:loading:809221866434199634> Processando a rodada...\n",
-    "match_finished": "- Partida finalizada"
+    "match_finished": "- Partida finalizada",
+    "send_message": "{user} Resultado da sua partida na Arena:\n{p1} **{score}** {p2}"
   },
   "helper": {
     "palpitate": "Palpitar",

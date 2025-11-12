@@ -222,7 +222,7 @@
       "no_pages": "Nothing to show in this page.",
       "embed": {
         "author": "Your Career",
-        "desc": "**Rank:** `{elo}` — `{rr}RR`\n**Wins/Defeats** (ranked): `{ranked_wins}/{ranked_defeats}`\n**Wins/Defeats** (unranked): `{unranked_wins}/{unranked_defeats}`\n**Wins/Defeats** (ranked swiftplay): `{ranked_swiftplay_wins}/{ranked_swiftplay_defeats}`\n**Wins/Defeats** (swiftplay): `{swiftplay_wins}/{swiftplay_defeats}`\n**Total Wins:** `{total_wins}`\n**Total Defeats:** `{total_defeats}`\n**Matches Played:** `{total}`",
+        "desc": "**Points:**`{rr}RR`\n**Wins/Defeats** (arena): `{arena_wins}/{arena_defeats}`\n**Wins/Defeats** (ranked): `{ranked_wins}/{ranked_defeats}`\n**Wins/Defeats** (unranked): `{unranked_wins}/{unranked_defeats}`\n**Wins/Defeats** (ranked swiftplay): `{ranked_swiftplay_wins}/{ranked_swiftplay_defeats}`\n**Wins/Defeats** (swiftplay): `{swiftplay_wins}/{swiftplay_defeats}`\n**Total Wins:** `{total_wins}`\n**Total Defeats:** `{total_defeats}`\n**Matches Played:** `{total}`",
         "footer": "Page {page}/{pages}"
       },
       "type": {
@@ -236,35 +236,8 @@
         "UNRANKED": "Unranked",
         "RANKED_SWIFTPLAY": "Ranked Swiftplay",
         "SWIFTPLAY": "Swiftplay",
-        "TOURNAMENT": "Tournament"
-      },
-      "elo": {
-        "0": "Unranked",
-        "1": "Iron 1",
-        "2": "Iron 2",
-        "3": "Iron 3",
-        "4": "Bronze 1",
-        "5": "Bronze 2",
-        "6": "Bronze 3",
-        "7": "Silver 1",
-        "8": "Silver 2",
-        "9": "Silver 3",
-        "10": "Gold 1",
-        "11": "Gold 2",
-        "12": "Gold 3",
-        "13": "Platinum 1",
-        "14": "Platinum 2",
-        "15": "Platinum 3",
-        "16": "Diamond 1",
-        "17": "Diamond 2",
-        "18": "Diamond 3",
-        "19": "Ascendant 1",
-        "20": "Ascendant 2",
-        "21": "Ascendant 3",
-        "22": "Immortal 1",
-        "23": "Immortal 2",
-        "24": "Immortal 3",
-        "25": "Radiant"
+        "TOURNAMENT": "Tournament",
+        "ARENA": "Arena"
       }
     },
     "daily": {
@@ -382,7 +355,8 @@
     },
     "match_started": "Match Started",
     "processing": "<a:loading:809221866434199634> Processing the round...\n",
-    "match_finished": "- Match finished"
+    "match_finished": "- Match finished",
+    "send_message": "{user} Your Arena match result:\n{p1} **{score}** {p2}"
   },
   "helper": {
     "palpitate": "Predict",
