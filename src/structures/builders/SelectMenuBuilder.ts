@@ -63,13 +63,23 @@ export default class SelectMenuBuilder extends StringSelectMenuBuilder {
     if(typeof content === 'string') {
       return {
         content: content ?? '',
-        components: [this.toJSON()]
+        components: [
+          {
+            type: 1,
+            components: [this.toJSON()]
+          }
+        ]
       }
     }
     
     else {
       return {
-        components: [this.toJSON()],
+        components: [
+          {
+            type: 1,
+            components: [this.toJSON()]
+          }
+        ],
         ...content
       }
     }

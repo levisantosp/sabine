@@ -65,13 +65,23 @@ export default class ButtonBuilder extends DJSButtonBuilder {
     if(typeof content === 'string') {
       return {
         content: content ?? '',
-        components: [this.toJSON()]
+        components: [
+          {
+            type: 1,
+            components: [this]
+          }
+        ]
       }
     }
 
     else {
       return {
-        components: [this.toJSON()],
+        components: [
+          {
+            type: 1,
+            components: [this]
+          }
+        ],
         ...content
       }
     }
