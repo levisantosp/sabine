@@ -86,8 +86,6 @@ export default class Round extends Match {
     const user1 = await SabineUser.fetch(this.teams[0].user) || new SabineUser(this.teams[0].user)
     const user2 = await SabineUser.fetch(this.teams[1].user) || new SabineUser(this.teams[1].user)
 
-    console.log(this.rounds[0].summary)
-
     if(this.mode === 'arena') {
       const max = Math.max(score1, score2)
 
