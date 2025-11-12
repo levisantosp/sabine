@@ -25,6 +25,7 @@ model User {
   unranked_wins            Int           @default(0) @db.SmallInt
   swiftplay_wins           Int           @default(0) @db.SmallInt
   ranked_swiftplay_wins    Int           @default(0) @db.SmallInt
+  arena_defeats            Int           @default(0) @db.SmallInt
   ranked_defeats           Int           @default(0) @db.SmallInt
   unranked_defeats         Int           @default(0) @db.SmallInt
   swiftplay_defeats        Int           @default(0) @db.SmallInt

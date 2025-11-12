@@ -58,6 +58,7 @@ export class SabineUser implements User {
   public unranked_wins: number = 0
   public swiftplay_wins: number = 0
   public ranked_swiftplay_wins: number = 0
+  public arena_defeats: number = 0
   public ranked_defeats: number = 0
   public unranked_defeats: number = 0
   public swiftplay_defeats: number = 0
