@@ -238,7 +238,8 @@
         "SWIFTPLAY": "Swiftplay",
         "TOURNAMENT": "Tournament",
         "ARENA": "Arena"
-      }
+      },
+      "seed": "Seed"
     },
     "daily": {
       "has_been_claimed": "You have already collected your daily reward. Try again {t}",

@@ -238,7 +238,8 @@
         "SWIFTPLAY": "Frenético",
         "TOURNAMENT": "Torneio",
         "ARENA": "Arena"
-      }
+      },
+      "seed": "Semente"
     },
     "daily": {
       "has_been_claimed": "Você já coletou sua recompensa diária. Tente novamente {t}",
