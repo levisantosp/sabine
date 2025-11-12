@@ -63,7 +63,7 @@
         "title": "Tabela de Classificação",
         "author": "Página {page}/{pages}",
         "footer": "Sua posição: #{pos}",
-        "field": "`{rank}` — `{rr}RR`"
+        "field": "Classificação: `{rr}RR`"
       },
       "desc": "A tabela é atualizada a cada 10 minutos\nÚltima atualização: {last}"
     },
@@ -331,6 +331,12 @@
       "select_agent": "Selecione um agent para **{player}**.",
       "agent_selected": "**{p}** jogará de **{agent}**.",
       "map": "Mapa Atual: `{map}`"
+    },
+    "summary": {
+      "match_not_found": "Esta partida não pôde ser encontrada. Verifique a semente e tente novamente.",
+      "embed": {
+        "title": "Resumo (Modo Arena)"
+      }
     }
   },
   "simulator": {
