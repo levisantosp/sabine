@@ -1,6 +1,6 @@
 import { Collection, Message, REST, Routes } from 'discord.js'
 import Service from '../api/index.ts'
-import t, { type Args, type Content } from '../i18n/index.ts'
+import t from '../i18n/index.ts'
 import type { MatchesData } from '../types.ts'
 import createListener from '../structures/app/createListener.ts'
 import Logger from '../util/Logger.ts'
