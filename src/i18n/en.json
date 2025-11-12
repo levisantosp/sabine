@@ -355,7 +355,8 @@
       "promote": "Promote",
       "remove": "Remove",
       "select_agent": "Select an agent for **{player}**.",
-      "agent_selected": "**{p}** will play as **{agent}**."
+      "agent_selected": "**{p}** will play as **{agent}**.",
+      "map": "Current Map: `{map}`"
     }
   },
   "simulator": {
