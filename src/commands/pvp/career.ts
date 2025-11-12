@@ -64,8 +64,10 @@ export default createCommand({
     const ranked_defeats = ctx.db.user.ranked_defeats
     const ranked_swiftplay_defeats = ctx.db.user.ranked_swiftplay_defeats
     const swiftplay_defeats = ctx.db.user.swiftplay_defeats
-    const total_wins = ranked_wins + unranked_wins + swiftplay_wins + ranked_swiftplay_wins
-    const total_defeats = ranked_defeats + unranked_defeats + swiftplay_defeats + ranked_swiftplay_defeats
+    const arena_wins = ctx.db.user.arena_wins
+    const arena_defeats = ctx.db.user.arena_defeats
+    const total_wins = ranked_wins + unranked_wins + swiftplay_wins + ranked_swiftplay_wins + arena_wins
+    const total_defeats = ranked_defeats + unranked_defeats + swiftplay_defeats + ranked_swiftplay_defeats + arena_defeats
 
     let content = t(
       'commands.career.embed.desc',
@@ -81,8 +83,9 @@ export default createCommand({
         total_wins,
         total_defeats,
         total: matches.length,
-        elo: t(`commands.career.elo.${ctx.db.user.elo}`),
-        rr: ctx.db.user.rank_rating
+        rr: ctx.db.user.rank_rating,
+        arena_defeats,
+        arena_wins
       }
     ) + '\n\n'
 
@@ -109,6 +112,17 @@ export default createCommand({
           user: `<@${match.teams[1].user}>`,
           points: match.points! > 0 ? `+${match.points}` : match.points
         })}\n`
+      }
+      else if(match.mode === 'ARENA') {
+        const timestamp = (match.when.getTime() / 1000).toFixed(0)
+
+        const type = match.winner ? 'win' : 'defeat'
+
+        content += `- [<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] **[${t(`commands.career.mode.${match.mode}`)}]** ${t(`commands.career.type.ranked_${type}`, {
+          score: `${match.teams[0].score}-${match.teams[1].score}`,
+          user: `<@${match.teams[1].user}>`,
+          points: match.points! > 0 ? `+${match.points}` : match.points
+        })}\n  - ${t('commands.career.seed')}: \`${match.id}\`\n`
       }
       else {
         const timestamp = (match.when.getTime() / 1000).toFixed(0)
@@ -187,8 +201,10 @@ export default createCommand({
     const ranked_defeats = ctx.db.user.ranked_defeats
     const ranked_swiftplay_defeats = ctx.db.user.ranked_swiftplay_defeats
     const swiftplay_defeats = ctx.db.user.swiftplay_defeats
-    const total_wins = ranked_wins + unranked_wins + swiftplay_wins + ranked_swiftplay_wins
-    const total_defeats = ranked_defeats + unranked_defeats + swiftplay_defeats + ranked_swiftplay_defeats
+    const arena_wins = ctx.db.user.arena_wins
+    const arena_defeats = ctx.db.user.arena_defeats
+    const total_wins = ranked_wins + unranked_wins + swiftplay_wins + ranked_swiftplay_wins + arena_wins
+    const total_defeats = ranked_defeats + unranked_defeats + swiftplay_defeats + ranked_swiftplay_defeats + arena_defeats
 
     let content = t(
       'commands.career.embed.desc',
@@ -204,8 +220,9 @@ export default createCommand({
         total_wins,
         total_defeats,
         total: matches.length,
-        elo: t(`commands.career.elo.${ctx.db.user.elo}`),
-        rr: ctx.db.user.rank_rating
+        rr: ctx.db.user.rank_rating,
+        arena_defeats,
+        arena_wins
       }
     ) + '\n\n'
 
@@ -232,6 +249,17 @@ export default createCommand({
           user: `<@${match.teams[1].user}>`,
           points: match.points! > 0 ? `+${match.points}` : match.points
         })}\n`
+      }
+      else if(match.mode === 'ARENA') {
+        const timestamp = (match.when.getTime() / 1000).toFixed(0)
+
+        const type = match.winner ? 'win' : 'defeat'
+
+        content += `- [<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>] **[${t(`commands.career.mode.${match.mode}`)}]** ${t(`commands.career.type.ranked_${type}`, {
+          score: `${match.teams[0].score}-${match.teams[1].score}`,
+          user: `<@${match.teams[1].user}>`,
+          points: match.points! > 0 ? `+${match.points}` : match.points
+        })}\n  - ${t('commands.career.seed')}: \`${match.id}\`\n`
       }
       else {
         const timestamp = (match.when.getTime() / 1000).toFixed(0)
