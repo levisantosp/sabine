@@ -144,8 +144,13 @@ export default createCommand({
 
         const page = ctx.args[1] as number ?? 1
 
+        const map = ctx.t('commands.arena.map', { map: await ctx.app.redis.get('arena:map') })
+
         const container = new ContainerBuilder()
           .setAccentColor(6719296)
+          .addTextDisplayComponents(
+            text => text.setContent(map)
+          )
           .addTextDisplayComponents(
             text => text.setContent(ctx.t('commands.arena.your_players'))
           )
@@ -370,8 +375,13 @@ export default createCommand({
 
       const page = 1
 
+      const map = t('commands.arena.map', { map: await ctx.app.redis.get('arena:map') })
+
       const container = new ContainerBuilder()
         .setAccentColor(6719296)
+        .addTextDisplayComponents(
+          text => text.setContent(map)
+        )
         .addTextDisplayComponents(
           text => text.setContent(t('commands.arena.your_players'))
         )
@@ -513,8 +523,13 @@ export default createCommand({
 
       const page = 1
 
+      const map = t('commands.arena.map', { map: await ctx.app.redis.get('arena:map') })
+
       const container = new ContainerBuilder()
         .setAccentColor(6719296)
+        .addTextDisplayComponents(
+          text => text.setContent(map)
+        )
         .addTextDisplayComponents(
           text => text.setContent(t('commands.arena.your_players'))
         )
@@ -636,8 +651,13 @@ export default createCommand({
 
       const page = Number(ctx.args[2])
 
+      const map = t('commands.arena.map', { map: await ctx.app.redis.get('arena:map') })
+
       const container = new ContainerBuilder()
         .setAccentColor(6719296)
+        .addTextDisplayComponents(
+          text => text.setContent(map)
+        )
         .addTextDisplayComponents(
           text => text.setContent(t('commands.arena.your_players'))
         )
