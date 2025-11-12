@@ -33,10 +33,24 @@ if(mapIndex >= 0) {
 
 const map = maps[Math.floor(Math.random() * maps.length)]
 
-// await redis.set('arena:map', map)
-await redis.set('arena:map', 'Ascent')
+if(!currentMap) await redis.set('arena:map', map)
 
 const arenaMatchQueue = new Bull<ArenaQueue>('arena', { redis: process.env.REDIS_URL })
+const changeMapQueue = new Bull('arena:map', { redis: process.env.REDIS_URL })
+
+changeMapQueue.process('arena:map', async() => {
+  const currentMap = await redis.get('arena:map')
+  const mapIndex = valorant_maps.findIndex(m => m.name === currentMap)
+  const maps = valorant_maps.filter(m => m.current_map_pool).map(m => m.name)
+
+  if(mapIndex >= 0) {
+    maps.splice(mapIndex, 1)
+  }
+
+  const map = maps[Math.floor(Math.random() * maps.length)]
+
+  await redis.set('arena:map', map)
+})
 
 const processArenaQueue = async() => {
   try {
@@ -183,9 +197,26 @@ if(!webhook) {
   Logger.warn('There is no webhook')
 }
 
-manager.on('shardCreate', shard => {
+manager.on('shardCreate', async shard => {
   if(shard.id === 0) {
     setInterval(processArenaQueue, 5000)
+
+    const oldJobs = await changeMapQueue.getRepeatableJobs()
+
+    for(const job of oldJobs) {
+      if(job.id === 'change:map') {
+        await changeMapQueue.removeRepeatableByKey(job.key)
+      }
+    }
+
+    await changeMapQueue.add('arena:map', {}, {
+      jobId: 'change:map',
+      repeat: {
+        cron: '0 0 * * 0' // midnight every sunday
+      },
+      removeOnComplete: true,
+      removeOnFail: true
+    })
   }
 
   shard.on('disconnect', async() => {
