@@ -181,6 +181,16 @@ export default createCommand({
       ctx.db.user.coins -= BigInt(ctx.args[5])
       ctx.db.user.trade_time = new Date(Date.now() + (60 * 60 * 1000))
 
+      if(
+        user.arena_metadata?.lineup
+          .some(line => line.player === player.id.toString())
+      ) {
+        const index = user.arena_metadata.lineup
+          .findIndex(line => line.player === player.id.toString())
+
+        user.arena_metadata.lineup.splice(index, 1)
+      }
+
       await app.prisma.transaction.createMany({
         data: [
           {

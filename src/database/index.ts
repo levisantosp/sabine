@@ -296,6 +296,16 @@ export class SabineUser implements User {
       }
     })
 
+    if(
+      this.arena_metadata?.lineup
+        .some(line => line.player === id)
+    ) {
+      const index = this.arena_metadata.lineup
+        .findIndex(line => line.player === id)
+
+      this.arena_metadata.lineup.splice(index, 1)
+    }
+
     await this.save()
 
     return this
