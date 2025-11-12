@@ -260,6 +260,15 @@ export default createCommand({
       ctx.setFlags(64)
 
       if(
+        ctx.db.user.arena_metadata?.lineup
+          .some(line => line.player === player?.id.toString())
+      ) {
+        ctx.setFlags(64)
+
+        return await ctx.reply('commands.duel.duplicated_cards')
+      }
+
+      if(
         (
           !ctx.db.user.active_players.includes(ctx.args[3]) &&
           !ctx.db.user.reserve_players.includes(ctx.args[3])
@@ -491,6 +500,15 @@ export default createCommand({
       const player = ctx.app.players.get(ctx.args[3])
 
       if(!agent || !player) return
+      
+      if(
+        ctx.db.user.arena_metadata?.lineup
+          .some(line => line.agent.name === agent.name)
+      ) {
+        ctx.setFlags(64)
+
+        return await ctx.reply('commands.duel.duplicated_agent')
+      }
 
       if(
         !ctx.db.user.arena_metadata ||
