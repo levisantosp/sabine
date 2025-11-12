@@ -324,6 +324,8 @@ export default class Round extends Match {
         await Promise.allSettled([user1.save(), user2.save()])
       }
     }
+
+    return this
   }
 
   private async firstStep(duels: number) {
