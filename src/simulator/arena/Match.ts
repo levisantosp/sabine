@@ -86,7 +86,6 @@ type RoundResult = {
 
 type MatchOptions = {
   teams: Team[]
-  t: <T extends Content>(content: T, args?: Args) => string
   mode: 'arena'
   map: string
 }
@@ -95,7 +94,6 @@ export default class Match {
   public rounds: RoundResult[] = []
   public teams: Team[] = []
   public finished: boolean = false
-  public t: <T extends Content>(content: T, args?: Args) => string
   public readonly mode: 'arena'
   public maxScore: number = 0
   public switchSidesAt: number = 12
@@ -105,7 +103,6 @@ export default class Match {
 
   public constructor(options: MatchOptions) {
     this.teams = options.teams
-    this.t = options.t
     this.mode = options.mode
     this.options = options
     this.map = options.map
