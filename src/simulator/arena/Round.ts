@@ -1,5 +1,4 @@
-import type { MessageEditOptions, TextChannel } from 'discord.js'
-import { valorant_agents, valorant_maps, valorant_weapons } from '../../config.ts'
+import { valorant_maps, valorant_weapons } from '../../config.ts'
 import { prisma, SabineUser } from '../../database/index.ts'
 import Match, { type TeamRoster, type KillEvent } from './Match.ts'
 import Player from './Player.ts'
@@ -102,6 +101,32 @@ export default class Round extends Match {
         user2.arena_defeats += 1
         user2.rank_rating -= pts - 5
 
+        if(user2.rank_rating < 0) {
+          user2.rank_rating = 0
+        }
+
+        const stats = {
+          stats: [
+            ...this.teams[0].roster.map(p => ({
+              id: p.id.toString(),
+              kills: p.kills,
+              deaths: p.deaths,
+              agent: p.agent.name
+            })),
+            ...this.teams[1].roster.map(p => ({
+              id: p.id.toString(),
+              kills: p.kills,
+              deaths: p.deaths,
+              agent: p.agent.name
+            }))
+          ],
+          map: this.mapImage,
+          teams: [
+            this.teams[0].name,
+            this.teams[1].name
+          ]
+        }
+
         await Promise.allSettled([
           prisma.match.create({
             data: {
@@ -121,7 +146,7 @@ export default class Round extends Match {
                   }
                 ]
               },
-              metadata: this.rounds.map(r => r.summary)
+              metadata: stats
             }
           }),
           prisma.match.create({
@@ -142,7 +167,7 @@ export default class Round extends Match {
                   }
                 ]
               },
-              metadata: this.rounds.map(r => r.summary)
+              metadata: stats
             }
           })])
 
@@ -161,6 +186,32 @@ export default class Round extends Match {
         user1.arena_defeats += 1
         user1.rank_rating -= pts - 5
 
+        if(user1.rank_rating < 0) {
+          user1.rank_rating = 0
+        }
+
+        const stats = {
+          stats: [
+            ...this.teams[0].roster.map(p => ({
+              id: p.id.toString(),
+              kills: p.kills,
+              deaths: p.deaths,
+              agent: p.agent.name
+            })),
+            ...this.teams[1].roster.map(p => ({
+              id: p.id.toString(),
+              kills: p.kills,
+              deaths: p.deaths,
+              agent: p.agent.name
+            }))
+          ],
+          map: this.mapImage,
+          teams: [
+            this.teams[0].name,
+            this.teams[1].name
+          ]
+        }
+
         await Promise.allSettled([
           prisma.match.create({
             data: {
@@ -180,7 +231,7 @@ export default class Round extends Match {
                   }
                 ]
               },
-              metadata: this.rounds.map(r => r.summary)
+              metadata: stats
             }
           }),
           prisma.match.create({
@@ -201,7 +252,7 @@ export default class Round extends Match {
                   }
                 ]
               },
-              metadata: this.rounds.map(r => r.summary)
+              metadata: stats
             }
           })
         ])
@@ -222,6 +273,32 @@ export default class Round extends Match {
         user2.arena_defeats += 1
         user2.rank_rating -= pts - 5
 
+        if(user2.rank_rating < 0) {
+          user2.rank_rating = 0
+        }
+
+        const stats = {
+          stats: [
+            ...this.teams[0].roster.map(p => ({
+              id: p.id.toString(),
+              kills: p.kills,
+              deaths: p.deaths,
+              agent: p.agent.name
+            })),
+            ...this.teams[1].roster.map(p => ({
+              id: p.id.toString(),
+              kills: p.kills,
+              deaths: p.deaths,
+              agent: p.agent.name
+            }))
+          ],
+          map: this.mapImage,
+          teams: [
+            this.teams[0].name,
+            this.teams[1].name
+          ]
+        }
+
         await Promise.allSettled([
           prisma.match.create({
             data: {
@@ -241,7 +318,7 @@ export default class Round extends Match {
                   }
                 ]
               },
-              metadata: this.rounds.map(r => r.summary)
+              metadata: stats
             }
           }),
           prisma.match.create({
@@ -262,7 +339,7 @@ export default class Round extends Match {
                   }
                 ]
               },
-              metadata: this.rounds.map(r => r.summary)
+              metadata: stats
             }
           })
         ])
@@ -281,6 +358,32 @@ export default class Round extends Match {
         user2.fates += 5
         user1.arena_defeats += 1
         user1.rank_rating -= pts - 5
+
+        if(user1.rank_rating < 0) {
+          user1.rank_rating = 0
+        }
+
+        const stats = {
+          stats: [
+            ...this.teams[0].roster.map(p => ({
+              id: p.id.toString(),
+              kills: p.kills,
+              deaths: p.deaths,
+              agent: p.agent.name
+            })),
+            ...this.teams[1].roster.map(p => ({
+              id: p.id.toString(),
+              kills: p.kills,
+              deaths: p.deaths,
+              agent: p.agent.name
+            }))
+          ],
+          map: this.mapImage,
+          teams: [
+            this.teams[0].name,
+            this.teams[1].name
+          ]
+        }
 
         await Promise.allSettled([
           prisma.match.create({
@@ -301,7 +404,7 @@ export default class Round extends Match {
                   }
                 ]
               },
-              metadata: this.rounds.map(r => r.summary)
+              metadata: stats
             }
           }),
           prisma.match.create({
@@ -322,7 +425,7 @@ export default class Round extends Match {
                   }
                 ]
               },
-              metadata: this.rounds.map(r => r.summary)
+              metadata: stats
             }
           })
         ])
@@ -367,29 +470,11 @@ export default class Round extends Match {
       })
     }
 
-    for(const kill of kills) {
-      summary.push(
-        this.t('simulator.kill', {
-          t1: this.teams[kill.killerIndex].tag,
-          p1: kill.killer.name,
-          t2: this.teams[kill.victimIndex].tag,
-          p2: kill.victim.name,
-          w: kill.weapon
-        })
-      )
-    }
-
     const playersAlive1 = this.teams[0].roster.filter(p => p.life > 0).length > 0
     const playersAlive2 = this.teams[1].roster.filter(p => p.life > 0).length > 0
 
     if(!playersAlive1 || !playersAlive2) {
       const winningTeam = playersAlive1 ? 0 : 1
-
-      summary.push(
-        this.t('simulator.won_by_elimination', {
-          t: this.teams[winningTeam].name
-        })
-      )
 
       this.rounds.push({
         winning_team: winningTeam,
@@ -445,14 +530,6 @@ export default class Round extends Match {
     const defenderChance = defenderOvr / totalOvr
 
     let win_type: 'ELIMINATION' | 'BOMB' | 'DEFUSE' | 'TIME'
-
-    if(bombPlanted) {
-      summary.push(
-        this.t('simulator.spike_planted', {
-          bomb: site
-        })
-      )
-    }
 
     if(bombPlanted) {
       const random = Math.random()
@@ -516,25 +593,7 @@ export default class Round extends Match {
         alivePlayers--
       }
 
-      for(const kill of kills) {
-        summary.push(
-          this.t('simulator.kill', {
-            t1: this.teams[kill.killerIndex].tag,
-            p1: kill.killer.name,
-            t2: this.teams[kill.victimIndex].tag,
-            p2: kill.victim.name,
-            w: kill.weapon
-          })
-        )
-      }
-
       const winning_team = this.teams[0].roster.filter(p => p.life > 0).length > 0 ? 0 : 1
-
-      summary.push(
-        this.t('simulator.won_by_elimination', {
-          t: this.teams[winning_team].name
-        })
-      )
 
       this.rounds.push({
         kills,
@@ -604,25 +663,7 @@ export default class Round extends Match {
         alivePlayers--
       }
 
-      for(const kill of kills) {
-        summary.push(
-          this.t('simulator.kill', {
-            t1: this.teams[kill.killerIndex].tag,
-            p1: kill.killer.name,
-            t2: this.teams[kill.victimIndex].tag,
-            p2: kill.victim.name,
-            w: kill.weapon
-          })
-        )
-      }
-
       const winning_team = this.teams.findIndex(t => t.side === 'ATTACK')
-
-      summary.push(
-        this.t('simulator.spike_detonated', {
-          t: this.teams[winning_team].name
-        })
-      )
 
       this.rounds.push({
         kills,
@@ -693,28 +734,7 @@ export default class Round extends Match {
         alivePlayers--
       }
 
-      for(const kill of kills) {
-        summary.push(
-          this.t('simulator.kill', {
-            t1: this.teams[kill.killerIndex].tag,
-            p1: kill.killer.name,
-            t2: this.teams[kill.victimIndex].tag,
-            p2: kill.victim.name,
-            w: kill.weapon
-          })
-        )
-      }
-
       const winning_team = this.teams.findIndex(t => t.side === 'DEFENSE')
-
-      summary.push(
-        this.t(
-          'simulator.spike_defused',
-          {
-            t: this.teams[winning_team].name
-          }
-        )
-      )
 
       this.rounds.push({
         kills,
@@ -786,25 +806,7 @@ export default class Round extends Match {
         alivePlayers--
       }
 
-      for(const kill of kills) {
-        summary.push(
-          this.t('simulator.kill', {
-            t1: this.teams[kill.killerIndex].tag,
-            p1: kill.killer.name,
-            t2: this.teams[kill.victimIndex].tag,
-            p2: kill.victim.name,
-            w: kill.weapon
-          })
-        )
-      }
-
       const winning_team = this.teams.findIndex(t => t.side === 'DEFENSE')
-
-      summary.push(
-        this.t('simulator.spike_not_planted', {
-          t: this.teams[winning_team].name
-        })
-      )
 
       this.rounds.push({
         kills,
