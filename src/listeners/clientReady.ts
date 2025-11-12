@@ -614,7 +614,7 @@ export default createListener({
     
     if(!app.shard || !app.shard.ids[0]) {
       await app.postCommands()
-      
+
       arenaMatchQueue.process('arena', async job => {
         const player1 = await SabineUser.fetch(job.data.parsedData1.userId)
         const player2 = await SabineUser.fetch(job.data.parsedData2.userId)
@@ -656,16 +656,6 @@ export default createListener({
           await Promise.allSettled([player1.save(), player2.save()])
         }
 
-        const translate = (content: Content, args?: Args) => {
-          return t(
-            player1.lang === player2.lang
-            ? player1.lang
-            : 'en',
-            content,
-            args
-          )
-        }
-
         const map = await app.redis.get('arena:map')
 
         if(!map) return
@@ -704,8 +694,7 @@ export default createListener({
             }
           ],
           map,
-          mode: 'arena',
-          t: translate
+          mode: 'arena'
         })
 
         while(!match.finished) {
