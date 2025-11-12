@@ -215,7 +215,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.predictions.title'))
-          .setThumb((await app.getUser(array[0].id!))?.avatarURL()!)
+          .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -300,7 +300,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.coins.title'))
-          .setThumb((await app.getUser(array[0].id!))?.avatarURL()!)
+          .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -360,13 +360,7 @@ export default createCommand({
 
         let users = value.data
           .filter((user: any) => ctx.guild!.members.cache.get(user.id))
-          .sort((a: any, b: any) => {
-            if(b.elo !== a.elo) {
-              return b.elo - a.elo
-            }
-
-            return b.rank_rating - a.rank_rating
-          })
+          .sort((a: any, b: any) => b.rank_rating - a.rank_rating)
 
         const array = users
 
@@ -391,7 +385,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.rating.title'))
-          .setThumb((await app.getUser(array[0].id!))?.avatarURL()!)
+          .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -412,7 +406,6 @@ export default createCommand({
           else if(pos === 3) field = `🥉 - ${!u ? '*unknown*' : u.username}`
 
           embed.addField(field, t('commands.leaderboard.rating.field', {
-            rank: t(`commands.career.elo.${user.elo}`),
             rr: user.rank_rating
           }))
         }
@@ -477,7 +470,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.predictions.title'))
-          .setThumb((await app.getUser(array[0].id!))?.avatarURL()!)
+          .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -560,7 +553,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.coins.title'))
-          .setThumb((await app.getUser(array[0].id!))?.avatarURL()!)
+          .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -618,13 +611,7 @@ export default createCommand({
         const value = JSON.parse((await app.redis.get('leaderboard:rating'))!)
 
         let users = value.data
-          .sort((a: any, b: any) => {
-            if(b.elo !== a.elo) {
-              return b.elo - a.elo
-            }
-
-            return b.rank_rating - a.rank_rating
-          })
+          .sort((a: any, b: any) => b.rank_rating - a.rank_rating)
 
         const array = users
 
@@ -649,7 +636,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.rating.title'))
-          .setThumb((await app.getUser(array[0].id!))?.avatarURL()!)
+          .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -669,7 +656,6 @@ export default createCommand({
           else if(pos === 3) field = `🥉 - ${!u ? '*unknown*' : u.username}`
 
           embed.addField(field, t('commands.leaderboard.rating.field', {
-            rank: t(`commands.career.elo.${user.elo}`),
             rr: user.rank_rating
           }))
         }
@@ -736,7 +722,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.predictions.title'))
-          .setThumb((await app.getUser(array[0].id!))?.avatarURL()!)
+          .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -818,7 +804,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.coins.title'))
-          .setThumb((await app.getUser(array[0].id!))?.avatarURL()!)
+          .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -878,13 +864,7 @@ export default createCommand({
 
         let users = value.data
           .filter((user: any) => ctx.guild!.members.cache.get(user.id))
-          .sort((a: any, b: any) => {
-            if(b.elo !== a.elo) {
-              return b.elo - a.elo
-            }
-
-            return b.rank_rating - a.rank_rating
-          })
+          .sort((a: any, b: any) => b.rank_rating - a.rank_rating)
 
         const array = users
 
@@ -906,7 +886,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.rating.title'))
-          .setThumb((await app.getUser(array[0].id!))?.avatarURL()!)
+          .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -927,7 +907,6 @@ export default createCommand({
           else if(pos === 3) field = `🥉 - ${!u ? '*unknown*' : u.username}`
 
           embed.addField(field, t('commands.leaderboard.rating.field', {
-            rank: t(`commands.career.elo.${user.elo}`),
             rr: user.rank_rating
           }))
         }
@@ -989,7 +968,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.predictions.title'))
-          .setThumb((await app.getUser(array[0].id!))?.avatarURL()!)
+          .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -1069,7 +1048,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.coins.title'))
-          .setThumb((await app.getUser(array[0].id!))?.avatarURL()!)
+          .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -1127,13 +1106,7 @@ export default createCommand({
       else if(ctx.args[5] === 'rating') {
         const value = JSON.parse((await app.redis.get('leaderboard:rating'))!)
 
-        let users = value.data.sort((a: any, b: any) => {
-          if(b.elo !== a.elo) {
-            return b.elo - a.elo
-          }
-
-          return b.rank_rating - a.rank_rating
-        })
+        let users = value.data.sort((a: any, b: any) => b.rank_rating - a.rank_rating)
 
         const array = users
 
@@ -1155,7 +1128,7 @@ export default createCommand({
             })
           })
           .setTitle(t('commands.leaderboard.rating.title'))
-          .setThumb((await app.getUser(array[0].id!))?.avatarURL()!)
+          .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
           .setDesc(t('commands.leaderboard.desc', {
             last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
           }))
@@ -1176,7 +1149,6 @@ export default createCommand({
           else if(pos === 3) field = `🥉 - ${!u ? '*unknown*' : u.username}`
 
           embed.addField(field, t('commands.leaderboard.rating.field', {
-            rank: t(`commands.career.elo.${user.elo}`),
             rr: user.rank_rating
           }))
         }
