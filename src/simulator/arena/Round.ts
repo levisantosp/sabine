@@ -92,8 +92,8 @@ export default class Round extends Match {
       if(max === 13 && score1 === max) {
         const diff = score1 - score2
         const maxDiff = 13
-        const minPts = 10
-        const maxPts = 40
+        const minPts = 20
+        const maxPts = 60
         const pts = Math.round(minPts + (diff - 1) * ((maxPts - minPts) / (maxDiff - 1)))
 
         user1.arena_wins += 1
@@ -120,7 +120,8 @@ export default class Round extends Match {
                     score: score2
                   }
                 ]
-              }
+              },
+              metadata: this.rounds.map(r => r.summary)
             }
           }),
           prisma.match.create({
@@ -140,7 +141,8 @@ export default class Round extends Match {
                     score: score1
                   }
                 ]
-              }
+              },
+              metadata: this.rounds.map(r => r.summary)
             }
           })])
 
@@ -149,8 +151,8 @@ export default class Round extends Match {
       else if(max === 13 && score2 === max) {
         const diff = score2 - score1
         const maxDiff = 13
-        const minPts = 10
-        const maxPts = 40
+        const minPts = 20
+        const maxPts = 60
         const pts = Math.round(minPts + (diff - 1) * ((maxPts - minPts) / (maxDiff - 1)))
 
         user2.arena_wins += 1
@@ -177,7 +179,8 @@ export default class Round extends Match {
                     score: score1,
                   }
                 ]
-              }
+              },
+              metadata: this.rounds.map(r => r.summary)
             }
           }),
           prisma.match.create({
@@ -197,7 +200,8 @@ export default class Round extends Match {
                     score: score2,
                   }
                 ]
-              }
+              },
+              metadata: this.rounds.map(r => r.summary)
             }
           })
         ])
@@ -208,8 +212,8 @@ export default class Round extends Match {
       else if(max > 13 && score1 === max) {
         const diff = score1 - score2
         const maxDiff = 13
-        const minPts = 10
-        const maxPts = 40
+        const minPts = 20
+        const maxPts = 60
         const pts = Math.round(minPts + (diff - 1) * ((maxPts - minPts) / (maxDiff - 1)))
 
         user1.arena_wins += 1
@@ -236,7 +240,8 @@ export default class Round extends Match {
                     score: score2,
                   }
                 ]
-              }
+              },
+              metadata: this.rounds.map(r => r.summary)
             }
           }),
           prisma.match.create({
@@ -256,7 +261,8 @@ export default class Round extends Match {
                     score: score1,
                   }
                 ]
-              }
+              },
+              metadata: this.rounds.map(r => r.summary)
             }
           })
         ])
@@ -266,8 +272,8 @@ export default class Round extends Match {
       else if(max > 13 && score2 === max) {
         const diff = score2 - score1
         const maxDiff = 13
-        const minPts = 10
-        const maxPts = 40
+        const minPts = 20
+        const maxPts = 60
         const pts = Math.round(minPts + (diff - 1) * ((maxPts - minPts) / (maxDiff - 1)))
 
         user2.arena_wins += 1
@@ -294,7 +300,8 @@ export default class Round extends Match {
                     score: score1,
                   }
                 ]
-              }
+              },
+              metadata: this.rounds.map(r => r.summary)
             }
           }),
           prisma.match.create({
@@ -314,7 +321,8 @@ export default class Round extends Match {
                     score: score1,
                   }
                 ]
-              }
+              },
+              metadata: this.rounds.map(r => r.summary)
             }
           })
         ])
