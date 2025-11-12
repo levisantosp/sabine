@@ -100,7 +100,7 @@ const processArenaQueue = async() => {
       await processArenaQueue()
     }
   }
-  catch(e) {
+  catch (e) {
     Logger.error(e as Error)
   }
 }
