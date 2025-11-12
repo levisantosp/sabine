@@ -611,10 +611,10 @@ export default createListener({
         type: 4
       })
     }
-
-    await app.postCommands()
     
     if(!app.shard || !app.shard.ids[0]) {
+      await app.postCommands()
+      
       arenaMatchQueue.process('arena', async job => {
         const player1 = await SabineUser.fetch(job.data.parsedData1.userId)
         const player2 = await SabineUser.fetch(job.data.parsedData2.userId)
@@ -666,7 +666,11 @@ export default createListener({
           )
         }
 
-        const match = new Match({
+        const map = await app.redis.get('arena:map')
+
+        if(!map) return
+
+        let match = new Match({
           teams: [
             {
               roster: player1.arena_metadata.lineup.map(l => {
@@ -699,16 +703,54 @@ export default createListener({
               user: player2.id
             }
           ],
-          map: (await app.redis.get('map'))!,
+          map,
           mode: 'arena',
           t: translate
         })
 
         while(!match.finished) {
-          await match.start()
+          match = await match.start()
         }
 
-        console.log(`match finished with ${match.rounds.length} rounds`)
+        const messages: Promise<unknown>[] = []
+
+        if(job.data.parsedData1.channelId) {
+          const score1 = match.rounds.filter(r => r.winning_team === 0).length
+          const score2 = match.rounds.filter(r => r.winning_team === 1).length
+
+          messages.push(
+            rest.post(Routes.channelMessages(job.data.parsedData1.channelId), {
+              body: {
+                content: t(player1.lang, 'simulator.send_message', {
+                  p1: `<@${player1.id}>`,
+                  p2: `<@${player2.id}>`,
+                  score: `${score1}-${score2}`,
+                  user: `<@${player1.id}>`
+                })
+              }
+            })
+          )
+        }
+
+        if(job.data.parsedData2.channelId) {
+          const score1 = match.rounds.filter(r => r.winning_team === 0).length
+          const score2 = match.rounds.filter(r => r.winning_team === 1).length
+
+          messages.push(
+            rest.post(Routes.channelMessages(job.data.parsedData2.channelId), {
+              body: {
+                content: t(player2.lang, 'simulator.send_message', {
+                  p1: `<@${player1.id}>`,
+                  p2: `<@${player2.id}>`,
+                  score: `${score1}-${score2}`,
+                  user: `<@${player2.id}>`
+                })
+              }
+            })
+          )
+        }
+
+        await Promise.allSettled(messages)
       })
 
       app.queue.process('reminder', async job => {
