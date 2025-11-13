@@ -309,7 +309,7 @@
         "silver": "Silver Packs: `{count}`",
         "gold": "Gold Packs: `{count}`",
         "platinum": "Platinum Packs: `{count}`",
-        "diamond": "Diamond  Packs: `{count}`",
+        "diamond": "Diamond Packs: `{count}`",
         "ascendant": "Ascendant Packs: `{count}`",
         "immortal": "Immortal Packs: `{count}`",
         "radiant": "Radiant Packs: `{count}`"
@@ -336,6 +336,25 @@
       "match_not_found": "This match could not be found. Check the seed and try again.",
       "embed": {
         "title": "Summary (Arena Mode)"
+      }
+    },
+    "shop": {
+      "container": {
+        "title": "### Card Pack Shop",
+        "text": {
+          "gold": "(`{price}` fates) Gold Pack — 73-77 overall",
+          "platinum": "(`{price}` fates) Platinum Pack — 78-82 overall",
+          "diamond": "(`{price}` fates) Diamond Pack — 83-86 overall",
+          "ascendant": "(`{price}` fates) Ascendant Pack — 87-90 overall"
+        },
+        "button": "Buy"
+      },
+      "not_enough": "You do not have enough fates.",
+      "success": {
+        "gold": "You bought a **Gold** pack for **{fates} fates** succesfully!",
+        "platinum": "You bought a **Platinum** pack for **{fates} fates** succesfully!",
+        "diamond": "You bought a **Diamond** pack for **{fates} fates** succesfully!",
+        "ascendant": "You bought a **Ascendant** pack for **{fates} fates** succesfully!"
       }
     }
   },

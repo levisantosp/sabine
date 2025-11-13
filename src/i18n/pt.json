@@ -337,6 +337,25 @@
       "embed": {
         "title": "Resumo (Modo Arena)"
       }
+    },
+    "shop": {
+      "container": {
+        "title": "### Loja de Pacotes de Cartas",
+        "text": {
+          "gold": "(`{price}` destinos) Pacote Ouro — 73-77 overall",
+          "platinum": "(`{price}` destinos) Pacote Platina — 78-82 overall",
+          "diamond": "(`{price}` destinos) Pacote Diamante — 83-86 overall",
+          "ascendant": "(`{price}` destinos) Pacote Ascendente — 87-90 overall"
+        },
+        "button": "Buy"
+      },
+      "not_enough": "You do not have enough fates.",
+      "success": {
+        "gold": "You bought a **Gold** pack for **{fates} fates** succesfully!",
+        "platinum": "You bought a **Platinum** pack for **{fates} fates** succesfully!",
+        "diamond": "You bought a **Diamond** pack for **{fates} fates** succesfully!",
+        "ascendant": "You bought a **Ascendant** pack for **{fates} fates** succesfully!"
+      }
     }
   },
   "simulator": {
