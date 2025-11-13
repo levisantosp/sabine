@@ -33,7 +33,5 @@ jobs:
           SSH_HOST: ${{ secrets.HOST }}
           SSH_PORT: 22
       - name: update sabine
-        env:
-          GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ssh prod "cd sabine/sabine && git pull && GITHUB_AUTH_TOKEN=$GITHUB_AUTH_TOKEN docker compose up -d --build"
+          ssh prod 'cd sabine/sabine && git pull && docker compose up -d --build'
