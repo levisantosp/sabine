@@ -224,10 +224,8 @@ export class SabineUser implements User {
       if(this.premium) {
         this.claim_time = new Date(Date.now() + 5 * 60 * 1000)
       }
-
       else this.claim_time = new Date(Date.now() + 10 * 60 * 1000)
 
-      this.fates -= 1
       this.claims += 1
       this.reminded = false
       this.pity += 1

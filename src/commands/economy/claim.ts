@@ -63,10 +63,6 @@ export default createCommand({
       return await ctx.reply('commands.claim.has_been_claimed', { t: `<t:${((ctx.db.user.claim_time.getTime()) / 1000).toFixed(0)}:R>` })
     }
 
-    if(ctx.db.user.fates <= 0) {
-      return await ctx.reply('commands.claim.no_fates')
-    }
-
     let player: Player
 
     if(ctx.db.user.pity >= 49) {
