@@ -388,7 +388,7 @@
     "send_message": "{user} Your Arena match result:\n{p1} **{score}** {p2}"
   },
   "helper": {
-    "palpitate": "Predict",
+    "predict": "Predict",
     "stats": "Stats",
     "prediction_modal": {
       "title": "Your prediction for the match"

@@ -388,7 +388,7 @@
     "send_message": "{user} Resultado da sua partida na Arena:\n{p1} **{score}** {p2}"
   },
   "helper": {
-    "palpitate": "Palpitar",
+    "predict": "Palpitar",
     "stats": "Estatísticas",
     "prediction_modal": {
       "title": "Seu palpite para a partida"
