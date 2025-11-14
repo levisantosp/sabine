@@ -1,12 +1,18 @@
 import type { MatchesData } from '../../types.ts'
 import Service from '../../api/index.ts'
-import locales from '../../i18n/index.ts'
 import createCommand from '../../structures/command/createCommand.ts'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
-import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
-import { emojis } from '../../util/emojis.ts'
-import { ChannelType, TextChannel } from 'discord.js'
+import {
+  ChannelType,
+  TextChannel,
+  ContainerBuilder,
+  ActionRowBuilder,
+  ButtonStyle,
+  MessageFlags,
+  ButtonBuilder
+} from 'discord.js'
 import type { $Enums } from '@prisma/client'
+import { emojis } from '../../util/emojis.ts'
 
 const service = new Service(process.env.AUTH)
 
@@ -128,11 +134,11 @@ export default createCommand({
             type: 1,
             components: [
               new ButtonBuilder()
-                .defineStyle('blue')
+                .setStyle(ButtonStyle.Primary)
                 .setLabel(t('commands.admin.vlr_esports_coverage'))
                 .setCustomId(`admin;${ctx.interaction.user.id};vlr`),
               new ButtonBuilder()
-                .defineStyle('blue')
+                .setStyle(ButtonStyle.Primary)
                 .setLabel(t('commands.admin.lol_esports_coverage'))
                 .setCustomId(`admin;${ctx.interaction.user.id};lol`)
             ]
@@ -142,11 +148,11 @@ export default createCommand({
             components: [
               new ButtonBuilder()
                 .setLabel(t('commands.admin.resend', { game: 'VALORANT' }))
-                .defineStyle('red')
+                .setStyle(ButtonStyle.Danger)
                 .setCustomId(`admin;${ctx.interaction.user.id};resend;vlr`),
               new ButtonBuilder()
                 .setLabel(t('commands.admin.resend', { game: 'League of Legends' }))
-                .defineStyle('red')
+                .setStyle(ButtonStyle.Danger)
                 .setCustomId(`admin;${ctx.interaction.user.id};resend;lol`)
             ]
           }
@@ -272,10 +278,18 @@ export default createCommand({
 
       const button = new ButtonBuilder()
         .setLabel(t('commands.admin.continue'))
-        .defineStyle('red')
+        .setStyle(ButtonStyle.Danger)
         .setCustomId(`admin;${ctx.interaction.user.id};continue;vlr`)
 
-      await ctx.reply(button.build(t('commands.admin.confirm')))
+      await ctx.reply({
+        content: t('commands.admin.confirm'),
+        components: [
+          {
+            type: 1,
+            components: [button.toJSON()]
+          }
+        ]
+      })
     }
 
     else if(ctx.args[2] === 'resend' && ctx.args[3] === 'lol') {
@@ -290,10 +304,18 @@ export default createCommand({
 
       const button = new ButtonBuilder()
         .setLabel(t('commands.admin.continue'))
-        .defineStyle('red')
+        .setStyle(ButtonStyle.Danger)
         .setCustomId(`admin;${ctx.interaction.user.id};continue;lol`)
 
-      await ctx.reply(button.build(t('commands.admin.confirm')))
+      await ctx.reply({
+        content: t('commands.admin.confirm'),
+        components: [
+          {
+            type: 1,
+            components: [button.toJSON()]
+          }
+        ]
+      })
     }
     else if(ctx.args[2] === 'continue' && ctx.args[3] === 'vlr') {
       if(
@@ -409,6 +431,9 @@ export default createCommand({
 
         catch { }
       }
+
+      const channelBatches = new Map<string, any[]>()
+
       try {
         for(
           const d of data.map(body => ({
@@ -425,6 +450,8 @@ export default createCommand({
                 regex.test(d.tournament.name.trim().replace(/\s+/g, ' ').toLowerCase())
               )
             ) {
+              if(d.stage.toLowerCase().includes('showmatch')) continue
+
               const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
               const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
 
@@ -434,66 +461,94 @@ export default createCommand({
 
               guild.valorant_matches.push(d.id!)
 
-              const embed = new EmbedBuilder()
-                .setAuthor({
-                  iconURL: d.tournament.image,
-                  name: d.tournament.name
-                })
-                .setField(`${emoji1} **${d.teams[0].name}** <:versus:1349105624180330516> **${d.teams[1].name}** ${emoji2}`, `<t:${d.when.getTime() / 1000}:F> | <t:${d.when.getTime() / 1000}:R>`)
-                .setFooter({
-                  text: d.stage
-                })
+              if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') {
+                if(!channelBatches.has(e.channel1)) {
+                  channelBatches.set(e.channel1, [])
+                }
 
-              const button = new ButtonBuilder()
-                .setLabel(locales(guild.lang!, 'helper.palpitate'))
-                .setCustomId(`predict;valorant;${d.id}`)
-                .defineStyle('green')
-
-              const urlButton = new ButtonBuilder()
-                .setLabel(locales(guild.lang!, 'helper.stats'))
-                .defineStyle('link')
-                .setURL(`https://vlr.gg/${d.id}`)
-
-              if(d.stage.toLowerCase().includes('showmatch')) continue
-
-              const channel = ctx.app.channels.cache.get(e.channel1) as TextChannel
-
-              if(!channel) return
-
-              if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') await channel.send({
-                embeds: [embed],
-                components: [
-                  {
-                    type: 1,
-                    components: [
-                      button,
-                      new ButtonBuilder()
-                        .setLabel(locales(guild.lang!, 'helper.bet'))
-                        .setCustomId(`bet;valorant;${d.id}`)
-                        .defineStyle('gray'),
-                      urlButton,
-                      new ButtonBuilder()
-                        .setLabel(locales(guild.lang!, 'helper.pickem.label'))
-                        .defineStyle('blue')
-                        .setCustomId('pickem')
-                    ]
-                  }
-                ]
-              }).catch(() => { })
-
-              else {
-                matches.push({
-                  matchId: d.id!,
-                  channel: e.channel1,
-                  guildId: guild.id,
-                  type: 'valorant'
-                })
+                channelBatches.get(e.channel1)?.push({ d, e, emoji1, emoji2 })
               }
+              else {
+                if(!matches.some(m => m.matchId === d.id)) {
+                  matches.push({
+                    matchId: d.id!,
+                    channel: e.channel1,
+                    guildId: guild.id,
+                    type: 'valorant'
+                  })
+                }
+              }
+
+              break
             }
           }
         }
       }
       catch { }
+
+      for(const [channelId, matchesChunk] of channelBatches.entries()) {
+        const chunkSize = 10
+
+        for(let i = 0; i < matchesChunk.length; i += chunkSize) {
+          const chunk = matchesChunk.slice(i, i + chunkSize)
+
+          const container = new ContainerBuilder()
+            .setAccentColor(6719296)
+
+          for(const data of chunk) {
+            const { d, emoji1, emoji2 } = data
+
+            container
+              .addTextDisplayComponents(
+                text => {
+                  let content = `### ${d.tournament.name}\n`
+
+                  content += `**${emoji1} ${d.teams[0].name} <:versus:1349105624180330516> ${d.teams[1].name} ${emoji2}**\n`
+                  content += `<t:${d.when.getTime() / 1000}:F> | <t:${d.when.getTime() / 1000}:R>\n`
+                  content += `-# ${d.stage}`
+
+                  return text.setContent(content)
+                }
+              )
+              .addActionRowComponents(
+                row => row.setComponents(
+                  new ButtonBuilder()
+                    .setLabel(t('helper.predict'))
+                    .setCustomId(`predict;valorant;${d.id}`)
+                    .setStyle(ButtonStyle.Success),
+                  new ButtonBuilder()
+                    .setLabel(t('helper.bet'))
+                    .setCustomId(`bet;valorant;${d.id}`)
+                    .setStyle(ButtonStyle.Secondary),
+                  new ButtonBuilder()
+                    .setLabel(t('helper.stats'))
+                    .setStyle(ButtonStyle.Link)
+                    .setURL(`https://vlr.gg/${d.id}`)
+                )
+              )
+              .addSeparatorComponents(separator => separator)
+          }
+
+          const channel = ctx.app.channels.cache.get(channelId) as TextChannel
+
+          if(!channel) continue
+
+          if(container.components.length) {
+            const row = new ActionRowBuilder<ButtonBuilder>()
+              .setComponents(
+                new ButtonBuilder()
+                  .setLabel(t('helper.pickem.label'))
+                  .setStyle(ButtonStyle.Primary)
+                  .setCustomId('pickem')
+              )
+
+            await channel.send({
+              components: [container.toJSON(), row.toJSON()],
+              flags: MessageFlags.IsComponentsV2
+            }).catch(() => { })
+          }
+        }
+      }
 
       await app.prisma.guild.update({
         where: {
@@ -590,6 +645,8 @@ export default createCommand({
         catch { }
       }
 
+      const channelBatches = new Map<string, any[]>()
+
       try {
         for(
           const d of data.map(body => ({
@@ -601,6 +658,8 @@ export default createCommand({
 
           for(const e of guild.events) {
             if(e.name === d.tournament.name) {
+              if(d.stage.toLowerCase().includes('showmatch')) continue
+              
               const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
               const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
 
@@ -610,47 +669,13 @@ export default createCommand({
 
               guild.lol_matches.push(d.id!)
 
-              const embed = new EmbedBuilder()
-                .setAuthor({
-                  iconURL: d.tournament.image,
-                  name: d.tournament.full_name!
-                })
-                .setField(`${emoji1} **${d.teams[0].name}** <:versus:1349105624180330516> **${d.teams[1].name}** ${emoji2}`, `<t:${d.when.getTime() / 1000}:F> | <t:${d.when.getTime() / 1000}:R>`)
-                .setFooter({
-                  text: d.stage
-                })
+              if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') {
+                if(!channelBatches.has(e.channel1)) {
+                  channelBatches.set(e.channel1, [])
+                }
 
-              const button = new ButtonBuilder()
-                .setLabel(t('helper.palpitate'))
-                .setCustomId(`predict;lol;${d.id}`)
-                .defineStyle('green')
-
-              if(d.stage.toLowerCase().includes('showmatch')) continue
-
-              const channel = ctx.app.channels.cache.get(e.channel1) as TextChannel
-
-              if(!channel) return
-
-              if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') await channel.send({
-                embeds: [embed],
-                components: [
-                  {
-                    type: 1,
-                    components: [
-                      button,
-                      new ButtonBuilder()
-                        .setLabel(locales(guild.lang!, 'helper.bet'))
-                        .setCustomId(`bet;lol;${d.id}`)
-                        .defineStyle('gray'),
-                      new ButtonBuilder()
-                        .setLabel(locales(guild.lang!, 'helper.pickem.label'))
-                        .defineStyle('blue')
-                        .setCustomId('pickem')
-                    ]
-                  }
-                ]
-              }).catch(() => { })
-
+                channelBatches.get(e.channel1)?.push({ d, emoji1, emoji2 })
+              }
               else {
                 matches.push({
                   matchId: d.id!,
@@ -659,11 +684,68 @@ export default createCommand({
                   type: 'lol'
                 })
               }
+
+              break
             }
           }
         }
       }
       catch { }
+
+      for(const [channelId, matchesChunk] of channelBatches.entries()) {
+        const chunkSize = 10
+
+        for(let i = 0; i < matchesChunk.length; i += chunkSize) {
+          const chunk = matchesChunk.slice(i, i + chunkSize)
+
+          const container = new ContainerBuilder()
+            .setAccentColor(6719296)
+
+          for(const data of chunk) {
+            const { d, emoji1, emoji2 } = data
+
+            container
+              .addTextDisplayComponents(
+                text => {
+                  let content = `### ${d.tournament.full_name}\n`
+                  
+                  content += `**${emoji1} ${d.teams[0].name} <:versus:1349105624180330516> ${d.teams[1].name} ${emoji2}**\n`
+                  content += `<t:${d.when.getTime() / 1000}:F> | <t:${d.when.getTime() / 1000}:R>\n`
+                  content += `-# ${d.stage}`
+
+                  return text.setContent(content)
+                }
+              )
+              .addActionRowComponents(
+                row => row.setComponents(
+                  new ButtonBuilder()
+                    .setLabel(t('helper.predict'))
+                    .setCustomId(`predict;lol;${d.id}`)
+                    .setStyle(ButtonStyle.Success),
+                  new ButtonBuilder()
+                    .setLabel(t('helper.bet'))
+                    .setCustomId(`bet;lol;${d.id}`)
+                    .setStyle(ButtonStyle.Secondary),
+                  new ButtonBuilder()
+                    .setLabel(t('helper.pickem.label'))
+                    .setStyle(ButtonStyle.Primary)
+                    .setCustomId('pickem')
+                )
+              )
+              .addSeparatorComponents(separator => separator)
+          }
+
+          const channel = ctx.app.channels.cache.get(channelId) as TextChannel
+          if(!channel) continue
+
+          if(container.components.length) {
+            await channel.send({
+              components: [container.toJSON()],
+              flags: MessageFlags.IsComponentsV2
+            }).catch(() => { })
+          }
+        }
+      }
 
       await app.prisma.guild.update({
         where: {
