@@ -156,12 +156,14 @@
       "no_fates": "Você não tem nenhum destino para gastar!\nConsiga mais usando `/daily`, palpitando e jogando partidas ranqueada."
     },
     "roster": {
-      "embed": {
-        "title": "Seu elenco",
+      "container": {
+        "title": "### Seu Elenco",
         "desc": "Nome da equipe: **{name}**\nValor do elenco: `{value}`\nOverall do elenco: `{ovr}`",
-        "field": {
-          "name1": "Jogadores Titulares ({total})",
-          "name2": "Jogadores Reservas ({total})"
+        "active_players": "### Active Players ({total})",
+        "reserve_players": "### Reserve Players ({total})",
+        "button": {
+          "promote": "Promover",
+          "remove": "Remover"
         }
       },
       "generate_file": "Gerar arquivo .txt do elenco completo",

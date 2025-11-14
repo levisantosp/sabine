@@ -155,12 +155,14 @@
       "no_fates": "You don't have any fates to spend!\nGet more using `/daily`, predicting and playing ranked matches."
     },
     "roster": {
-      "embed": {
-        "title": "Your roster",
+      "container": {
+        "title": "### Your Roster",
         "desc": "Team name: **{name}**\nRoster value: `{value}`\nRoster overall: `{ovr}`",
-        "field": {
-          "name1": "Active Players ({total})",
-          "name2": "Reserve Players ({total})"
+        "active_players": "### Active Players ({total})",
+        "reserve_players": "### Reserve Players ({total})",
+        "button": {
+          "promote": "Promote",
+          "remove": "Remove"
         }
       },
       "generate_file": "Generate full roster .txt file",
