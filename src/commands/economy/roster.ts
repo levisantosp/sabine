@@ -1,7 +1,14 @@
-import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
-import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
+import {
+  ActionRowBuilder,
+  ApplicationCommandOptionType,
+  ButtonBuilder,
+  ButtonStyle,
+  ContainerBuilder,
+  type APISelectMenuOption
+} from 'discord.js'
 import createCommand from '../../structures/command/createCommand.ts'
 import { emojis } from '../../util/emojis.ts'
+import SelectMenuBuilder from '../../structures/builders/SelectMenuBuilder.ts'
 
 export default createCommand({
   name: 'roster',
@@ -13,9 +20,22 @@ export default createCommand({
   descriptionLocalizations: {
     'pt-BR': 'Veja seu elenco'
   },
+  options: [
+    {
+      type: ApplicationCommandOptionType.Integer,
+      name: 'page',
+      nameLocalizations: {
+        'pt-BR': 'página'
+      },
+      description: 'Provide a page',
+      descriptionLocalizations: {
+        'pt-BR': 'Informe uma página'
+      }
+    }
+  ],
   userInstall: true,
   messageComponentInteractionTime: 5 * 60 * 1000,
-  async run({ ctx, t, app }) {
+  async run({ ctx }) {
     const active_players = ctx.db.user.active_players
     const reserve_players = ctx.db.user.reserve_players
 
@@ -23,149 +43,146 @@ export default createCommand({
     let ovr = 0
 
     for(const p of active_players) {
-      const player = app.players.get(p)
+      const player = ctx.app.players.get(p)
 
-      if(!player || !player.price) break
+      if(!player) continue
 
       ovr += player.ovr
       value += player.price
     }
+
     for(const p of reserve_players) {
-      const player = app.players.get(p)
+      const player = ctx.app.players.get(p)
 
-      if(!player || !player.price) break
+      if(!player) continue
 
       ovr += player.ovr
       value += player.price
     }
 
-    const embed = new EmbedBuilder()
-      .setTitle(t('commands.roster.embed.title'))
-      .setDesc(t(
-        'commands.roster.embed.desc',
-        {
-          value: Math.floor(value).toLocaleString(),
-          ovr: Math.floor(ovr / (active_players.length + reserve_players.length)),
-          name: ctx.db.user.team_name ? `${ctx.db.user.team_name} (${ctx.db.user.team_tag})` : '`undefined`'
+    const container = new ContainerBuilder()
+      .setAccentColor(6719296)
+      .addTextDisplayComponents(
+        text => text.setContent(
+          ctx.t('commands.roster.container.title') + '\n'
+          + ctx.t('commands.roster.container.desc', {
+            value: Math.floor(value).toLocaleString(),
+            ovr: Math.floor(ovr / (active_players.length + reserve_players.length)),
+            name: ctx.db.user.team_name
+              ? `${ctx.db.user.team_name} (${ctx.db.user.team_tag})`
+              : '`undefined`'
+          })
+        )
+      )
+      .addActionRowComponents(
+        row => row.setComponents(
+          new ButtonBuilder()
+            .setLabel(ctx.t('commands.roster.change_team'))
+            .setCustomId(`roster;${ctx.interaction.user.id};team`)
+            .setStyle(ButtonStyle.Primary)
+        )
+      )
+      .addSeparatorComponents(separator => separator)
+
+    const pages = Math.ceil(reserve_players.length / 10) + 1
+    let page = ctx.args[0] as number ?? 1
+
+    if(page === 1) {
+      if(active_players.length) {
+        container.addTextDisplayComponents(
+          text => text.setContent(ctx.t('commands.roster.container.active_players', { total: active_players.length }))
+        )
+
+        for(const p of active_players) {
+          container.addSectionComponents(
+            section => section
+              .addTextDisplayComponents(
+                text => {
+                  const player = ctx.app.players.get(p)
+
+                  if(!player) return text
+
+                  const emoji = emojis.find(e => e.name === player.role)?.emoji
+                  const content = `${emoji} ${player.name} (${Math.floor(player.ovr)}) — ${player.collection}`
+
+                  return text.setContent(content)
+                }
+              )
+              .setButtonAccessory(
+                button => button
+                  .setStyle(ButtonStyle.Danger)
+                  .setLabel(ctx.t('commands.roster.container.button.remove'))
+                  .setCustomId(`roster;${ctx.db.user.id};remove;${p}`)
+              )
+          )
         }
-      ))
-      .setThumb(ctx.interaction.user.displayAvatarURL({ size: 2048 }))
-
-    let active_content = ''
-    let reserve_content = ''
-
-    for(const p_id of active_players) {
-      const player = app.players.get(p_id)
-
-      if(!player) break
-
-      active_content += `${emojis.find(e => e.name === player.role)?.emoji} ${player.name} (${Math.floor(player.ovr)}) — ${player.collection}\n`
-    }
-
-    let i = 0
-
-    for(const p_id of reserve_players) {
-      i++
-
-      if(i >= 10) break
-
-      const player = app.players.get(p_id)
-
-      if(!player) break
-
-      reserve_content += `${emojis.find(e => e.name === player.role)?.emoji} ${player.name} (${Math.floor(player.ovr)}) — ${player.collection}\n`
-    }
-    if(reserve_players.length > 10) {
-      reserve_content += `- +${reserve_players.length - 10}...`
-    }
-
-    embed.addField(t(
-      'commands.roster.embed.field.name1',
-      {
-        total: active_players.length
       }
-    ), active_content, true)
-    embed.setFields(
-      {
-        name: t(
-          'commands.roster.embed.field.name1',
-          {
-            total: active_players.length
-          }
-        ),
-        value: active_content,
-        inline: true
-      },
-      {
-        name: t(
-          'commands.roster.embed.field.name2',
-          {
-            total: reserve_players.length
-          }
-        ),
-        value: reserve_content,
-        inline: true
-      }
-    )
-
-    const button = new ButtonBuilder()
-      .setLabel(t('commands.roster.generate_file'))
-      .setCustomId(`roster;${ctx.interaction.user.id};file`)
-      .defineStyle('blue')
-
-    const button2 = new ButtonBuilder()
-      .setLabel(t('commands.roster.change_team'))
-      .setCustomId(`roster;${ctx.interaction.user.id};team`)
-      .defineStyle('green')
-
-    await ctx.reply(embed.build({
-      components: [
-        {
-          type: 1,
-          components: [button, button2]
-        }
-      ]
-    }))
-  },
-  async createMessageComponentInteraction({ ctx, i, t, app }) {
-    if(ctx.args[2] === 'file') {
-      await ctx.interaction.deferReply({ flags: 64 })
-
-      let playersContent = ''
-
-      const active_players = ctx.db.user.active_players
-      const reserve_players = ctx.db.user.reserve_players
-
-      for(const p of active_players) {
-        if(!active_players.length) break
-
-        const player = app.players.get(p)
-
-        if(!player) continue
-
-        playersContent += `${player.name} (${Math.floor(player.ovr)}) — ${player.collection}\n`
-      }
-      for(const p of reserve_players) {
-        if(!reserve_players.length) break
-
-        const player = app.players.get(p)
-
-        if(!player) continue
-
-        playersContent += `${player.name} (${Math.floor(player.ovr)}) — ${player.collection}\n`
-      }
-      const txt = Buffer.from(playersContent, 'utf-8')
-
-      await ctx.reply('', {
-        files: [
-          {
-            name: `roster_${ctx.interaction.user.id}.txt`,
-            attachment: txt
-          }
-        ]
-      })
     }
     else {
+      page -= 1
+
+      const players = reserve_players.slice(page * 10 - 10, page * 10)
+
+      if(players.length) {
+        container.addTextDisplayComponents(
+          text => text.setContent(ctx.t('commands.roster.container.reserve_players', { total: reserve_players.length }))
+        )
+
+        let i = 0
+
+        for(const p of players) {
+          container.addSectionComponents(
+            section => section
+              .addTextDisplayComponents(
+                text => {
+                  const player = ctx.app.players.get(p)
+
+                  if(!player) return text
+
+                  const emoji = emojis.find(e => e.name === player.role)?.emoji
+                  const content = `${emoji} ${player.name} (${Math.floor(player.ovr)}) — ${player.collection}`
+
+                  return text.setContent(content)
+                }
+              )
+              .setButtonAccessory(
+                button => button
+                  .setStyle(ButtonStyle.Success)
+                  .setLabel(ctx.t('commands.roster.container.button.promote'))
+                  .setCustomId(`roster;${ctx.db.user.id};promote;${p};${i}`)
+              )
+          )
+        }
+      }
+
+      page += 1
+    }
+
+    const previous = new ButtonBuilder()
+      .setStyle(ButtonStyle.Primary)
+      .setEmoji('1404176223621611572')
+      .setCustomId(`roster;${ctx.db.user.id};previous;${page - 1 < 1 ? 1 : page - 1}`)
+
+    const next = new ButtonBuilder()
+      .setStyle(ButtonStyle.Primary)
+      .setEmoji('1404176291829121028')
+      .setCustomId(`roster;${ctx.db.user.id};next;${page + 1 > pages ? pages : page + 1}`)
+
+    if(page <= 1) previous.setDisabled()
+    if(page >= pages) next.setDisabled()      
+
+    const row = new ActionRowBuilder<ButtonBuilder>()
+      .setComponents(previous, next)
+
+    await ctx.reply({
+      flags: 'IsComponentsV2',
+      components: [container, row]
+    })
+  },
+  async createMessageComponentInteraction({ ctx, i, t }) {
+    ctx.setFlags(64)
+
+    if(ctx.args[2] === 'team') {
       await i.showModal({
         customId: `roster;${i.user.id};modal`,
         title: t('commands.roster.modal.title'),
@@ -199,6 +216,235 @@ export default createCommand({
             ]
           }
         ]
+      })
+    }
+    else if(ctx.args[2] === 'promote') {
+      const player = ctx.app.players.get(ctx.args[3])
+
+      if(!player || !ctx.db.user.reserve_players.includes(player.id.toString())) {
+        return await ctx.reply('commands.promote.player_not_found')
+      }
+
+      if(ctx.db.user.active_players.length < 5) {
+        const i = ctx.db.user.reserve_players.findIndex(p => p === player.id.toString())
+
+        ctx.db.user.reserve_players.splice(i, 1)
+        ctx.db.user.active_players.push(player.id.toString())
+        
+        await ctx.db.user.save()
+
+        return await ctx.reply('commands.promote.player_promoted', { p: player.name })
+      }
+
+      let i = 0
+      const options: APISelectMenuOption[] = []
+
+      for(const p of ctx.db.user.active_players) {
+        const player = ctx.app.players.get(p)
+
+        if(!player) break
+
+        options.push({
+          label: `${player.name} (${Math.floor(player.ovr)})`,
+          description: player.role,
+          value: `${i};${player.id}`
+        })
+      }
+
+      const menu = new SelectMenuBuilder()
+        .setCustomId(`roster;${ctx.db.user.id};promote2;${player.id}`)
+        .setOptions(options)
+
+      await ctx.reply(menu.build(t('commands.promote.select_player')))
+    }
+    else if(ctx.args[2] === 'promote2') {
+      if(!ctx.interaction.isStringSelectMenu()) return
+
+      const id = ctx.interaction.values[0].split(';')[1]
+
+      let i = ctx.db.user.active_players.findIndex(p => p === id)
+
+      if(i < 0) {
+        return await ctx.reply('commands.promote.player_not_found')
+      }
+
+      ctx.db.user.active_players.splice(i, 1)
+      ctx.db.user.reserve_players.push(id)
+
+      i = ctx.db.user.reserve_players.findIndex(p => p === ctx.args[3])
+
+      if(i < 0) {
+        return await ctx.reply('commands.promote.player_not_found')
+      }
+
+      ctx.db.user.reserve_players.splice(i, 1)
+      ctx.db.user.active_players.push(ctx.args[3])
+
+      await ctx.db.user.save()
+
+      const p = ctx.app.players.get(ctx.args[3])
+
+      await ctx.edit('commands.promote.player_promoted', { p: p?.name })
+    }
+    else {
+      const active_players = ctx.db.user.active_players
+      const reserve_players = ctx.db.user.reserve_players
+
+      let value = 0
+      let ovr = 0
+
+      for(const p of active_players) {
+        const player = ctx.app.players.get(p)
+
+        if(!player) continue
+
+        ovr += player.ovr
+        value += player.price
+      }
+
+      for(const p of reserve_players) {
+        const player = ctx.app.players.get(p)
+
+        if(!player) continue
+
+        ovr += player.ovr
+        value += player.price
+      }
+
+      let page = Number(ctx.args[3])
+      const pages = Math.ceil(reserve_players.length / 10) + 1
+
+      const container = new ContainerBuilder()
+        .setAccentColor(6719296)
+        .addTextDisplayComponents(
+          text => text.setContent(
+            t('commands.roster.container.title') + '\n'
+            + t('commands.roster.container.desc', {
+              value: Math.floor(value).toLocaleString(),
+              ovr: Math.floor(ovr / (active_players.length + reserve_players.length)),
+              name: ctx.db.user.team_name
+                ? `${ctx.db.user.team_name} (${ctx.db.user.team_tag})`
+                : '`undefined`'
+            })
+          )
+        )
+        .addActionRowComponents(
+          row => row.setComponents(
+            new ButtonBuilder()
+              .setLabel(t('commands.roster.change_team'))
+              .setCustomId(`roster;${ctx.interaction.user.id};team`)
+              .setStyle(ButtonStyle.Primary)
+          )
+        )
+        .addSeparatorComponents(separator => separator)
+
+      if(page === 1) {
+        if(active_players.length) {
+          container.addTextDisplayComponents(
+            text => text.setContent(t('commands.roster.container.active_players', { total: active_players.length }))
+          )
+
+          for(const p of active_players) {
+            container.addSectionComponents(
+              section => section
+                .addTextDisplayComponents(
+                  text => {
+                    const player = ctx.app.players.get(p)
+
+                    if(!player) return text
+
+                    const emoji = emojis.find(e => e.name === player.role)?.emoji
+                    const content = `${emoji} ${player.name} (${Math.floor(player.ovr)}) — ${player.collection}`
+
+                    return text.setContent(content)
+                  }
+                )
+                .setButtonAccessory(
+                  button => button
+                    .setStyle(ButtonStyle.Danger)
+                    .setLabel(t('commands.roster.container.button.remove'))
+                    .setCustomId(`roster;${ctx.db.user.id};remove;${p}`)
+                )
+            )
+          }
+        }
+      }
+      else if(ctx.args[2] === 'remove') {
+        const player = ctx.app.players.get(ctx.args[3])
+
+        if(!player || !ctx.db.user.active_players.includes(player.id.toString())) {
+          return await ctx.reply('commands.remove.player_not_found')
+        }
+
+        const i = ctx.db.user.active_players.findIndex(p => p === player.id.toString())
+
+        ctx.db.user.reserve_players.push(player.id.toString())
+        ctx.db.user.active_players.splice(i, 1)
+
+        await ctx.db.user.save()
+
+        await ctx.reply('commands.remove.player_removed', { p: player.name })
+      }
+      else {
+        console.log(ctx.args)
+        page -= 1
+
+        const players = reserve_players.slice(page * 10 - 10, page * 10)
+
+        if(players.length) {
+          container.addTextDisplayComponents(
+            text => text.setContent(t('commands.roster.container.reserve_players', { total: reserve_players.length }))
+          )
+
+          let i = 0
+
+          for(const p of players) {
+            container.addSectionComponents(
+              section => section
+                .addTextDisplayComponents(
+                  text => {
+                    const player = ctx.app.players.get(p)
+
+                    if(!player) return text
+
+                    const emoji = emojis.find(e => e.name === player.role)?.emoji
+                    const content = `${emoji} ${player.name} (${Math.floor(player.ovr)}) — ${player.collection}`
+
+                    return text.setContent(content)
+                  }
+                )
+                .setButtonAccessory(
+                  button => button
+                    .setStyle(ButtonStyle.Success)
+                    .setLabel(t('commands.roster.container.button.promote'))
+                    .setCustomId(`roster;${ctx.db.user.id};promote;${p};${i}`)
+                )
+            )
+          }
+        }
+
+        page += 1
+      }
+      
+      const previous = new ButtonBuilder()
+        .setStyle(ButtonStyle.Primary)
+        .setEmoji('1404176223621611572')
+        .setCustomId(`roster;${ctx.db.user.id};previous;${page - 1}`)
+
+      const next = new ButtonBuilder()
+        .setStyle(ButtonStyle.Primary)
+        .setEmoji('1404176291829121028')
+        .setCustomId(`roster;${ctx.db.user.id};next;${page + 1}`)
+
+      if(page <= 1) previous.setDisabled()
+      if(page >= pages) next.setDisabled()
+
+      const row = new ActionRowBuilder<ButtonBuilder>()
+        .setComponents(previous, next)
+
+      await ctx.edit({
+        flags: 'IsComponentsV2',
+        components: [container, row]
       })
     }
   },
