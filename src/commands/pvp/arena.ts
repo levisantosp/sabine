@@ -161,9 +161,6 @@ export default createCommand({
         ]
         let players = [...new Set(allPlayers)]
 
-        for(const p of ctx.db.user.active_players) players.push(p)
-        for(const p of ctx.db.user.reserve_players) players.push(p)
-
         const pages = Math.ceil(players.length / 10)
 
         if(page === 1) {
@@ -401,9 +398,6 @@ export default createCommand({
       ]
       let players = [...new Set(allPlayers)]
 
-      for(const p of ctx.db.user.active_players) players.push(p)
-      for(const p of ctx.db.user.reserve_players) players.push(p)
-
       const pages = Math.ceil(players.length / 10)
 
       if(page === 1) {
@@ -557,9 +551,6 @@ export default createCommand({
         ...ctx.db.user.reserve_players
       ]
       let players = [...new Set(allPlayers)]
-
-      for(const p of ctx.db.user.active_players) players.push(p)
-      for(const p of ctx.db.user.reserve_players) players.push(p)
 
       const pages = Math.ceil(players.length / 10)
 
