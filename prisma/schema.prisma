@@ -43,7 +43,6 @@ model User {
   reminded                 Boolean       @default(true)
   transactions             Transaction[]
   career                   Match[]
-  trade_time               DateTime?
   warned                   Boolean?
   iron_packs               Int           @default(0)
   bronze_packs             Int           @default(0)

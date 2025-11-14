@@ -66,7 +66,6 @@ export class SabineUser implements User {
   public arena_metadata: ArenaMetadata | null = null
   public daily_time: Date | null = null
   public claim_time: Date | null = null
-  public trade_time: Date | null = null
   public warn: boolean = false
   public pity: number = 0
   public claims: number = 0
