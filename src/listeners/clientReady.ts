@@ -1,4 +1,4 @@
-import { Collection, Message, REST, Routes } from 'discord.js'
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Collection, ContainerBuilder, Message, MessageFlags, REST, Routes } from 'discord.js'
 import Service from '../api/index.ts'
 import t from '../i18n/index.ts'
 import type { MatchesData } from '../types.ts'
@@ -6,7 +6,6 @@ import createListener from '../structures/app/createListener.ts'
 import Logger from '../util/Logger.ts'
 import { emojis } from '../util/emojis.ts'
 import EmbedBuilder from '../structures/builders/EmbedBuilder.ts'
-import ButtonBuilder from '../structures/builders/ButtonBuilder.ts'
 import App from '../structures/app/App.ts'
 import { SabineUser } from '../database/index.ts'
 import type { $Enums } from '@prisma/client'
@@ -171,6 +170,8 @@ const sendValorantMatches = async(app: App) => {
       bulkDeleteThunks.push(thunk)
     }
 
+    const channelBatches = new Map<string, any[]>()
+
     try {
       for(
         const d of data.map(body => ({
@@ -187,6 +188,8 @@ const sendValorantMatches = async(app: App) => {
               regex.test(d.tournament.name.trim().replace(/\s+/g, ' ').toLowerCase())
             )
           ) {
+            if(d.stage.toLowerCase().includes('showmatch')) continue
+
             const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
             const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
 
@@ -194,57 +197,14 @@ const sendValorantMatches = async(app: App) => {
 
             if(index > -1) guild.valorant_matches.splice(index, 1)
 
-            if(!d.stage.toLowerCase().includes('showmatch')) guild.valorant_matches.push(d.id!)
-
-            const embed = new EmbedBuilder()
-              .setAuthor({
-                iconURL: d.tournament.image,
-                name: d.tournament.name
-              })
-              .setField(`${emoji1} ${d.teams[0].name} <:versus:1349105624180330516> ${d.teams[1].name} ${emoji2}`, `<t:${d.when.getTime() / 1000}:F> | <t:${d.when.getTime() / 1000}:R>`, true)
-              .setFooter({
-                text: d.stage
-              })
-
-            const button = new ButtonBuilder()
-              .setLabel(t(guild.lang, 'helper.palpitate'))
-              .setCustomId(`predict;valorant;${d.id}`)
-              .defineStyle('green')
-
-            const urlButton = new ButtonBuilder()
-              .setLabel(t(guild.lang, 'helper.stats'))
-              .defineStyle('link')
-              .setURL(`https://vlr.gg/${d.id}`)
-
-            if(d.stage.toLowerCase().includes('showmatch')) continue
+            guild.valorant_matches.push(d.id!)
 
             if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') {
-              const thunk = async() => {
-                await rest.post(Routes.channelMessages(e.channel1), {
-                  body: {
-                    embeds: [embed],
-                    components: [
-                      {
-                        type: 1,
-                        components: [
-                          button,
-                          new ButtonBuilder()
-                            .setLabel(t(guild.lang, 'helper.bet'))
-                            .setCustomId(`bet;valorant;${d.id}`)
-                            .defineStyle('gray'),
-                          urlButton,
-                          new ButtonBuilder()
-                            .setLabel(t(guild.lang, 'helper.pickem.label'))
-                            .defineStyle('blue')
-                            .setCustomId('pickem')
-                        ]
-                      }
-                    ]
-                  }
-                })
+              if(!channelBatches.has(e.channel1)) {
+                channelBatches.set(e.channel1, [])
               }
-              
-              sendMessageThunks.push(thunk)
+
+              channelBatches.get(e.channel1)?.push({ d, e, emoji1, emoji2 })
             }
             else {
               if(!matches.some(m => m.matchId === d.id)) {
@@ -262,7 +222,72 @@ const sendValorantMatches = async(app: App) => {
         }
       }
     }
-    catch {}
+    catch(e) {
+      Logger.error(e as Error)
+    }
+
+    for(const [channelId, matches] of channelBatches.entries()) {
+      const chunkSize = 10
+
+      for(let i = 0; i < matches.length; i+= chunkSize) {
+        const chunk = matches.slice(i, i + chunkSize)
+
+        const container = new ContainerBuilder()
+          .setAccentColor(6719296)
+
+        for(const data of chunk) {
+          const { d, emoji1, emoji2 } = data
+
+          container
+            .addTextDisplayComponents(
+              text => {
+                let content = `### ${d.tournament.name}\n`
+                content += `**${emoji1} ${d.teams[0].name} <:versus:1349105624180330516> ${d.teams[1].name} ${emoji2}**\n`
+                content += `<t:${d.when.getTime() / 1000}:F> | <t:${d.when.getTime() / 1000}:R>`
+                return text.setContent(content)
+              }
+            )
+            .addActionRowComponents(
+              row => row.setComponents(
+                new ButtonBuilder()
+                  .setLabel(t(guild.lang, 'helper.predict'))
+                  .setCustomId(`predict;valorant;${d.id}`)
+                  .setStyle(ButtonStyle.Success),
+                new ButtonBuilder()
+                  .setLabel(t(guild.lang, 'helper.bet'))
+                  .setCustomId(`bet;valorant;${d.id}`)
+                  .setStyle(ButtonStyle.Secondary),
+                new ButtonBuilder()
+                  .setLabel(t(guild.lang, 'helper.stats'))
+                  .setStyle(ButtonStyle.Link)
+                  .setURL(`https://vlr.gg/${d.id}`)
+              )
+            )
+            .addSeparatorComponents(separator => separator)
+        }
+
+        const thunk = async() => {
+          if(container.components.length) {
+            const row = new ActionRowBuilder<ButtonBuilder>()
+              .setComponents(
+                new ButtonBuilder()
+                  .setLabel(t(guild.lang, 'helper.pickem.label'))
+                  .setStyle(ButtonStyle.Primary)
+                  .setCustomId('pickem')
+              )
+
+            await rest.post(Routes.channelMessages(channelId), {
+              body: {
+                components: [container.toJSON(), row.toJSON()],
+                flags: MessageFlags.IsComponentsV2
+              }
+            })
+          }
+        }
+
+        sendMessageThunks.push(thunk)
+      }
+    }
 
     const thunk = async() => {
       await app.prisma.guild.update({
@@ -352,7 +377,7 @@ const sendValorantTBDMatches = async(app: App) => {
                   type: 1,
                   components: [
                     new ButtonBuilder()
-                      .setLabel(t(guild.lang, 'helper.palpitate'))
+                      .setLabel(t(guild.lang, 'helper.predict'))
                       .setCustomId(`predict;valorant;${match.id}`)
                       .defineStyle('green'),
                     new ButtonBuilder()
@@ -500,7 +525,7 @@ const sendLolMatches = async(app: App) => {
               })
 
             const button = new ButtonBuilder()
-              .setLabel(t(guild.lang, 'helper.palpitate'))
+              .setLabel(t(guild.lang, 'helper.predict'))
               .setCustomId(`predict;lol;${d.id}`)
               .defineStyle('green')
 
