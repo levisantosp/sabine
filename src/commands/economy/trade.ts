@@ -55,16 +55,7 @@ export default createCommand({
   ],
   messageComponentInteractionTime: 5 * 60 * 1000,
   cooldown: true,
-  async run({ ctx, t, app }) {
-    if(
-      ctx.db.user.trade_time &&
-      ctx.db.user.trade_time.getTime() > Date.now()
-    ) {
-      return await ctx.reply('commands.trade.has_been_traded', {
-        t: `<t:${(ctx.db.user.trade_time.getTime() / 1000).toFixed(0)}:R>`
-      })
-    }
-
+  async run({ ctx, app }) {
     const user = await SabineUser.fetch(ctx.args[0].toString())
 
     const player = app.players.get(ctx.args[1].toString())
@@ -89,7 +80,7 @@ export default createCommand({
     }
 
     await ctx.reply({
-      content: t('commands.trade.request', {
+      content: ctx.t('commands.trade.request', {
         player: `${player.name} (${player.ovr})`,
         collection: player.collection,
         user: `<@${ctx.args[0]}>`,
@@ -102,11 +93,11 @@ export default createCommand({
           components: [
             new ButtonBuilder()
               .defineStyle('green')
-              .setLabel(t('commands.trade.make_purchase'))
+              .setLabel(ctx.t('commands.trade.make_purchase'))
               .setCustomId(`trade;${ctx.args[0]};buy;${ctx.interaction.user.id};${player.id};${ctx.args[2]}`),
             new ButtonBuilder()
               .defineStyle('red')
-              .setLabel(t('commands.trade.cancel'))
+              .setLabel(ctx.t('commands.trade.cancel'))
               .setCustomId(`trade;${ctx.interaction.user.id};cancel`)
           ]
         }
@@ -144,17 +135,6 @@ export default createCommand({
     )
   },
   async createMessageComponentInteraction({ ctx, app }) {
-    if(
-      ctx.db.user.trade_time &&
-      ctx.db.user.trade_time.getTime() > Date.now()
-    ) {
-      ctx.setFlags(64)
-
-      return await ctx.reply('commands.trade.has_been_traded', {
-        t: `<t:${(ctx.db.user.trade_time.getTime() / 1000).toFixed(0)}:R>`
-      })
-    }
-
     if(ctx.args[2] === 'buy') {
       const user = await SabineUser.fetch(ctx.args[3])
 
@@ -175,11 +155,9 @@ export default createCommand({
 
       user.reserve_players.splice(i, 1)
       user.coins += BigInt(ctx.args[5])
-      user.trade_time = new Date(Date.now() + (60 * 60 * 1000))
 
       ctx.db.user.reserve_players.push(ctx.args[4])
       ctx.db.user.coins -= BigInt(ctx.args[5])
-      ctx.db.user.trade_time = new Date(Date.now() + (60 * 60 * 1000))
 
       if(
         user.arena_metadata?.lineup
@@ -191,27 +169,28 @@ export default createCommand({
         user.arena_metadata.lineup.splice(index, 1)
       }
 
-      await app.prisma.transaction.createMany({
-        data: [
-          {
-            type: 'TRADE_PLAYER',
-            player: player.id,
-            price: BigInt(ctx.args[5]),
-            userId: ctx.db.user.id,
-            to: user.id
-          },
-          {
-            type: 'TRADE_PLAYER',
-            player: player.id,
-            price: BigInt(ctx.args[5]),
-            userId: user.id,
-            to: ctx.db.user.id
-          }
-        ]
-      })
-
-      await user.save()
-      await ctx.db.user.save()
+      await Promise.allSettled([
+        user.save(),
+        ctx.db.user.save(),
+        app.prisma.transaction.createMany({
+          data: [
+            {
+              type: 'TRADE_PLAYER',
+              player: player.id,
+              price: BigInt(ctx.args[5]),
+              userId: ctx.db.user.id,
+              to: user.id
+            },
+            {
+              type: 'TRADE_PLAYER',
+              player: player.id,
+              price: BigInt(ctx.args[5]),
+              userId: user.id,
+              to: ctx.db.user.id
+            }
+          ]
+        })
+      ])
 
       await ctx.edit('commands.trade.res', {
         player: `${player.name} (${player.ovr})`,
