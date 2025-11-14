@@ -2,6 +2,7 @@ import { ApplicationCommandOptionType } from 'discord.js'
 import createCommand from '../../structures/command/createCommand.ts'
 import { SabineUser } from '../../database/index.ts'
 import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
+import { calcPlayerPrice } from '@sabinelab/players'
 
 export default createCommand({
   name: 'trade',
@@ -60,8 +61,14 @@ export default createCommand({
 
     const player = app.players.get(ctx.args[1].toString())
 
-    if(BigInt(ctx.args[2]) < 0) {
-      return await ctx.reply('commands.trade.invalid_value')
+    if(!player) {
+      return await ctx.reply('commands.trade.player_not_found')
+    }
+
+    const price = calcPlayerPrice(player, true)
+
+    if(BigInt(ctx.args[2]) < price) {
+      return await ctx.reply('commands.trade.invalid_value', { value: price.toLocaleString() })
     }
 
     if(ctx.args[0] === ctx.interaction.user.id) {
@@ -73,10 +80,6 @@ export default createCommand({
         coins: (BigInt(ctx.args[2]) - (!user ? 0n : user.coins)).toLocaleString(),
         user: `<@${ctx.args[0]}>`
       })
-    }
-
-    if(!player) {
-      return await ctx.reply('commands.trade.player_not_found')
     }
 
     await ctx.reply({
