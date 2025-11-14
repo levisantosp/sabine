@@ -275,9 +275,10 @@
       "cancel": "Cancelar",
       "cancelled": "Negociação cancelada.",
       "res": "Você vendeu **{player} — {collection}** para {user} por **{coins}** coins com sucesso!",
-      "invalid_value": "Informe um valor maior que 0.",
+      "invalid_value": "Informe um valor maior ou igual a **{value}**.",
       "cannot_trade": "Você não pode negociar consigo mesmo.",
-      "has_been_traded": "Você já negociou um jogador recentemente. Tente novamente {t}"
+      "has_been_traded": "Você já negociou um jogador recentemente. Tente novamente {t}",
+      "player_not_found": "Jogador não encontrado!"
     },
     "transactions": {
       "type": {

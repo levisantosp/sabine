@@ -275,9 +275,10 @@
       "cancel": "Cancel",
       "cancelled": "Trade cancelled.",
       "res": "You sold **{player} — {collection}** for {user} for **{coins}** coins succesfully!",
-      "invalid_value": "Enter a value greater than 0.",
+      "invalid_value": "Please, provide a value greater than or equal to **{value}**.",
       "cannot_trade": "You cannot trade with yourself.",
-      "has_been_traded": "You already traded a player recently. Try again {t}"
+      "has_been_traded": "You already traded a player recently. Try again {t}",
+      "player_not_found": "Player not found!"
     },
     "transactions": {
       "type": {
