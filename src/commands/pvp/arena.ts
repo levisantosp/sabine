@@ -260,7 +260,7 @@ export default createCommand({
         const when = new Date(now)
         const today = now.getDay()
 
-        when.setDate(now.getDate() + ((7 - today) % 7))
+        when.setDate(now.getDate() + (7 - today))
         when.setHours(0, 0, 0, 0)
 
         const embed = new EmbedBuilder()
