@@ -38,7 +38,6 @@ const rest = new Discord.REST().setToken(process.env.BOT_TOKEN)
 
 export default class App extends Discord.Client {
   public commands: Map<string, Command> = new Map()
-  public _uptime: number = Date.now()
   public prisma: typeof prisma
   public redis: typeof redis
   public queue: typeof queue
