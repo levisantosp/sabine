@@ -390,7 +390,6 @@ export default createCommand({
         await ctx.reply('commands.remove.player_removed', { p: player.name })
       }
       else {
-        console.log(ctx.args)
         page -= 1
 
         const players = reserve_players.slice(page * 10 - 10, page * 10)
