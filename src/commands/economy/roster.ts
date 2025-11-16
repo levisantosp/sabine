@@ -152,6 +152,8 @@ export default createCommand({
                   .setCustomId(`roster;${ctx.db.user.id};promote;${p};${i}`)
               )
           )
+
+          i++
         }
       }
 
@@ -249,6 +251,8 @@ export default createCommand({
           description: player.role,
           value: `${i};${player.id}`
         })
+
+        i++
       }
 
       const menu = new SelectMenuBuilder()
@@ -421,6 +425,8 @@ export default createCommand({
                 )
             )
           }
+
+          i++
         }
 
         page += 1
