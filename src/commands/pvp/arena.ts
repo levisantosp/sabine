@@ -8,6 +8,7 @@ import {
 import createCommand from '../../structures/command/createCommand.ts'
 import SelectMenuBuilder from '../../structures/builders/SelectMenuBuilder.ts'
 import { valorant_agents } from '../../config.ts'
+import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
 
 export default createCommand({
   name: 'arena',
@@ -72,6 +73,14 @@ export default createCommand({
           }
         }
       ]
+    },
+    {
+      type: ApplicationCommandOptionType.Subcommand,
+      name: 'info',
+      description: 'View information about the Arena',
+      descriptionLocalizations: {
+        'pt-BR': 'Veja informações sobre a Arena'
+      }
     }
   ],
   messageComponentInteractionTime: 5 * 60 * 1000,
@@ -245,8 +254,27 @@ export default createCommand({
           flags: 'IsComponentsV2',
           components: [container, row.toJSON()]
         })
+      },
+      info: async() => {
+        const now = new Date()
+        const when = new Date(now)
+        const today = now.getDay()
+
+        when.setDate(now.getDate() + ((7 - today) % 7))
+        when.setHours(0, 0, 0, 0)
+
+        const embed = new EmbedBuilder()
+          .setTitle(ctx.t('commands.arena.embed.title'))
+          .setDesc(ctx.t('commands.arena.embed.desc', {
+            when: `<t:${Math.floor(when.getTime() / 1000)}:R>`,
+            map: await ctx.app.redis.get('arena:map')
+          }))
+
+        await ctx.reply(embed.build())
       }
     }
+
+    if(!actions[ctx.args[0].toString()]) return
 
     await actions[ctx.args[0].toString()]()
   },
