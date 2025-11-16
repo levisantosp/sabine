@@ -401,7 +401,7 @@
       "bot": "Me faltam as seguintes permissões para esse comando funcionar adequadamente: {permissions}"
     },
     "error": "Ocorreu um erro inesperado...\n```fix\n{e}```",
-    "privacy": "Antes de começar a usar o bot, você deve aceitar os [Termos de Serviço e Privacidade](https://levispires.github.io/sabine-terms/)",
+    "privacy": "Antes de começar a usar o bot, você deve aceitar os [Termos de Serviço e Privacidade](https://sabinebot.xyz/terms)",
     "verified": "Faça seu palpite clicando no botão abaixo.",
     "pickem": {
       "label": "Bolão",

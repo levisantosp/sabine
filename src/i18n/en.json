@@ -333,7 +333,11 @@
       "remove": "Remove",
       "select_agent": "Select an agent for **{player}**.",
       "agent_selected": "**{p}** will play as **{agent}**.",
-      "map": "Current Map: `{map}`"
+      "map": "Current Map: `{map}`",
+      "embed": {
+        "title": "Arena Information",
+        "desc": "Current Map: `{map}`\nThe map will change {when}"
+      }
     },
     "summary": {
       "match_not_found": "This match could not be found. Check the seed and try again.",
@@ -401,7 +405,7 @@
       "bot": "I lack the following permissions for this command to work properly: {permissions}"
     },
     "error": "An unexpected error has occurred...\n```fix\n{e}```",
-    "privacy": "Before you start to use the bot, you must accept the [Terms of Service and Privacy](https://levispires.github.io/sabine-terms/)",
+    "privacy": "Before you start to use the bot, you must accept the [Terms of Service and Privacy](https://sabinebot.xyz/terms)",
     "verified": "Make your prediction by clicking the button below.",
     "pickem": {
       "label": "Pick'em",
