@@ -227,7 +227,7 @@ const sendValorantMatches = async(app: App) => {
     for(const [channelId, matches] of channelBatches.entries()) {
       const chunkSize = 10
 
-      for(let i = 0; i < matches.length; i+= chunkSize) {
+      for(let i = 0;i < matches.length;i += chunkSize) {
         const chunk = matches.slice(i, i + chunkSize)
 
         const container = new ContainerBuilder()
@@ -241,10 +241,10 @@ const sendValorantMatches = async(app: App) => {
               text => {
                 let content = `### ${d.tournament.name}\n`
 
-                content += `**${emoji1} ${d.teams[0].name} <:versus:1349105624180330516> ${d.teams[1].name} ${emoji2}**\n`
-                content += `<t:${d.when.getTime() / 1000}:F> | <t:${d.when.getTime() / 1000}:R>\n`
-                content += `-# ${d.stage}`
-                
+                content += `**${emoji1} ${d.teams[0].name} <:versus:1349105624180330516> ${d.teams[1].name} ${emoji2}**\n`
+                content += `<t:${d.when.getTime() / 1000}:F> | <t:${d.when.getTime() / 1000}:R>\n`
+                content += `-# ${d.stage}`
+
                 return text.setContent(content)
               }
             )
@@ -325,304 +325,304 @@ const sendValorantMatches = async(app: App) => {
 }
 
 const sendValorantTBDMatches = async(app: App) => {
-  const res = await service.getMatches('valorant')
+  const res = await service.getMatches('valorant')
 
-  if(!res || !res.length) return
+  if(!res || !res.length) return
 
-  const guilds = await app.prisma.guild.findMany({
-    include: {
-      tbd_matches: {
-        where: {
-          type: 'valorant'
-        }
-      }
-    }
-  })
+  const guilds = await app.prisma.guild.findMany({
+    include: {
+      tbd_matches: {
+        where: {
+          type: 'valorant'
+        }
+      }
+    }
+  })
 
-  if(!guilds.length) return
+  if(!guilds.length) return
 
-  const sendMessageThunks: (() => Promise<unknown>)[] = []
-  const updateGuildThunks: (() => Promise<unknown>)[] = []
+  const sendMessageThunks: (() => Promise<unknown>)[] = []
+  const updateGuildThunks: (() => Promise<unknown>)[] = []
 
-  for(const guild of guilds) {
-    if(!guild.tbd_matches.length) continue
+  for(const guild of guilds) {
+    if(!guild.tbd_matches.length) continue
 
-    const channelBatches = new Map<string, any[]>()
+    const channelBatches = new Map<string, any[]>()
 
-    for(const match of guild.tbd_matches) {
-      const data = res
-        .map(body => ({
-          ...body,
-          when: new Date(body.when)
-        }))
-        .find(d => d.id === match.id)
+    for(const match of guild.tbd_matches) {
+      const data = res
+        .map(body => ({
+          ...body,
+          when: new Date(body.when)
+        }))
+        .find(d => d.id === match.id)
 
-      if(!data) continue
+      if(!data) continue
 
-      if(data.teams[0].name !== 'TBD' && data.teams[1].name !== 'TBD') {
-        const emoji1 = emojis.find(e => e?.name === data.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
-        const emoji2 = emojis.find(e => e?.name === data.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
+      if(data.teams[0].name !== 'TBD' && data.teams[1].name !== 'TBD') {
+        const emoji1 = emojis.find(e => e?.name === data.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
+        const emoji2 = emojis.find(e => e?.name === data.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
 
-        if(!channelBatches.has(match.channel)) {
-          channelBatches.set(match.channel, [])
-        }
+        if(!channelBatches.has(match.channel)) {
+          channelBatches.set(match.channel, [])
+        }
 
-        channelBatches.get(match.channel)?.push({ data, emoji1, emoji2, match })
+        channelBatches.get(match.channel)?.push({ data, emoji1, emoji2, match })
 
-        const m = guild.tbd_matches.filter((m) => m.id === match.id)[0]
+        const m = guild.tbd_matches.filter((m) => m.id === match.id)[0]
 
-        const thunk = async() => {
-          await app.prisma.guild.update({
-            where: {
-              id: guild.id
-            },
-            data: {
-              tbd_matches: {
-                delete: {
-                  id: m.id
-                }
-              }
-            }
-          })
-        }
+        const thunk = async() => {
+          await app.prisma.guild.update({
+            where: {
+              id: guild.id
+            },
+            data: {
+              tbd_matches: {
+                delete: {
+                  id: m.id
+                }
+              }
+            }
+          })
+        }
 
-        updateGuildThunks.push(thunk)
-      }
-    }
+        updateGuildThunks.push(thunk)
+      }
+    }
 
-    for(const [channelId, matches] of channelBatches.entries()) {
-      const chunkSize = 10
+    for(const [channelId, matches] of channelBatches.entries()) {
+      const chunkSize = 10
 
-      for(let i = 0; i < matches.length; i+= chunkSize) {
-        const chunk = matches.slice(i, i + chunkSize)
+      for(let i = 0;i < matches.length;i += chunkSize) {
+        const chunk = matches.slice(i, i + chunkSize)
 
-        const container = new ContainerBuilder()
-          .setAccentColor(6719296)
+        const container = new ContainerBuilder()
+          .setAccentColor(6719296)
 
-        for(const item of chunk) {
-          const { data, emoji1, emoji2, match } = item
+        for(const item of chunk) {
+          const { data, emoji1, emoji2, match } = item
 
-          container
-            .addTextDisplayComponents(
-              text => {
-                let content = `### ${data.tournament.name}\n`
+          container
+            .addTextDisplayComponents(
+              text => {
+                let content = `### ${data.tournament.name}\n`
 
-                content += `**${emoji1} ${data.teams[0].name} <:versus:1349105624180330516> ${data.teams[1].name} ${emoji2}**\n`
-                content += `<t:${data.when.getTime() / 1000}:F> | <t:${data.when.getTime() / 1000}:R>\n`
-                content += `-# ${data.stage}`
+                content += `**${emoji1} ${data.teams[0].name} <:versus:1349105624180330516> ${data.teams[1].name} ${emoji2}**\n`
+                content += `<t:${data.when.getTime() / 1000}:F> | <t:${data.when.getTime() / 1000}:R>\n`
+                content += `-# ${data.stage}`
 
-                return text.setContent(content)
-              }
-            )
-            .addActionRowComponents(
-              row => row.setComponents(
-                new ButtonBuilder()
-                  .setLabel(t(guild.lang, 'helper.predict'))
-                  .setCustomId(`predict;valorant;${match.id}`)
-                  .setStyle(ButtonStyle.Success),
-                new ButtonBuilder()
-                  .setLabel(t(guild.lang, 'helper.bet'))
-                  .setCustomId(`bet;valorant;${data.id}`)
-                  .setStyle(ButtonStyle.Secondary),
-                new ButtonBuilder()
-                  .setLabel(t(guild.lang, 'helper.stats'))
-                  .setStyle(ButtonStyle.Link)
-                  .setURL(`https://vlr.gg/${data.id}`)
-              )
-            )
-            .addSeparatorComponents(separator => separator)
-        }
+                return text.setContent(content)
+              }
+            )
+            .addActionRowComponents(
+              row => row.setComponents(
+                new ButtonBuilder()
+                  .setLabel(t(guild.lang, 'helper.predict'))
+                  .setCustomId(`predict;valorant;${match.id}`)
+                  .setStyle(ButtonStyle.Success),
+                new ButtonBuilder()
+                  .setLabel(t(guild.lang, 'helper.bet'))
+                  .setCustomId(`bet;valorant;${data.id}`)
+                  .setStyle(ButtonStyle.Secondary),
+                new ButtonBuilder()
+                  .setLabel(t(guild.lang, 'helper.stats'))
+                  .setStyle(ButtonStyle.Link)
+                  .setURL(`https://vlr.gg/${data.id}`)
+              )
+            )
+            .addSeparatorComponents(separator => separator)
+        }
 
-        const thunk = async() => {
-          if(container.components.length) {
-            const row = new ActionRowBuilder<ButtonBuilder>()
-              .setComponents(
-                new ButtonBuilder()
-                  .setLabel(t(guild.lang, 'helper.pickem.label'))
-                  .setStyle(ButtonStyle.Primary)
-                  .setCustomId('pickem')
-              )
+        const thunk = async() => {
+          if(container.components.length) {
+            const row = new ActionRowBuilder<ButtonBuilder>()
+              .setComponents(
+                new ButtonBuilder()
+                  .setLabel(t(guild.lang, 'helper.pickem.label'))
+                  .setStyle(ButtonStyle.Primary)
+                  .setCustomId('pickem')
+              )
 
-            await rest.post(Routes.channelMessages(channelId), {
-              body: {
-                components: [container.toJSON(), row.toJSON()],
-                flags: MessageFlags.IsComponentsV2
-              }
-            })
-          }
-        }
+            await rest.post(Routes.channelMessages(channelId), {
+              body: {
+                components: [container.toJSON(), row.toJSON()],
+                flags: MessageFlags.IsComponentsV2
+              }
+            })
+          }
+        }
 
-        sendMessageThunks.push(thunk)
-      }
-    }
-  }
+        sendMessageThunks.push(thunk)
+      }
+    }
+  }
 
-  await Promise.allSettled(updateGuildThunks.map(task => task()))
-  await Promise.allSettled(sendMessageThunks.map(task => task()))
+  await Promise.allSettled(updateGuildThunks.map(task => task()))
+  await Promise.allSettled(sendMessageThunks.map(task => task()))
 }
 
 const sendLolMatches = async(app: App) => {
-  const res = await service.getMatches('lol')
-  const res2 = await service.getResults('lol')
+  const res = await service.getMatches('lol')
+  const res2 = await service.getResults('lol')
 
-  if(!res || !res.length) return
+  if(!res || !res.length) return
 
-  const guilds = await app.prisma.guild.findMany({
-    include: {
-      events: {
-        where: {
-          type: 'lol'
-        }
-      },
-      key: true,
-      tbd_matches: {
-        where: {
-          type: 'lol'
-        }
-      }
-    }
-  })
+  const guilds = await app.prisma.guild.findMany({
+    include: {
+      events: {
+        where: {
+          type: 'lol'
+        }
+      },
+      key: true,
+      tbd_matches: {
+        where: {
+          type: 'lol'
+        }
+      }
+    }
+  })
 
-  if(!guilds.length) return
+  if(!guilds.length) return
 
-  const bulkDeleteThunks: (() => Promise<unknown>)[] = []
-  const updateGuildThunks: (() => Promise<unknown>)[] = []
-  const sendMessageThunks: (() => Promise<unknown>)[] = []
+  const bulkDeleteThunks: (() => Promise<unknown>)[] = []
+  const updateGuildThunks: (() => Promise<unknown>)[] = []
+  const sendMessageThunks: (() => Promise<unknown>)[] = []
 
-  for(const guild of guilds) {
-    const matches: {
-      matchId: string
-      guildId: string
-      channel: string
-      type: $Enums.EventType
-    }[] = []
+  for(const guild of guilds) {
+    const matches: {
+      matchId: string
+      guildId: string
+      channel: string
+      type: $Enums.EventType
+    }[] = []
 
-    if(guild.lol_matches.length && !res2.some(d => d.id === guild.lol_matches[guild.lol_matches.length - 1])) continue
+    if(guild.lol_matches.length && !res2.some(d => d.id === guild.lol_matches[guild.lol_matches.length - 1])) continue
 
-    guild.lol_matches = []
+    guild.lol_matches = []
 
-    let data: MatchesData[]
+    let data: MatchesData[]
 
-    if(guild.events.length > 5 && !guild.key) {
-      data = res.filter(d => guild.events.reverse().slice(0, 5).some(e => e.name === d.tournament.name))
-    }
+    if(guild.events.length > 5 && !guild.key) {
+      data = res.filter(d => guild.events.reverse().slice(0, 5).some(e => e.name === d.tournament.name))
+    }
 
-    else data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
+    else data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
 
-    for(const e of guild.events) {
-      const thunk = async() => {
-        try {
-          const messages = await rest.get(Routes.channelMessages(e.channel1), {
-            query: new URLSearchParams({ limit: '100' })
-          }) as Collection<string, Message>
+    for(const e of guild.events) {
+      const thunk = async() => {
+        try {
+          const messages = await rest.get(Routes.channelMessages(e.channel1), {
+            query: new URLSearchParams({ limit: '100' })
+          }) as Collection<string, Message>
 
-          const messagesIds = messages.filter(m => m.author.id === app.user?.id).map(m => m.id)
+          const messagesIds = messages.filter(m => m.author.id === app.user?.id).map(m => m.id)
 
-          if(messagesIds.length) {
-            await rest.post(Routes.channelBulkDelete(e.channel1), {
-              body: {
-                messages: messagesIds
-              }
-            })
-          }
-        }
-        catch {}
-      }
+          if(messagesIds.length) {
+            await rest.post(Routes.channelBulkDelete(e.channel1), {
+              body: {
+                messages: messagesIds
+              }
+            })
+          }
+        }
+        catch {}
+      }
 
-      bulkDeleteThunks.push(thunk)
-    }
+      bulkDeleteThunks.push(thunk)
+    }
 
-    const channelBatches = new Map<string, any[]>()
+    const channelBatches = new Map<string, any[]>()
 
-    try {
-      for(
-        const d of data.map(body => ({
-          ...body,
-          when: new Date(body.when)
-        }))
-      ) {
-        if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
+    try {
+      for(
+        const d of data.map(body => ({
+          ...body,
+          when: new Date(body.when)
+        }))
+      ) {
+        if(new Date(d.when).getDate() !== new Date(data[0].when).getDate()) continue
 
-        for(const e of guild.events) {
-          if(e.name === d.tournament.name) {
-            const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
-            const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
+        for(const e of guild.events) {
+          if(e.name === d.tournament.name) {
+            const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
+            const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
 
-            const index = guild.lol_matches.findIndex((m) => m === d.id)
+            const index = guild.lol_matches.findIndex((m) => m === d.id)
 
-            if(index > -1) guild.lol_matches.splice(index, 1)
+            if(index > -1) guild.lol_matches.splice(index, 1)
 
-            if(!d.stage.toLowerCase().includes('showmatch')) guild.lol_matches.push(d.id!)
+            if(!d.stage.toLowerCase().includes('showmatch')) guild.lol_matches.push(d.id!)
 
-            if(d.stage.toLowerCase().includes('showmatch')) continue
+            if(d.stage.toLowerCase().includes('showmatch')) continue
 
-            if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') {
-              if(!channelBatches.has(e.channel1)) {
-                channelBatches.set(e.channel1, [])
-              }
+            if(d.teams[0].name !== 'TBD' && d.teams[1].name !== 'TBD') {
+              if(!channelBatches.has(e.channel1)) {
+                channelBatches.set(e.channel1, [])
+              }
 
-              channelBatches.get(e.channel1)?.push({ d, emoji1, emoji2 })
-            }
-            else {
-              matches.push({
-                matchId: d.id!,
-                channel: e.channel1,
-                guildId: guild.id,
-                type: 'lol'
-              })
-            }
+              channelBatches.get(e.channel1)?.push({ d, emoji1, emoji2 })
+            }
+            else {
+              matches.push({
+                matchId: d.id!,
+                channel: e.channel1,
+                guildId: guild.id,
+                type: 'lol'
+              })
+            }
 
-            break
-          }
-        }
-      }
-    }
-    catch {}
+            break
+          }
+        }
+      }
+    }
+    catch {}
 
-    for(const [channelId, matches] of channelBatches.entries()) {
-      const chunkSize = 10
+    for(const [channelId, matches] of channelBatches.entries()) {
+      const chunkSize = 10
 
-      for(let i = 0; i < matches.length; i+= chunkSize) {
-        const chunk = matches.slice(i, i + chunkSize)
+      for(let i = 0;i < matches.length;i += chunkSize) {
+        const chunk = matches.slice(i, i + chunkSize)
 
-        const container = new ContainerBuilder()
-          .setAccentColor(6719296)
+        const container = new ContainerBuilder()
+          .setAccentColor(6719296)
 
-        for(const data of chunk) {
-          const { d, emoji1, emoji2 } = data
+        for(const data of chunk) {
+          const { d, emoji1, emoji2 } = data
 
-          container
-            .addTextDisplayComponents(
-              text => {
-                let content = `### ${d.tournament.full_name}\n`
+          container
+            .addTextDisplayComponents(
+              text => {
+                let content = `### ${d.tournament.full_name}\n`
 
-                content += `**${emoji1} ${d.teams[0].name} <:versus:1349105624180330516> ${d.teams[1].name} ${emoji2}**\n`
-                content += `<t:${d.when.getTime() / 1000}:F> | <t:${d.when.getTime() / 1000}:R>\n`
-                content += `-# ${d.stage}`
+                content += `**${emoji1} ${d.teams[0].name} <:versus:1349105624180330516> ${d.teams[1].name} ${emoji2}**\n`
+                content += `<t:${d.when.getTime() / 1000}:F> | <t:${d.when.getTime() / 1000}:R>\n`
+                content += `-# ${d.stage}`
 
-                return text.setContent(content)
-              }
-            )
-            .addActionRowComponents(
-              row => row.setComponents(
-                new ButtonBuilder()
-                  .setLabel(t(guild.lang, 'helper.predict'))
-                  .setCustomId(`predict;lol;${d.id}`)
-                  .setStyle(ButtonStyle.Success),
-                new ButtonBuilder()
-                  .setLabel(t(guild.lang, 'helper.bet'))
-                  .setCustomId(`bet;lol;${d.id}`)
-                  .setStyle(ButtonStyle.Secondary),
-                new ButtonBuilder()
-                  .setLabel(t(guild.lang, 'helper.pickem.label'))
-                  .setStyle(ButtonStyle.Primary)
-                  .setCustomId('pickem')
-              )
-            )
-            .addSeparatorComponents(separator => separator)
-        }
+                return text.setContent(content)
+              }
+            )
+            .addActionRowComponents(
+              row => row.setComponents(
+                new ButtonBuilder()
+                  .setLabel(t(guild.lang, 'helper.predict'))
+                  .setCustomId(`predict;lol;${d.id}`)
+                  .setStyle(ButtonStyle.Success),
+                new ButtonBuilder()
+                  .setLabel(t(guild.lang, 'helper.bet'))
+                  .setCustomId(`bet;lol;${d.id}`)
+                  .setStyle(ButtonStyle.Secondary),
+                new ButtonBuilder()
+                  .setLabel(t(guild.lang, 'helper.pickem.label'))
+                  .setStyle(ButtonStyle.Primary)
+                  .setCustomId('pickem')
+              )
+            )
+            .addSeparatorComponents(separator => separator)
+        }
 
-        const thunk = async () => {
+        const thunk = async() => {
           if(container.components.length) {
             await rest.post(Routes.channelMessages(channelId), {
               body: {
@@ -633,40 +633,40 @@ const sendLolMatches = async(app: App) => {
           }
         }
 
-        sendMessageThunks.push(thunk)
-      }
-    }
+        sendMessageThunks.push(thunk)
+      }
+    }
 
-    const thunk = async() => {
-      await app.prisma.guild.update({
-        where: {
-          id: guild.id
-        },
-        data: {
-          lol_matches: guild.lol_matches,
-          tbd_matches: {
-            deleteMany: {
-              type: 'lol'
-            },
-            create: matches.map(m => ({
-              type: m.type,
-              matchId: m.matchId,
-              channel: m.channel
-            }))
-          },
-          live_messages: {
-            deleteMany: {}
-          }
-        }
-      })
-    }
+    const thunk = async() => {
+      await app.prisma.guild.update({
+        where: {
+          id: guild.id
+        },
+        data: {
+          lol_matches: guild.lol_matches,
+          tbd_matches: {
+            deleteMany: {
+              type: 'lol'
+            },
+            create: matches.map(m => ({
+              type: m.type,
+              matchId: m.matchId,
+              channel: m.channel
+            }))
+          },
+          live_messages: {
+            deleteMany: {}
+          }
+        }
+      })
+    }
 
-    updateGuildThunks.push(thunk)
-  }
+    updateGuildThunks.push(thunk)
+  }
 
-  await Promise.allSettled(bulkDeleteThunks.map(task => task()))
-  await Promise.allSettled(updateGuildThunks.map(task => task()))
-  await Promise.allSettled(sendMessageThunks.map(task => task()))
+  await Promise.allSettled(bulkDeleteThunks.map(task => task()))
+  await Promise.allSettled(updateGuildThunks.map(task => task()))
+  await Promise.allSettled(sendMessageThunks.map(task => task()))
 }
 
 const runTasks = async(app: App) => {
@@ -699,7 +699,7 @@ export default createListener({
         type: 4
       })
     }
-    
+
     if(!app.shard || !app.shard.ids[0]) {
       await app.postCommands()
 
@@ -852,7 +852,7 @@ export default createListener({
         await user.save()
       })
         .catch(e => new Logger(app).error(e))
- 
+
       await runTasks(app)
     }
   }
