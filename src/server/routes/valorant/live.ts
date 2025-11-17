@@ -127,6 +127,6 @@ export default async function(
       }
     }
 
-    await Promise.all(messages)
+    await Promise.allSettled(messages)
   })
 }
