@@ -159,75 +159,105 @@ export default async function(
 
     if(!preds.length) return
 
+    const usersIds = [...new Set(preds.map(pred => pred.userId))]
+
+    const usersData = await app.prisma.user.findMany({
+      where: {
+        id: { in: usersIds }
+      }
+    })
+
+    const userMap = new Map<string, SabineUser>()
+
+    for(const data of usersData) {
+      let user = new SabineUser(data.id)
+      user = Object.assign(user, data)
+
+      userMap.set(user.id, user)
+    }
+
+    const transactions: Promise<unknown>[] = []
+
     for(const data of req.body) {
       for(const pred of preds) {
         if(data.id !== pred.match) continue
 
-        const user = await SabineUser.fetch(pred.userId)
+        const user = userMap.get(pred.userId)
 
         if(!user) continue
 
-        if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
-          await user.addCorrectPrediction('valorant', data.id)
+        const transaction = async() => {
+          if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
+            user.correct_predictions += 1
+            
+            let odd: number | null = null
+            let bonus = 0
 
-          if(pred.bet) {
-            const winnerIndex = data.teams.findIndex(t => t.winner)
+            if(pred.bet) {
+              const winnerIndex = data.teams.findIndex(t => t.winner)
 
-            if(pred.teams[winnerIndex].winner) {
-              let oddA = 0
-              let oddB = 0
+              if(pred.teams[winnerIndex].winner) {
+                let oddA = 0
+                let oddB = 0
 
-              for(const p of preds) {
-                if(p.teams[0].winner && p.bet) {
-                  oddA += 1
-                }
-
-                else if(p.teams[1].winner && p.bet) {
-                  oddB += 1
-                }
-              }
-
-              let odd: number
-
-              if(pred.teams[0].winner) {
-                odd = calcOdd(oddA)
-              }
-
-              else {
-                odd = calcOdd(oddB)
-              }
-
-              let bonus = 0
-
-              if(user.premium) {
-                bonus = Number(pred.bet) / 2
-              }
-
-              user.coins += BigInt(Number(pred.bet) * odd) + BigInt(bonus)
-              user.fates += 10
-
-              pred.odd = odd
-
-              await Promise.all([
-                app.prisma.prediction.update({
-                  where: {
-                    id: pred.id
-                  },
-                  data: {
-                    odd: odd
+                for(const p of preds) {
+                  if(p.teams[0].winner && p.bet) {
+                    oddA += 1
                   }
-                }),
-                user.save()
-              ])
+
+                  else if(p.teams[1].winner && p.bet) {
+                    oddB += 1
+                  }
+                }
+
+                if(pred.teams[0].winner) {
+                  odd = calcOdd(oddA)
+                }
+
+                else {
+                  odd = calcOdd(oddB)
+                }
+
+                if(user.premium) {
+                  bonus = Number(pred.bet) / 2
+                }
+              }
             }
+
+            const coins = BigInt(Number(pred.bet) * (odd ?? 1)) + BigInt(bonus)
+            const fates = 10
+
+            await Promise.allSettled([
+              app.prisma.prediction.update({
+                where: {
+                  id: pred.id
+                },
+                data: {
+                  odd: odd,
+                  status: 'correct'
+                }
+              }),
+              app.prisma.user.update({
+                where: { id: user.id },
+                data: {
+                  correct_predictions: {
+                    increment: 1
+                  },
+                  coins: { increment: coins },
+                  fates: { increment: fates }
+                }
+              })
+            ])
+          }
+          else {
+            await user.addIncorrectPrediction('valorant', data.id)
           }
         }
-        else {
-          await user.addWrongPrediction('valorant', data.id)
-        }
+
+        transactions.push(transaction())
       }
     }
 
-    await Promise.allSettled(messages)
+    await Promise.allSettled([...messages, ...transactions])
   })
 }
