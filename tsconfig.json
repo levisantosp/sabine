@@ -12,12 +12,8 @@
     "rewriteRelativeImportExtensions": true,
     "verbatimModuleSyntax": true,
     "outDir": "./dist",
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "noEmit": true
   },
-  "include": [
-    // "src/**/*.json",
-    "env.d.ts",
-    "src"
-  ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "./test.ts"]
 }

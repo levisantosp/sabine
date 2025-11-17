@@ -1,14 +1,12 @@
-FROM node:24.11.1-alpine
-
-RUN corepack enable pnpm
+FROM oven/bun:1.3.2-alpine
 
 WORKDIR /app
 
-COPY package.json pnpm*.yaml .npmrc /app/
+COPY package.json bun.lock /app/
 COPY . .
 
-RUN pnpm i --frozen-lockfile
-RUN pnpm build
-RUN pnpm push
+RUN bun i --frozen-lockfile
+RUN bun compile
+RUN bun push
 
-CMD ["pnpm", "start"]
+CMD ["bun", "start"]
