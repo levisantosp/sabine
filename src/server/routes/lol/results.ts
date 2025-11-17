@@ -171,8 +171,6 @@ export default async function(
                   }
                 }
 
-                let odd: number
-
                 if(pred.teams[0].winner) {
                   odd = calcOdd(oddA)
                 }
