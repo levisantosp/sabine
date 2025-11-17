@@ -197,21 +197,25 @@ export class SabineUser implements User {
 
     if(!pred) return this
 
-    this.incorrect_predictions += 1
-
-    await prisma.prediction.update({
-      where: {
-        match: predictionId,
-        game,
-        userId: this.id,
-        id: pred.id
-      },
-      data: {
-        status: 'wrong'
-      }
-    })
-
-    await this.save()
+    await prisma.$transaction([
+      prisma.prediction.update({
+        where: {
+          match: predictionId,
+          game,
+          userId: this.id,
+          id: pred.id
+        },
+        data: {
+          status: 'wrong'
+        }
+      }),
+      prisma.user.update({
+        where: { id: this.id },
+        data: {
+          incorrect_predictions: { increment: 1 }
+        }
+      })
+    ])
 
     return this
   }
