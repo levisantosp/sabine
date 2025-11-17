@@ -10,13 +10,6 @@ import Bull from 'bull'
 import type { ArenaQueue } from './listeners/clientReady.ts'
 import { valorant_maps } from './config.ts'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-
-const isProd = process.env.NODE_ENV === 'production'
-
-const file = path.join(__dirname, isProd ? 'index.js' : 'index.ts')
-
 const redis: Redis.RedisClientType = Redis.createClient({
   url: process.env.REDIS_URL
 })
@@ -182,7 +175,7 @@ server.listen({
 })
   .then(() => console.log(`HTTP server running at ${process.env.PORT}`))
 
-const manager = new ShardingManager(file, {
+const manager = new ShardingManager('src/index.ts', {
   token: process.env.BOT_TOKEN,
   mode: 'process',
   totalShards: 2
