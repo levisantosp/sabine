@@ -186,7 +186,7 @@ export class SabineUser implements User {
     return this
   }
 
-  public async addWrongPrediction(game: 'valorant' | 'lol', predictionId: string) {
+  public async addIncorrectPrediction(game: 'valorant' | 'lol', predictionId: string) {
     const pred = await prisma.prediction.findFirst({
       where: {
         match: predictionId,
