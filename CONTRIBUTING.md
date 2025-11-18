@@ -8,8 +8,8 @@ Sabine is an open-source project dedicated to providing a top-tier esports cover
 
 ### Reporting Bugs
 
-* Ensure the bug hasn't already been reported by searching on GitHub under [Issues](https://github.com/levisantosp/sabine/issues).
-* If you're unable to find an open issue addressing the problem, [open a new one](https://github.com/levisantosp/sabine/issues/new). Be sure to include a title and clear description, as much relevant information as possible, and a code sample or an explicit set of steps to reproduce the issue.
+* Ensure the bug hasn't already been reported by searching on GitHub under [Issues](https://github.com/sabinelab/sabine/issues).
+* If you're unable to find an open issue addressing the problem, [open a new one](https://github.com/sabinelab/sabine/issues/new). Be sure to include a title and clear description, as much relevant information as possible, and a code sample or an explicit set of steps to reproduce the issue.
 
 ### Suggesting Enhancements
 
@@ -21,24 +21,24 @@ Sabine is an open-source project dedicated to providing a top-tier esports cover
 2.  **Clone** your fork: `git clone https://github.com/YOUR_USERNAME/sabine.git`
 3.  Create a new **branch** for your changes: `git checkout -b my-feature-branch`
 4.  Make your changes.
-5.  **Lint** your code: `pnpm lint`. Please ensure your code adheres to the project's ESLint rules.
+5.  **Lint** your code: `bun lint`. Please ensure your code adheres to the project's ESLint rules.
 6.  **Commit** your changes with a descriptive message.
 7.  **Push** your branch to your fork: `git push origin my-feature-branch`
 8.  Open a **Pull Request** to the `master` branch of the main repository.
 
 ## Development Setup
 
-To get Sabine running locally, you'll need [Node.js](https://nodejs.org/), [Performant NPM](https://pnpm.io/), [Docker](https://www.docker.com/), and [Docker Compose](https://docs.docker.com/compose/).
+To get Sabine running locally, you'll need [Bun](https://bun.sh/), [Docker](https://www.docker.com/), and [Docker Compose](https://docs.docker.com/compose/).
 
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/YOUR_USERNAME/sabine.git](https://github.com/YOUR_USERNAME/sabine.git)
+    git clone https://github.com/YOUR_USERNAME/sabine.git
     cd sabine
     ```
 
 2.  **Install dependencies:**
     ```bash
-    pnpm i
+    bun i
     ```
 
 3.  **Set up environment variables:**
@@ -54,18 +54,18 @@ To get Sabine running locally, you'll need [Node.js](https://nodejs.org/), [Perf
 4.  **Sync the database:**
     Run the Prisma push command to sync your schema with the database.
     ```bash
-    pnpm push
+    bun push
     ```
 
 5.  **Run the bot in development (watch) mode:**
     This command will start the bot and watch for file changes.
     ```bash
-    pnpm dev
+    bun dev
     ```
 
 ## Code Style
 
-This project uses ESLint and TypeScript. Before committing, please run `pnpm lint` to check for any style issues and fix them.
+This project uses ESLint and TypeScript. Before committing, please run `bun lint` to check for any style issues and fix them.
 
 ## License
 
