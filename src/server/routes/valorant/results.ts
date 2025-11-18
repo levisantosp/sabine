@@ -225,7 +225,7 @@ export default async function(
             }
 
             const coins = BigInt(Number(pred.bet) * (odd ?? 1)) + BigInt(bonus)
-            const fates = 10
+            const fates = 5
 
             await Promise.allSettled([
               app.prisma.prediction.update({
