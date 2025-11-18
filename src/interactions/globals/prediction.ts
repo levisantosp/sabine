@@ -31,8 +31,6 @@ export default createModalSubmitInteraction({
           Number(ctx.args[4])
         )
 
-        ctx.db.user.fates += 1
-
         await ctx.db.user.save()
         await ctx.db.user.addPrediction('valorant', {
           match: data.id!,
@@ -80,8 +78,6 @@ export default createModalSubmitInteraction({
           Number(ctx.args[3]),
           Number(ctx.args[4])
         )
-
-        ctx.db.user.fates += 1
 
         await ctx.db.user.save()
         await ctx.db.user.addPrediction('lol', {
