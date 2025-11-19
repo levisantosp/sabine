@@ -21,7 +21,7 @@
   "dependencies": {
     "@fastify/type-provider-typebox": "^6.1.0",
     "@iamtraction/google-translate": "^2.0.1",
-    "@prisma/client": "^6.19.0",
+    "@prisma/client": "^7.0.0",
     "@sabinelab/players": "latest",
     "bull": "^4.16.5",
     "colors": "^1.4.0",
