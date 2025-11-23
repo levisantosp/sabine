@@ -1,16 +1,15 @@
 import js from '@eslint/js'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
-import { defineConfig } from 'eslint/config'
+import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  {
-    ignores: [
-      '**/test*',
-      'dist',
-      'scripts'
-    ]
-  },
+  globalIgnores([
+    '**/test*',
+    'dist',
+    'scripts',
+    'prisma.config.js'
+  ]),
   {
     files: ['**/*.{js,mjs,cjs,ts,mts,cts}'],
     plugins: { js },
