@@ -1,8 +1,16 @@
-import colors from 'colors'
-import moment from 'moment'
 import { ChannelType } from 'discord.js'
+import pino from 'pino'
 import App from '../structures/app/App.ts'
 import EmbedBuilder from '../structures/builders/EmbedBuilder.ts'
+
+const logger = pino({
+  transport: {
+    target: 'pino-pretty',
+    options: {
+      colorize: true
+    }
+  }
+})
 
 export default class Logger {
   private client: App
@@ -11,16 +19,16 @@ export default class Logger {
     this.client = client
   }
 
-  public static send(message: string) {
-    return console.log(colors.green(`[${moment(Date.now()).format('hh:mm:ss A')}] ${message}`))
+  public static info(message: string) {
+    logger.info(message)
   }
 
   public static warn(message: string) {
-    return console.log(colors.yellow(`[${moment(Date.now()).format('hh:mm:ss A')}] ${message}`))
+    logger.warn(message)
   }
 
   public static error(error: Error) {
-    return console.log(colors.red(`[${moment(Date.now()).format('hh:mm:ss A')}] ${error.stack ?? error}`))
+    logger.error(error.stack ?? error)
   }
 
   public async error(error: Error | string, shardId?: number) {
@@ -32,6 +40,8 @@ export default class Logger {
     if(ignoredErrors.some(e => error.toString().includes(e))) return
 
     if(typeof error === 'string') {
+      logger.error(error)
+      
       const embed = new EmbedBuilder()
         .setTitle('An error has occurred')
         .setDesc(`Shard ID: \`${shardId}\`\n\`\`\`js\n${error}\`\`\``)
@@ -50,10 +60,10 @@ export default class Logger {
         embeds: [embed],
         avatarURL: this.client.user?.displayAvatarURL({ size: 2048 })
       })
-
-      return console.log(colors.red(`[${moment(Date.now()).format('hh:mm:ss')}] ${error}`))
     }
     else {
+      logger.error(error.stack ?? error)
+
       const embed = new EmbedBuilder()
         .setTitle('An error has occurred')
         .setDesc(`Shard ID: \`${shardId}\`\n\`\`\`js\n${error.stack}\`\`\``)
@@ -72,8 +82,6 @@ export default class Logger {
         embeds: [embed],
         avatarURL: this.client.user?.displayAvatarURL({ size: 2048 })
       })
-
-      return console.log(colors.red(`[${moment(Date.now()).format('hh:mm:ss')}] ${error.stack ?? error}`))
     }
   }
 }

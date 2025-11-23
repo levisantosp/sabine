@@ -171,7 +171,7 @@ server.listen({
   host: process.env.HOST,
   port: process.env.PORT
 })
-  .then(() => console.log(`HTTP server running at ${process.env.PORT}`))
+  .then(() => Logger.info(`HTTP server running at ${process.env.PORT}`))
 
 const manager = new ShardingManager('src/index.ts', {
   token: process.env.BOT_TOKEN,
