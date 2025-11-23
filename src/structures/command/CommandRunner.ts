@@ -8,7 +8,7 @@ import { SabineGuild, SabineUser } from '../../database/index.ts'
 import path from 'node:path'
 import { readFileSync } from 'node:fs'
 import Logger from '../../util/Logger.ts'
-import type { Blacklist } from '@prisma/client'
+import type { Blacklist } from '../../../prisma/generated/client.ts'
 
 const locale: {
   [key: string]: string

@@ -10,7 +10,7 @@
     "dev": "bun --watch .",
     "compile": "bun lint && tsc",
     "push": "bun --env-file=.env prisma db push",
-    "gen": "bun prisma generate",
+    "gen": "bun --env-file=.env prisma generate",
     "lint": "eslint",
     "type-check": "tsc"
   },

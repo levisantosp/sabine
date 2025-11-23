@@ -3,7 +3,7 @@ import App from '../app/App.ts'
 import ModalSubmitInteractionContext from './ModalSubmitInteractionContext.ts'
 import { SabineGuild, SabineUser } from '../../database/index.ts'
 import locales, { type Args, type Content } from '../../i18n/index.ts'
-import type { Blacklist } from '@prisma/client'
+import type { Blacklist } from '../../../prisma/generated/client.ts'
 
 export default class ModalSubmitInteractionRunner {
   public async run(

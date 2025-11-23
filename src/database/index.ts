@@ -7,7 +7,7 @@ import {
   PrismaClient,
   type TBDMatch,
   type User
-} from '@prisma/client'
+} from '../../prisma/generated/client.ts'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { app } from '../structures/app/App.ts'
 import type { Pack } from '../server/routes/util/vote.ts'

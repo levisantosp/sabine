@@ -7,7 +7,7 @@ import Logger from '../util/Logger.ts'
 import { emojis } from '../util/emojis.ts'
 import App from '../structures/app/App.ts'
 import { SabineUser } from '../database/index.ts'
-import type { $Enums } from '@prisma/client'
+import type { $Enums } from '../../prisma/generated/client.ts'
 import Bull from 'bull'
 import Match from '../simulator/arena/Match.ts'
 

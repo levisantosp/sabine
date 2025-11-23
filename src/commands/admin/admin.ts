@@ -11,7 +11,7 @@ import {
   MessageFlags,
   ButtonBuilder
 } from 'discord.js'
-import type { $Enums } from '@prisma/client'
+import type { $Enums } from '../../../prisma/generated/client.ts'
 import { emojis } from '../../util/emojis.ts'
 
 const service = new Service(process.env.AUTH)
