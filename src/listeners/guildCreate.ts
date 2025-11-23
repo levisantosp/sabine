@@ -1,9 +1,7 @@
 import { ChannelType } from 'discord.js'
 import createListener from '../structures/app/createListener.ts'
 import EmbedBuilder from '../structures/builders/EmbedBuilder.ts'
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import { prisma } from '../database/index.ts'
 
 export default createListener({
   name: 'guildCreate',

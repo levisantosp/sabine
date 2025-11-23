@@ -3,10 +3,10 @@ import Redis from 'redis'
 import { server } from './server/index.ts'
 import Logger from './util/Logger.ts'
 import EmbedBuilder from './structures/builders/EmbedBuilder.ts'
-import { prisma } from './database/prisma.ts'
 import Bull from 'bull'
 import type { ArenaQueue } from './listeners/clientReady.ts'
 import { valorant_maps } from './config.ts'
+import { prisma } from './database/index.ts'
 
 const redis: Redis.RedisClientType = Redis.createClient({
   url: process.env.REDIS_URL

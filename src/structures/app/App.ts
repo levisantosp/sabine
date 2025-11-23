@@ -3,7 +3,6 @@ import { readdirSync } from 'node:fs'
 import path from 'node:path'
 import type { Command } from '../command/createCommand.ts'
 import { fileURLToPath } from 'node:url'
-import { PrismaClient } from '@prisma/client'
 import Redis from 'redis'
 import Logger from '../../util/Logger.ts'
 import type { CreateInteractionOptions } from '../interaction/createComponentInteraction.ts'
@@ -15,13 +14,12 @@ import {
   type Player
 } from '@sabinelab/players'
 import type { Listener } from './createListener.ts'
+import { prisma } from '../../database/index.ts'
 
 type Reminder = {
   user: string
   channel: string
 }
-
-const prisma = new PrismaClient()
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -38,7 +36,7 @@ const rest = new Discord.REST().setToken(process.env.BOT_TOKEN)
 
 export default class App extends Discord.Client {
   public commands: Map<string, Command> = new Map()
-  public prisma: typeof prisma
+  public prisma!: typeof prisma
   public redis: typeof redis
   public queue: typeof queue
   public interactions: Map<string, CreateInteractionOptions & CreateModalSubmitInteractionOptions> = new Map()
@@ -46,7 +44,6 @@ export default class App extends Discord.Client {
 
   public constructor(options: Discord.ClientOptions) {
     super(options)
-    this.prisma = prisma
     this.redis = redis
     this.queue = queue
   }
@@ -86,6 +83,8 @@ export default class App extends Discord.Client {
   }
 
   public async connect() {
+    this.prisma = prisma
+
     for(const player of getPlayers()) {
       this.players.set(player.id.toString(), {
         ...player,

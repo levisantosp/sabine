@@ -8,11 +8,13 @@ import {
   type TBDMatch,
   type User
 } from '@prisma/client'
+import { PrismaPg } from '@prisma/adapter-pg'
 import { app } from '../structures/app/App.ts'
 import type { Pack } from '../server/routes/util/vote.ts'
 import { valorant_agents } from '../config.ts'
 
-export const prisma = new PrismaClient()
+const adapter = new PrismaPg({ connectionString: process.env.POSTGRES_URI })
+export const prisma = new PrismaClient({ adapter })
 
 type PredictionTeam = {
   name: string

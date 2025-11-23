@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client'
 import type { FastifyInstance } from 'fastify'
-
-const prisma = new PrismaClient()
+import { prisma } from '../../../database/index.ts'
 
 export default async function(fastify: FastifyInstance) {
   fastify.get('/updates', async() => {
