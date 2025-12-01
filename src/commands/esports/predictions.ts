@@ -88,21 +88,21 @@ export default createCommand({
                 return await ctx.reply('commands.predictions.no_pages')
             }
             const embed = new EmbedBuilder()
-        .setAuthor({
-            name: t('commands.predictions.embed.author'),
-            iconURL: ctx.interaction.user.displayAvatarURL({ size: 2048 })
-        })
-        .setDesc(t('commands.predictions.embed.desc', {
-            correct: ctx.db.user.correct_predictions,
-            wrong: ctx.db.user.incorrect_predictions,
-            t: predictions.length
-        }))
-        .setFooter({
-            text: t('commands.predictions.embed.footer', {
-                p1: isNaN(page) ? 1 : page,
-                p2: pages
-            })
-        })
+                .setAuthor({
+                    name: t('commands.predictions.embed.author'),
+                    iconURL: ctx.interaction.user.displayAvatarURL({ size: 2048 })
+                })
+                .setDesc(t('commands.predictions.embed.desc', {
+                    correct: ctx.db.user.correct_predictions,
+                    wrong: ctx.db.user.incorrect_predictions,
+                    t: predictions.length
+                }))
+                .setFooter({
+                    text: t('commands.predictions.embed.footer', {
+                        p1: isNaN(page) ? 1 : page,
+                        p2: pages
+                    })
+                })
             for(const prediction of preds) {
                 let status: string
                 let odd = ''
@@ -119,21 +119,21 @@ export default createCommand({
                     odd += `\nOdd: \`${prediction.odd}x\``
                 }
                 const timestamp = (prediction.created_at.getTime() / 1000).toFixed(0)
-        embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name} (<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>)`, t('commands.predictions.embed.field', {
-            score1: prediction.teams[0].score,
-            score2: prediction.teams[1].score,
-            link: `https://www.vlr.gg/${prediction.match}`,
-            status
-        }) + odd)
+                embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name} (<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>)`, t('commands.predictions.embed.field', {
+                    score1: prediction.teams[0].score,
+                    score2: prediction.teams[1].score,
+                    link: `https://www.vlr.gg/${prediction.match}`,
+                    status
+                }) + odd)
             }
             const previous = new ButtonBuilder()
-        .setEmoji('1404176223621611572')
-        .setCustomId(`predictions;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;valorant`)
-        .defineStyle('blue')
+                .setEmoji('1404176223621611572')
+                .setCustomId(`predictions;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;valorant`)
+                .defineStyle('blue')
             const next = new ButtonBuilder()
-        .setEmoji('1404176291829121028')
-        .setCustomId(`predictions;${ctx.interaction.user.id};${page + 1 > pages ? pages : page + 1};next;valorant`)
-        .defineStyle('blue')
+                .setEmoji('1404176291829121028')
+                .setCustomId(`predictions;${ctx.interaction.user.id};${page + 1 > pages ? pages : page + 1};next;valorant`)
+                .defineStyle('blue')
             if(page <= 1) previous.setDisabled()
             if(page >= pages) next.setDisabled()
             await ctx.reply({
@@ -168,21 +168,21 @@ export default createCommand({
                 return await ctx.reply('commands.predictions.no_pages')
             }
             const embed = new EmbedBuilder()
-        .setAuthor({
-            name: t('commands.predictions.embed.author'),
-            iconURL: ctx.interaction.user.displayAvatarURL({ size: 2048 })
-        })
-        .setDesc(t('commands.predictions.embed.desc', {
-            correct: ctx.db.user.correct_predictions,
-            wrong: ctx.db.user.incorrect_predictions,
-            t: predictions.length
-        }))
-        .setFooter({
-            text: t('commands.predictions.embed.footer', {
-                p1: isNaN(page) ? 1 : page,
-                p2: pages
-            })
-        })
+                .setAuthor({
+                    name: t('commands.predictions.embed.author'),
+                    iconURL: ctx.interaction.user.displayAvatarURL({ size: 2048 })
+                })
+                .setDesc(t('commands.predictions.embed.desc', {
+                    correct: ctx.db.user.correct_predictions,
+                    wrong: ctx.db.user.incorrect_predictions,
+                    t: predictions.length
+                }))
+                .setFooter({
+                    text: t('commands.predictions.embed.footer', {
+                        p1: isNaN(page) ? 1 : page,
+                        p2: pages
+                    })
+                })
             for(const prediction of preds) {
                 let status: string
                 let odd = ''
@@ -199,21 +199,21 @@ export default createCommand({
                     odd += `\nOdd: \`${prediction.odd}x\``
                 }
                 const timestamp = (prediction.created_at.getTime() / 1000).toFixed(0)
-        embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name} (<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>)`, t('commands.predictions.embed.field', {
-            score1: prediction.teams[0].score,
-            score2: prediction.teams[1].score,
-            link: `https://www.loltv.gg/match/${prediction.match}`,
-            status
-        }) + odd)
+                embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name} (<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>)`, t('commands.predictions.embed.field', {
+                    score1: prediction.teams[0].score,
+                    score2: prediction.teams[1].score,
+                    link: `https://www.loltv.gg/match/${prediction.match}`,
+                    status
+                }) + odd)
             }
             const previous = new ButtonBuilder()
-        .setEmoji('1404176223621611572')
-        .setCustomId(`predictions;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;lol`)
-        .defineStyle('blue')
+                .setEmoji('1404176223621611572')
+                .setCustomId(`predictions;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;lol`)
+                .defineStyle('blue')
             const next = new ButtonBuilder()
-        .setEmoji('1404176291829121028')
-        .setCustomId(`predictions;${ctx.interaction.user.id};${page + 1 > pages ? pages : page + 1};next;lol`)
-        .defineStyle('blue')
+                .setEmoji('1404176291829121028')
+                .setCustomId(`predictions;${ctx.interaction.user.id};${page + 1 > pages ? pages : page + 1};next;lol`)
+                .defineStyle('blue')
             if(page <= 1) previous.setDisabled()
             if(page >= pages) next.setDisabled()
             await ctx.reply({
@@ -255,21 +255,21 @@ export default createCommand({
             }
 
             const embed = new EmbedBuilder()
-        .setAuthor({
-            name: t('commands.predictions.embed.author'),
-            iconURL: ctx.interaction.user.displayAvatarURL({ size: 2048 })
-        })
-        .setDesc(t('commands.predictions.embed.desc', {
-            correct: ctx.db.user.correct_predictions,
-            wrong: ctx.db.user.incorrect_predictions,
-            t: predictions.length
-        }))
-        .setFooter({
-            text: t('commands.predictions.embed.footer', {
-                p1: isNaN(page) ? 1 : page,
-                p2: pages
-            })
-        })
+                .setAuthor({
+                    name: t('commands.predictions.embed.author'),
+                    iconURL: ctx.interaction.user.displayAvatarURL({ size: 2048 })
+                })
+                .setDesc(t('commands.predictions.embed.desc', {
+                    correct: ctx.db.user.correct_predictions,
+                    wrong: ctx.db.user.incorrect_predictions,
+                    t: predictions.length
+                }))
+                .setFooter({
+                    text: t('commands.predictions.embed.footer', {
+                        p1: isNaN(page) ? 1 : page,
+                        p2: pages
+                    })
+                })
 
             for(const prediction of preds) {
                 let status: string
@@ -289,22 +289,22 @@ export default createCommand({
                 }
 
                 const timestamp = (prediction.created_at.getTime() / 1000).toFixed(0)
-        embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name} (<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>)`, t('commands.predictions.embed.field', {
-            score1: prediction.teams[0].score,
-            score2: prediction.teams[1].score,
-            link: `https://www.vlr.gg/${prediction.match}`,
-            status
-        }) + odd)
+                embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name} (<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>)`, t('commands.predictions.embed.field', {
+                    score1: prediction.teams[0].score,
+                    score2: prediction.teams[1].score,
+                    link: `https://www.vlr.gg/${prediction.match}`,
+                    status
+                }) + odd)
             }
             const previous = new ButtonBuilder()
-        .setEmoji('1404176223621611572')
-        .defineStyle('blue')
-        .setCustomId(`${ctx.args[0]};${ctx.args[1]};${page - 1};previous;valorant`)
+                .setEmoji('1404176223621611572')
+                .defineStyle('blue')
+                .setCustomId(`${ctx.args[0]};${ctx.args[1]};${page - 1};previous;valorant`)
 
             const next = new ButtonBuilder()
-        .setEmoji('1404176291829121028')
-        .defineStyle('blue')
-        .setCustomId(`${ctx.args[0]};${ctx.args[1]};${page + 1};next;valorant`)
+                .setEmoji('1404176291829121028')
+                .defineStyle('blue')
+                .setCustomId(`${ctx.args[0]};${ctx.args[1]};${page + 1};next;valorant`)
 
             if(page <= 1) previous.setDisabled()
             if(page >= pages) next.setDisabled()
@@ -346,21 +346,21 @@ export default createCommand({
             }
 
             const embed = new EmbedBuilder()
-        .setAuthor({
-            name: t('commands.predictions.embed.author'),
-            iconURL: ctx.interaction.user.displayAvatarURL({ size: 2048 })
-        })
-        .setDesc(t('commands.predictions.embed.desc', {
-            correct: ctx.db.user.correct_predictions,
-            wrong: ctx.db.user.incorrect_predictions,
-            t: predictions.length
-        }))
-        .setFooter({
-            text: t('commands.predictions.embed.footer', {
-                p1: isNaN(page) ? 1 : page,
-                p2: pages
-            })
-        })
+                .setAuthor({
+                    name: t('commands.predictions.embed.author'),
+                    iconURL: ctx.interaction.user.displayAvatarURL({ size: 2048 })
+                })
+                .setDesc(t('commands.predictions.embed.desc', {
+                    correct: ctx.db.user.correct_predictions,
+                    wrong: ctx.db.user.incorrect_predictions,
+                    t: predictions.length
+                }))
+                .setFooter({
+                    text: t('commands.predictions.embed.footer', {
+                        p1: isNaN(page) ? 1 : page,
+                        p2: pages
+                    })
+                })
 
             for(const prediction of preds) {
                 let status: string
@@ -381,26 +381,26 @@ export default createCommand({
 
                 const timestamp = (prediction.created_at.getTime() / 1000).toFixed(0)
 
-        embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name} (<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>)`, t('commands.predictions.embed.field', {
-            score1: prediction.teams[0].score,
-            score2: prediction.teams[1].score,
-            link: `https://www.loltv.gg/match/${prediction.match}`,
-            status
-        }) + odd)
+                embed.addField(`${prediction.teams[0].name} <:versus:1349105624180330516> ${prediction.teams[1].name} (<t:${timestamp}:d> <t:${timestamp}:t> | <t:${timestamp}:R>)`, t('commands.predictions.embed.field', {
+                    score1: prediction.teams[0].score,
+                    score2: prediction.teams[1].score,
+                    link: `https://www.loltv.gg/match/${prediction.match}`,
+                    status
+                }) + odd)
             }
             const previous = new ButtonBuilder()
-        .setEmoji('1404176223621611572')
-        .defineStyle('blue')
-        .setCustomId(`${ctx.args[0]};${ctx.args[1]};${page - 1};previous;lol`)
+                .setEmoji('1404176223621611572')
+                .defineStyle('blue')
+                .setCustomId(`${ctx.args[0]};${ctx.args[1]};${page - 1};previous;lol`)
 
             const next = new ButtonBuilder()
-        .setEmoji('1404176291829121028')
-        .defineStyle('blue')
-        .setCustomId(`${ctx.args[0]};${ctx.args[1]};${page + 1};next;lol`)
+                .setEmoji('1404176291829121028')
+                .defineStyle('blue')
+                .setCustomId(`${ctx.args[0]};${ctx.args[1]};${page + 1};next;lol`)
 
             if(page <= 1) previous.setDisabled()
             if(page >= pages) next.setDisabled()
-        
+
             await ctx.edit({
                 embeds: [embed],
                 components: [

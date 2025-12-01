@@ -90,16 +90,16 @@ export default createCommand({
         ) + '\n\n'
 
         const embed = new EmbedBuilder()
-      .setAuthor({
-          name: t('commands.career.embed.author'),
-          iconURL: ctx.interaction.user.displayAvatarURL({ size: 2048 })
-      })
-      .setFooter({
-          text: t('commands.career.embed.footer', {
-              page: page < 1 ? 1 : page,
-              pages
-          })
-      })
+            .setAuthor({
+                name: t('commands.career.embed.author'),
+                iconURL: ctx.interaction.user.displayAvatarURL({ size: 2048 })
+            })
+            .setFooter({
+                text: t('commands.career.embed.footer', {
+                    page: page < 1 ? 1 : page,
+                    pages
+                })
+            })
 
         for(const match of career) {
             if(match.mode.toLowerCase().includes('ranked') && match.mode.toLowerCase() !== 'unranked') {
@@ -136,34 +136,34 @@ export default createCommand({
             }
         }
 
-    embed.setDesc(content)
+        embed.setDesc(content)
 
-    const previous = new ButtonBuilder()
-      .defineStyle('blue')
-      .setEmoji('1404176223621611572')
-      .setCustomId(`career;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous`)
+        const previous = new ButtonBuilder()
+            .defineStyle('blue')
+            .setEmoji('1404176223621611572')
+            .setCustomId(`career;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous`)
 
-    const next = new ButtonBuilder()
-      .defineStyle('blue')
-      .setEmoji('1404176291829121028')
-      .setCustomId(`career;${ctx.interaction.user.id};${page + 1 > pages ? pages : page + 1};next`)
+        const next = new ButtonBuilder()
+            .defineStyle('blue')
+            .setEmoji('1404176291829121028')
+            .setCustomId(`career;${ctx.interaction.user.id};${page + 1 > pages ? pages : page + 1};next`)
 
-    if(page <= 1) {
-      previous.setDisabled()
-    }
+        if(page <= 1) {
+            previous.setDisabled()
+        }
 
-    if(page >= pages) {
-      next.setDisabled()
-    }
+        if(page >= pages) {
+            next.setDisabled()
+        }
 
-    await ctx.reply(embed.build({
-        components: [
-            {
-                type: 1,
-                components: [previous, next]
-            }
-        ]
-    }))
+        await ctx.reply(embed.build({
+            components: [
+                {
+                    type: 1,
+                    components: [previous, next]
+                }
+            ]
+        }))
     },
     async createMessageComponentInteraction({ ctx, t, app }) {
         const matches = await app.prisma.match.findMany({
@@ -227,16 +227,16 @@ export default createCommand({
         ) + '\n\n'
 
         const embed = new EmbedBuilder()
-      .setAuthor({
-          name: t('commands.career.embed.author'),
-          iconURL: ctx.interaction.user.displayAvatarURL({ size: 2048 })
-      })
-      .setFooter({
-          text: t('commands.career.embed.footer', {
-              page: page < 1 ? 1 : page,
-              pages
-          })
-      })
+            .setAuthor({
+                name: t('commands.career.embed.author'),
+                iconURL: ctx.interaction.user.displayAvatarURL({ size: 2048 })
+            })
+            .setFooter({
+                text: t('commands.career.embed.footer', {
+                    page: page < 1 ? 1 : page,
+                    pages
+                })
+            })
 
         for(const match of career) {
             if(match.mode.toLowerCase().includes('ranked') && match.mode.toLowerCase() !== 'unranked') {
@@ -273,34 +273,34 @@ export default createCommand({
             }
         }
 
-    embed.setDesc(content)
+        embed.setDesc(content)
 
-    const previous = new ButtonBuilder()
-      .defineStyle('blue')
-      .setEmoji('1404176223621611572')
-      .setCustomId(`career;${ctx.interaction.user.id};${page - 1};previous`)
+        const previous = new ButtonBuilder()
+            .defineStyle('blue')
+            .setEmoji('1404176223621611572')
+            .setCustomId(`career;${ctx.interaction.user.id};${page - 1};previous`)
 
-    const next = new ButtonBuilder()
-      .defineStyle('blue')
-      .setEmoji('1404176291829121028')
-      .setCustomId(`career;${ctx.interaction.user.id};${page + 1};next`)
+        const next = new ButtonBuilder()
+            .defineStyle('blue')
+            .setEmoji('1404176291829121028')
+            .setCustomId(`career;${ctx.interaction.user.id};${page + 1};next`)
 
-    if(page <= 1) {
-      previous.setDisabled()
-    }
+        if(page <= 1) {
+            previous.setDisabled()
+        }
 
-    if(page >= pages) {
-      next.setDisabled()
-    }
+        if(page >= pages) {
+            next.setDisabled()
+        }
 
-    await ctx.edit({
-        embeds: [embed],
-        components: [
-            {
-                type: 1,
-                components: [previous, next]
-            }
-        ]
-    })
+        await ctx.edit({
+            embeds: [embed],
+            components: [
+                {
+                    type: 1,
+                    components: [previous, next]
+                }
+            ]
+        })
     }
 })

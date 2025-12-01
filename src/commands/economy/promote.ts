@@ -44,12 +44,12 @@ export default createCommand({
         if(players.length < 5) {
             const i = ctx.db.user.reserve_players.findIndex(pl => pl === p.id.toString())
 
-      ctx.db.user.active_players.push(p.id.toString())
-      ctx.db.user.reserve_players.splice(i, 1)
+            ctx.db.user.active_players.push(p.id.toString())
+            ctx.db.user.reserve_players.splice(i, 1)
 
-      await ctx.db.user.save()
+            await ctx.db.user.save()
 
-      return await ctx.reply('commands.promote.player_promoted', { p: p.name })
+            return await ctx.reply('commands.promote.player_promoted', { p: p.name })
         }
         let i = 0
 
@@ -62,16 +62,16 @@ export default createCommand({
 
             const ovr = parseInt(p.ovr.toString())
 
-      options.push({
-          label: `${p.name} (${ovr})`,
-          description: p.role,
-          value: `${i}_${p_id}`
-      })
+            options.push({
+                label: `${p.name} (${ovr})`,
+                description: p.role,
+                value: `${i}_${p_id}`
+            })
         }
 
         const menu = new SelectMenuBuilder()
-      .setCustomId(`promote;${ctx.interaction.user.id};${ctx.args[0]}`)
-      .setOptions(...options)
+            .setCustomId(`promote;${ctx.interaction.user.id};${ctx.args[0]}`)
+            .setOptions(...options)
 
         await ctx.reply(menu.build(t('commands.promote.select_player')))
     },
@@ -89,19 +89,19 @@ export default createCommand({
 
             const ovr = parseInt(p.ovr.toString())
 
-      players.push({
-          name: `${p.name} (${ovr}) — ${p.collection}`,
-          ovr,
-          id: p_id
-      })
+            players.push({
+                name: `${p.name} (${ovr}) — ${p.collection}`,
+                ovr,
+                id: p_id
+            })
         }
         await i.respond(
-      players.sort((a, b) => a.ovr - b.ovr)
-        .filter(p => {
-            if(p.name.toLowerCase().includes(value.toLowerCase())) return p
-        })
-        .slice(0, 25)
-        .map(p => ({ name: p.name, value: p.id }))
+            players.sort((a, b) => a.ovr - b.ovr)
+                .filter(p => {
+                    if(p.name.toLowerCase().includes(value.toLowerCase())) return p
+                })
+                .slice(0, 25)
+                .map(p => ({ name: p.name, value: p.id }))
         )
     },
     async createMessageComponentInteraction({ ctx, i, app }) {
@@ -111,18 +111,18 @@ export default createCommand({
 
         let index = ctx.db.user.active_players.findIndex(p => p === id)
 
-    ctx.db.user.active_players.splice(index, 1)
-    ctx.db.user.reserve_players.push(id)
+        ctx.db.user.active_players.splice(index, 1)
+        ctx.db.user.reserve_players.push(id)
 
-    index = ctx.db.user.reserve_players.findIndex(p => p === ctx.args[2])
+        index = ctx.db.user.reserve_players.findIndex(p => p === ctx.args[2])
 
-    ctx.db.user.reserve_players.splice(index, 1)
-    ctx.db.user.active_players.push(ctx.args[2])
+        ctx.db.user.reserve_players.splice(index, 1)
+        ctx.db.user.active_players.push(ctx.args[2])
 
-    await ctx.db.user.save()
+        await ctx.db.user.save()
 
-    const p = app.players.get(ctx.args[2])!
+        const p = app.players.get(ctx.args[2])!
 
-    await ctx.edit('commands.promote.player_promoted', { p: p.name })
+        await ctx.edit('commands.promote.player_promoted', { p: p.name })
     }
 })

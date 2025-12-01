@@ -14,11 +14,11 @@ export default createListener({
         const owner = await client.getUser(guild.ownerId)
 
         const embed = new EmbedBuilder()
-      .setTitle(`I've been added to \`${guild.name} (${guild.id})\``)
-      .setDesc(`Now I'm on ${client.guilds.cache.size} guilds`)
-      .addField('Owner', `\`${owner?.username} (${owner?.id})`, true)
-      .addField('Member count', guild.memberCount.toString(), true)
-      .setThumb(guild.iconURL()!)
+            .setTitle(`I've been added to \`${guild.name} (${guild.id})\``)
+            .setDesc(`Now I'm on ${client.guilds.cache.size} guilds`)
+            .addField('Owner', `\`${owner?.username} (${owner?.id})`, true)
+            .addField('Member count', guild.memberCount.toString(), true)
+            .setThumb(guild.iconURL()!)
 
         const channel = await client.channels.fetch(process.env.GUILDS_LOG!)
 

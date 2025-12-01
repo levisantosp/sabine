@@ -55,22 +55,22 @@ export default class Round extends Match {
                     rounds: this.rounds.length
                 })
 
-        player.buy()
+                player.buy()
 
-        p.credits = player.credits
-        p.weapon = player.weapon
+                p.credits = player.credits
+                p.weapon = player.weapon
 
-        if(p.weapon.primary) {
-            const weapon = valorant_weapons.filter(w => w.name === p.weapon?.primary?.name)[0]
+                if(p.weapon.primary) {
+                    const weapon = valorant_weapons.filter(w => w.name === p.weapon?.primary?.name)[0]
 
-            p.weapon.primary.magazine = weapon.magazine
-        }
+                    p.weapon.primary.magazine = weapon.magazine
+                }
 
-        if(p.weapon.secondary) {
-            const weapon = valorant_weapons.filter(w => w.name === p.weapon?.secondary?.name)[0]
+                if(p.weapon.secondary) {
+                    const weapon = valorant_weapons.filter(w => w.name === p.weapon?.secondary?.name)[0]
 
-            p.weapon.secondary.magazine = weapon.magazine
-        }
+                    p.weapon.secondary.magazine = weapon.magazine
+                }
             }
         }
 
@@ -128,48 +128,48 @@ export default class Round extends Match {
                 }
 
                 await Promise.allSettled([
-          prisma.match.create({
-              data: {
-                  mode: 'ARENA',
-                  points: pts,
-                  userId: this.teams[0].user,
-                  winner: true,
-                  teams: {
-                      create: [
-                          {
-                              user: this.teams[0].user,
-                              score: score1
-                          },
-                          {
-                              user: this.teams[1].user,
-                              score: score2
-                          }
-                      ]
-                  },
-                  metadata: stats
-              }
-          }),
-          prisma.match.create({
-              data: {
-                  mode: 'ARENA',
-                  points: -(pts - 5),
-                  userId: this.teams[1].user,
-                  winner: false,
-                  teams: {
-                      create: [
-                          {
-                              user: this.teams[1].user,
-                              score: score2
-                          },
-                          {
-                              user: this.teams[0].user,
-                              score: score1
-                          }
-                      ]
-                  },
-                  metadata: stats
-              }
-          })])
+                    prisma.match.create({
+                        data: {
+                            mode: 'ARENA',
+                            points: pts,
+                            userId: this.teams[0].user,
+                            winner: true,
+                            teams: {
+                                create: [
+                                    {
+                                        user: this.teams[0].user,
+                                        score: score1
+                                    },
+                                    {
+                                        user: this.teams[1].user,
+                                        score: score2
+                                    }
+                                ]
+                            },
+                            metadata: stats
+                        }
+                    }),
+                    prisma.match.create({
+                        data: {
+                            mode: 'ARENA',
+                            points: -(pts - 5),
+                            userId: this.teams[1].user,
+                            winner: false,
+                            teams: {
+                                create: [
+                                    {
+                                        user: this.teams[1].user,
+                                        score: score2
+                                    },
+                                    {
+                                        user: this.teams[0].user,
+                                        score: score1
+                                    }
+                                ]
+                            },
+                            metadata: stats
+                        }
+                    })])
 
                 await Promise.allSettled([user1.save(), user2.save()])
             }
@@ -213,48 +213,48 @@ export default class Round extends Match {
                 }
 
                 await Promise.allSettled([
-          prisma.match.create({
-              data: {
-                  mode: 'ARENA',
-                  points: pts,
-                  userId: this.teams[1].user,
-                  winner: true,
-                  teams: {
-                      create: [
-                          {
-                              user: this.teams[1].user,
-                              score: score2,
-                          },
-                          {
-                              user: this.teams[0].user,
-                              score: score1,
-                          }
-                      ]
-                  },
-                  metadata: stats
-              }
-          }),
-          prisma.match.create({
-              data: {
-                  mode: 'ARENA',
-                  points: -(pts - 5),
-                  userId: this.teams[0].user,
-                  winner: false,
-                  teams: {
-                      create: [
-                          {
-                              user: this.teams[0].user,
-                              score: score1,
-                          },
-                          {
-                              user: this.teams[1].user,
-                              score: score2,
-                          }
-                      ]
-                  },
-                  metadata: stats
-              }
-          })
+                    prisma.match.create({
+                        data: {
+                            mode: 'ARENA',
+                            points: pts,
+                            userId: this.teams[1].user,
+                            winner: true,
+                            teams: {
+                                create: [
+                                    {
+                                        user: this.teams[1].user,
+                                        score: score2,
+                                    },
+                                    {
+                                        user: this.teams[0].user,
+                                        score: score1,
+                                    }
+                                ]
+                            },
+                            metadata: stats
+                        }
+                    }),
+                    prisma.match.create({
+                        data: {
+                            mode: 'ARENA',
+                            points: -(pts - 5),
+                            userId: this.teams[0].user,
+                            winner: false,
+                            teams: {
+                                create: [
+                                    {
+                                        user: this.teams[0].user,
+                                        score: score1,
+                                    },
+                                    {
+                                        user: this.teams[1].user,
+                                        score: score2,
+                                    }
+                                ]
+                            },
+                            metadata: stats
+                        }
+                    })
                 ])
 
                 await Promise.allSettled([user1.save(), user2.save()])
@@ -300,48 +300,48 @@ export default class Round extends Match {
                 }
 
                 await Promise.allSettled([
-          prisma.match.create({
-              data: {
-                  mode: 'ARENA',
-                  points: pts,
-                  userId: this.teams[0].user,
-                  winner: true,
-                  teams: {
-                      create: [
-                          {
-                              user: this.teams[0].user,
-                              score: score1,
-                          },
-                          {
-                              user: this.teams[1].user,
-                              score: score2,
-                          }
-                      ]
-                  },
-                  metadata: stats
-              }
-          }),
-          prisma.match.create({
-              data: {
-                  mode: 'ARENA',
-                  points: -(pts - 5),
-                  userId: this.teams[1].user,
-                  winner: false,
-                  teams: {
-                      create: [
-                          {
-                              user: this.teams[1].user,
-                              score: score2,
-                          },
-                          {
-                              user: this.teams[0].user,
-                              score: score1,
-                          }
-                      ]
-                  },
-                  metadata: stats
-              }
-          })
+                    prisma.match.create({
+                        data: {
+                            mode: 'ARENA',
+                            points: pts,
+                            userId: this.teams[0].user,
+                            winner: true,
+                            teams: {
+                                create: [
+                                    {
+                                        user: this.teams[0].user,
+                                        score: score1,
+                                    },
+                                    {
+                                        user: this.teams[1].user,
+                                        score: score2,
+                                    }
+                                ]
+                            },
+                            metadata: stats
+                        }
+                    }),
+                    prisma.match.create({
+                        data: {
+                            mode: 'ARENA',
+                            points: -(pts - 5),
+                            userId: this.teams[1].user,
+                            winner: false,
+                            teams: {
+                                create: [
+                                    {
+                                        user: this.teams[1].user,
+                                        score: score2,
+                                    },
+                                    {
+                                        user: this.teams[0].user,
+                                        score: score1,
+                                    }
+                                ]
+                            },
+                            metadata: stats
+                        }
+                    })
                 ])
 
                 await Promise.allSettled([user1.save(), user2.save()])
@@ -386,48 +386,48 @@ export default class Round extends Match {
                 }
 
                 await Promise.allSettled([
-          prisma.match.create({
-              data: {
-                  mode: 'ARENA',
-                  points: pts,
-                  userId: this.teams[1].user,
-                  winner: true,
-                  teams: {
-                      create: [
-                          {
-                              user: this.teams[1].user,
-                              score: score2,
-                          },
-                          {
-                              user: this.teams[0].user,
-                              score: score1,
-                          }
-                      ]
-                  },
-                  metadata: stats
-              }
-          }),
-          prisma.match.create({
-              data: {
-                  mode: 'ARENA',
-                  points: -(pts - 5),
-                  userId: this.teams[1].user,
-                  winner: false,
-                  teams: {
-                      create: [
-                          {
-                              user: this.teams[1].user,
-                              score: score2,
-                          },
-                          {
-                              user: this.teams[0].user,
-                              score: score1,
-                          }
-                      ]
-                  },
-                  metadata: stats
-              }
-          })
+                    prisma.match.create({
+                        data: {
+                            mode: 'ARENA',
+                            points: pts,
+                            userId: this.teams[1].user,
+                            winner: true,
+                            teams: {
+                                create: [
+                                    {
+                                        user: this.teams[1].user,
+                                        score: score2,
+                                    },
+                                    {
+                                        user: this.teams[0].user,
+                                        score: score1,
+                                    }
+                                ]
+                            },
+                            metadata: stats
+                        }
+                    }),
+                    prisma.match.create({
+                        data: {
+                            mode: 'ARENA',
+                            points: -(pts - 5),
+                            userId: this.teams[1].user,
+                            winner: false,
+                            teams: {
+                                create: [
+                                    {
+                                        user: this.teams[1].user,
+                                        score: score2,
+                                    },
+                                    {
+                                        user: this.teams[0].user,
+                                        score: score1,
+                                    }
+                                ]
+                            },
+                            metadata: stats
+                        }
+                    })
                 ])
 
                 await Promise.allSettled([user1.save(), user2.save()])
@@ -455,19 +455,19 @@ export default class Round extends Match {
             const killer = this.teams[winnerTeamIndex].roster[winnerIndex]
             const victim = this.teams[loserTeamIndex].roster[loserIndex]
 
-      kills.push({
-          killer: {
-              name: killer.name,
-              id: killer.id.toString()
-          },
-          killerIndex: winnerTeamIndex,
-          victim: {
-              name: victim.name,
-              id: victim.id.toString()
-          },
-          victimIndex: loserTeamIndex,
-          weapon: weapon as typeof valorant_weapons[number]['name']
-      })
+            kills.push({
+                killer: {
+                    name: killer.name,
+                    id: killer.id.toString()
+                },
+                killerIndex: winnerTeamIndex,
+                victim: {
+                    name: victim.name,
+                    id: victim.id.toString()
+                },
+                victimIndex: loserTeamIndex,
+                weapon: weapon as typeof valorant_weapons[number]['name']
+            })
         }
 
         const playersAlive1 = this.teams[0].roster.filter(p => p.life > 0).length > 0
@@ -476,25 +476,25 @@ export default class Round extends Match {
         if(!playersAlive1 || !playersAlive2) {
             const winningTeam = playersAlive1 ? 0 : 1
 
-      this.rounds.push({
-          winning_team: winningTeam,
-          kills,
-          win_type: 'ELIMINATION',
-          summary
-      })
+            this.rounds.push({
+                winning_team: winningTeam,
+                kills,
+                win_type: 'ELIMINATION',
+                summary
+            })
 
-      for(let i = 0;i < this.teams.length;i++) {
-          if(i === winningTeam) {
-              for(const p of this.teams[i].roster) {
-                  p.credits += 2900
-              }
-          }
-          else {
-              for(const p of this.teams[i].roster) {
-                  p.credits += 1900
-              }
-          }
-      }
+            for(let i = 0;i < this.teams.length;i++) {
+                if(i === winningTeam) {
+                    for(const p of this.teams[i].roster) {
+                        p.credits += 2900
+                    }
+                }
+                else {
+                    for(const p of this.teams[i].roster) {
+                        p.credits += 1900
+                    }
+                }
+            }
         }
         else {
             const playersAlive = this.teams.find(t => t.side === 'ATTACK')!.roster.filter(p => p.life > 0).length
@@ -576,52 +576,52 @@ export default class Round extends Match {
                 const killer = this.teams[winnerTeamIndex].roster[winnerIndex]
                 const victim = this.teams[loserTeamIndex].roster[loserIndex]
 
-        kills.push({
-            killer: {
-                name: killer.name,
-                id: killer.id.toString()
-            },
-            killerIndex: winnerTeamIndex,
-            victim: {
-                name: victim.name,
-                id: victim.id.toString()
-            },
-            victimIndex: loserTeamIndex,
-            weapon: weapon as typeof valorant_weapons[number]['name']
-        })
+                kills.push({
+                    killer: {
+                        name: killer.name,
+                        id: killer.id.toString()
+                    },
+                    killerIndex: winnerTeamIndex,
+                    victim: {
+                        name: victim.name,
+                        id: victim.id.toString()
+                    },
+                    victimIndex: loserTeamIndex,
+                    weapon: weapon as typeof valorant_weapons[number]['name']
+                })
 
-        alivePlayers--
+                alivePlayers--
             }
 
             const winning_team = this.teams[0].roster.filter(p => p.life > 0).length > 0 ? 0 : 1
 
-      this.rounds.push({
-          kills,
-          win_type,
-          winning_team,
-          bomb_planted: bombPlanted,
-          site,
-          summary
-      })
+            this.rounds.push({
+                kills,
+                win_type,
+                winning_team,
+                bomb_planted: bombPlanted,
+                site,
+                summary
+            })
 
-      for(let i = 0;i < this.teams.length;i++) {
-          if(i === winning_team) {
-              for(const p of this.teams[i].roster) {
-                  let bonus = 0
+            for(let i = 0;i < this.teams.length;i++) {
+                if(i === winning_team) {
+                    for(const p of this.teams[i].roster) {
+                        let bonus = 0
 
-                  if(bombPlanted) {
-                      bonus += 300
-                  }
+                        if(bombPlanted) {
+                            bonus += 300
+                        }
 
-                  p.credits += 2900 + bonus
-              }
-          }
-          else {
-              for(const p of this.teams[i].roster) {
-                  p.credits += 1900
-              }
-          }
-      }
+                        p.credits += 2900 + bonus
+                    }
+                }
+                else {
+                    for(const p of this.teams[i].roster) {
+                        p.credits += 1900
+                    }
+                }
+            }
         }
         else if(win_type === 'BOMB') {
             let alivePlayers = [
@@ -646,52 +646,52 @@ export default class Round extends Match {
                 const killer = this.teams[winnerTeamIndex].roster[winnerIndex]
                 const victim = this.teams[loserTeamIndex].roster[loserIndex]
 
-        kills.push({
-            killer: {
-                name: killer.name,
-                id: killer.id.toString()
-            },
-            killerIndex: winnerTeamIndex,
-            victim: {
-                name: victim.name,
-                id: victim.id.toString()
-            },
-            victimIndex: loserTeamIndex,
-            weapon: weapon as typeof valorant_weapons[number]['name']
-        })
+                kills.push({
+                    killer: {
+                        name: killer.name,
+                        id: killer.id.toString()
+                    },
+                    killerIndex: winnerTeamIndex,
+                    victim: {
+                        name: victim.name,
+                        id: victim.id.toString()
+                    },
+                    victimIndex: loserTeamIndex,
+                    weapon: weapon as typeof valorant_weapons[number]['name']
+                })
 
-        alivePlayers--
+                alivePlayers--
             }
 
             const winning_team = this.teams.findIndex(t => t.side === 'ATTACK')
 
-      this.rounds.push({
-          kills,
-          win_type,
-          winning_team,
-          bomb_planted: bombPlanted,
-          site,
-          summary
-      })
+            this.rounds.push({
+                kills,
+                win_type,
+                winning_team,
+                bomb_planted: bombPlanted,
+                site,
+                summary
+            })
 
-      for(let i = 0;i < this.teams.length;i++) {
-          if(i === winning_team) {
-              for(const p of this.teams[i].roster) {
-                  let bonus = 0
+            for(let i = 0;i < this.teams.length;i++) {
+                if(i === winning_team) {
+                    for(const p of this.teams[i].roster) {
+                        let bonus = 0
 
-                  if(bombPlanted) {
-                      bonus += 300
-                  }
+                        if(bombPlanted) {
+                            bonus += 300
+                        }
 
-                  p.credits += 2900 + bonus
-              }
-          }
-          else {
-              for(const p of this.teams[i].roster) {
-                  p.credits += 1900
-              }
-          }
-      }
+                        p.credits += 2900 + bonus
+                    }
+                }
+                else {
+                    for(const p of this.teams[i].roster) {
+                        p.credits += 1900
+                    }
+                }
+            }
         }
         else if(win_type === 'DEFUSE') {
             let alivePlayers = [
@@ -717,53 +717,53 @@ export default class Round extends Match {
                 const killer = this.teams[winnerTeamIndex].roster[winnerIndex]
                 const victim = this.teams[loserTeamIndex].roster[loserIndex]
 
-        kills.push({
-            killer: {
-                name: killer.name,
-                id: killer.id.toString()
-            },
-            killerIndex: winnerTeamIndex,
-            victim: {
-                name: victim.name,
-                id: victim.id.toString()
-            },
-            victimIndex: loserTeamIndex,
-            weapon: weapon as typeof valorant_weapons[number]['name']
-        })
+                kills.push({
+                    killer: {
+                        name: killer.name,
+                        id: killer.id.toString()
+                    },
+                    killerIndex: winnerTeamIndex,
+                    victim: {
+                        name: victim.name,
+                        id: victim.id.toString()
+                    },
+                    victimIndex: loserTeamIndex,
+                    weapon: weapon as typeof valorant_weapons[number]['name']
+                })
 
-        alivePlayers--
+                alivePlayers--
             }
 
             const winning_team = this.teams.findIndex(t => t.side === 'DEFENSE')
 
-      this.rounds.push({
-          kills,
-          win_type,
-          winning_team,
-          bomb_defused: true,
-          bomb_planted: bombPlanted,
-          site,
-          summary
-      })
+            this.rounds.push({
+                kills,
+                win_type,
+                winning_team,
+                bomb_defused: true,
+                bomb_planted: bombPlanted,
+                site,
+                summary
+            })
 
-      for(let i = 0;i < this.teams.length;i++) {
-          if(i === winning_team) {
-              for(const p of this.teams[i].roster) {
-                  let bonus = 0
+            for(let i = 0;i < this.teams.length;i++) {
+                if(i === winning_team) {
+                    for(const p of this.teams[i].roster) {
+                        let bonus = 0
 
-                  if(bombPlanted) {
-                      bonus += 300
-                  }
+                        if(bombPlanted) {
+                            bonus += 300
+                        }
 
-                  p.credits += 2900 + bonus
-              }
-          }
-          else {
-              for(const p of this.teams[i].roster) {
-                  p.credits += 1900
-              }
-          }
-      }
+                        p.credits += 2900 + bonus
+                    }
+                }
+                else {
+                    for(const p of this.teams[i].roster) {
+                        p.credits += 1900
+                    }
+                }
+            }
         }
         else if(win_type === 'TIME') {
             let alivePlayers = [
@@ -789,52 +789,52 @@ export default class Round extends Match {
                 const killer = this.teams[winnerTeamIndex].roster[winnerIndex]
                 const victim = this.teams[loserTeamIndex].roster[loserIndex]
 
-        kills.push({
-            killer: {
-                name: killer.name,
-                id: killer.id.toString()
-            },
-            killerIndex: winnerTeamIndex,
-            victim: {
-                name: victim.name,
-                id: victim.id.toString()
-            },
-            victimIndex: loserTeamIndex,
-            weapon: weapon as typeof valorant_weapons[number]['name']
-        })
+                kills.push({
+                    killer: {
+                        name: killer.name,
+                        id: killer.id.toString()
+                    },
+                    killerIndex: winnerTeamIndex,
+                    victim: {
+                        name: victim.name,
+                        id: victim.id.toString()
+                    },
+                    victimIndex: loserTeamIndex,
+                    weapon: weapon as typeof valorant_weapons[number]['name']
+                })
 
-        alivePlayers--
+                alivePlayers--
             }
 
             const winning_team = this.teams.findIndex(t => t.side === 'DEFENSE')
 
-      this.rounds.push({
-          kills,
-          win_type,
-          winning_team,
-          bomb_planted: bombPlanted,
-          site,
-          summary
-      })
+            this.rounds.push({
+                kills,
+                win_type,
+                winning_team,
+                bomb_planted: bombPlanted,
+                site,
+                summary
+            })
 
-      for(let i = 0;i < this.teams.length;i++) {
-          if(i === winning_team) {
-              for(const p of this.teams[i].roster) {
-                  let bonus = 0
+            for(let i = 0;i < this.teams.length;i++) {
+                if(i === winning_team) {
+                    for(const p of this.teams[i].roster) {
+                        let bonus = 0
 
-                  if(bombPlanted) {
-                      bonus += 300
-                  }
+                        if(bombPlanted) {
+                            bonus += 300
+                        }
 
-                  p.credits += 2900 + bonus
-              }
-          }
-          else {
-              for(const p of this.teams[i].roster) {
-                  p.credits += 1900
-              }
-          }
-      }
+                        p.credits += 2900 + bonus
+                    }
+                }
+                else {
+                    for(const p of this.teams[i].roster) {
+                        p.credits += 1900
+                    }
+                }
+            }
         }
     }
 
@@ -856,32 +856,32 @@ export default class Round extends Match {
         const i2 = this.teams[1].roster.findIndex(p => p.id === player2?.id)
 
         if(winner1 && i1 >= 0 && i2 >= 0) {
-      this.teams[0].roster[i1].kills! += 1
-      this.teams[0].roster[i1].life = player1?.life ?? 0
-      this.teams[1].roster[i2].deaths! += 1
-      this.teams[1].roster[i2].life = player2?.life ?? 0
+            this.teams[0].roster[i1].kills! += 1
+            this.teams[0].roster[i1].life = player1?.life ?? 0
+            this.teams[1].roster[i2].deaths! += 1
+            this.teams[1].roster[i2].life = player2?.life ?? 0
 
-      return {
-          winnerIndex: i1,
-          loserIndex: i2,
-          winnerTeamIndex: 0,
-          loserTeamIndex: 1,
-          weapon: weapon1
-      }
+            return {
+                winnerIndex: i1,
+                loserIndex: i2,
+                winnerTeamIndex: 0,
+                loserTeamIndex: 1,
+                weapon: weapon1
+            }
         }
         else if(winner2 && i1 >= 0 && i2 >= 0) {
-      this.teams[1].roster[i2].kills! += 1
-      this.teams[1].roster[i2].life = player2?.life ?? 0
-      this.teams[0].roster[i1].deaths! += 1
-      this.teams[0].roster[i1].life = player1?.life ?? 0
+            this.teams[1].roster[i2].kills! += 1
+            this.teams[1].roster[i2].life = player2?.life ?? 0
+            this.teams[0].roster[i1].deaths! += 1
+            this.teams[0].roster[i1].life = player1?.life ?? 0
 
-      return {
-          winnerIndex: i2,
-          loserIndex: i1,
-          winnerTeamIndex: 1,
-          loserTeamIndex: 0,
-          weapon: weapon2
-      }
+            return {
+                winnerIndex: i2,
+                loserIndex: i1,
+                winnerTeamIndex: 1,
+                loserTeamIndex: 0,
+                weapon: weapon2
+            }
         }
         else {
             return {

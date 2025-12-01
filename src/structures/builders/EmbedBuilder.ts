@@ -1,4 +1,4 @@
-import { 
+import {
     EmbedBuilder as DJSEmbedBuilder,
     type EmbedAuthorOptions,
     type APIEmbedField,
@@ -9,77 +9,77 @@ import {
 export default class EmbedBuilder extends DJSEmbedBuilder {
     public constructor() {
         super()
-    super.setColor(6719296)
+        super.setColor(6719296)
     }
 
     public setAuthor(options: EmbedAuthorOptions) {
-    super.setAuthor(options)
-    
-    return this
+        super.setAuthor(options)
+
+        return this
     }
 
     public setTitle(title: string) {
-    super.setTitle(title)
+        super.setTitle(title)
 
-    return this
+        return this
     }
 
     public setDesc(desc: string) {
-    super.setDescription(desc)
+        super.setDescription(desc)
 
-    return this
+        return this
     }
 
     public addField(name: string, value: string, inline = false) {
-    super.addFields({ name, value, inline })
+        super.addFields({ name, value, inline })
 
-    return this
+        return this
     }
 
     public addFields(fields: APIEmbedField[]) {
-    super.addFields(fields)
+        super.addFields(fields)
 
-    return this
+        return this
     }
 
     public setField(name: string, value: string, inline = false) {
-    super.setFields(
-        {
-            name, value, inline
-        }
-    )
+        super.setFields(
+            {
+                name, value, inline
+            }
+        )
 
-    return this
+        return this
     }
 
     public setFields(...fields: APIEmbedField[]) {
-    super.setFields(fields)
+        super.setFields(fields)
 
-    return this
+        return this
     }
 
     public setImage(url: string) {
-    super.setImage(url)
+        super.setImage(url)
 
-    return this
+        return this
     }
 
     public setThumb(url: string) {
-    super.setThumbnail(url)
+        super.setThumbnail(url)
 
-    return this
+        return this
     }
 
     public setTimestamp(timestamp = new Date()) {
-    super.setTimestamp(timestamp)
+        super.setTimestamp(timestamp)
 
-    return this
+        return this
     }
 
     public setFooter(footer: EmbedFooterOptions) {
-    super.setFooter(footer)
+        super.setFooter(footer)
 
-    return this
+        return this
     }
 
     public build(content?: string | InteractionReplyOptions) {

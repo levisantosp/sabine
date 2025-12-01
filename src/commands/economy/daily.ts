@@ -11,7 +11,7 @@ export default createCommand({
     async run({ ctx, app, t }) {
         if(
             ctx.db.user.daily_time &&
-      ctx.db.user.daily_time.getTime() > Date.now()
+            ctx.db.user.daily_time.getTime() > Date.now()
         ) {
             return await ctx.reply('commands.daily.has_been_claimed', { t: `<t:${((ctx.db.user.daily_time.getTime()) / 1000).toFixed(0)}:R>` })
         }
@@ -33,19 +33,19 @@ export default createCommand({
             coins *= 5n
             fates = Math.round(fates * 1.5)
 
-      bonus.push(t('commands.daily.bonus', {
-          coins: '5x',
-          fates: '1.5x'
-      }))
+            bonus.push(t('commands.daily.bonus', {
+                coins: '5x',
+                fates: '1.5x'
+            }))
         }
         if(member?.premiumSince) {
             coins *= 2n
             fates = Math.round(fates * 1.25)
 
-      bonus.push(t('commands.daily.bonus2', {
-          coins: '2x',
-          fates: '1.25x'
-      }))
+            bonus.push(t('commands.daily.bonus2', {
+                coins: '2x',
+                fates: '1.25x'
+            }))
         }
         const key = await app.prisma.guildKey.findUnique({
             where: {
@@ -58,24 +58,24 @@ export default createCommand({
 
         if(
             key &&
-      key.key.type === 'PREMIUM'
+            key.key.type === 'PREMIUM'
         ) {
             coins = BigInt(Math.round(Number(coins) * 1.5))
 
-      bonus.push(t('commands.daily.bonus3', {
-          coins: '1.5x'
-      }))
+            bonus.push(t('commands.daily.bonus3', {
+                coins: '1.5x'
+            }))
         }
 
         if(
             key &&
-      key.key.type === 'BOOSTER'
+            key.key.type === 'BOOSTER'
         ) {
             coins = BigInt(Math.round(Number(coins) * 1.25))
 
-      bonus.push(t('commands.daily.bonus4', {
-          coins: '1.25x'
-      }))
+            bonus.push(t('commands.daily.bonus4', {
+                coins: '1.25x'
+            }))
         }
         if(bonus.length) {
             content = t('commands.daily.res', {
@@ -89,7 +89,7 @@ export default createCommand({
         ctx.db.user.daily_time = new Date(new Date().setHours(24, 0, 0, 0))
 
         await ctx.db.user.save()
-    
+
         await ctx.reply(content)
     }
 })

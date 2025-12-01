@@ -36,34 +36,34 @@ export default createCommand({
         if(!player) return await ctx.reply('commands.card.player_not_found')
 
         const embed = new EmbedBuilder()
-      .setFields(
-          {
-              name: t('commands.card.name'),
-              value: player.name,
-              inline: true
-          },
-          {
-              name: t('commands.card.collection'),
-              value: player.collection,
-              inline: true
-          },
-          {
-              name: t('commands.card.purchaseable'),
-              value: player.purchaseable ? t('helper.yes') : t('helper.no'),
-              inline: true
-          },
-          {
-              name: t('commands.card.price'),
-              value: calcPlayerPrice(player).toLocaleString('en') + ' coins',
-              inline: true
-          },
-          {
-              name: t('commands.card.devalued_price'),
-              value: calcPlayerPrice(player, true).toLocaleString('en') + ' coins',
-              inline: true
-          }
-      )
-      .setImage(`${process.env.CDN_URL}/cards/${player.id}.png?ts=${date}`)
+            .setFields(
+                {
+                    name: t('commands.card.name'),
+                    value: player.name,
+                    inline: true
+                },
+                {
+                    name: t('commands.card.collection'),
+                    value: player.collection,
+                    inline: true
+                },
+                {
+                    name: t('commands.card.purchaseable'),
+                    value: player.purchaseable ? t('helper.yes') : t('helper.no'),
+                    inline: true
+                },
+                {
+                    name: t('commands.card.price'),
+                    value: calcPlayerPrice(player).toLocaleString('en') + ' coins',
+                    inline: true
+                },
+                {
+                    name: t('commands.card.devalued_price'),
+                    value: calcPlayerPrice(player, true).toLocaleString('en') + ' coins',
+                    inline: true
+                }
+            )
+            .setImage(`${process.env.CDN_URL}/cards/${player.id}.png?ts=${date}`)
 
         await ctx.reply(embed.build())
     },
@@ -75,20 +75,20 @@ export default createCommand({
         for(const p of app.players.values()) {
             const ovr = Math.floor(p.ovr)
 
-      players.push({
-          name: `${p.name} (${ovr}) — ${p.collection}`,
-          ovr,
-          id: p.id
-      })
+            players.push({
+                name: `${p.name} (${ovr}) — ${p.collection}`,
+                ovr,
+                id: p.id
+            })
         }
 
         await i.respond(
-      players.sort((a, b) => b.ovr - a.ovr)
-        .filter(p => {
-            if(p.name.toLowerCase().includes(value.toLowerCase())) return p
-        })
-        .slice(0, 25)
-        .map(p => ({ name: p.name, value: p.id.toString() }))
+            players.sort((a, b) => b.ovr - a.ovr)
+                .filter(p => {
+                    if(p.name.toLowerCase().includes(value.toLowerCase())) return p
+                })
+                .slice(0, 25)
+                .map(p => ({ name: p.name, value: p.id.toString() }))
         )
     }
 })

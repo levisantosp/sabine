@@ -62,108 +62,108 @@ export default createComponentInteraction({
         if(!user) return
 
         const embed = new EmbedBuilder()
-      .setTitle(t('commands.duel.embed.title'))
-      .setDesc(t('commands.duel.embed.desc'))
-      .setImage(data.image)
-      .setFields(
-          {
-              name: key.split(':')[1] === ctx.interaction.user.id ?
-            ctx.db.user.team_name! :
-            user.team_name!,
-              value: key.split(':')[1] === ctx.interaction.user.id ?
-            ctx.db.user.active_players.map(id => {
-                const player = app.players.get(id)!
+            .setTitle(t('commands.duel.embed.title'))
+            .setDesc(t('commands.duel.embed.desc'))
+            .setImage(data.image)
+            .setFields(
+                {
+                    name: key.split(':')[1] === ctx.interaction.user.id ?
+                        ctx.db.user.team_name! :
+                        user.team_name!,
+                    value: key.split(':')[1] === ctx.interaction.user.id ?
+                        ctx.db.user.active_players.map(id => {
+                            const player = app.players.get(id)!
 
-                let emoji: string | undefined = '<a:loading:809221866434199634>'
+                            let emoji: string | undefined = '<a:loading:809221866434199634>'
 
-                const i = data[ctx.interaction.user.id].findIndex((p: any) => p.id.toString() === id)
+                            const i = data[ctx.interaction.user.id].findIndex((p: any) => p.id.toString() === id)
 
-                if(
-                data[ctx.interaction.user.id][i].id.toString() ===
-                id &&
-                data[ctx.interaction.user.id][i].agent
-                ) {
-                    emoji = valorant_agents.find(agent => agent.name === data[ctx.interaction.user.id][i].agent!.name)?.emoji
+                            if(
+                                data[ctx.interaction.user.id][i].id.toString() ===
+                                id &&
+                                data[ctx.interaction.user.id][i].agent
+                            ) {
+                                emoji = valorant_agents.find(agent => agent.name === data[ctx.interaction.user.id][i].agent!.name)?.emoji
+                            }
+
+                            const ovr = parseInt(player.ovr.toString())
+
+                            return `${emoji} ${player.name} (${ovr})`
+                        }).join('\n') :
+                        user.active_players.map(id => {
+                            const player = app.players.get(id)!
+
+                            let emoji: string | undefined = '<a:loading:809221866434199634>'
+
+                            const i = data[user.id].findIndex((p: any) => p.id.toString() === id)
+
+                            if(
+                                data[user.id][i].id.toString() ===
+                                id &&
+                                data[user.id][i].agent
+                            ) {
+                                emoji = valorant_agents.find(agent => agent.name === data[user.id][i].agent!.name)?.emoji
+                            }
+
+                            const ovr = parseInt(player.ovr.toString())
+
+                            return `${emoji} ${player.name} (${ovr})`
+                        }).join('\n'),
+                    inline: true
+                },
+                {
+                    name: key.split(':')[1] !== ctx.interaction.user.id ?
+                        ctx.db.user.team_name! :
+                        user.team_name!,
+                    value: key.split(':')[1] !== ctx.interaction.user.id ?
+                        ctx.db.user.active_players.map(id => {
+                            const player = app.players.get(id)!
+
+                            let emoji: string | undefined = '<a:loading:809221866434199634>'
+
+                            const i = data[ctx.interaction.user.id].findIndex((p: any) => p.id.toString() === id)
+
+                            if(
+                                data[ctx.interaction.user.id][i].id.toString() ===
+                                id &&
+                                data[ctx.interaction.user.id][i].agent
+                            ) {
+                                emoji = valorant_agents.find(agent => agent.name === data[ctx.interaction.user.id][i].agent!.name)?.emoji
+                            }
+
+                            const ovr = parseInt(player.ovr.toString())
+
+                            return `${emoji} ${player.name} (${ovr})`
+                        }).join('\n') :
+                        user.active_players.map(id => {
+                            const player = app.players.get(id)!
+
+                            let emoji: string | undefined = '<a:loading:809221866434199634>'
+
+                            const i = data[user.id].findIndex((p: any) => p.id.toString() === id)
+
+                            if(
+                                data[user.id][i].id.toString() ===
+                                id &&
+                                data[user.id][i].agent
+                            ) {
+                                emoji = valorant_agents.find(agent => agent.name === data[user.id][i].agent!.name)?.emoji
+                            }
+
+                            const ovr = parseInt(player.ovr.toString())
+
+                            return `${emoji} ${player.name} (${ovr})`
+                        }).join('\n'),
+                    inline: true
                 }
-
-                const ovr = parseInt(player.ovr.toString())
-
-                return `${emoji} ${player.name} (${ovr})`
-            }).join('\n') :
-            user.active_players.map(id => {
-                const player = app.players.get(id)!
-
-                let emoji: string | undefined = '<a:loading:809221866434199634>'
-
-                const i = data[user.id].findIndex((p: any) => p.id.toString() === id)
-
-                if(
-                data[user.id][i].id.toString() ===
-                id &&
-                data[user.id][i].agent
-                ) {
-                    emoji = valorant_agents.find(agent => agent.name === data[user.id][i].agent!.name)?.emoji
-                }
-
-                const ovr = parseInt(player.ovr.toString())
-
-                return `${emoji} ${player.name} (${ovr})`
-            }).join('\n'),
-              inline: true
-          },
-          {
-              name: key.split(':')[1] !== ctx.interaction.user.id ?
-            ctx.db.user.team_name! :
-            user.team_name!,
-              value: key.split(':')[1] !== ctx.interaction.user.id ?
-            ctx.db.user.active_players.map(id => {
-                const player = app.players.get(id)!
-
-                let emoji: string | undefined = '<a:loading:809221866434199634>'
-
-                const i = data[ctx.interaction.user.id].findIndex((p: any) => p.id.toString() === id)
-
-                if(
-                data[ctx.interaction.user.id][i].id.toString() ===
-                id &&
-                data[ctx.interaction.user.id][i].agent
-                ) {
-                    emoji = valorant_agents.find(agent => agent.name === data[ctx.interaction.user.id][i].agent!.name)?.emoji
-                }
-
-                const ovr = parseInt(player.ovr.toString())
-
-                return `${emoji} ${player.name} (${ovr})`
-            }).join('\n') :
-            user.active_players.map(id => {
-                const player = app.players.get(id)!
-
-                let emoji: string | undefined = '<a:loading:809221866434199634>'
-
-                const i = data[user.id].findIndex((p: any) => p.id.toString() === id)
-
-                if(
-                data[user.id][i].id.toString() ===
-                id &&
-                data[user.id][i].agent
-                ) {
-                    emoji = valorant_agents.find(agent => agent.name === data[user.id][i].agent!.name)?.emoji
-                }
-
-                const ovr = parseInt(player.ovr.toString())
-
-                return `${emoji} ${player.name} (${ovr})`
-            }).join('\n'),
-              inline: true
-          }
-      )
-      .setFooter({ text: t('commands.duel.time') })
+            )
+            .setFooter({ text: t('commands.duel.time') })
 
         const channel = app.channels.cache.get(data.channelId)
 
         if(
             !channel
-      || channel.type !== ChannelType.GuildText
+            || channel.type !== ChannelType.GuildText
         ) return
 
         const message = channel.messages.cache.get(data.messageId)
@@ -176,8 +176,8 @@ export default createComponentInteraction({
         })
 
         if(
-      data[ctx.interaction.user.id].filter((p: any) => p.agent).length === 5 &&
-      data[user.id].filter((p: any) => p.agent).length === 5
+            data[ctx.interaction.user.id].filter((p: any) => p.agent).length === 5 &&
+            data[user.id].filter((p: any) => p.agent).length === 5
         ) {
             const timeout = 10000
 
@@ -214,12 +214,12 @@ export default createComponentInteraction({
                 })
 
                 const embed = new EmbedBuilder()
-          .setTitle(t(`simulator.mode.${match.mode}`))
-          .setDesc(
-              `### ${match.teams[0].name} 0 <:versus:1349105624180330516> 0 ${match.teams[1].name}` + '\n' +
-            t('simulator.match_started')
-          )
-          .setImage(valorant_maps.filter(map => map.name === match.map)[0].image)
+                    .setTitle(t(`simulator.mode.${match.mode}`))
+                    .setDesc(
+                        `### ${match.teams[0].name} 0 <:versus:1349105624180330516> 0 ${match.teams[1].name}` + '\n' +
+                        t('simulator.match_started')
+                    )
+                    .setImage(valorant_maps.filter(map => map.name === match.map)[0].image)
 
                 await message.edit({ embeds: [embed] })
 
@@ -238,7 +238,7 @@ export default createComponentInteraction({
                         match = await match.start()
                     }
                 }
-                catch (e) {
+                catch(e) {
                     await app.redis.del(`match:${ctx.db.user.id}`)
                     await app.redis.del(`match:${user.id}`)
 

@@ -42,7 +42,7 @@ export default class ModalSubmitInteractionRunner {
             for(const component of interaction.fields.fields.values()) {
                 const value = interaction.fields.getTextInputValue(component.customId)
 
-        args.push(value)
+                args.push(value)
             }
 
             const t = <T extends Content>(content: T, args?: Args) => {
@@ -58,7 +58,7 @@ export default class ModalSubmitInteractionRunner {
             }
 
             else if(i.flags) {
-        ctx.setFlags(i.flags)
+                ctx.setFlags(i.flags)
             }
 
             return await i.run({ ctx, t })

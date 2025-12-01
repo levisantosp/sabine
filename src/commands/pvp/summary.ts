@@ -65,37 +65,37 @@ export default createCommand({
         const summary = match.metadata as Metadata
 
         const embed = new EmbedBuilder()
-      .setTitle(ctx.t('commands.summary.embed.title'))
-      .setDesc(`### <@${match.teams[0].user}> ${match.teams[0].score} <:versus:1349105624180330516> ${match.teams[1].score} <@${match.teams[1].user}>\n`)
-      .setFields(
-          {
-              name: summary.teams[0],
-              value: summary.stats.slice(0, 5)
-            .map(p => {
-                const player = ctx.app.players.get(p.id)
+            .setTitle(ctx.t('commands.summary.embed.title'))
+            .setDesc(`### <@${match.teams[0].user}> ${match.teams[0].score} <:versus:1349105624180330516> ${match.teams[1].score} <@${match.teams[1].user}>\n`)
+            .setFields(
+                {
+                    name: summary.teams[0],
+                    value: summary.stats.slice(0, 5)
+                        .map(p => {
+                            const player = ctx.app.players.get(p.id)
 
-                if(!player) return
+                            if(!player) return
 
-                return `${valorant_agents.find(a => a.name === p.agent)?.emoji} ${player.name} (${Math.floor(player.ovr)}) — \`${p.kills}/${p.deaths}\``
-            })
-            .join('\n'),
-              inline: true
-          },
-          {
-              name: summary.teams[1],
-              value: summary.stats.slice(-5)
-            .map(p => {
-                const player = ctx.app.players.get(p.id)
+                            return `${valorant_agents.find(a => a.name === p.agent)?.emoji} ${player.name} (${Math.floor(player.ovr)}) — \`${p.kills}/${p.deaths}\``
+                        })
+                        .join('\n'),
+                    inline: true
+                },
+                {
+                    name: summary.teams[1],
+                    value: summary.stats.slice(-5)
+                        .map(p => {
+                            const player = ctx.app.players.get(p.id)
 
-                if(!player) return
+                            if(!player) return
 
-                return `${valorant_agents.find(a => a.name === p.agent)?.emoji} ${player.name} (${Math.floor(player.ovr)}) — \`${p.kills}/${p.deaths}\``
-            })
-            .join('\n'),
-              inline: true
-          }
-      )
-      .setImage(summary.map)
+                            return `${valorant_agents.find(a => a.name === p.agent)?.emoji} ${player.name} (${Math.floor(player.ovr)}) — \`${p.kills}/${p.deaths}\``
+                        })
+                        .join('\n'),
+                    inline: true
+                }
+            )
+            .setImage(summary.map)
 
         await ctx.reply(embed.build())
     }

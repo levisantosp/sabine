@@ -6,7 +6,7 @@ import path from 'node:path'
 import fs from 'node:fs'
 
 const raw: {
-  [key: string]: any
+    [key: string]: any
 } = {
     pt: JSON.parse(fs.readFileSync(path.resolve('src/i18n/pt.json'), 'utf-8')),
     en: JSON.parse(fs.readFileSync(path.resolve('src/i18n/en.json'), 'utf-8'))
@@ -55,13 +55,13 @@ export default createCommand({
             const { permissions } = raw[ctx.locale]
 
             const embed = new EmbedBuilder()
-        .setTitle(ctx.args[0].toString())
-        .setDesc((await translate(cmd.description, {
-            to: ctx.db.guild!.lang
-        })).text)
-        .addField(t('commands.help.name'), `\`${cmd.name}\``)
-        .setFooter({ text: t('commands.help.footer') })
-        .setThumb(app.user!.displayAvatarURL({ size: 2048 }))
+                .setTitle(ctx.args[0].toString())
+                .setDesc((await translate(cmd.description, {
+                    to: ctx.db.guild!.lang
+                })).text)
+                .addField(t('commands.help.name'), `\`${cmd.name}\``)
+                .setFooter({ text: t('commands.help.footer') })
+                .setThumb(app.user!.displayAvatarURL({ size: 2048 }))
 
             if(cmd.syntax) embed.addField(t('commands.help.syntax'), `\`/${cmd.syntax}\``)
             if(cmd.syntaxes) embed.addField(t('commands.help.syntax'), cmd.syntaxes.map(syntax => `\`/${syntax}\``).join('\n'))
@@ -73,27 +73,27 @@ export default createCommand({
         }
 
         const embed = new EmbedBuilder()
-      .setThumb(app.user!.displayAvatarURL({ size: 2048 }))
-      .setFields(
-          {
-              name: t('commands.help.support.title'),
-              value: t('commands.help.support.desc')
-          },
-          {
-              name: t('commands.help.get.title'),
-              value: t('commands.help.get.desc')
-          }
-      )
+            .setThumb(app.user!.displayAvatarURL({ size: 2048 }))
+            .setFields(
+                {
+                    name: t('commands.help.support.title'),
+                    value: t('commands.help.support.desc')
+                },
+                {
+                    name: t('commands.help.get.title'),
+                    value: t('commands.help.get.desc')
+                }
+            )
 
         const button = new ButtonBuilder()
-      .setLabel(t('commands.help.community'))
-      .defineStyle('link')
-      .setURL('https://discord.gg/g5nmc376yh')
+            .setLabel(t('commands.help.community'))
+            .defineStyle('link')
+            .setURL('https://discord.gg/g5nmc376yh')
 
         const terms = new ButtonBuilder()
-      .setLabel(t('commands.help.privacy'))
-      .defineStyle('link')
-      .setURL('https://sabinebot.xyz/terms')
+            .setLabel(t('commands.help.privacy'))
+            .defineStyle('link')
+            .setURL('https://sabinebot.xyz/terms')
 
         await ctx.reply(embed.build(
             {
@@ -112,7 +112,7 @@ export default createCommand({
         const commands = Array.from(app.commands).filter(c => {
             if(c[0].includes(value.toLowerCase())) return c
         })
-      .slice(0, 25)
+            .slice(0, 25)
 
         await i.respond(commands.map(cmd => ({ name: cmd[0], value: cmd[0] })))
     }

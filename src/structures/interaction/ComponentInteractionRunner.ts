@@ -53,7 +53,7 @@ export default class ComponentInteractionRunner {
             }
 
             else if(i.flags) {
-        ctx.setFlags(64)
+                ctx.setFlags(64)
             }
 
             return await i.run({
@@ -88,17 +88,17 @@ export default class ComponentInteractionRunner {
 
             if(
                 command.messageComponentInteractionTime &&
-        interaction.message.createdAt.getTime() + command.messageComponentInteractionTime < Date.now()
+                interaction.message.createdAt.getTime() + command.messageComponentInteractionTime < Date.now()
             ) {
-        ctx.setFlags(64)
+                ctx.setFlags(64)
 
-        return await ctx.reply('helper.unknown_interaction')
+                return await ctx.reply('helper.unknown_interaction')
             }
 
             if(args[1] !== 'all' && args[1] !== interaction.user.id) {
-        ctx.setFlags(64)
+                ctx.setFlags(64)
 
-        return await ctx.reply('helper.this_isnt_for_you')
+                return await ctx.reply('helper.this_isnt_for_you')
             }
 
             const t = <T extends Content>(content: T, args?: Args) => {
@@ -137,17 +137,17 @@ export default class ComponentInteractionRunner {
 
         if(
             i.time &&
-      (interaction.message.createdAt.getTime() + i.time) < Date.now()
+            (interaction.message.createdAt.getTime() + i.time) < Date.now()
         ) {
-      ctx.setFlags(64)
+            ctx.setFlags(64)
 
-      return await ctx.reply('helper.unknown_interaction')
+            return await ctx.reply('helper.unknown_interaction')
         }
 
         if(args[1] !== interaction.user.id) {
-      ctx.setFlags(64)
+            ctx.setFlags(64)
 
-      return await ctx.reply('helper.this_isnt_for_you')
+            return await ctx.reply('helper.this_isnt_for_you')
         }
 
         const t = <T extends Content>(content: T, args?: Args) => {
@@ -155,7 +155,7 @@ export default class ComponentInteractionRunner {
         }
 
         if(i.flags) {
-      ctx.setFlags(i.flags)
+            ctx.setFlags(i.flags)
         }
 
         else if(i.ephemeral) {

@@ -17,8 +17,8 @@ import type { Listener } from './createListener'
 import { prisma } from '../../database'
 
 type Reminder = {
-  user: string
-  channel: string
+    user: string
+    channel: string
 }
 
 const __filename = fileURLToPath(import.meta.url)
@@ -62,10 +62,10 @@ export default class App extends Discord.Client {
                 const command: Command = (await import(`../../commands/${folder}/${file}`)).default
 
                 if(this.commands.get(command.name)) {
-          Logger.warn(`There is already an interaction named '${command.name}'`)
+                    Logger.warn(`There is already an interaction named '${command.name}'`)
                 }
 
-        this.commands.set(command.name, command)
+                this.commands.set(command.name, command)
             }
         }
 
@@ -74,10 +74,10 @@ export default class App extends Discord.Client {
                 const interaction = (await import(`../../interactions/${folder}/${file}`)).default
 
                 if(this.interactions.get(interaction.name)) {
-          Logger.warn(`There is already an interaction named '${interaction.name}'`)
+                    Logger.warn(`There is already an interaction named '${interaction.name}'`)
                 }
 
-        this.interactions.set(interaction.name, interaction)
+                this.interactions.set(interaction.name, interaction)
             }
         }
     }
@@ -86,10 +86,10 @@ export default class App extends Discord.Client {
         this.prisma = prisma
 
         for(const player of getPlayers()) {
-      this.players.set(player.id.toString(), {
-          ...player,
-          price: calcPlayerPrice(player)
-      })
+            this.players.set(player.id.toString(), {
+                ...player,
+                price: calcPlayerPrice(player)
+            })
         }
 
         await this.load()
@@ -99,38 +99,38 @@ export default class App extends Discord.Client {
     public async postCommands() {
         const commands: Discord.ApplicationCommandData[] = []
 
-    this.commands.forEach(cmd => {
-        const integrationTypes = [
-            Discord.ApplicationIntegrationType.GuildInstall
-        ]
+        this.commands.forEach(cmd => {
+            const integrationTypes = [
+                Discord.ApplicationIntegrationType.GuildInstall
+            ]
 
-        const contexts = [
-            Discord.InteractionContextType.Guild
-        ]
+            const contexts = [
+                Discord.InteractionContextType.Guild
+            ]
 
-        if(cmd.userInstall) {
-        integrationTypes.push(Discord.ApplicationIntegrationType.UserInstall)
-        contexts.push(
-          Discord.InteractionContextType.BotDM,
-          Discord.InteractionContextType.PrivateChannel
-        )
-        }
+            if(cmd.userInstall) {
+                integrationTypes.push(Discord.ApplicationIntegrationType.UserInstall)
+                contexts.push(
+                    Discord.InteractionContextType.BotDM,
+                    Discord.InteractionContextType.PrivateChannel
+                )
+            }
 
-      commands.push({
-          name: cmd.name,
-          nameLocalizations: cmd.nameLocalizations,
-          description: cmd.description,
-          descriptionLocalizations: cmd.descriptionLocalizations,
-          options: cmd.options,
-          type: 1,
-          integrationTypes,
-          contexts
-      })
-    })
+            commands.push({
+                name: cmd.name,
+                nameLocalizations: cmd.nameLocalizations,
+                description: cmd.description,
+                descriptionLocalizations: cmd.descriptionLocalizations,
+                options: cmd.options,
+                type: 1,
+                integrationTypes,
+                contexts
+            })
+        })
 
-    await rest.put(Discord.Routes.applicationCommands(this.user!.id), {
-        body: commands
-    })
+        await rest.put(Discord.Routes.applicationCommands(this.user!.id), {
+            body: commands
+        })
     }
 
     public async getUser(id: string) {

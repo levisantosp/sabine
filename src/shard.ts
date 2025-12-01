@@ -35,7 +35,7 @@ changeMapQueue.process('arena:map', async() => {
     const maps = valorant_maps.filter(m => m.current_map_pool).map(m => m.name)
 
     if(mapIndex >= 0) {
-    maps.splice(mapIndex, 1)
+        maps.splice(mapIndex, 1)
     }
 
     const map = maps[Math.floor(Math.random() * maps.length)]
@@ -91,8 +91,8 @@ const processArenaQueue = async() => {
             await processArenaQueue()
         }
     }
-    catch (e) {
-    Logger.error(e as Error)
+    catch(e) {
+        Logger.error(e as Error)
     }
 }
 
@@ -104,44 +104,44 @@ const updateRedis = async() => {
 
     await redis.set(
         'leaderboard:coins',
-    JSON.stringify(
-        {
-            updated_at: Date.now(),
-            data: users.map(user => ({
-                id: user.id,
-                coins: user.coins
-            }))
-          .filter(user => user.coins > 0)
-        },
-        (_, value) => typeof value === 'bigint' ? value.toString() : value
-    )
+        JSON.stringify(
+            {
+                updated_at: Date.now(),
+                data: users.map(user => ({
+                    id: user.id,
+                    coins: user.coins
+                }))
+                    .filter(user => user.coins > 0)
+            },
+            (_, value) => typeof value === 'bigint' ? value.toString() : value
+        )
     )
 
     await redis.set(
         'leaderboard:predictions',
-    JSON.stringify(
-        {
-            updated_at: Date.now(),
-            data: users.map(user => ({
-                id: user.id,
-                correct_predictions: user.correct_predictions
-            }))
-          .filter(user => user.correct_predictions > 0)
-        }
-    )
+        JSON.stringify(
+            {
+                updated_at: Date.now(),
+                data: users.map(user => ({
+                    id: user.id,
+                    correct_predictions: user.correct_predictions
+                }))
+                    .filter(user => user.correct_predictions > 0)
+            }
+        )
     )
 
     await redis.set(
         'leaderboard:rating',
-    JSON.stringify(
-        {
-            updated_at: Date.now(),
-            data: users.map(user => ({
-                id: user.id,
-                rank_rating: user.rank_rating
-            }))
-        }
-    )
+        JSON.stringify(
+            {
+                updated_at: Date.now(),
+                data: users.map(user => ({
+                    id: user.id,
+                    rank_rating: user.rank_rating
+                }))
+            }
+        )
     )
 
     setTimeout(updateRedis, 10 * 60 * 1000)
@@ -154,7 +154,7 @@ const keysToDelete = new Set<string>()
 for(const pattern of patterns) {
     for await (const keys of redis.scanIterator({ MATCH: pattern, COUNT: 100 })) {
         for(const key of keys) {
-      keysToDelete.add(key)
+            keysToDelete.add(key)
         }
     }
 }
@@ -171,7 +171,7 @@ server.listen({
     host: process.env.HOST,
     port: process.env.PORT
 })
-  .then(() => Logger.info(`HTTP server running at ${process.env.PORT}`))
+    .then(() => Logger.info(`HTTP server running at ${process.env.PORT}`))
 
 const manager = new ShardingManager('src/index.ts', {
     token: process.env.BOT_TOKEN,
@@ -185,7 +185,7 @@ const res = await rest.get(Routes.channelWebhooks(process.env.SHARD_LOG)) as any
 const webhook = res.filter(w => w.token)[0]
 
 if(!webhook) {
-  Logger.warn('There is no webhook')
+    Logger.warn('There is no webhook')
 }
 
 manager.on('shardCreate', async shard => {
@@ -210,110 +210,110 @@ manager.on('shardCreate', async shard => {
         })
     }
 
-  shard.on('disconnect', async() => {
-      const embed = new EmbedBuilder()
-      .setTitle('Shard Disconnected')
-      .setDesc(`Shard ID: \`${shard.id}\` => \`Disconnected\``)
-      .setTimestamp()
+    shard.on('disconnect', async() => {
+        const embed = new EmbedBuilder()
+            .setTitle('Shard Disconnected')
+            .setDesc(`Shard ID: \`${shard.id}\` => \`Disconnected\``)
+            .setTimestamp()
 
-      const route = Routes.webhook(webhook.id, webhook.token)
+        const route = Routes.webhook(webhook.id, webhook.token)
 
-      await rest.post(route, {
-          body: {
-              embeds: [embed]
-          }
-      })
-  })
+        await rest.post(route, {
+            body: {
+                embeds: [embed]
+            }
+        })
+    })
 
-  shard.on('ready', async() => {
-      const embed = new EmbedBuilder()
-      .setTitle('Shard Ready')
-      .setDesc(`Shard ID: \`${shard.id}\` => \`Ready\``)
-      .setTimestamp()
+    shard.on('ready', async() => {
+        const embed = new EmbedBuilder()
+            .setTitle('Shard Ready')
+            .setDesc(`Shard ID: \`${shard.id}\` => \`Ready\``)
+            .setTimestamp()
 
-      const route = Routes.webhook(webhook.id, webhook.token)
+        const route = Routes.webhook(webhook.id, webhook.token)
 
-      await rest.post(route, {
-          body: {
-              embeds: [embed]
-          }
-      })
-  })
+        await rest.post(route, {
+            body: {
+                embeds: [embed]
+            }
+        })
+    })
 
-  shard.on('resume', async() => {
-      const embed = new EmbedBuilder()
-      .setTitle('Shard Resumed')
-      .setDesc(`Shard ID: \`${shard.id}\` => \`Resumed\``)
-      .setTimestamp()
+    shard.on('resume', async() => {
+        const embed = new EmbedBuilder()
+            .setTitle('Shard Resumed')
+            .setDesc(`Shard ID: \`${shard.id}\` => \`Resumed\``)
+            .setTimestamp()
 
-      const route = Routes.webhook(webhook.id, webhook.token)
+        const route = Routes.webhook(webhook.id, webhook.token)
 
-      await rest.post(route, {
-          body: {
-              embeds: [embed]
-          }
-      })
-  })
+        await rest.post(route, {
+            body: {
+                embeds: [embed]
+            }
+        })
+    })
 
-  shard.on('reconnecting', async() => {
-      const embed = new EmbedBuilder()
-      .setTitle('Shard Reconnecting')
-      .setDesc(`Shard ID: \`${shard.id}\` => \`Reconnecting\``)
-      .setTimestamp()
+    shard.on('reconnecting', async() => {
+        const embed = new EmbedBuilder()
+            .setTitle('Shard Reconnecting')
+            .setDesc(`Shard ID: \`${shard.id}\` => \`Reconnecting\``)
+            .setTimestamp()
 
-      const route = Routes.webhook(webhook.id, webhook.token)
+        const route = Routes.webhook(webhook.id, webhook.token)
 
-      await rest.post(route, {
-          body: {
-              embeds: [embed]
-          }
-      })
-  })
+        await rest.post(route, {
+            body: {
+                embeds: [embed]
+            }
+        })
+    })
 
-  shard.on('death', async() => {
-      const embed = new EmbedBuilder()
-      .setTitle('Shard Dead')
-      .setDesc(`Shard ID: \`${shard.id}\` => \`Dead\``)
-      .setTimestamp()
+    shard.on('death', async() => {
+        const embed = new EmbedBuilder()
+            .setTitle('Shard Dead')
+            .setDesc(`Shard ID: \`${shard.id}\` => \`Dead\``)
+            .setTimestamp()
 
-      const route = Routes.webhook(webhook.id, webhook.token)
+        const route = Routes.webhook(webhook.id, webhook.token)
 
-      await rest.post(route, {
-          body: {
-              embeds: [embed]
-          }
-      })
-  })
+        await rest.post(route, {
+            body: {
+                embeds: [embed]
+            }
+        })
+    })
 
-  shard.on('spawn', async() => {
-      const embed = new EmbedBuilder()
-      .setTitle('Shard Spawned')
-      .setDesc(`Shard ID: \`${shard.id}\` => \`Spawned\``)
-      .setTimestamp()
+    shard.on('spawn', async() => {
+        const embed = new EmbedBuilder()
+            .setTitle('Shard Spawned')
+            .setDesc(`Shard ID: \`${shard.id}\` => \`Spawned\``)
+            .setTimestamp()
 
-      const route = Routes.webhook(webhook.id, webhook.token)
+        const route = Routes.webhook(webhook.id, webhook.token)
 
-      await rest.post(route, {
-          body: {
-              embeds: [embed]
-          }
-      })
-  })
+        await rest.post(route, {
+            body: {
+                embeds: [embed]
+            }
+        })
+    })
 
-  shard.on('error', async(error) => {
-      const embed = new EmbedBuilder()
-      .setTitle('Shard Error')
-      .setDesc(`Shard ID: \`${shard.id}\` => \`Error\`\n\`\`\`fix\n${error.stack}\`\`\``)
-      .setTimestamp()
+    shard.on('error', async(error) => {
+        const embed = new EmbedBuilder()
+            .setTitle('Shard Error')
+            .setDesc(`Shard ID: \`${shard.id}\` => \`Error\`\n\`\`\`fix\n${error.stack}\`\`\``)
+            .setTimestamp()
 
-      const route = Routes.webhook(webhook.id, webhook.token)
+        const route = Routes.webhook(webhook.id, webhook.token)
 
-      await rest.post(route, {
-          body: {
-              embeds: [embed]
-          }
-      })
-  })
+        await rest.post(route, {
+            body: {
+                embeds: [embed]
+            }
+        })
+    })
 })
 
 manager.spawn()

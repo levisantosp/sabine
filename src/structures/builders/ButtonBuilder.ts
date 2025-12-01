@@ -1,5 +1,5 @@
-import { 
-    ButtonBuilder as DJSButtonBuilder, 
+import {
+    ButtonBuilder as DJSButtonBuilder,
     ButtonStyle,
     type InteractionReplyOptions,
 } from 'discord.js'
@@ -24,41 +24,41 @@ export default class ButtonBuilder extends DJSButtonBuilder {
     }
 
     public setLabel(label: string) {
-    super.setLabel(label)
+        super.setLabel(label)
 
-    return this
+        return this
     }
 
     public setCustomId(id: string) {
-    super.setCustomId(id)
+        super.setCustomId(id)
 
-    return this
+        return this
     }
 
     public setEmoji(emoji: string, animated?: boolean) {
         if(isNaN(Number(emoji))) super.setEmoji({ name: emoji })
 
-        else super.setEmoji({ id: emoji , animated})
+        else super.setEmoji({ id: emoji, animated })
 
         return this
     }
 
     public setURL(url: string) {
-    super.setURL(url)
+        super.setURL(url)
 
-    return this
+        return this
     }
 
     public setDisabled() {
-    super.setDisabled(true)
+        super.setDisabled(true)
 
-    return this
+        return this
     }
 
     public setEnabled() {
-    super.setDisabled(false)
-    
-    return this
+        super.setDisabled(false)
+
+        return this
     }
 
     public build(content?: string | InteractionReplyOptions) {

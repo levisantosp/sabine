@@ -20,15 +20,15 @@ export default class Logger {
     }
 
     public static info(message: string) {
-    logger.info(message)
+        logger.info(message)
     }
 
     public static warn(message: string) {
-    logger.warn(message)
+        logger.warn(message)
     }
 
     public static error(error: Error) {
-    logger.error(error.stack ?? error)
+        logger.error(error.stack ?? error)
     }
 
     public async error(error: Error | string, shardId?: number) {
@@ -40,48 +40,48 @@ export default class Logger {
         if(ignoredErrors.some(e => error.toString().includes(e))) return
 
         if(typeof error === 'string') {
-      logger.error(error)
-      
-      const embed = new EmbedBuilder()
-        .setTitle('An error has occurred')
-        .setDesc(`Shard ID: \`${shardId}\`\n\`\`\`js\n${error}\`\`\``)
+            logger.error(error)
 
-      const channel = await this.client.channels.fetch(process.env.GUILDS_LOG!)
+            const embed = new EmbedBuilder()
+                .setTitle('An error has occurred')
+                .setDesc(`Shard ID: \`${shardId}\`\n\`\`\`js\n${error}\`\`\``)
 
-      if(!channel || channel.type !== ChannelType.GuildText) return
+            const channel = await this.client.channels.fetch(process.env.GUILDS_LOG!)
 
-      const webhooks = await channel.fetchWebhooks()
+            if(!channel || channel.type !== ChannelType.GuildText) return
 
-      let webhook = webhooks.find(w => w.name === `${this.client.user?.username} Logger`)
+            const webhooks = await channel.fetchWebhooks()
 
-      if(!webhook) webhook = await channel.createWebhook({ name: `${this.client.user?.username} Logger` })
+            let webhook = webhooks.find(w => w.name === `${this.client.user?.username} Logger`)
 
-      await webhook.send({
-          embeds: [embed],
-          avatarURL: this.client.user?.displayAvatarURL({ size: 2048 })
-      })
+            if(!webhook) webhook = await channel.createWebhook({ name: `${this.client.user?.username} Logger` })
+
+            await webhook.send({
+                embeds: [embed],
+                avatarURL: this.client.user?.displayAvatarURL({ size: 2048 })
+            })
         }
         else {
-      logger.error(error.stack ?? error)
+            logger.error(error.stack ?? error)
 
-      const embed = new EmbedBuilder()
-        .setTitle('An error has occurred')
-        .setDesc(`Shard ID: \`${shardId}\`\n\`\`\`js\n${error.stack}\`\`\``)
+            const embed = new EmbedBuilder()
+                .setTitle('An error has occurred')
+                .setDesc(`Shard ID: \`${shardId}\`\n\`\`\`js\n${error.stack}\`\`\``)
 
-      const channel = await this.client.channels.fetch(process.env.ERROR_LOG!)
+            const channel = await this.client.channels.fetch(process.env.ERROR_LOG!)
 
-      if(!channel || channel.type !== ChannelType.GuildText) return
+            if(!channel || channel.type !== ChannelType.GuildText) return
 
-      const webhooks = await channel.fetchWebhooks()
+            const webhooks = await channel.fetchWebhooks()
 
-      let webhook = webhooks.find(w => w.name === `${this.client.user?.username} Logger`)
+            let webhook = webhooks.find(w => w.name === `${this.client.user?.username} Logger`)
 
-      if(!webhook) webhook = await channel.createWebhook({ name: `${this.client.user?.username} Logger` })
+            if(!webhook) webhook = await channel.createWebhook({ name: `${this.client.user?.username} Logger` })
 
-      await webhook.send({
-          embeds: [embed],
-          avatarURL: this.client.user?.displayAvatarURL({ size: 2048 })
-      })
+            await webhook.send({
+                embeds: [embed],
+                avatarURL: this.client.user?.displayAvatarURL({ size: 2048 })
+            })
         }
     }
 }

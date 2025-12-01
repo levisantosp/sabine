@@ -99,9 +99,9 @@ export class SabineUser implements User {
         for(const key in this) {
             if(
                 typeof this[key] === 'function' ||
-        key === 'id' ||
-        this[key] === null ||
-        this[key] === 'premium'
+                key === 'id' ||
+                this[key] === null ||
+                this[key] === 'premium'
             ) continue
 
             (data as any)[key] = this[key]
@@ -200,118 +200,118 @@ export class SabineUser implements User {
         if(!pred) return this
 
         await prisma.$transaction([
-      prisma.prediction.update({
-          where: {
-              match: predictionId,
-              game,
-              userId: this.id,
-              id: pred.id
-          },
-          data: {
-              status: 'wrong'
-          }
-      }),
-      prisma.user.update({
-          where: { id: this.id },
-          data: {
-              incorrect_predictions: { increment: 1 }
-          }
-      })
+            prisma.prediction.update({
+                where: {
+                    match: predictionId,
+                    game,
+                    userId: this.id,
+                    id: pred.id
+                },
+                data: {
+                    status: 'wrong'
+                }
+            }),
+            prisma.user.update({
+                where: { id: this.id },
+                data: {
+                    incorrect_predictions: { increment: 1 }
+                }
+            })
         ])
 
         return this
     }
 
     public async addPlayerToRoster(player: string, method: 'CLAIM_PLAYER_BY_CLAIM_COMMAND' | 'CLAIM_PLAYER_BY_COMMAND' = 'CLAIM_PLAYER_BY_CLAIM_COMMAND', channel?: string) {
-    this.reserve_players.push(player)
+        this.reserve_players.push(player)
 
-    if(method === 'CLAIM_PLAYER_BY_CLAIM_COMMAND') {
-        if(this.premium) {
-            this.claim_time = new Date(Date.now() + 5 * 60 * 1000)
-        }
-        else this.claim_time = new Date(Date.now() + 10 * 60 * 1000)
+        if(method === 'CLAIM_PLAYER_BY_CLAIM_COMMAND') {
+            if(this.premium) {
+                this.claim_time = new Date(Date.now() + 5 * 60 * 1000)
+            }
+            else this.claim_time = new Date(Date.now() + 10 * 60 * 1000)
 
-        this.claims += 1
-        this.reminded = false
-        this.pity += 1
-        this.claims += 1
+            this.claims += 1
+            this.reminded = false
+            this.pity += 1
+            this.claims += 1
 
-        if(channel) {
-            this.remind_in = channel
+            if(channel) {
+                this.remind_in = channel
 
-            if(this.remind) {
-                await app.queue.add('reminder', {
-                    channel: this.remind_in,
-                    user: this.id
-                }, {
-                    delay: this.claim_time.getTime() - Date.now(),
-                    removeOnComplete: true,
-                    removeOnFail: true
-                })
+                if(this.remind) {
+                    await app.queue.add('reminder', {
+                        channel: this.remind_in,
+                        user: this.id
+                    }, {
+                        delay: this.claim_time.getTime() - Date.now(),
+                        removeOnComplete: true,
+                        removeOnFail: true
+                    })
+                }
+            }
+
+            if(app.players.get(player)!.ovr >= 85) {
+                this.pity = 0
             }
         }
 
-        if(app.players.get(player)!.ovr >= 85) {
-            this.pity = 0
-        }
-    }
+        await prisma.transaction.create({
+            data: {
+                type: method,
+                player: Number(player),
+                userId: this.id
+            }
+        })
 
-    await prisma.transaction.create({
-        data: {
-            type: method,
-            player: Number(player),
-            userId: this.id
-        }
-    })
+        await this.save()
 
-    await this.save()
-
-    return this
+        return this
     }
 
     public async addPlayersToRoster(players: string[]) {
-    this.reserve_players.push(...players)
-    
-    await Promise.all([
-      this.save(),
-      prisma.transaction.createMany({
-          data: players.map(p => ({
-              type: 'CLAIM_PLAYER_BY_PACK',
-              player: Number(p),
-              userId: this.id
-          }))
-      })
-    ])
+        this.reserve_players.push(...players)
 
-    return this
+        await Promise.all([
+            this.save(),
+            prisma.transaction.createMany({
+                data: players.map(p => ({
+                    type: 'CLAIM_PLAYER_BY_PACK',
+                    player: Number(p),
+                    userId: this.id
+                }))
+            })
+        ])
+
+        return this
     }
 
     public async sellPlayer(id: string, price: bigint, i: number) {
-    this.reserve_players.splice(i, 1)
-    this.coins += price
+        this.reserve_players.splice(i, 1)
+        this.coins += price
 
-    await prisma.transaction.create({
-        data: {
-            type: 'SELL_PLAYER',
-            player: Number(id),
-            price,
-            userId: this.id
+        await prisma.transaction.create({
+            data: {
+                type: 'SELL_PLAYER',
+                player: Number(id),
+                price,
+                userId: this.id
+            }
+        })
+
+        if(
+            this.arena_metadata?.lineup
+                .some(line => line.player === id)
+        ) {
+            const index = this.arena_metadata.lineup
+                .findIndex(line => line.player === id)
+
+            this.arena_metadata.lineup.splice(index, 1)
         }
-    })
 
-    if(
-      this.arena_metadata?.lineup
-        .some(line => line.player === id)
-    ) {
-        const index = this.arena_metadata.lineup
-        .findIndex(line => line.player === id)
+        await this.save()
 
-      this.arena_metadata.lineup.splice(index, 1)
-    }
-
-    await this.save()
-
-    return this
+        return this
     }
 
     public async addPack(pack: Pack, increaseVoteStreak?: boolean) {
@@ -401,17 +401,17 @@ export class SabineGuild implements Guild {
         for(const key in this) {
             if(
                 typeof this[key] === 'function' ||
-        key === 'id' ||
-        this[key] === null
+                key === 'id' ||
+                this[key] === null
             ) continue
 
             if(
-        ['tbd_matches', 'events', 'live_messages']
-          .includes(key)
+                ['tbd_matches', 'events', 'live_messages']
+                    .includes(key)
             ) {
                 (data as any)[key] = {
                     [key]: Array.isArray(this[key]) &&
-            this[key].length ?
+                        this[key].length ?
                         {
                             create: this[key]
                         } :

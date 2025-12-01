@@ -17,18 +17,18 @@ export default createCommand({
         }
 
         const button = new ButtonBuilder()
-      .setLabel(t('commands.premium.button.label'))
-      .defineStyle('blue')
-      .setCustomId(`premium;${ctx.interaction.user.id}`)
+            .setLabel(t('commands.premium.button.label'))
+            .defineStyle('blue')
+            .setCustomId(`premium;${ctx.interaction.user.id}`)
 
         const embed = new EmbedBuilder()
-      .setTitle('Premium')
-      .setDesc(t(
-          'commands.premium.embed.description',
-          {
-              expiresAt: `<t:${(ctx.db.user.premium.expires_at.getTime() / 1000).toFixed(0)}:R>`
-          }
-      ))
+            .setTitle('Premium')
+            .setDesc(t(
+                'commands.premium.embed.description',
+                {
+                    expiresAt: `<t:${(ctx.db.user.premium.expires_at.getTime() / 1000).toFixed(0)}:R>`
+                }
+            ))
 
         await ctx.reply(button.build({ embeds: [embed] }))
     },
@@ -49,28 +49,28 @@ export default createCommand({
 
         for(const key of keys) {
             if(key.expires_at) {
-        embed.addField(
-          key.type,
-          t(
-              'commands.premium.embed.field.value',
-              {
-                  expiresAt: `<t:${(key.expires_at.getTime() / 1000).toFixed(0)}:R>`,
-                  key: key.id
-              }
-          )
-        )
+                embed.addField(
+                    key.type,
+                    t(
+                        'commands.premium.embed.field.value',
+                        {
+                            expiresAt: `<t:${(key.expires_at.getTime() / 1000).toFixed(0)}:R>`,
+                            key: key.id
+                        }
+                    )
+                )
             }
 
             else {
-        embed.addField(
-          key.type,
-          t(
-              'commands.premium.embed.field.value2',
-              {
-                  key: key.id
-              }
-          )
-        )
+                embed.addField(
+                    key.type,
+                    t(
+                        'commands.premium.embed.field.value2',
+                        {
+                            key: key.id
+                        }
+                    )
+                )
             }
         }
 

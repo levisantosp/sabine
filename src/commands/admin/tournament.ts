@@ -213,17 +213,17 @@ export default createCommand({
 
                     if(
                         (
-              guild.events.filter(e => e.type === 'lol').length +
-              guild.events.filter(e => e.type === 'valorant').length
+                            guild.events.filter(e => e.type === 'lol').length +
+                            guild.events.filter(e => e.type === 'valorant').length
                         ) >=
-            ctx.db.guild.tournaments_length
+                        ctx.db.guild.tournaments_length
                     ) return ctx.reply('commands.tournament.limit_reached', { cmd: `</tournament remove valorant:${id}>` })
 
                     if(ctx.args[3].toString() === ctx.args[4].toString()) return ctx.reply('commands.tournament.channels_must_be_different')
 
                     if(
-            ctx.guild.channels.cache.get(ctx.args[3].toString())?.type !== 0 ||
-            ctx.guild.channels.cache.get(ctx.args[4].toString())?.type !== 0
+                        ctx.guild.channels.cache.get(ctx.args[3].toString())?.type !== 0 ||
+                        ctx.guild.channels.cache.get(ctx.args[4].toString())?.type !== 0
                     ) {
                         return ctx.reply('commands.tournament.invalid_channel')
                     }
@@ -278,15 +278,15 @@ export default createCommand({
 
                     if(
                         (
-              guild.events.filter(e => e.type === 'lol').length +
-              guild.events.filter(e => e.type === 'valorant').length
+                            guild.events.filter(e => e.type === 'lol').length +
+                            guild.events.filter(e => e.type === 'valorant').length
                         ) >=
-            ctx.db.guild.tournaments_length
+                        ctx.db.guild.tournaments_length
                     ) return ctx.reply('commands.tournament.limit_reached', { cmd: `</tournament remove lol:${id}>` })
                     if(ctx.args[3].toString() === ctx.args[4].toString()) return ctx.reply('commands.tournament.channels_must_be_different')
                     if(
-            ctx.guild.channels.cache.get(ctx.args[3].toString())?.type !== 0 ||
-            ctx.guild.channels.cache.get(ctx.args[4].toString())?.type !== 0
+                        ctx.guild.channels.cache.get(ctx.args[3].toString())?.type !== 0 ||
+                        ctx.guild.channels.cache.get(ctx.args[4].toString())?.type !== 0
                     ) return ctx.reply('commands.tournament.invalid_channel')
 
                     await app.prisma.guild.upsert({
@@ -450,66 +450,66 @@ export default createCommand({
         if(args[1] === 'valorant') {
             const res = await service.getEvents('valorant')
 
-      res.unshift({
-          name: 'Valorant Game Changers'
-      })
-
-      res.unshift({
-          name: 'Valorant Challengers League'
-      })
-
-      res.unshift({
-          name: 'Valorant Champions Tour'
-      })
-
-      const events = res.filter(e => e.status !== 'completed')
-        .map(e => e.name)
-        .filter(e => {
-            if(e.toLowerCase().includes(value.toLowerCase())) return e
-        })
-        .slice(0, 25)
-
-      const actions = {
-          add: async() => {
-              await i.respond(events.map(e => ({ name: e, value: e })))
-          },
-          remove: async() => {
-              const guild = await app.prisma.guild.findUnique({
-                  where: {
-                      id: i.guild!.id
-                  },
-                  include: {
-                      events: {
-                          where: {
-                              type: 'valorant'
-                          }
-                      }
-                  }
-              })
-
-              if(!guild) return
-
-              const events = guild.events.map(e => e.name)
-            .filter(e => {
-                if(e.toLowerCase().includes(value.toLowerCase())) return e
+            res.unshift({
+                name: 'Valorant Game Changers'
             })
 
-          events.unshift(t('commands.tournament.remove_all'))
+            res.unshift({
+                name: 'Valorant Challengers League'
+            })
 
-          await i.respond(events.map(e => ({ name: e, value: e })))
-          }
-      }
+            res.unshift({
+                name: 'Valorant Champions Tour'
+            })
 
-      await actions[args[0] as 'add' | 'remove']()
+            const events = res.filter(e => e.status !== 'completed')
+                .map(e => e.name)
+                .filter(e => {
+                    if(e.toLowerCase().includes(value.toLowerCase())) return e
+                })
+                .slice(0, 25)
+
+            const actions = {
+                add: async() => {
+                    await i.respond(events.map(e => ({ name: e, value: e })))
+                },
+                remove: async() => {
+                    const guild = await app.prisma.guild.findUnique({
+                        where: {
+                            id: i.guild!.id
+                        },
+                        include: {
+                            events: {
+                                where: {
+                                    type: 'valorant'
+                                }
+                            }
+                        }
+                    })
+
+                    if(!guild) return
+
+                    const events = guild.events.map(e => e.name)
+                        .filter(e => {
+                            if(e.toLowerCase().includes(value.toLowerCase())) return e
+                        })
+
+                    events.unshift(t('commands.tournament.remove_all'))
+
+                    await i.respond(events.map(e => ({ name: e, value: e })))
+                }
+            }
+
+            await actions[args[0] as 'add' | 'remove']()
         }
         else {
             const res = await service.getEvents('lol')
 
             const events = res.map(e => e.name)
-        .filter(e => {
-            if(e.toLowerCase().includes(value.toLowerCase())) return e
-        })
-        .slice(0, 25)
+                .filter(e => {
+                    if(e.toLowerCase().includes(value.toLowerCase())) return e
+                })
+                .slice(0, 25)
 
             const actions = {
                 add: async() => {
@@ -532,13 +532,13 @@ export default createCommand({
                     if(!guild) return
 
                     const events = guild.events.filter(e => e.type === 'lol').map(e => e.name)
-            .filter(e => {
-                if(e.toLowerCase().includes(value.toLowerCase())) return e
-            })
+                        .filter(e => {
+                            if(e.toLowerCase().includes(value.toLowerCase())) return e
+                        })
 
-          events.unshift(t('commands.tournament.remove_all'))
+                    events.unshift(t('commands.tournament.remove_all'))
 
-          await i.respond(events.map(e => ({ name: e, value: e })))
+                    await i.respond(events.map(e => ({ name: e, value: e })))
                 }
             }
 

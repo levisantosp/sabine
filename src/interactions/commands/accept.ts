@@ -50,56 +50,56 @@ export default createComponentInteraction({
         }
 
         const embed = new EmbedBuilder()
-      .setTitle(t('commands.duel.embed.title'))
-      .setDesc(t('commands.duel.embed.desc'))
-      .setFields(
-          {
-              name: user.team_name,
-              value: user.active_players.map(id => {
-                  const player = app.players.get(id)!
-                  const ovr = parseInt(player.ovr.toString())
-                  return `<a:loading:809221866434199634> ${player.name} (${ovr})`
-              }).join('\n'),
-              inline: true
-          },
-          {
-              name: ctx.db.user.team_name,
-              value: ctx.db.user.active_players.map(id => {
-                  const player = app.players.get(id)!
-                  const ovr = parseInt(player.ovr.toString())
-                  return `<a:loading:809221866434199634> ${player.name} (${ovr})`
-              }).join('\n'),
-              inline: true
-          }
-      )
-      .setImage(map.image)
-      .setFooter({ text: t('commands.duel.time') })
+            .setTitle(t('commands.duel.embed.title'))
+            .setDesc(t('commands.duel.embed.desc'))
+            .setFields(
+                {
+                    name: user.team_name,
+                    value: user.active_players.map(id => {
+                        const player = app.players.get(id)!
+                        const ovr = parseInt(player.ovr.toString())
+                        return `<a:loading:809221866434199634> ${player.name} (${ovr})`
+                    }).join('\n'),
+                    inline: true
+                },
+                {
+                    name: ctx.db.user.team_name,
+                    value: ctx.db.user.active_players.map(id => {
+                        const player = app.players.get(id)!
+                        const ovr = parseInt(player.ovr.toString())
+                        return `<a:loading:809221866434199634> ${player.name} (${ovr})`
+                    }).join('\n'),
+                    inline: true
+                }
+            )
+            .setImage(map.image)
+            .setFooter({ text: t('commands.duel.time') })
 
         const menu1 = new SelectMenuBuilder()
-      .setPlaceholder(user.team_name)
-      .setOptions(
-          ...user.active_players.map(id => {
-              const player = app.players.get(id)!
-              return {
-                  label: `${player.name}`,
-                  value: player.id.toString()
-              }
-          })
-      )
-      .setCustomId(`select;${user.id};${ctx.interaction.user.id}`)
+            .setPlaceholder(user.team_name)
+            .setOptions(
+                ...user.active_players.map(id => {
+                    const player = app.players.get(id)!
+                    return {
+                        label: `${player.name}`,
+                        value: player.id.toString()
+                    }
+                })
+            )
+            .setCustomId(`select;${user.id};${ctx.interaction.user.id}`)
 
         const menu2 = new SelectMenuBuilder()
-      .setPlaceholder(ctx.db.user.team_name!)
-      .setOptions(
-          ...ctx.db.user.active_players.map(id => {
-              const player = app.players.get(id)!
-              return {
-                  label: `${player.name}`,
-                  value: player.id.toString()
-              }
-          })
-      )
-      .setCustomId(`select;${ctx.interaction.user.id};${user.id}`)
+            .setPlaceholder(ctx.db.user.team_name!)
+            .setOptions(
+                ...ctx.db.user.active_players.map(id => {
+                    const player = app.players.get(id)!
+                    return {
+                        label: `${player.name}`,
+                        value: player.id.toString()
+                    }
+                })
+            )
+            .setCustomId(`select;${ctx.interaction.user.id};${user.id}`)
 
         const interaction = await ctx.edit({
             embeds: [embed],
@@ -117,23 +117,23 @@ export default createComponentInteraction({
         }) as InteractionCallbackResponse
 
         const data: {
-      [key: string]: {
-        name: string
-        id: number
-        role: string
-        aim: number
-        HS: number
-        movement: number
-        aggression: number
-        ACS: number
-        gamesense: number
-        ovr: number
-        agent: {
-          name: string
-          role: typeof valorant_agents[number]['role']
-        } | null
-      }[]
-    } = {}
+            [key: string]: {
+                name: string
+                id: number
+                role: string
+                aim: number
+                HS: number
+                movement: number
+                aggression: number
+                ACS: number
+                gamesense: number
+                ovr: number
+                agent: {
+                    name: string
+                    role: typeof valorant_agents[number]['role']
+                } | null
+            }[]
+        } = {}
 
         data[ctx.db.user.id] = ctx.db.user.active_players.map(id => {
             const p = app.players.get(id)!

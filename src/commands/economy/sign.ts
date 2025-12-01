@@ -38,19 +38,19 @@ export default createCommand({
         const price = player.price
 
         const embed = new EmbedBuilder()
-      .setTitle(player.name)
-      .setDesc(t(
-          'commands.sign.embed.desc',
-          {
-              price: price.toLocaleString()
-          }
-      ))
-      .setImage(`${process.env.CDN_URL}/cards/${player.id}.png`)
+            .setTitle(player.name)
+            .setDesc(t(
+                'commands.sign.embed.desc',
+                {
+                    price: price.toLocaleString()
+                }
+            ))
+            .setImage(`${process.env.CDN_URL}/cards/${player.id}.png`)
 
         const button = new ButtonBuilder()
-      .defineStyle('green')
-      .setLabel(t('commands.sign.buy'))
-      .setCustomId(`sign;${ctx.interaction.user.id};${player.id}`)
+            .defineStyle('green')
+            .setLabel(t('commands.sign.buy'))
+            .setCustomId(`sign;${ctx.interaction.user.id};${player.id}`)
 
         await ctx.reply(embed.build(button.build()))
     },
@@ -64,20 +64,20 @@ export default createCommand({
 
             const ovr = Math.floor(p.ovr)
 
-      players.push({
-          name: `${p.name} (${ovr}) — ${p.collection}`,
-          ovr,
-          id: p.id
-      })
+            players.push({
+                name: `${p.name} (${ovr}) — ${p.collection}`,
+                ovr,
+                id: p.id
+            })
         }
 
         await i.respond(
-      players.sort((a, b) => b.ovr - a.ovr)
-        .filter(p => {
-            if(p.name.toLowerCase().includes(value.toLowerCase())) return p
-        })
-        .slice(0, 25)
-        .map(p => ({ name: p.name, value: p.id.toString() }))
+            players.sort((a, b) => b.ovr - a.ovr)
+                .filter(p => {
+                    if(p.name.toLowerCase().includes(value.toLowerCase())) return p
+                })
+                .slice(0, 25)
+                .map(p => ({ name: p.name, value: p.id.toString() }))
         )
     },
     async createMessageComponentInteraction({ ctx, i, app }) {
@@ -92,21 +92,21 @@ export default createCommand({
         if(price > ctx.db.user.coins) return ctx.reply('commands.sign.coins_needed')
 
         ctx.db.user.coins -= BigInt(price)
-    ctx.db.user.reserve_players.push(player.id.toString())
+        ctx.db.user.reserve_players.push(player.id.toString())
 
-    await app.prisma.transaction.create({
-        data: {
-            userId: ctx.db.user.id,
-            player: player.id,
-            type: 'SIGN_PLAYER'
-        }
-    })
+        await app.prisma.transaction.create({
+            data: {
+                userId: ctx.db.user.id,
+                player: player.id,
+                type: 'SIGN_PLAYER'
+            }
+        })
 
-    await ctx.db.user.save()
+        await ctx.db.user.save()
 
-    await ctx.reply('commands.sign.signed', {
-        player: `${player.name} (${Math.floor(player.ovr)})`,
-        price: price.toLocaleString()
-    })
+        await ctx.reply('commands.sign.signed', {
+            player: `${player.name} (${Math.floor(player.ovr)})`,
+            price: price.toLocaleString()
+        })
     }
 })

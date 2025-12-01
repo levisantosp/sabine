@@ -190,7 +190,7 @@ export default createCommand({
                 const value = JSON.parse((await app.redis.get('leaderboard:predictions'))!)
 
                 let users = value.data
-          .filter((user: any) => ctx.guild!.members.cache.get(user.id)).sort((a: any, b: any) => b.correct_predictions - a.correct_predictions)
+                    .filter((user: any) => ctx.guild!.members.cache.get(user.id)).sort((a: any, b: any) => b.correct_predictions - a.correct_predictions)
 
                 const array = users
 
@@ -208,17 +208,17 @@ export default createCommand({
                 }
 
                 const embed = new EmbedBuilder()
-          .setAuthor({
-              name: t('commands.leaderboard.predictions.author', {
-                  page,
-                  pages: Math.ceil(array.length / 10)
-              })
-          })
-          .setTitle(t('commands.leaderboard.predictions.title'))
-          .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
-          .setDesc(t('commands.leaderboard.desc', {
-              last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
-          }))
+                    .setAuthor({
+                        name: t('commands.leaderboard.predictions.author', {
+                            page,
+                            pages: Math.ceil(array.length / 10)
+                        })
+                    })
+                    .setTitle(t('commands.leaderboard.predictions.title'))
+                    .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
+                    .setDesc(t('commands.leaderboard.desc', {
+                        last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
+                    }))
 
                 let pos = 0
 
@@ -235,47 +235,47 @@ export default createCommand({
                     else if(pos === 2) field = `🥈 - ${!u ? '*unknown*' : u.username}`
                     else if(pos === 3) field = `🥉 - ${!u ? '*unknown*' : u.username}`
 
-          embed.addField(field, t('commands.leaderboard.predictions.field', {
-              t: user.correct_predictions
-          }))
+                    embed.addField(field, t('commands.leaderboard.predictions.field', {
+                        t: user.correct_predictions
+                    }))
                 }
 
-        embed.setFooter({
-            text: t('commands.leaderboard.predictions.footer', {
-                pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
-            })
-        })
+                embed.setFooter({
+                    text: t('commands.leaderboard.predictions.footer', {
+                        pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
+                    })
+                })
 
-        const previous = new ButtonBuilder()
-          .setEmoji('1404176223621611572')
-          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;local;predictions`)
-          .defineStyle('blue')
+                const previous = new ButtonBuilder()
+                    .setEmoji('1404176223621611572')
+                    .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;local;predictions`)
+                    .defineStyle('blue')
 
-        const next = new ButtonBuilder()
-          .setEmoji('1404176291829121028')
-          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;local;predictions`)
-          .defineStyle('blue')
+                const next = new ButtonBuilder()
+                    .setEmoji('1404176291829121028')
+                    .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;local;predictions`)
+                    .defineStyle('blue')
 
-        if(page <= 1) previous.setDisabled()
+                if(page <= 1) previous.setDisabled()
 
-        if(page >= Math.ceil(array.length / 10)) next.setDisabled()
+                if(page >= Math.ceil(array.length / 10)) next.setDisabled()
 
-        await ctx.reply({
-            embeds: [embed],
-            components: [
-                {
-                    type: 1,
-                    components: [previous, next]
-                }
-            ]
-        })
+                await ctx.reply({
+                    embeds: [embed],
+                    components: [
+                        {
+                            type: 1,
+                            components: [previous, next]
+                        }
+                    ]
+                })
             }
             else if(ctx.args[1] === 'coins') {
                 const value = JSON.parse((await app.redis.get('leaderboard:coins'))!)
 
                 let users = value.data
-          .filter((user: any) => ctx.guild!.members.cache.get(user.id))
-          .sort((a: any, b: any) => Number(b.coins - a.coins))
+                    .filter((user: any) => ctx.guild!.members.cache.get(user.id))
+                    .sort((a: any, b: any) => Number(b.coins - a.coins))
 
                 const array = users
 
@@ -293,17 +293,17 @@ export default createCommand({
                 }
 
                 const embed = new EmbedBuilder()
-          .setAuthor({
-              name: t('commands.leaderboard.coins.author', {
-                  page,
-                  pages: Math.ceil(array.length / 10)
-              })
-          })
-          .setTitle(t('commands.leaderboard.coins.title'))
-          .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
-          .setDesc(t('commands.leaderboard.desc', {
-              last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
-          }))
+                    .setAuthor({
+                        name: t('commands.leaderboard.coins.author', {
+                            page,
+                            pages: Math.ceil(array.length / 10)
+                        })
+                    })
+                    .setTitle(t('commands.leaderboard.coins.title'))
+                    .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
+                    .setDesc(t('commands.leaderboard.desc', {
+                        last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
+                    }))
 
                 let pos = 0
 
@@ -320,47 +320,47 @@ export default createCommand({
                     else if(pos === 2) field = `🥈 - ${!u ? '*unknown*' : u.username}`
                     else if(pos === 3) field = `🥉 - ${!u ? '*unknown*' : u.username}`
 
-          embed.addField(field, t('commands.leaderboard.coins.field', {
-              t: BigInt(user.coins).toLocaleString('en')
-          }))
+                    embed.addField(field, t('commands.leaderboard.coins.field', {
+                        t: BigInt(user.coins).toLocaleString('en')
+                    }))
                 }
 
-        embed.setFooter({
-            text: t('commands.leaderboard.coins.footer', {
-                pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
-            })
-        })
+                embed.setFooter({
+                    text: t('commands.leaderboard.coins.footer', {
+                        pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
+                    })
+                })
 
-        const previous = new ButtonBuilder()
-          .setEmoji('1404176223621611572')
-          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;local;coins`)
-          .defineStyle('blue')
+                const previous = new ButtonBuilder()
+                    .setEmoji('1404176223621611572')
+                    .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;local;coins`)
+                    .defineStyle('blue')
 
-        const next = new ButtonBuilder()
-          .setEmoji('1404176291829121028')
-          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;local;coins`)
-          .defineStyle('blue')
+                const next = new ButtonBuilder()
+                    .setEmoji('1404176291829121028')
+                    .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;local;coins`)
+                    .defineStyle('blue')
 
-        if(page <= 1) previous.setDisabled()
+                if(page <= 1) previous.setDisabled()
 
-        if(page >= Math.ceil(array.length / 10)) next.setDisabled()
+                if(page >= Math.ceil(array.length / 10)) next.setDisabled()
 
-        await ctx.reply({
-            embeds: [embed],
-            components: [
-                {
-                    type: 1,
-                    components: [previous, next]
-                }
-            ]
-        })
+                await ctx.reply({
+                    embeds: [embed],
+                    components: [
+                        {
+                            type: 1,
+                            components: [previous, next]
+                        }
+                    ]
+                })
             }
             else if(ctx.args[1] === 'rating') {
                 const value = JSON.parse((await app.redis.get('leaderboard:rating'))!)
 
                 let users = value.data
-          .filter((user: any) => ctx.guild!.members.cache.get(user.id))
-          .sort((a: any, b: any) => b.rank_rating - a.rank_rating)
+                    .filter((user: any) => ctx.guild!.members.cache.get(user.id))
+                    .sort((a: any, b: any) => b.rank_rating - a.rank_rating)
 
                 const array = users
 
@@ -378,17 +378,17 @@ export default createCommand({
                 }
 
                 const embed = new EmbedBuilder()
-          .setAuthor({
-              name: t('commands.leaderboard.rating.author', {
-                  page,
-                  pages: Math.ceil(array.length / 10)
-              })
-          })
-          .setTitle(t('commands.leaderboard.rating.title'))
-          .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
-          .setDesc(t('commands.leaderboard.desc', {
-              last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
-          }))
+                    .setAuthor({
+                        name: t('commands.leaderboard.rating.author', {
+                            page,
+                            pages: Math.ceil(array.length / 10)
+                        })
+                    })
+                    .setTitle(t('commands.leaderboard.rating.title'))
+                    .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
+                    .setDesc(t('commands.leaderboard.desc', {
+                        last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
+                    }))
 
                 let pos = 0
 
@@ -405,39 +405,39 @@ export default createCommand({
                     else if(pos === 2) field = `🥈 - ${!u ? '*unknown*' : u.username}`
                     else if(pos === 3) field = `🥉 - ${!u ? '*unknown*' : u.username}`
 
-          embed.addField(field, t('commands.leaderboard.rating.field', {
-              rr: user.rank_rating
-          }))
+                    embed.addField(field, t('commands.leaderboard.rating.field', {
+                        rr: user.rank_rating
+                    }))
                 }
-        embed.setFooter({
-            text: t('commands.leaderboard.rating.footer', {
-                pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
-            })
-        })
+                embed.setFooter({
+                    text: t('commands.leaderboard.rating.footer', {
+                        pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
+                    })
+                })
 
-        const previous = new ButtonBuilder()
-          .setEmoji('1404176223621611572')
-          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;local;rating`)
-          .defineStyle('blue')
+                const previous = new ButtonBuilder()
+                    .setEmoji('1404176223621611572')
+                    .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;local;rating`)
+                    .defineStyle('blue')
 
-        const next = new ButtonBuilder()
-          .setEmoji('1404176291829121028')
-          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;local;rating`)
-          .defineStyle('blue')
+                const next = new ButtonBuilder()
+                    .setEmoji('1404176291829121028')
+                    .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;local;rating`)
+                    .defineStyle('blue')
 
-        if(page <= 1) previous.setDisabled()
+                if(page <= 1) previous.setDisabled()
 
-        if(page >= Math.ceil(array.length / 10)) next.setDisabled()
+                if(page >= Math.ceil(array.length / 10)) next.setDisabled()
 
-        await ctx.reply({
-            embeds: [embed],
-            components: [
-                {
-                    type: 1,
-                    components: [previous, next]
-                }
-            ]
-        })
+                await ctx.reply({
+                    embeds: [embed],
+                    components: [
+                        {
+                            type: 1,
+                            components: [previous, next]
+                        }
+                    ]
+                })
             }
         }
         else {
@@ -445,7 +445,7 @@ export default createCommand({
                 const value = JSON.parse((await app.redis.get('leaderboard:predictions'))!)
 
                 let users = value.data
-          .sort((a: any, b: any) => b.correct_predictions - a.correct_predictions)
+                    .sort((a: any, b: any) => b.correct_predictions - a.correct_predictions)
 
                 const array = users
 
@@ -463,17 +463,17 @@ export default createCommand({
                 }
 
                 const embed = new EmbedBuilder()
-          .setAuthor({
-              name: t('commands.leaderboard.predictions.author', {
-                  page,
-                  pages: Math.ceil(array.length / 10)
-              })
-          })
-          .setTitle(t('commands.leaderboard.predictions.title'))
-          .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
-          .setDesc(t('commands.leaderboard.desc', {
-              last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
-          }))
+                    .setAuthor({
+                        name: t('commands.leaderboard.predictions.author', {
+                            page,
+                            pages: Math.ceil(array.length / 10)
+                        })
+                    })
+                    .setTitle(t('commands.leaderboard.predictions.title'))
+                    .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
+                    .setDesc(t('commands.leaderboard.desc', {
+                        last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
+                    }))
 
                 let pos = 0
 
@@ -489,46 +489,46 @@ export default createCommand({
                     else if(pos === 2) field = `🥈 - ${!u ? '*unknown*' : u.username}`
                     else if(pos === 3) field = `🥉 - ${!u ? '*unknown*' : u.username}`
 
-          embed.addField(field, t('commands.leaderboard.predictions.field', {
-              t: user.correct_predictions
-          }))
+                    embed.addField(field, t('commands.leaderboard.predictions.field', {
+                        t: user.correct_predictions
+                    }))
                 }
 
-        embed.setFooter({
-            text: t('commands.leaderboard.predictions.footer', {
-                pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
-            })
-        })
+                embed.setFooter({
+                    text: t('commands.leaderboard.predictions.footer', {
+                        pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
+                    })
+                })
 
-        const previous = new ButtonBuilder()
-          .setEmoji('1404176223621611572')
-          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;global;predictions`)
-          .defineStyle('blue')
+                const previous = new ButtonBuilder()
+                    .setEmoji('1404176223621611572')
+                    .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;global;predictions`)
+                    .defineStyle('blue')
 
-        const next = new ButtonBuilder()
-          .setEmoji('1404176291829121028')
-          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;global;predictions`)
-          .defineStyle('blue')
+                const next = new ButtonBuilder()
+                    .setEmoji('1404176291829121028')
+                    .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;global;predictions`)
+                    .defineStyle('blue')
 
-        if(page <= 1) previous.setDisabled()
+                if(page <= 1) previous.setDisabled()
 
-        if(page >= Math.ceil(array.length / 10)) next.setDisabled()
+                if(page >= Math.ceil(array.length / 10)) next.setDisabled()
 
-        await ctx.reply({
-            embeds: [embed],
-            components: [
-                {
-                    type: 1,
-                    components: [previous, next]
-                }
-            ]
-        })
+                await ctx.reply({
+                    embeds: [embed],
+                    components: [
+                        {
+                            type: 1,
+                            components: [previous, next]
+                        }
+                    ]
+                })
             }
             else if(ctx.args[1] === 'coins') {
                 const value = JSON.parse((await app.redis.get('leaderboard:coins'))!)
 
                 let users = value.data
-          .sort((a: any, b: any) => Number(b.coins - a.coins))
+                    .sort((a: any, b: any) => Number(b.coins - a.coins))
 
                 const array = users
 
@@ -546,17 +546,17 @@ export default createCommand({
                 }
 
                 const embed = new EmbedBuilder()
-          .setAuthor({
-              name: t('commands.leaderboard.coins.author', {
-                  page,
-                  pages: Math.ceil(array.length / 10)
-              })
-          })
-          .setTitle(t('commands.leaderboard.coins.title'))
-          .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
-          .setDesc(t('commands.leaderboard.desc', {
-              last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
-          }))
+                    .setAuthor({
+                        name: t('commands.leaderboard.coins.author', {
+                            page,
+                            pages: Math.ceil(array.length / 10)
+                        })
+                    })
+                    .setTitle(t('commands.leaderboard.coins.title'))
+                    .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
+                    .setDesc(t('commands.leaderboard.desc', {
+                        last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
+                    }))
 
                 let pos = 0
 
@@ -572,46 +572,46 @@ export default createCommand({
                     else if(pos === 2) field = `🥈 - ${!u ? '*unknown*' : u.username}`
                     else if(pos === 3) field = `🥉 - ${!u ? '*unknown*' : u.username}`
 
-          embed.addField(field, t('commands.leaderboard.coins.field', {
-              t: BigInt(user.coins).toLocaleString('en')
-          }))
+                    embed.addField(field, t('commands.leaderboard.coins.field', {
+                        t: BigInt(user.coins).toLocaleString('en')
+                    }))
                 }
 
-        embed.setFooter({
-            text: t('commands.leaderboard.coins.footer', {
-                pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
-            })
-        })
+                embed.setFooter({
+                    text: t('commands.leaderboard.coins.footer', {
+                        pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
+                    })
+                })
 
-        const previous = new ButtonBuilder()
-          .setEmoji('1404176223621611572')
-          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;global;coins`)
-          .defineStyle('blue')
+                const previous = new ButtonBuilder()
+                    .setEmoji('1404176223621611572')
+                    .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;global;coins`)
+                    .defineStyle('blue')
 
-        const next = new ButtonBuilder()
-          .setEmoji('1404176291829121028')
-          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;global;coins`)
-          .defineStyle('blue')
+                const next = new ButtonBuilder()
+                    .setEmoji('1404176291829121028')
+                    .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;global;coins`)
+                    .defineStyle('blue')
 
-        if(page <= 1) previous.setDisabled()
+                if(page <= 1) previous.setDisabled()
 
-        if(page >= Math.ceil(array.length / 10)) next.setDisabled()
+                if(page >= Math.ceil(array.length / 10)) next.setDisabled()
 
-        await ctx.reply({
-            embeds: [embed],
-            components: [
-                {
-                    type: 1,
-                    components: [previous, next]
-                }
-            ]
-        })
+                await ctx.reply({
+                    embeds: [embed],
+                    components: [
+                        {
+                            type: 1,
+                            components: [previous, next]
+                        }
+                    ]
+                })
             }
             else if(ctx.args[1] === 'rating') {
                 const value = JSON.parse((await app.redis.get('leaderboard:rating'))!)
 
                 let users = value.data
-          .sort((a: any, b: any) => b.rank_rating - a.rank_rating)
+                    .sort((a: any, b: any) => b.rank_rating - a.rank_rating)
 
                 const array = users
 
@@ -629,17 +629,17 @@ export default createCommand({
                 }
 
                 const embed = new EmbedBuilder()
-          .setAuthor({
-              name: t('commands.leaderboard.rating.author', {
-                  page,
-                  pages: Math.ceil(array.length / 10)
-              })
-          })
-          .setTitle(t('commands.leaderboard.rating.title'))
-          .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
-          .setDesc(t('commands.leaderboard.desc', {
-              last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
-          }))
+                    .setAuthor({
+                        name: t('commands.leaderboard.rating.author', {
+                            page,
+                            pages: Math.ceil(array.length / 10)
+                        })
+                    })
+                    .setTitle(t('commands.leaderboard.rating.title'))
+                    .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
+                    .setDesc(t('commands.leaderboard.desc', {
+                        last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
+                    }))
 
                 let pos = 0
 
@@ -655,40 +655,40 @@ export default createCommand({
                     else if(pos === 2) field = `🥈 - ${!u ? '*unknown*' : u.username}`
                     else if(pos === 3) field = `🥉 - ${!u ? '*unknown*' : u.username}`
 
-          embed.addField(field, t('commands.leaderboard.rating.field', {
-              rr: user.rank_rating
-          }))
+                    embed.addField(field, t('commands.leaderboard.rating.field', {
+                        rr: user.rank_rating
+                    }))
                 }
 
-        embed.setFooter({
-            text: t('commands.leaderboard.rating.footer', {
-                pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
-            })
-        })
+                embed.setFooter({
+                    text: t('commands.leaderboard.rating.footer', {
+                        pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
+                    })
+                })
 
-        const previous = new ButtonBuilder()
-          .setEmoji('1404176223621611572')
-          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;global;rating`)
-          .defineStyle('blue')
+                const previous = new ButtonBuilder()
+                    .setEmoji('1404176223621611572')
+                    .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1 < 1 ? 1 : page - 1};previous;global;rating`)
+                    .defineStyle('blue')
 
-        const next = new ButtonBuilder()
-          .setEmoji('1404176291829121028')
-          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;global;rating`)
-          .defineStyle('blue')
+                const next = new ButtonBuilder()
+                    .setEmoji('1404176291829121028')
+                    .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1 > Math.ceil(array.length / 10) ? Math.ceil(array.length / 10) : page + 1};next;global;rating`)
+                    .defineStyle('blue')
 
-        if(page <= 1) previous.setDisabled()
+                if(page <= 1) previous.setDisabled()
 
-        if(page >= Math.ceil(array.length / 10)) next.setDisabled()
+                if(page >= Math.ceil(array.length / 10)) next.setDisabled()
 
-        await ctx.reply({
-            embeds: [embed],
-            components: [
-                {
-                    type: 1,
-                    components: [previous, next]
-                }
-            ]
-        })
+                await ctx.reply({
+                    embeds: [embed],
+                    components: [
+                        {
+                            type: 1,
+                            components: [previous, next]
+                        }
+                    ]
+                })
             }
         }
     },
@@ -699,8 +699,8 @@ export default createCommand({
                 const value = JSON.parse((await app.redis.get('leaderboard:predictions'))!)
 
                 let users = value.data
-          .filter((user: any) => ctx.guild!.members.cache.get(user.id))
-          .sort((a: any, b: any) => b.correct_predictions - a.correct_predictions)
+                    .filter((user: any) => ctx.guild!.members.cache.get(user.id))
+                    .sort((a: any, b: any) => b.correct_predictions - a.correct_predictions)
 
                 const array = users
 
@@ -715,17 +715,17 @@ export default createCommand({
                 }
 
                 const embed = new EmbedBuilder()
-          .setAuthor({
-              name: t('commands.leaderboard.predictions.author', {
-                  page,
-                  pages: Math.ceil(array.length / 10)
-              })
-          })
-          .setTitle(t('commands.leaderboard.predictions.title'))
-          .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
-          .setDesc(t('commands.leaderboard.desc', {
-              last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
-          }))
+                    .setAuthor({
+                        name: t('commands.leaderboard.predictions.author', {
+                            page,
+                            pages: Math.ceil(array.length / 10)
+                        })
+                    })
+                    .setTitle(t('commands.leaderboard.predictions.title'))
+                    .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
+                    .setDesc(t('commands.leaderboard.desc', {
+                        last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
+                    }))
 
                 let pos = 0
 
@@ -742,47 +742,47 @@ export default createCommand({
                     else if(pos === 2) field = `🥈 - ${!u ? '*unknown*' : u.username}`
                     else if(pos === 3) field = `🥉 - ${!u ? '*unknown*' : u.username}`
 
-          embed.addField(field, t('commands.leaderboard.predictions.field', {
-              t: user.correct_predictions
-          }))
+                    embed.addField(field, t('commands.leaderboard.predictions.field', {
+                        t: user.correct_predictions
+                    }))
                 }
 
-        embed.setFooter({
-            text: t('commands.leaderboard.predictions.footer', {
-                pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
-            })
-        })
+                embed.setFooter({
+                    text: t('commands.leaderboard.predictions.footer', {
+                        pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
+                    })
+                })
 
-        const previous = new ButtonBuilder()
-          .setEmoji('1404176223621611572')
-          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1};previous;local;predictions`)
-          .defineStyle('blue')
+                const previous = new ButtonBuilder()
+                    .setEmoji('1404176223621611572')
+                    .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1};previous;local;predictions`)
+                    .defineStyle('blue')
 
-        const next = new ButtonBuilder()
-          .setEmoji('1404176291829121028')
-          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1};next;local;predictions`)
-          .defineStyle('blue')
+                const next = new ButtonBuilder()
+                    .setEmoji('1404176291829121028')
+                    .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1};next;local;predictions`)
+                    .defineStyle('blue')
 
-        if(page <= 1) previous.setDisabled()
+                if(page <= 1) previous.setDisabled()
 
-        if(page >= pages) next.setDisabled()
+                if(page >= pages) next.setDisabled()
 
-        return await ctx.edit({
-            embeds: [embed],
-            components: [
-                {
-                    type: 1,
-                    components: [previous, next]
-                }
-            ]
-        })
+                return await ctx.edit({
+                    embeds: [embed],
+                    components: [
+                        {
+                            type: 1,
+                            components: [previous, next]
+                        }
+                    ]
+                })
             }
             else if(ctx.args[5] === 'coins') {
                 const value = JSON.parse((await app.redis.get('leaderboard:coins'))!)
 
                 let users = value.data
-          .filter((user: any) => ctx.guild!.members.cache.get(user.id))
-          .sort((a: any, b: any) => Number(b.coins - a.coins))
+                    .filter((user: any) => ctx.guild!.members.cache.get(user.id))
+                    .sort((a: any, b: any) => Number(b.coins - a.coins))
 
                 const array = users
 
@@ -797,17 +797,17 @@ export default createCommand({
                 }
 
                 const embed = new EmbedBuilder()
-          .setAuthor({
-              name: t('commands.leaderboard.coins.author', {
-                  page,
-                  pages: Math.ceil(array.length / 10)
-              })
-          })
-          .setTitle(t('commands.leaderboard.coins.title'))
-          .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
-          .setDesc(t('commands.leaderboard.desc', {
-              last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
-          }))
+                    .setAuthor({
+                        name: t('commands.leaderboard.coins.author', {
+                            page,
+                            pages: Math.ceil(array.length / 10)
+                        })
+                    })
+                    .setTitle(t('commands.leaderboard.coins.title'))
+                    .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
+                    .setDesc(t('commands.leaderboard.desc', {
+                        last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
+                    }))
 
                 let pos = 0
 
@@ -824,47 +824,47 @@ export default createCommand({
                     else if(pos === 2) field = `🥈 - ${!u ? '*unknown*' : u.username}`
                     else if(pos === 3) field = `🥉 - ${!u ? '*unknown*' : u.username}`
 
-          embed.addField(field, t('commands.leaderboard.coins.field', {
-              t: BigInt(user.coins).toLocaleString('en')
-          }))
+                    embed.addField(field, t('commands.leaderboard.coins.field', {
+                        t: BigInt(user.coins).toLocaleString('en')
+                    }))
                 }
 
-        embed.setFooter({
-            text: t('commands.leaderboard.coins.footer', {
-                pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
-            })
-        })
+                embed.setFooter({
+                    text: t('commands.leaderboard.coins.footer', {
+                        pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
+                    })
+                })
 
-        const previous = new ButtonBuilder()
-          .setEmoji('1404176223621611572')
-          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1};previous;local;coins`)
-          .defineStyle('blue')
+                const previous = new ButtonBuilder()
+                    .setEmoji('1404176223621611572')
+                    .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1};previous;local;coins`)
+                    .defineStyle('blue')
 
-        const next = new ButtonBuilder()
-          .setEmoji('1404176291829121028')
-          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1};next;local;coins`)
-          .defineStyle('blue')
+                const next = new ButtonBuilder()
+                    .setEmoji('1404176291829121028')
+                    .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1};next;local;coins`)
+                    .defineStyle('blue')
 
-        if(page <= 1) previous.setDisabled()
+                if(page <= 1) previous.setDisabled()
 
-        if(page >= pages) next.setDisabled()
+                if(page >= pages) next.setDisabled()
 
-        return await ctx.edit({
-            embeds: [embed],
-            components: [
-                {
-                    type: 1,
-                    components: [previous, next]
-                }
-            ]
-        })
+                return await ctx.edit({
+                    embeds: [embed],
+                    components: [
+                        {
+                            type: 1,
+                            components: [previous, next]
+                        }
+                    ]
+                })
             }
             else if(ctx.args[5] === 'rating') {
                 const value = JSON.parse((await app.redis.get('leaderboard:rating'))!)
 
                 let users = value.data
-          .filter((user: any) => ctx.guild!.members.cache.get(user.id))
-          .sort((a: any, b: any) => b.rank_rating - a.rank_rating)
+                    .filter((user: any) => ctx.guild!.members.cache.get(user.id))
+                    .sort((a: any, b: any) => b.rank_rating - a.rank_rating)
 
                 const array = users
 
@@ -879,17 +879,17 @@ export default createCommand({
                 }
 
                 const embed = new EmbedBuilder()
-          .setAuthor({
-              name: t('commands.leaderboard.rating.author', {
-                  page,
-                  pages: Math.ceil(array.length / 10)
-              })
-          })
-          .setTitle(t('commands.leaderboard.rating.title'))
-          .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
-          .setDesc(t('commands.leaderboard.desc', {
-              last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
-          }))
+                    .setAuthor({
+                        name: t('commands.leaderboard.rating.author', {
+                            page,
+                            pages: Math.ceil(array.length / 10)
+                        })
+                    })
+                    .setTitle(t('commands.leaderboard.rating.title'))
+                    .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
+                    .setDesc(t('commands.leaderboard.desc', {
+                        last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
+                    }))
 
                 let pos = 0
 
@@ -906,40 +906,40 @@ export default createCommand({
                     else if(pos === 2) field = `🥈 - ${!u ? '*unknown*' : u.username}`
                     else if(pos === 3) field = `🥉 - ${!u ? '*unknown*' : u.username}`
 
-          embed.addField(field, t('commands.leaderboard.rating.field', {
-              rr: user.rank_rating
-          }))
+                    embed.addField(field, t('commands.leaderboard.rating.field', {
+                        rr: user.rank_rating
+                    }))
                 }
 
-        embed.setFooter({
-            text: t('commands.leaderboard.rating.footer', {
-                pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
-            })
-        })
+                embed.setFooter({
+                    text: t('commands.leaderboard.rating.footer', {
+                        pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
+                    })
+                })
 
-        const previous = new ButtonBuilder()
-          .setEmoji('1404176223621611572')
-          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1};previous;local;rating`)
-          .defineStyle('blue')
+                const previous = new ButtonBuilder()
+                    .setEmoji('1404176223621611572')
+                    .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1};previous;local;rating`)
+                    .defineStyle('blue')
 
-        const next = new ButtonBuilder()
-          .setEmoji('1404176291829121028')
-          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1};next;local;rating`)
-          .defineStyle('blue')
+                const next = new ButtonBuilder()
+                    .setEmoji('1404176291829121028')
+                    .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1};next;local;rating`)
+                    .defineStyle('blue')
 
-        if(page <= 1) previous.setDisabled()
+                if(page <= 1) previous.setDisabled()
 
-        if(page >= pages) next.setDisabled()
+                if(page >= pages) next.setDisabled()
 
-        return await ctx.edit({
-            embeds: [embed],
-            components: [
-                {
-                    type: 1,
-                    components: [previous, next]
-                }
-            ]
-        })
+                return await ctx.edit({
+                    embeds: [embed],
+                    components: [
+                        {
+                            type: 1,
+                            components: [previous, next]
+                        }
+                    ]
+                })
             }
         }
         else {
@@ -961,17 +961,17 @@ export default createCommand({
                 }
 
                 const embed = new EmbedBuilder()
-          .setAuthor({
-              name: t('commands.leaderboard.predictions.author', {
-                  page,
-                  pages: Math.ceil(array.length / 10)
-              })
-          })
-          .setTitle(t('commands.leaderboard.predictions.title'))
-          .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
-          .setDesc(t('commands.leaderboard.desc', {
-              last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
-          }))
+                    .setAuthor({
+                        name: t('commands.leaderboard.predictions.author', {
+                            page,
+                            pages: Math.ceil(array.length / 10)
+                        })
+                    })
+                    .setTitle(t('commands.leaderboard.predictions.title'))
+                    .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
+                    .setDesc(t('commands.leaderboard.desc', {
+                        last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
+                    }))
 
                 let pos = 0
 
@@ -988,40 +988,40 @@ export default createCommand({
                     else if(pos === 2) field = `🥈 - ${!u ? '*unknown*' : u.username}`
                     else if(pos === 3) field = `🥉 - ${!u ? '*unknown*' : u.username}`
 
-          embed.addField(field, t('commands.leaderboard.predictions.field', {
-              t: user.correct_predictions
-          }))
+                    embed.addField(field, t('commands.leaderboard.predictions.field', {
+                        t: user.correct_predictions
+                    }))
                 }
 
-        embed.setFooter({
-            text: t('commands.leaderboard.predictions.footer', {
-                pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
-            })
-        })
+                embed.setFooter({
+                    text: t('commands.leaderboard.predictions.footer', {
+                        pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
+                    })
+                })
 
-        const previous = new ButtonBuilder()
-          .setEmoji('1404176223621611572')
-          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1};previous;global;predictions`)
-          .defineStyle('blue')
+                const previous = new ButtonBuilder()
+                    .setEmoji('1404176223621611572')
+                    .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1};previous;global;predictions`)
+                    .defineStyle('blue')
 
-        const next = new ButtonBuilder()
-          .setEmoji('1404176291829121028')
-          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1};next;global;predictions`)
-          .defineStyle('blue')
+                const next = new ButtonBuilder()
+                    .setEmoji('1404176291829121028')
+                    .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1};next;global;predictions`)
+                    .defineStyle('blue')
 
-        if(page <= 1) previous.setDisabled()
+                if(page <= 1) previous.setDisabled()
 
-        if(page >= pages) next.setDisabled()
+                if(page >= pages) next.setDisabled()
 
-        return await ctx.edit({
-            embeds: [embed],
-            components: [
-                {
-                    type: 1,
-                    components: [previous, next]
-                }
-            ]
-        })
+                return await ctx.edit({
+                    embeds: [embed],
+                    components: [
+                        {
+                            type: 1,
+                            components: [previous, next]
+                        }
+                    ]
+                })
             }
             else if(ctx.args[5] === 'coins') {
                 const value = JSON.parse((await app.redis.get('leaderboard:coins'))!)
@@ -1041,17 +1041,17 @@ export default createCommand({
                 }
 
                 const embed = new EmbedBuilder()
-          .setAuthor({
-              name: t('commands.leaderboard.coins.author', {
-                  page,
-                  pages: Math.ceil(array.length / 10)
-              })
-          })
-          .setTitle(t('commands.leaderboard.coins.title'))
-          .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
-          .setDesc(t('commands.leaderboard.desc', {
-              last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
-          }))
+                    .setAuthor({
+                        name: t('commands.leaderboard.coins.author', {
+                            page,
+                            pages: Math.ceil(array.length / 10)
+                        })
+                    })
+                    .setTitle(t('commands.leaderboard.coins.title'))
+                    .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
+                    .setDesc(t('commands.leaderboard.desc', {
+                        last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
+                    }))
 
                 let pos = 0
 
@@ -1068,40 +1068,40 @@ export default createCommand({
                     else if(pos === 2) field = `🥈 - ${!u ? '*unknown*' : u.username}`
                     else if(pos === 3) field = `🥉 - ${!u ? '*unknown*' : u.username}`
 
-          embed.addField(field, t('commands.leaderboard.coins.field', {
-              t: BigInt(user.coins).toLocaleString('en')
-          }))
+                    embed.addField(field, t('commands.leaderboard.coins.field', {
+                        t: BigInt(user.coins).toLocaleString('en')
+                    }))
                 }
 
-        embed.setFooter({
-            text: t('commands.leaderboard.coins.footer', {
-                pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
-            })
-        })
+                embed.setFooter({
+                    text: t('commands.leaderboard.coins.footer', {
+                        pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
+                    })
+                })
 
-        const previous = new ButtonBuilder()
-          .setEmoji('1404176223621611572')
-          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1};previous;global;coins`)
-          .defineStyle('blue')
+                const previous = new ButtonBuilder()
+                    .setEmoji('1404176223621611572')
+                    .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1};previous;global;coins`)
+                    .defineStyle('blue')
 
-        const next = new ButtonBuilder()
-          .setEmoji('1404176291829121028')
-          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1};next;global;coins`)
-          .defineStyle('blue')
+                const next = new ButtonBuilder()
+                    .setEmoji('1404176291829121028')
+                    .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1};next;global;coins`)
+                    .defineStyle('blue')
 
-        if(page <= 1) previous.setDisabled()
+                if(page <= 1) previous.setDisabled()
 
-        if(page >= pages) next.setDisabled()
+                if(page >= pages) next.setDisabled()
 
-        return await ctx.edit({
-            embeds: [embed],
-            components: [
-                {
-                    type: 1,
-                    components: [previous, next]
-                }
-            ]
-        })
+                return await ctx.edit({
+                    embeds: [embed],
+                    components: [
+                        {
+                            type: 1,
+                            components: [previous, next]
+                        }
+                    ]
+                })
             }
             else if(ctx.args[5] === 'rating') {
                 const value = JSON.parse((await app.redis.get('leaderboard:rating'))!)
@@ -1121,17 +1121,17 @@ export default createCommand({
                 }
 
                 const embed = new EmbedBuilder()
-          .setAuthor({
-              name: t('commands.leaderboard.rating.author', {
-                  page,
-                  pages: Math.ceil(array.length / 10)
-              })
-          })
-          .setTitle(t('commands.leaderboard.rating.title'))
-          .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
-          .setDesc(t('commands.leaderboard.desc', {
-              last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
-          }))
+                    .setAuthor({
+                        name: t('commands.leaderboard.rating.author', {
+                            page,
+                            pages: Math.ceil(array.length / 10)
+                        })
+                    })
+                    .setTitle(t('commands.leaderboard.rating.title'))
+                    .setThumb((await app.getUser(array[0].id!))?.avatarURL({ size: 2048 })!)
+                    .setDesc(t('commands.leaderboard.desc', {
+                        last: `<t:${(value.updated_at / 1000).toFixed(0)}:R>`
+                    }))
 
                 let pos = 0
 
@@ -1148,40 +1148,40 @@ export default createCommand({
                     else if(pos === 2) field = `🥈 - ${!u ? '*unknown*' : u.username}`
                     else if(pos === 3) field = `🥉 - ${!u ? '*unknown*' : u.username}`
 
-          embed.addField(field, t('commands.leaderboard.rating.field', {
-              rr: user.rank_rating
-          }))
+                    embed.addField(field, t('commands.leaderboard.rating.field', {
+                        rr: user.rank_rating
+                    }))
                 }
 
-        embed.setFooter({
-            text: t('commands.leaderboard.rating.footer', {
-                pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
-            })
-        })
+                embed.setFooter({
+                    text: t('commands.leaderboard.rating.footer', {
+                        pos: array.findIndex((user: any) => user.id === ctx.interaction.user.id) + 1
+                    })
+                })
 
-        const previous = new ButtonBuilder()
-          .setEmoji('1404176223621611572')
-          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1};previous;global;rating`)
-          .defineStyle('blue')
+                const previous = new ButtonBuilder()
+                    .setEmoji('1404176223621611572')
+                    .setCustomId(`leaderboard;${ctx.interaction.user.id};${page - 1};previous;global;rating`)
+                    .defineStyle('blue')
 
-        const next = new ButtonBuilder()
-          .setEmoji('1404176291829121028')
-          .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1};next;global;rating`)
-          .defineStyle('blue')
+                const next = new ButtonBuilder()
+                    .setEmoji('1404176291829121028')
+                    .setCustomId(`leaderboard;${ctx.interaction.user.id};${page + 1};next;global;rating`)
+                    .defineStyle('blue')
 
-        if(page <= 1) previous.setDisabled()
+                if(page <= 1) previous.setDisabled()
 
-        if(page >= pages) next.setDisabled()
+                if(page >= pages) next.setDisabled()
 
-        return await ctx.edit({
-            embeds: [embed],
-            components: [
-                {
-                    type: 1,
-                    components: [previous, next]
-                }
-            ]
-        })
+                return await ctx.edit({
+                    embeds: [embed],
+                    components: [
+                        {
+                            type: 1,
+                            components: [previous, next]
+                        }
+                    ]
+                })
             }
         }
     }

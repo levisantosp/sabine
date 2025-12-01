@@ -11,14 +11,14 @@ import Logger from '../../util/Logger'
 import type { Blacklist } from '../../../prisma/generated/client'
 
 const locale: {
-  [key: string]: string
+    [key: string]: string
 } = {
     pt: 'br',
     en: 'us'
 }
 
 const raw: {
-  [key: string]: any
+    [key: string]: any
 } = {
     pt: JSON.parse(readFileSync(path.resolve('src/i18n/pt.json'), 'utf-8')),
     en: JSON.parse(readFileSync(path.resolve('src/i18n/en.json'), 'utf-8'))
@@ -65,10 +65,10 @@ export default class CommandRunner {
                     {
                         type: 1,
                         components: [
-              new ButtonBuilder()
-                .defineStyle('link')
-                .setLabel(locales(guild?.lang ?? 'en', 'commands.help.community'))
-                .setURL('https://discord.gg/g5nmc376yh')
+                            new ButtonBuilder()
+                                .defineStyle('link')
+                                .setLabel(locales(guild?.lang ?? 'en', 'commands.help.community'))
+                                .setURL('https://discord.gg/g5nmc376yh')
                         ]
                     }
                 ]
@@ -86,10 +86,10 @@ export default class CommandRunner {
         for(const option of (interaction.options as any)._hoistedOptions) {
             if(
                 typeof option.value === 'string'
-        || typeof option.value === 'number'
-        || typeof option.value === 'boolean'
+                || typeof option.value === 'number'
+                || typeof option.value === 'boolean'
             ) {
-        args.push(option.value)
+                args.push(option.value)
             }
         }
 
@@ -151,12 +151,12 @@ export default class CommandRunner {
 
             if(update) {
                 const button = new ButtonBuilder()
-          .setLabel(t('helper.dont_show_again'))
-          .defineStyle('red')
-          .setCustomId('dontshowagain')
-          .build(t('helper.warn', {
-              link: `https://sabinebot.xyz/${locale[ctx.locale]}/changelog/v${update.id}`
-          }))
+                    .setLabel(t('helper.dont_show_again'))
+                    .defineStyle('red')
+                    .setCustomId('dontshowagain')
+                    .build(t('helper.warn', {
+                        link: `https://sabinebot.xyz/${locale[ctx.locale]}/changelog/v${update.id}`
+                    }))
 
                 await ctx.reply(button)
             }
@@ -178,66 +178,66 @@ export default class CommandRunner {
             })
         }
 
-    command.run({ ctx, app, t, id: interaction.commandId })
-      .then(async() => {
-          if(process.env.DEVS.includes(interaction.user.id)) return
+        command.run({ ctx, app, t, id: interaction.commandId })
+            .then(async() => {
+                if(process.env.DEVS.includes(interaction.user.id)) return
 
-          const cmd: string[] = [command.name]
+                const cmd: string[] = [command.name]
 
-          if(group) cmd.push(group)
-          if(sub) cmd.push(sub)
+                if(group) cmd.push(group)
+                if(sub) cmd.push(sub)
 
-          const embed = new EmbedBuilder()
+                const embed = new EmbedBuilder()
 
-          if(ctx.guild) {
-              const owner = await app.getUser(ctx.guild.ownerId)
+                if(ctx.guild) {
+                    const owner = await app.getUser(ctx.guild.ownerId)
 
-          embed
-            .setAuthor({
-                name: ctx.interaction.user.username,
-                iconURL: ctx.interaction.user.displayAvatarURL({ size: 2048 })
+                    embed
+                        .setAuthor({
+                            name: ctx.interaction.user.username,
+                            iconURL: ctx.interaction.user.displayAvatarURL({ size: 2048 })
+                        })
+                        .setTitle('New slash command executed')
+                        .setDesc(`The command \`${cmd.join(' ')}\` has been executed in \`${ctx.guild?.name}\``)
+                        .addField('Server ID', `\`${ctx.guild?.id}\``)
+                        .addField('Owner', `\`${owner?.username}\` (\`${owner?.id}\`)`)
+                        .addField('Command author', `\`${ctx.interaction.user.username}\` (\`${ctx.interaction.user.id}\`)`)
+                }
+
+                else {
+                    embed
+                        .setAuthor({
+                            name: ctx.interaction.user.username,
+                            iconURL: ctx.interaction.user.displayAvatarURL({ size: 2048 })
+                        })
+                        .setTitle('New slash command executed')
+                        .setDesc(`The command \`${cmd.join(' ')}\` has been executed in DM`)
+                        .addField('Command author', `\`${ctx.interaction.user.username}\` (\`${ctx.interaction.user.id}\`)`)
+                }
+
+                if(ctx.guild) {
+                    embed.setThumb(ctx.guild.iconURL()!)
+                }
+
+                const channel = await app.channels.fetch(process.env.COMMAND_LOG!)
+
+                if(!channel || channel.type !== ChannelType.GuildText) return
+
+                const webhooks = await channel.fetchWebhooks()
+
+                let webhook = webhooks.find(w => w.name === `${app.user?.username} Logger`)
+
+                if(!webhook) webhook = await channel.createWebhook({ name: `${app.user?.username} Logger` })
+
+                await webhook.send({
+                    embeds: [embed],
+                    avatarURL: app.user?.displayAvatarURL({ size: 2048 })
+                })
             })
-            .setTitle('New slash command executed')
-            .setDesc(`The command \`${cmd.join(' ')}\` has been executed in \`${ctx.guild?.name}\``)
-            .addField('Server ID', `\`${ctx.guild?.id}\``)
-            .addField('Owner', `\`${owner?.username}\` (\`${owner?.id}\`)`)
-            .addField('Command author', `\`${ctx.interaction.user.username}\` (\`${ctx.interaction.user.id}\`)`)
-          }
+            .catch(async e => {
+                await new Logger(app).error(e)
 
-          else {
-          embed
-            .setAuthor({
-                name: ctx.interaction.user.username,
-                iconURL: ctx.interaction.user.displayAvatarURL({ size: 2048 })
+                await ctx.reply('helper.error', { e })
             })
-            .setTitle('New slash command executed')
-            .setDesc(`The command \`${cmd.join(' ')}\` has been executed in DM`)
-            .addField('Command author', `\`${ctx.interaction.user.username}\` (\`${ctx.interaction.user.id}\`)`)
-          }
-
-          if(ctx.guild) {
-          embed.setThumb(ctx.guild.iconURL()!)
-          }
-
-          const channel = await app.channels.fetch(process.env.COMMAND_LOG!)
-
-          if(!channel || channel.type !== ChannelType.GuildText) return
-
-          const webhooks = await channel.fetchWebhooks()
-
-          let webhook = webhooks.find(w => w.name === `${app.user?.username} Logger`)
-
-          if(!webhook) webhook = await channel.createWebhook({ name: `${app.user?.username} Logger` })
-
-          await webhook.send({
-              embeds: [embed],
-              avatarURL: app.user?.displayAvatarURL({ size: 2048 })
-          })
-      })
-      .catch(async e => {
-          await new Logger(app).error(e)
-
-          await ctx.reply('helper.error', { e })
-      })
     }
 }
