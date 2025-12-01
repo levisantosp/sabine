@@ -173,7 +173,7 @@ server.listen({
 })
   .then(() => Logger.info(`HTTP server running at ${process.env.PORT}`))
 
-const manager = new ShardingManager('src', {
+const manager = new ShardingManager('src/index.ts', {
     token: process.env.BOT_TOKEN,
     mode: 'process',
     totalShards: 2
