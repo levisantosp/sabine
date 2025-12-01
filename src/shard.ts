@@ -19,7 +19,7 @@ const mapIndex = valorant_maps.findIndex(m => m.name === currentMap)
 const maps = valorant_maps.filter(m => m.current_map_pool).map(m => m.name)
 
 if(mapIndex >= 0) {
-  maps.splice(mapIndex, 1)
+    maps.splice(mapIndex, 1)
 }
 
 const map = maps[Math.floor(Math.random() * maps.length)]
