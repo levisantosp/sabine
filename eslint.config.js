@@ -35,6 +35,7 @@ export default defineConfig([
                     for: { after: false },
                     while: { after: false },
                     switch: { after: false },
+                    catch: { after: false }
                 }
             }],
             'space-before-function-paren': ['error', {
