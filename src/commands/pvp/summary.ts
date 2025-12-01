@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType } from 'discord.js'
 import createCommand from '../../structures/command/createCommand'
-import { Prisma } from '../../../prisma/generated/client'
+import { Prisma } from '@generated'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder'
 import { valorant_agents } from '../../config'
 

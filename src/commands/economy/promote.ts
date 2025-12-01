@@ -1,7 +1,7 @@
 import type { APISelectMenuOption } from 'discord.js'
 import SelectMenuBuilder from '../../structures/builders/SelectMenuBuilder'
 import createCommand from '../../structures/command/createCommand'
-import { SabineUser } from '../../database'
+import { SabineUser } from '@db'
 
 export default createCommand({
     name: 'promote',

@@ -2,7 +2,7 @@ import { ChannelType } from 'discord.js'
 import createComponentInteraction from '../../structures/interaction/createComponentInteraction'
 import { valorant_agents, valorant_maps } from '../../config'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder'
-import { SabineUser } from '../../database'
+import { SabineUser } from '@db'
 import Match from '../../simulator/vanilla/Match'
 import Logger from '../../util/Logger'
 

@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType } from 'discord.js'
 import createCommand from '../../structures/command/createCommand'
-import { SabineUser } from '../../database'
+import { SabineUser } from '@db'
 import ButtonBuilder from '../../structures/builders/ButtonBuilder'
 import { calcPlayerPrice } from '@sabinelab/players'
 

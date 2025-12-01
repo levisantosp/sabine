@@ -1,13 +1,13 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Collection, ContainerBuilder, Message, MessageFlags, REST, Routes } from 'discord.js'
 import Service from '../api'
-import t from '../i18n'
+import t from '@i18n'
 import type { MatchesData } from '../types'
 import createListener from '../structures/app/createListener'
 import Logger from '../util/Logger'
 import { emojis } from '../util/emojis'
 import App from '../structures/app/App'
-import { SabineUser } from '../database'
-import type { $Enums } from '../../prisma/generated/client'
+import { SabineUser } from '@db'
+import type { $Enums } from '@generated'
 import Bull from 'bull'
 import Match from '../simulator/arena/Match'
 
@@ -40,7 +40,7 @@ const tournaments: { [key: string]: RegExp[] } = {
     ]
 }
 
-const sendValorantMatches = async(app: App) => {
+const sendValorantMatches = async (app: App) => {
     const [res, res2] = await Promise.all([
         service.getMatches('valorant'),
         service.getResults('valorant')
@@ -147,7 +147,7 @@ const sendValorantMatches = async(app: App) => {
         if(!data.length) continue
 
         for(const e of guild.events) {
-            const thunk = async() => {
+            const thunk = async () => {
                 try {
                     const messages = await rest.get(Routes.channelMessages(e.channel1), {
                         query: new URLSearchParams({ limit: '100' })
@@ -163,7 +163,7 @@ const sendValorantMatches = async(app: App) => {
                         })
                     }
                 }
-                catch{ }
+                catch { }
             }
 
             bulkDeleteThunks.push(thunk)
@@ -221,7 +221,7 @@ const sendValorantMatches = async(app: App) => {
                 }
             }
         }
-        catch{ }
+        catch { }
 
         for(const [channelId, matches] of channelBatches.entries()) {
             const chunkSize = 10
@@ -266,7 +266,7 @@ const sendValorantMatches = async(app: App) => {
                         .addSeparatorComponents(separator => separator)
                 }
 
-                const thunk = async() => {
+                const thunk = async () => {
                     if(container.components.length) {
                         const row = new ActionRowBuilder<ButtonBuilder>()
                             .setComponents(
@@ -289,7 +289,7 @@ const sendValorantMatches = async(app: App) => {
             }
         }
 
-        const thunk = async() => {
+        const thunk = async () => {
             await app.prisma.guild.update({
                 where: {
                     id: guild.id
@@ -323,7 +323,7 @@ const sendValorantMatches = async(app: App) => {
     await Promise.allSettled(sendMessageThunks.map(task => task()))
 }
 
-const sendValorantTBDMatches = async(app: App) => {
+const sendValorantTBDMatches = async (app: App) => {
     const res = await service.getMatches('valorant')
 
     if(!res || !res.length) return
@@ -370,7 +370,7 @@ const sendValorantTBDMatches = async(app: App) => {
 
                 const m = guild.tbd_matches.filter((m) => m.id === match.id)[0]
 
-                const thunk = async() => {
+                const thunk = async () => {
                     await app.prisma.guild.update({
                         where: {
                             id: guild.id
@@ -432,7 +432,7 @@ const sendValorantTBDMatches = async(app: App) => {
                         .addSeparatorComponents(separator => separator)
                 }
 
-                const thunk = async() => {
+                const thunk = async () => {
                     if(container.components.length) {
                         const row = new ActionRowBuilder<ButtonBuilder>()
                             .setComponents(
@@ -460,7 +460,7 @@ const sendValorantTBDMatches = async(app: App) => {
     await Promise.allSettled(sendMessageThunks.map(task => task()))
 }
 
-const sendLolMatches = async(app: App) => {
+const sendLolMatches = async (app: App) => {
     const res = await service.getMatches('lol')
     const res2 = await service.getResults('lol')
 
@@ -509,7 +509,7 @@ const sendLolMatches = async(app: App) => {
         else data = res.filter(d => guild.events.some(e => e.name === d.tournament.name))
 
         for(const e of guild.events) {
-            const thunk = async() => {
+            const thunk = async () => {
                 try {
                     const messages = await rest.get(Routes.channelMessages(e.channel1), {
                         query: new URLSearchParams({ limit: '100' })
@@ -525,7 +525,7 @@ const sendLolMatches = async(app: App) => {
                         })
                     }
                 }
-                catch{ }
+                catch { }
             }
 
             bulkDeleteThunks.push(thunk)
@@ -576,7 +576,7 @@ const sendLolMatches = async(app: App) => {
                 }
             }
         }
-        catch{ }
+        catch { }
 
         for(const [channelId, matches] of channelBatches.entries()) {
             const chunkSize = 10
@@ -621,7 +621,7 @@ const sendLolMatches = async(app: App) => {
                         .addSeparatorComponents(separator => separator)
                 }
 
-                const thunk = async() => {
+                const thunk = async () => {
                     if(container.components.length) {
                         await rest.post(Routes.channelMessages(channelId), {
                             body: {
@@ -636,7 +636,7 @@ const sendLolMatches = async(app: App) => {
             }
         }
 
-        const thunk = async() => {
+        const thunk = async () => {
             await app.prisma.guild.update({
                 where: {
                     id: guild.id
@@ -668,7 +668,7 @@ const sendLolMatches = async(app: App) => {
     await Promise.allSettled(sendMessageThunks.map(task => task()))
 }
 
-const runTasks = async(app: App) => {
+const runTasks = async (app: App) => {
     const tasks = [
         sendValorantMatches,
         sendValorantTBDMatches,
@@ -679,7 +679,7 @@ const runTasks = async(app: App) => {
         tasks.map(task => task(app).catch(e => Logger.error(e)))
     )
 
-    setTimeout(async() => await runTasks(app), process.env.INTERVAL ?? 5 * 60 * 1000)
+    setTimeout(async () => await runTasks(app), process.env.INTERVAL ?? 5 * 60 * 1000)
 }
 
 export default createListener({

@@ -1,7 +1,7 @@
 import * as Discord from 'discord.js'
 import App from '../app/App'
-import locales, { type Content, type Args } from '../../i18n'
-import { SabineGuild, SabineUser } from '../../database'
+import locales, { type Content, type Args } from '@i18n'
+import { SabineGuild, SabineUser } from '@db'
 
 type Database = {
     guild?: SabineGuild

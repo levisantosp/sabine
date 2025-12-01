@@ -4,7 +4,7 @@ import type { IncomingMessage, ServerResponse } from 'http'
 import { REST, Routes } from 'discord.js'
 import { app } from '../../../structures/app/App'
 import EmbedBuilder from '../../../structures/builders/EmbedBuilder'
-import locales from '../../../i18n'
+import locales from '@i18n'
 import ButtonBuilder from '../../../structures/builders/ButtonBuilder'
 
 const rest = new REST().setToken(process.env.BOT_TOKEN)

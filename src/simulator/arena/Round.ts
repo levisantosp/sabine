@@ -1,5 +1,5 @@
 import { valorant_maps, valorant_weapons } from '../../config'
-import { prisma, SabineUser } from '../../database'
+import { prisma, SabineUser } from '@db'
 import Match, { type TeamRoster, type KillEvent } from './Match'
 import Player from './Player'
 

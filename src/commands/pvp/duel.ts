@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType } from 'discord.js'
 import createCommand from '../../structures/command/createCommand'
 import ButtonBuilder from '../../structures/builders/ButtonBuilder'
-import { SabineUser } from '../../database'
+import { SabineUser } from '@db'
 import { valorant_maps } from '../../config'
 
 export default createCommand({

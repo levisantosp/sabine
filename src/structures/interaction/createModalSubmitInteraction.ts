@@ -1,4 +1,4 @@
-import type { Args } from '../../i18n'
+import type { Args } from '@i18n'
 import ModalSubmitInteractionContext from './ModalSubmitInteractionContext'
 
 type CreateModalSubmitInteractionProps = {

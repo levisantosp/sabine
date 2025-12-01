@@ -1,4 +1,4 @@
-import { SabineUser } from '../../database'
+import { SabineUser } from '@db'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder'
 import createComponentInteraction from '../../structures/interaction/createComponentInteraction'
 import { ComponentType, InteractionCallbackResponse } from 'discord.js'

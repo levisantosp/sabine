@@ -1,7 +1,7 @@
 import { Type as t, type TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 import type { FastifyInstance } from 'fastify'
 import { auth } from '../../auth'
-import { SabineUser } from '../../../database'
+import { SabineUser } from '@db'
 
 export type Pack =
     | 'IRON' // 59-

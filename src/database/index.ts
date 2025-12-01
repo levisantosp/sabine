@@ -7,7 +7,7 @@ import {
     PrismaClient,
     type TBDMatch,
     type User
-} from '../../prisma/generated/client'
+} from '@generated'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { app } from '../structures/app/App'
 import type { Pack } from '../server/routes/util/vote'
@@ -419,7 +419,7 @@ export class SabineGuild implements Guild {
                 }
             }
 
-            else (data as any)[key] = this[key]
+            else(data as any)[key] = this[key]
         }
 
         return await prisma.guild.upsert({

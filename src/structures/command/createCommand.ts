@@ -1,7 +1,7 @@
 import * as Discord from 'discord.js'
 import App from '../app/App'
 import CommandContext from './CommandContext'
-import type { Args } from '../../i18n'
+import type { Args } from '@i18n'
 import ComponentInteractionContext from '../interaction/ComponentInteractionContext'
 import ModalSubmitInteractionContext from '../interaction/ModalSubmitInteractionContext'
 

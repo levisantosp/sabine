@@ -1,6 +1,6 @@
 import type { MessageEditOptions, TextChannel } from 'discord.js'
 import { valorant_agents, valorant_maps, valorant_weapons } from '../../config'
-import { prisma, SabineUser } from '../../database'
+import { prisma, SabineUser } from '@db'
 import EmbedBuilder from '../../structures/builders/EmbedBuilder'
 import Match, { type TeamRoster, type KillEvent } from './Match'
 import Player from './Player'

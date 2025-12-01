@@ -1,9 +1,9 @@
 import type { MessageComponentInteraction } from 'discord.js'
 import App from '../app/App'
 import ComponentInteractionContext from './ComponentInteractionContext'
-import { SabineGuild, SabineUser } from '../../database'
-import locales, { type Args, type Content } from '../../i18n'
-import type { Blacklist } from '../../../prisma/generated/client'
+import { SabineGuild, SabineUser } from '@db'
+import locales, { type Args, type Content } from '@i18n'
+import type { Blacklist } from '@generated'
 import type ModalSubmitInteractionContext from './ModalSubmitInteractionContext'
 
 export default class ComponentInteractionRunner {

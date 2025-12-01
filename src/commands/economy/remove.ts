@@ -1,4 +1,4 @@
-import { SabineUser } from '../../database'
+import { SabineUser } from '@db'
 import createCommand from '../../structures/command/createCommand'
 
 export default createCommand({

@@ -1,9 +1,9 @@
 import type { ModalSubmitInteraction } from 'discord.js'
 import App from '../app/App'
 import ModalSubmitInteractionContext from './ModalSubmitInteractionContext'
-import { SabineGuild, SabineUser } from '../../database'
-import locales, { type Args, type Content } from '../../i18n'
-import type { Blacklist } from '../../../prisma/generated/client'
+import { SabineGuild, SabineUser } from '@db'
+import locales, { type Args, type Content } from '@i18n'
+import type { Blacklist } from '@generated'
 
 export default class ModalSubmitInteractionRunner {
     public async run(

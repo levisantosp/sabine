@@ -1,14 +1,14 @@
 import { ChannelType, type ChatInputCommandInteraction, type Guild, type PermissionResolvable } from 'discord.js'
 import App from '../app/App'
 import CommandContext from './CommandContext'
-import locales from '../../i18n'
+import locales from '@i18n'
 import ButtonBuilder from '../builders/ButtonBuilder'
 import EmbedBuilder from '../builders/EmbedBuilder'
-import { SabineGuild, SabineUser } from '../../database'
+import { SabineGuild, SabineUser } from '@db'
 import path from 'node:path'
 import { readFileSync } from 'node:fs'
 import Logger from '../../util/Logger'
-import type { Blacklist } from '../../../prisma/generated/client'
+import type { Blacklist } from '@generated'
 
 const locale: {
     [key: string]: string
@@ -83,7 +83,7 @@ export default class CommandRunner {
         if(group) args.push(group)
         if(sub) args.push(sub)
 
-        for(const option of (interaction.options as any)._hoistedOptions) {
+        for(const option of(interaction.options as any)._hoistedOptions) {
             if(
                 typeof option.value === 'string'
                 || typeof option.value === 'number'
@@ -179,7 +179,7 @@ export default class CommandRunner {
         }
 
         command.run({ ctx, app, t, id: interaction.commandId })
-            .then(async() => {
+            .then(async () => {
                 if(process.env.DEVS.includes(interaction.user.id)) return
 
                 const cmd: string[] = [command.name]

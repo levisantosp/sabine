@@ -1,6 +1,6 @@
 import createCommand from '../../structures/command/createCommand'
 import Service from '../../api'
-import { SabineGuild } from '../../database'
+import { SabineGuild } from '@db'
 
 const service = new Service(process.env.AUTH)
 

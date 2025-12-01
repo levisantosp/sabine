@@ -4,10 +4,10 @@ import type { IncomingMessage, ServerResponse } from 'http'
 import { app } from '../../../structures/app/App'
 import { emojis } from '../../../util/emojis'
 import EmbedBuilder from '../../../structures/builders/EmbedBuilder'
-import locales from '../../../i18n'
+import locales from '@i18n'
 import ButtonBuilder from '../../../structures/builders/ButtonBuilder'
 import calcOdd from '../../../util/calcOdd'
-import { SabineUser } from '../../../database'
+import { SabineUser } from '@db'
 import { REST, Routes } from 'discord.js'
 
 const rest = new REST().setToken(process.env.BOT_TOKEN)

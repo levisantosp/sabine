@@ -14,7 +14,7 @@ import {
     type Player
 } from '@sabinelab/players'
 import type { Listener } from './createListener'
-import { prisma } from '../../database'
+import { prisma } from '@db'
 
 type Reminder = {
     user: string

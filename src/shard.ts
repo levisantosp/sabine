@@ -6,7 +6,7 @@ import EmbedBuilder from './structures/builders/EmbedBuilder'
 import Bull from 'bull'
 import type { ArenaQueue } from './listeners/clientReady'
 import { valorant_maps } from './config'
-import { prisma } from './database'
+import { prisma } from '@db'
 
 const redis: Redis.RedisClientType = Redis.createClient({
     url: process.env.REDIS_URL
