@@ -12,6 +12,12 @@
         "rewriteRelativeImportExtensions": true,
         "verbatimModuleSyntax": true,
         "noEmit": true,
-        "moduleResolution": "bundler"
+        "moduleResolution": "bundler",
+        "paths": {
+            "@generated": ["./prisma/generated/client"],
+            "@i18n": ["./src/i18n"],
+            "@i18n/*": ["./src/i18n/*"],
+            "@db": ["./src/database"]
+        }
     }
 }
