@@ -1,224 +1,224 @@
 import { Type, type TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 import type { FastifyBaseLogger, RawServerDefault, FastifyInstance } from 'fastify'
 import type { IncomingMessage, ServerResponse } from 'http'
-import { app } from '../../../structures/app/App.ts'
-import { emojis } from '../../../util/emojis.ts'
-import EmbedBuilder from '../../../structures/builders/EmbedBuilder.ts'
-import locales from '../../../i18n/index.ts'
-import ButtonBuilder from '../../../structures/builders/ButtonBuilder.ts'
-import calcOdd from '../../../util/calcOdd.ts'
-import { SabineUser } from '../../../database/index.ts'
+import { app } from '../../../structures/app/App'
+import { emojis } from '../../../util/emojis'
+import EmbedBuilder from '../../../structures/builders/EmbedBuilder'
+import locales from '../../../i18n'
+import ButtonBuilder from '../../../structures/builders/ButtonBuilder'
+import calcOdd from '../../../util/calcOdd'
+import { SabineUser } from '../../../database'
 import { REST, Routes } from 'discord.js'
 
 const rest = new REST().setToken(process.env.BOT_TOKEN)
 
 export default async function(
-  fastify: FastifyInstance<RawServerDefault, IncomingMessage, ServerResponse<IncomingMessage>, FastifyBaseLogger, TypeBoxTypeProvider>
+    fastify: FastifyInstance<RawServerDefault, IncomingMessage, ServerResponse<IncomingMessage>, FastifyBaseLogger, TypeBoxTypeProvider>
 ) {
   fastify.post('/webhooks/results/lol', {
-    schema: {
-      body: Type.Array(
+      schema: {
+          body: Type.Array(
         Type.Object({
-          id: Type.String(),
-          teams: Type.Array(
+            id: Type.String(),
+            teams: Type.Array(
             Type.Object({
-              name: Type.String(),
-              score: Type.String(),
-              winner: Type.Boolean()
+                name: Type.String(),
+                score: Type.String(),
+                winner: Type.Boolean()
             })
-          ),
-          tournament: Type.Object({
-            name: Type.String(),
-            full_name: Type.String(),
-            image: Type.String()
-          }),
-          stage: Type.String(),
-          when: Type.String()
+            ),
+            tournament: Type.Object({
+                name: Type.String(),
+                full_name: Type.String(),
+                image: Type.String()
+            }),
+            stage: Type.String(),
+            when: Type.String()
         })
-      )
-    }
+          )
+      }
   }, async(req) => {
-    const guilds = await app.prisma.guild.findMany({
-      where: {
-        events: {
-          some: {
-            type: 'lol'
-          }
-        }
-      },
-      include: {
-        events: {
+      const guilds = await app.prisma.guild.findMany({
           where: {
-            type: 'lol'
+              events: {
+                  some: {
+                      type: 'lol'
+                  }
+              }
+          },
+          include: {
+              events: {
+                  where: {
+                      type: 'lol'
+                  }
+              },
+              key: true
           }
-        },
-        key: true
-      }
-    })
+      })
 
-    const preds = await app.prisma.prediction.findMany({
-      where: {
-        game: 'lol'
-      },
-      include: {
-        teams: true
-      }
-    })
+      const preds = await app.prisma.prediction.findMany({
+          where: {
+              game: 'lol'
+          },
+          include: {
+              teams: true
+          }
+      })
 
-    if(!guilds.length) return
+      if(!guilds.length) return
 
-    const messages: Promise<unknown>[] = []
+      const messages: Promise<unknown>[] = []
 
-    for(
-      const data of req.body
+      for(
+          const data of req.body
         .map(body => ({
-          ...body,
-          when: new Date(body.when)
+            ...body,
+            when: new Date(body.when)
         }))
-    ) {
-      for(const guild of guilds) {
-        const event = guild.events.find(e => e.name === data.tournament.name)
+      ) {
+          for(const guild of guilds) {
+              const event = guild.events.find(e => e.name === data.tournament.name)
 
-        if(!event) continue
+              if(!event) continue
 
-        if(!guild.events.some(e => e.name === data.tournament.name)) continue
+              if(!guild.events.some(e => e.name === data.tournament.name)) continue
 
-        const emoji1 = emojis.find(e => e?.name === data.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
-        const emoji2 = emojis.find(e => e?.name === data.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
+              const emoji1 = emojis.find(e => e?.name === data.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
+              const emoji2 = emojis.find(e => e?.name === data.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
 
-        const embed = new EmbedBuilder()
+              const embed = new EmbedBuilder()
           .setAuthor({
-            name: data.tournament.name,
-            iconURL: data.tournament.image
+              name: data.tournament.name,
+              iconURL: data.tournament.image
           })
           .setField(
-            `${emoji1} ${data.teams[0].name} \`${data.teams[0].score}\` <:versus:1349105624180330516> \`${data.teams[1].score}\` ${data.teams[1].name} ${emoji2}`,
-            `<t:${data.when.getTime() / 1000}:F> | <t:${data.when.getTime() / 1000}:R>`,
-            true
+              `${emoji1} ${data.teams[0].name} \`${data.teams[0].score}\` <:versus:1349105624180330516> \`${data.teams[1].score}\` ${data.teams[1].name} ${emoji2}`,
+              `<t:${data.when.getTime() / 1000}:F> | <t:${data.when.getTime() / 1000}:R>`,
+              true
           )
           .setFooter({ text: data.stage })
 
         messages.push(
           rest.post(Routes.channelMessages(event.channel2), {
-            body: {
-              embeds: [embed.toJSON()],
-              components: [
-                {
-                  type: 1,
+              body: {
+                  embeds: [embed.toJSON()],
                   components: [
+                      {
+                          type: 1,
+                          components: [
                     new ButtonBuilder()
                       .setLabel(locales(guild.lang, 'helper.pickem.label'))
                       .defineStyle('blue')
                       .setCustomId('pickem')
+                          ]
+                      }
                   ]
-                }
-              ]
-            }
+              }
           })
         )
+          }
       }
-    }
 
-    if(!preds.length) return
+      if(!preds.length) return
 
-    const usersIds = [...new Set(preds.map(pred => pred.userId))]
+      const usersIds = [...new Set(preds.map(pred => pred.userId))]
 
-    const usersData = await app.prisma.user.findMany({
-      where: {
-        id: { in: usersIds }
-      }
-    })
+      const usersData = await app.prisma.user.findMany({
+          where: {
+              id: { in: usersIds }
+          }
+      })
 
-    const userMap = new Map<string, SabineUser>()
+      const userMap = new Map<string, SabineUser>()
 
-    for(const data of usersData) {
-      let user = new SabineUser(data.id)
-      user = Object.assign(user, data)
+      for(const data of usersData) {
+          let user = new SabineUser(data.id)
+          user = Object.assign(user, data)
 
       userMap.set(user.id, user)
-    }
+      }
 
-    const transactions: Promise<unknown>[] = []
+      const transactions: Promise<unknown>[] = []
 
-    for(const data of req.body) {
-      for(const pred of preds) {
-        if(data.id !== pred.match) continue
+      for(const data of req.body) {
+          for(const pred of preds) {
+              if(data.id !== pred.match) continue
 
-        const user = userMap.get(pred.userId)
+              const user = userMap.get(pred.userId)
 
-        if(!user) continue
+              if(!user) continue
 
-        const transaction = async() => {
-          if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
-            
-            let odd: number | null = null
-            let bonus = 0
+              const transaction = async() => {
+                  if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
 
-            if(pred.bet) {
-              const winnerIndex = data.teams.findIndex(t => t.winner)
+                      let odd: number | null = null
+                      let bonus = 0
 
-              if(pred.teams[winnerIndex].winner) {
-                let oddA = 0
-                let oddB = 0
+                      if(pred.bet) {
+                          const winnerIndex = data.teams.findIndex(t => t.winner)
 
-                for(const p of preds) {
-                  if(p.teams[0].winner && p.bet) {
-                    oddA += 1
-                  }
+                          if(pred.teams[winnerIndex].winner) {
+                              let oddA = 0
+                              let oddB = 0
 
-                  else if(p.teams[1].winner && p.bet) {
-                    oddB += 1
-                  }
-                }
+                              for(const p of preds) {
+                                  if(p.teams[0].winner && p.bet) {
+                                      oddA += 1
+                                  }
 
-                if(pred.teams[0].winner) {
-                  odd = calcOdd(oddA)
-                }
+                                  else if(p.teams[1].winner && p.bet) {
+                                      oddB += 1
+                                  }
+                              }
 
-                else {
-                  odd = calcOdd(oddB)
-                }
+                              if(pred.teams[0].winner) {
+                                  odd = calcOdd(oddA)
+                              }
 
-                if(user.premium) {
-                  bonus = Number(pred.bet) / 2
-                }
-              }
-            }
+                              else {
+                                  odd = calcOdd(oddB)
+                              }
 
-            const coins = BigInt(Number(pred.bet) * (odd ?? 1)) + BigInt(bonus)
-            const fates = 5
+                              if(user.premium) {
+                                  bonus = Number(pred.bet) / 2
+                              }
+                          }
+                      }
 
-            await Promise.allSettled([
+                      const coins = BigInt(Number(pred.bet) * (odd ?? 1)) + BigInt(bonus)
+                      const fates = 5
+
+                      await Promise.allSettled([
               app.prisma.prediction.update({
-                where: {
-                  id: pred.id
-                },
-                data: {
-                  odd: odd,
-                  status: 'correct'
-                }
+                  where: {
+                      id: pred.id
+                  },
+                  data: {
+                      odd: odd,
+                      status: 'correct'
+                  }
               }),
               app.prisma.user.update({
-                where: { id: user.id },
-                data: {
-                  correct_predictions: {
-                    increment: 1
-                  },
-                  coins: { increment: coins },
-                  fates: { increment: fates }
-                }
+                  where: { id: user.id },
+                  data: {
+                      correct_predictions: {
+                          increment: 1
+                      },
+                      coins: { increment: coins },
+                      fates: { increment: fates }
+                  }
               })
-            ])
-          }
-          else {
-            await user.addIncorrectPrediction('lol', data.id)
-          }
-        }
+                      ])
+                  }
+                  else {
+                      await user.addIncorrectPrediction('lol', data.id)
+                  }
+              }
 
         transactions.push(transaction())
+          }
       }
-    }
 
-    await Promise.allSettled([...messages, ...transactions])
+      await Promise.allSettled([...messages, ...transactions])
   })
 }

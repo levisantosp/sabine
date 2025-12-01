@@ -1,145 +1,145 @@
 import { Type, type TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 import type { FastifyBaseLogger, FastifyInstance, RawServerDefault } from 'fastify'
-import calcOdd from '../../../util/calcOdd.ts'
-import ButtonBuilder from '../../../structures/builders/ButtonBuilder.ts'
-import locales from '../../../i18n/index.ts'
-import EmbedBuilder from '../../../structures/builders/EmbedBuilder.ts'
-import { emojis } from '../../../util/emojis.ts'
-import { app } from '../../../structures/app/App.ts'
+import calcOdd from '../../../util/calcOdd'
+import ButtonBuilder from '../../../structures/builders/ButtonBuilder'
+import locales from '../../../i18n'
+import EmbedBuilder from '../../../structures/builders/EmbedBuilder'
+import { emojis } from '../../../util/emojis'
+import { app } from '../../../structures/app/App'
 import type { IncomingMessage, ServerResponse } from 'http'
-import { SabineUser } from '../../../database/index.ts'
+import { SabineUser } from '../../../database'
 import * as Discord from 'discord.js'
 
 const tournaments: { [key: string]: RegExp[] } = {
-  'Valorant Champions Tour': [
-    /valorant champions/,
-    /valorant masters/,
-    /vct \d{4}/
-  ],
-  'Valorant Challengers League': [
-    /challengers \d{4}/
-  ],
-  'Valorant Game Changers': [
-    /game changers \d{4}/
-  ]
+    'Valorant Champions Tour': [
+        /valorant champions/,
+        /valorant masters/,
+        /vct \d{4}/
+    ],
+    'Valorant Challengers League': [
+        /challengers \d{4}/
+    ],
+    'Valorant Game Changers': [
+        /game changers \d{4}/
+    ]
 }
 
 const rest = new Discord.REST().setToken(process.env.BOT_TOKEN)
 
 export default async function(
-  fastify: FastifyInstance<RawServerDefault, IncomingMessage, ServerResponse<IncomingMessage>, FastifyBaseLogger, TypeBoxTypeProvider>
+    fastify: FastifyInstance<RawServerDefault, IncomingMessage, ServerResponse<IncomingMessage>, FastifyBaseLogger, TypeBoxTypeProvider>
 ) {
   fastify.post('/webhooks/results/valorant', {
-    schema: {
-      body: Type.Array(
+      schema: {
+          body: Type.Array(
         Type.Object(
-          {
-            id: Type.String(),
-            status: Type.String(),
-            stage: Type.String(),
-            when: Type.String(),
-            url: Type.String(),
-            teams: Type.Array(
+            {
+                id: Type.String(),
+                status: Type.String(),
+                stage: Type.String(),
+                when: Type.String(),
+                url: Type.String(),
+                teams: Type.Array(
               Type.Object(
-                {
-                  name: Type.String(),
-                  score: Type.String(),
-                  country: Type.String(),
-                  winner: Type.Boolean()
-                }
+                  {
+                      name: Type.String(),
+                      score: Type.String(),
+                      country: Type.String(),
+                      winner: Type.Boolean()
+                  }
               )
-            ),
-            tournament: Type.Object(
-              {
-                name: Type.String(),
-                image: Type.String()
-              }
-            ),
-          }
+                ),
+                tournament: Type.Object(
+                    {
+                        name: Type.String(),
+                        image: Type.String()
+                    }
+                ),
+            }
         )
-      )
-    }
+          )
+      }
   }, async(req) => {
-    const guilds = await app.prisma.guild.findMany({
-      where: {
-        events: {
-          some: {
-            type: 'valorant'
-          }
-        }
-      },
-      include: {
-        events: {
+      const guilds = await app.prisma.guild.findMany({
           where: {
-            type: 'valorant'
+              events: {
+                  some: {
+                      type: 'valorant'
+                  }
+              }
+          },
+          include: {
+              events: {
+                  where: {
+                      type: 'valorant'
+                  }
+              },
+              key: true
           }
-        },
-        key: true
-      }
-    })
+      })
 
-    const preds = await app.prisma.prediction.findMany({
-      where: {
-        game: 'valorant'
-      },
-      include: {
-        teams: true
-      }
-    })
+      const preds = await app.prisma.prediction.findMany({
+          where: {
+              game: 'valorant'
+          },
+          include: {
+              teams: true
+          }
+      })
 
-    if(!guilds.length) return
+      if(!guilds.length) return
 
-    const messages: Promise<unknown>[] = []
+      const messages: Promise<unknown>[] = []
 
-    for(
-      const data of req.body
+      for(
+          const data of req.body
         .map(body => ({
-          ...body,
-          when: new Date(body.when)
+            ...body,
+            when: new Date(body.when)
         }))
-    ) {
-      for(const guild of guilds) {
-        const event = guild.events.find(e =>
-          e.name === data.tournament.name ||
+      ) {
+          for(const guild of guilds) {
+              const event = guild.events.find(e =>
+                  e.name === data.tournament.name ||
           tournaments[e.name]?.some(regex =>
             regex.test(data.tournament.name.replace(/\s+/g, ' ').trim().toLowerCase())
           )
-        )
+              )
 
-        if(!event) continue
+              if(!event) continue
 
-        if(
-          !guild.events.some(e => e.name === data.tournament.name) &&
+              if(
+                  !guild.events.some(e => e.name === data.tournament.name) &&
           !guild.events.some(e =>
             tournaments[e.name]?.some(regex =>
               regex.test(data.tournament.name.replace(/\s+/g, ' ').trim().toLowerCase())
             )
           )
-        ) continue
+              ) continue
 
-        const emoji1 = emojis.find(e => e?.name === data.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
-        const emoji2 = emojis.find(e => e?.name === data.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
+              const emoji1 = emojis.find(e => e?.name === data.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
+              const emoji2 = emojis.find(e => e?.name === data.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
 
-        const embed = new EmbedBuilder()
+              const embed = new EmbedBuilder()
           .setAuthor({
-            name: data.tournament.name,
-            iconURL: data.tournament.image
+              name: data.tournament.name,
+              iconURL: data.tournament.image
           })
           .setField(
-            `${emoji1} ${data.teams[0].name} \`${data.teams[0].score}\` <:versus:1349105624180330516> \`${data.teams[1].score}\` ${data.teams[1].name} ${emoji2}`,
-            `<t:${data.when.getTime() / 1000}:F> | <t:${data.when.getTime() / 1000}:R>`,
-            true
+              `${emoji1} ${data.teams[0].name} \`${data.teams[0].score}\` <:versus:1349105624180330516> \`${data.teams[1].score}\` ${data.teams[1].name} ${emoji2}`,
+              `<t:${data.when.getTime() / 1000}:F> | <t:${data.when.getTime() / 1000}:R>`,
+              true
           )
           .setFooter({ text: data.stage })
 
         messages.push(
           rest.post(Discord.Routes.channelMessages(event.channel2), {
-            body: {
-              embeds: [embed.toJSON()],
-              components: [
-                {
-                  type: 1,
+              body: {
+                  embeds: [embed.toJSON()],
                   components: [
+                      {
+                          type: 1,
+                          components: [
                     new ButtonBuilder()
                       .setLabel(locales(guild.lang, 'helper.stats'))
                       .defineStyle('link')
@@ -148,116 +148,116 @@ export default async function(
                       .setLabel(locales(guild.lang, 'helper.pickem.label'))
                       .defineStyle('blue')
                       .setCustomId('pickem')
+                          ]
+                      }
                   ]
-                }
-              ]
-            }
+              }
           })
         )
+          }
       }
-    }
 
-    if(!preds.length) return
+      if(!preds.length) return
 
-    const usersIds = [...new Set(preds.map(pred => pred.userId))]
+      const usersIds = [...new Set(preds.map(pred => pred.userId))]
 
-    const usersData = await app.prisma.user.findMany({
-      where: {
-        id: { in: usersIds }
-      }
-    })
+      const usersData = await app.prisma.user.findMany({
+          where: {
+              id: { in: usersIds }
+          }
+      })
 
-    const userMap = new Map<string, SabineUser>()
+      const userMap = new Map<string, SabineUser>()
 
-    for(const data of usersData) {
-      let user = new SabineUser(data.id)
-      user = Object.assign(user, data)
+      for(const data of usersData) {
+          let user = new SabineUser(data.id)
+          user = Object.assign(user, data)
 
       userMap.set(user.id, user)
-    }
+      }
 
-    const transactions: Promise<unknown>[] = []
+      const transactions: Promise<unknown>[] = []
 
-    for(const data of req.body) {
-      for(const pred of preds) {
-        if(data.id !== pred.match) continue
+      for(const data of req.body) {
+          for(const pred of preds) {
+              if(data.id !== pred.match) continue
 
-        const user = userMap.get(pred.userId)
+              const user = userMap.get(pred.userId)
 
-        if(!user) continue
+              if(!user) continue
 
-        const transaction = async() => {
-          if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
-            user.correct_predictions += 1
-            
-            let odd: number | null = null
-            let bonus = 0
+              const transaction = async() => {
+                  if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
+                      user.correct_predictions += 1
 
-            if(pred.bet) {
-              const winnerIndex = data.teams.findIndex(t => t.winner)
+                      let odd: number | null = null
+                      let bonus = 0
 
-              if(pred.teams[winnerIndex].winner) {
-                let oddA = 0
-                let oddB = 0
+                      if(pred.bet) {
+                          const winnerIndex = data.teams.findIndex(t => t.winner)
 
-                for(const p of preds) {
-                  if(p.teams[0].winner && p.bet) {
-                    oddA += 1
-                  }
+                          if(pred.teams[winnerIndex].winner) {
+                              let oddA = 0
+                              let oddB = 0
 
-                  else if(p.teams[1].winner && p.bet) {
-                    oddB += 1
-                  }
-                }
+                              for(const p of preds) {
+                                  if(p.teams[0].winner && p.bet) {
+                                      oddA += 1
+                                  }
 
-                if(pred.teams[0].winner) {
-                  odd = calcOdd(oddA)
-                }
+                                  else if(p.teams[1].winner && p.bet) {
+                                      oddB += 1
+                                  }
+                              }
 
-                else {
-                  odd = calcOdd(oddB)
-                }
+                              if(pred.teams[0].winner) {
+                                  odd = calcOdd(oddA)
+                              }
 
-                if(user.premium) {
-                  bonus = Number(pred.bet) / 2
-                }
-              }
-            }
+                              else {
+                                  odd = calcOdd(oddB)
+                              }
 
-            const coins = BigInt(Number(pred.bet) * (odd ?? 1)) + BigInt(bonus)
-            const fates = 5
+                              if(user.premium) {
+                                  bonus = Number(pred.bet) / 2
+                              }
+                          }
+                      }
 
-            await Promise.allSettled([
+                      const coins = BigInt(Number(pred.bet) * (odd ?? 1)) + BigInt(bonus)
+                      const fates = 5
+
+                      await Promise.allSettled([
               app.prisma.prediction.update({
-                where: {
-                  id: pred.id
-                },
-                data: {
-                  odd: odd,
-                  status: 'correct'
-                }
+                  where: {
+                      id: pred.id
+                  },
+                  data: {
+                      odd: odd,
+                      status: 'correct'
+                  }
               }),
               app.prisma.user.update({
-                where: { id: user.id },
-                data: {
-                  correct_predictions: {
-                    increment: 1
-                  },
-                  coins: { increment: coins },
-                  fates: { increment: fates }
-                }
+                  where: { id: user.id },
+                  data: {
+                      correct_predictions: {
+                          increment: 1
+                      },
+                      coins: { increment: coins },
+                      fates: { increment: fates }
+                  }
               })
-            ])
-          }
-          else {
-            await user.addIncorrectPrediction('valorant', data.id)
-          }
-        }
+                      ])
+                  }
+                  else {
+                      await user.addIncorrectPrediction('valorant', data.id)
+                  }
+              }
 
         transactions.push(transaction())
+          }
       }
-    }
 
-    await Promise.allSettled([...messages, ...transactions])
+      await Promise.allSettled([...messages, ...transactions])
   })
 }

@@ -1,102 +1,102 @@
 import { ApplicationCommandOptionType } from 'discord.js'
-import createCommand from '../../structures/command/createCommand.ts'
-import { Prisma } from '../../../prisma/generated/client.ts'
-import EmbedBuilder from '../../structures/builders/EmbedBuilder.ts'
-import { valorant_agents } from '../../config.ts'
+import createCommand from '../../structures/command/createCommand'
+import { Prisma } from '../../../prisma/generated/client'
+import EmbedBuilder from '../../structures/builders/EmbedBuilder'
+import { valorant_agents } from '../../config'
 
 type Stats = {
-  id: string
-  kills: number
-  deaths: number
-  agent: string
+    id: string
+    kills: number
+    deaths: number
+    agent: string
 }
 
 type Metadata = {
-  map: string
-  stats: Stats[]
-  teams: string[]
+    map: string
+    stats: Stats[]
+    teams: string[]
 }
 
 export default createCommand({
-  name: 'summary',
-  nameLocalizations: {
-    'pt-BR': 'resumo'
-  },
-  description: 'View a match summary',
-  descriptionLocalizations: {
-    'pt-BR': 'Veja o resumo de uma partida'
-  },
-  category: 'pvp',
-  options: [
-    {
-      type: ApplicationCommandOptionType.Integer,
-      name: 'seed',
-      nameLocalizations: {
-        'pt-BR': 'semente'
-      },
-      description: 'Insert the seed',
-      descriptionLocalizations: {
-        'pt-BR': 'Insira a semente'
-      },
-      required: true
-    }
-  ],
-  async run({ ctx }) {
-    const match = await ctx.app.prisma.match.findFirst({
-      where: {
-        id: BigInt(ctx.args[0]),
-        metadata: { not: Prisma.DbNull },
-        userId: ctx.db.user.id
-      },
-      include: {
-        teams: true
-      },
-      omit: {
-        when: true,
-        points: true,
-        winner: true
-      }
-    })
+    name: 'summary',
+    nameLocalizations: {
+        'pt-BR': 'resumo'
+    },
+    description: 'View a match summary',
+    descriptionLocalizations: {
+        'pt-BR': 'Veja o resumo de uma partida'
+    },
+    category: 'pvp',
+    options: [
+        {
+            type: ApplicationCommandOptionType.Integer,
+            name: 'seed',
+            nameLocalizations: {
+                'pt-BR': 'semente'
+            },
+            description: 'Insert the seed',
+            descriptionLocalizations: {
+                'pt-BR': 'Insira a semente'
+            },
+            required: true
+        }
+    ],
+    async run({ ctx }) {
+        const match = await ctx.app.prisma.match.findFirst({
+            where: {
+                id: BigInt(ctx.args[0]),
+                metadata: { not: Prisma.DbNull },
+                userId: ctx.db.user.id
+            },
+            include: {
+                teams: true
+            },
+            omit: {
+                when: true,
+                points: true,
+                winner: true
+            }
+        })
 
-    if(!match) {
-      return await ctx.reply('commands.summary.match_not_found')
-    }
+        if(!match) {
+            return await ctx.reply('commands.summary.match_not_found')
+        }
 
-    const summary = match.metadata as Metadata
+        const summary = match.metadata as Metadata
 
-    const embed = new EmbedBuilder()
+        const embed = new EmbedBuilder()
       .setTitle(ctx.t('commands.summary.embed.title'))
       .setDesc(`### <@${match.teams[0].user}> ${match.teams[0].score} <:versus:1349105624180330516> ${match.teams[1].score} <@${match.teams[1].user}>\n`)
       .setFields(
-        {
-          name: summary.teams[0],
-          value: summary.stats.slice(0, 5)
+          {
+              name: summary.teams[0],
+              value: summary.stats.slice(0, 5)
             .map(p => {
-              const player = ctx.app.players.get(p.id)
+                const player = ctx.app.players.get(p.id)
 
-              if(!player) return
+                if(!player) return
 
-              return `${valorant_agents.find(a => a.name === p.agent)?.emoji} ${player.name} (${Math.floor(player.ovr)}) — \`${p.kills}/${p.deaths}\``
+                return `${valorant_agents.find(a => a.name === p.agent)?.emoji} ${player.name} (${Math.floor(player.ovr)}) — \`${p.kills}/${p.deaths}\``
             })
             .join('\n'),
-          inline: true
-        },
-        {
-          name: summary.teams[1],
-          value: summary.stats.slice(-5)
+              inline: true
+          },
+          {
+              name: summary.teams[1],
+              value: summary.stats.slice(-5)
             .map(p => {
-              const player = ctx.app.players.get(p.id)
+                const player = ctx.app.players.get(p.id)
 
-              if(!player) return
+                if(!player) return
 
-              return `${valorant_agents.find(a => a.name === p.agent)?.emoji} ${player.name} (${Math.floor(player.ovr)}) — \`${p.kills}/${p.deaths}\``
+                return `${valorant_agents.find(a => a.name === p.agent)?.emoji} ${player.name} (${Math.floor(player.ovr)}) — \`${p.kills}/${p.deaths}\``
             })
             .join('\n'),
-          inline: true
-        }
+              inline: true
+          }
       )
       .setImage(summary.map)
 
-    await ctx.reply(embed.build())
-  }
+        await ctx.reply(embed.build())
+    }
 })

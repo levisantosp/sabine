@@ -1,8 +1,8 @@
 import type { FastifyInstance } from 'fastify'
-import { app } from '../../../structures/app/App.ts'
+import { app } from '../../../structures/app/App'
 
 export default async function(fastify: FastifyInstance) {
-  await app.load()
+    await app.load()
   
   fastify.get('/commands', async() => {
     type Command = Pick<
@@ -22,15 +22,15 @@ export default async function(fastify: FastifyInstance) {
 
     app.commands.forEach(command => {
       commands.push({
-        name: command.name,
-        nameLocalizations: command.nameLocalizations,
-        description: command.description,
-        descriptionLocalizations: command.descriptionLocalizations,
-        syntax: command.syntax,
-        syntaxes: command.syntaxes,
-        examples: command.examples,
-        permissions: command.permissions,
-        botPermissions: command.botPermissions
+          name: command.name,
+          nameLocalizations: command.nameLocalizations,
+          description: command.description,
+          descriptionLocalizations: command.descriptionLocalizations,
+          syntax: command.syntax,
+          syntaxes: command.syntaxes,
+          examples: command.examples,
+          permissions: command.permissions,
+          botPermissions: command.botPermissions
       })
     })
 

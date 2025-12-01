@@ -10,23 +10,23 @@ const __dirname = path.dirname(__filename)
 const server = fastify()
 
 await server.register(fastifyCors, {
-  origin: true,
-  methods: ['POST', 'GET', 'OPTIONS'],
-  allowedHeaders: [
-    'Content-Type',
-    'Authorization',
-    'x-dbl-signature'
-  ]
+    origin: true,
+    methods: ['POST', 'GET', 'OPTIONS'],
+    allowedHeaders: [
+        'Content-Type',
+        'Authorization',
+        'x-dbl-signature'
+    ]
 })
 
 for(const folder of readdirSync(path.resolve(__dirname, './routes'))) {
-  for(const file of readdirSync(path.resolve(__dirname, `./routes/${folder}`))) {
-    const route = await import(`./routes/${folder}/${file}`)
+    for(const file of readdirSync(path.resolve(__dirname, `./routes/${folder}`))) {
+        const route = await import(`./routes/${folder}/${file}`)
 
-    await server.register(route)
-  }
+        await server.register(route)
+    }
 }
 
 export {
-  server
+    server
 }
