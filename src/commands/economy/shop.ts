@@ -22,62 +22,62 @@ export default createCommand({
     userInstall: true,
     async run({ ctx }) {
         const container = new ContainerBuilder()
-      .setAccentColor(6719296)
-      .addTextDisplayComponents(
-          text => text.setContent(ctx.t('commands.shop.container.title'))
-      )
-      .addSectionComponents(
-          section => section
-          .addTextDisplayComponents(
-              text => text.setContent(ctx.t('commands.shop.container.text.gold', { price: price.gold }))
-          )
-          .setButtonAccessory(
-              button => button
-              .setStyle(ButtonStyle.Success)
-              .setLabel(ctx.t('commands.shop.container.button'))
-              .setCustomId(`shop;${ctx.db.user.id};gold`)
-              .setDisabled(ctx.db.user.fates < price.gold)
-          )
-      )
-      .addSectionComponents(
-          section => section
-          .addTextDisplayComponents(
-              text => text.setContent(ctx.t('commands.shop.container.text.platinum', { price: price.platinum }))
-          )
-          .setButtonAccessory(
-              button => button
-              .setStyle(ButtonStyle.Success)
-              .setLabel(ctx.t('commands.shop.container.button'))
-              .setCustomId(`shop;${ctx.db.user.id};platinum`)
-              .setDisabled(ctx.db.user.fates < price.platinum)
-          )
-      )
-      .addSectionComponents(
-          section => section
-          .addTextDisplayComponents(
-              text => text.setContent(ctx.t('commands.shop.container.text.diamond', { price: price.diamond }))
-          )
-          .setButtonAccessory(
-              button => button
-              .setStyle(ButtonStyle.Success)
-              .setLabel(ctx.t('commands.shop.container.button'))
-              .setCustomId(`shop;${ctx.db.user.id};diamond`)
-              .setDisabled(ctx.db.user.fates < price.diamond)
-          )
-      )
-      .addSectionComponents(
-          section => section
-          .addTextDisplayComponents(
-              text => text.setContent(ctx.t('commands.shop.container.text.ascendant', { price: price.ascendant }))
-          )
-          .setButtonAccessory(
-              button => button
-              .setStyle(ButtonStyle.Success)
-              .setLabel(ctx.t('commands.shop.container.button'))
-              .setCustomId(`shop;${ctx.db.user.id};ascendant`)
-              .setDisabled(ctx.db.user.fates < price.ascendant)
-          )
-      )
+            .setAccentColor(6719296)
+            .addTextDisplayComponents(
+                text => text.setContent(ctx.t('commands.shop.container.title'))
+            )
+            .addSectionComponents(
+                section => section
+                    .addTextDisplayComponents(
+                        text => text.setContent(ctx.t('commands.shop.container.text.gold', { price: price.gold }))
+                    )
+                    .setButtonAccessory(
+                        button => button
+                            .setStyle(ButtonStyle.Success)
+                            .setLabel(ctx.t('commands.shop.container.button'))
+                            .setCustomId(`shop;${ctx.db.user.id};gold`)
+                            .setDisabled(ctx.db.user.fates < price.gold)
+                    )
+            )
+            .addSectionComponents(
+                section => section
+                    .addTextDisplayComponents(
+                        text => text.setContent(ctx.t('commands.shop.container.text.platinum', { price: price.platinum }))
+                    )
+                    .setButtonAccessory(
+                        button => button
+                            .setStyle(ButtonStyle.Success)
+                            .setLabel(ctx.t('commands.shop.container.button'))
+                            .setCustomId(`shop;${ctx.db.user.id};platinum`)
+                            .setDisabled(ctx.db.user.fates < price.platinum)
+                    )
+            )
+            .addSectionComponents(
+                section => section
+                    .addTextDisplayComponents(
+                        text => text.setContent(ctx.t('commands.shop.container.text.diamond', { price: price.diamond }))
+                    )
+                    .setButtonAccessory(
+                        button => button
+                            .setStyle(ButtonStyle.Success)
+                            .setLabel(ctx.t('commands.shop.container.button'))
+                            .setCustomId(`shop;${ctx.db.user.id};diamond`)
+                            .setDisabled(ctx.db.user.fates < price.diamond)
+                    )
+            )
+            .addSectionComponents(
+                section => section
+                    .addTextDisplayComponents(
+                        text => text.setContent(ctx.t('commands.shop.container.text.ascendant', { price: price.ascendant }))
+                    )
+                    .setButtonAccessory(
+                        button => button
+                            .setStyle(ButtonStyle.Success)
+                            .setLabel(ctx.t('commands.shop.container.button'))
+                            .setCustomId(`shop;${ctx.db.user.id};ascendant`)
+                            .setDisabled(ctx.db.user.fates < price.ascendant)
+                    )
+            )
 
         await ctx.reply({
             flags: 'IsComponentsV2',
@@ -85,7 +85,7 @@ export default createCommand({
         })
     },
     async createMessageComponentInteraction({ ctx }) {
-        const args: {[key: string]: () => Promise<unknown>} = {
+        const args: { [key: string]: () => Promise<unknown> } = {
             gold: async() => {
                 if(ctx.db.user.fates < price.gold) {
                     return await ctx.reply('commands.shop.not_enough')
@@ -134,8 +134,8 @@ export default createCommand({
 
         if(!args[ctx.args[2]]) return
 
-    ctx.setFlags(64)
-    
-    await args[ctx.args[2]]()
+        ctx.setFlags(64)
+
+        await args[ctx.args[2]]()
     }
 })

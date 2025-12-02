@@ -1,6 +1,5 @@
 import { Elysia, t } from 'elysia'
 import { SabineUser } from '@db'
-import { auth } from '../../auth'
 
 export type Pack =
     | 'IRON' // 59-
@@ -16,7 +15,7 @@ export type Pack =
 export const vote = new Elysia()
     .post(
         '/vote',
-        async ({ body, set }) => {
+        async({ body, set }) => {
             const random = Math.random() * 100
             const pack: Pack =
                 random < 0.5 ? 'RADIANT'

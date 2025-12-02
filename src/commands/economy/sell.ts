@@ -58,20 +58,20 @@ export default createCommand({
 
             const ovr = Math.floor(p.ovr)
 
-      players.push({
-          name: `${p.name} (${ovr})`,
-          ovr,
-          id: p_id
-      })
+            players.push({
+                name: `${p.name} (${ovr})`,
+                ovr,
+                id: p_id
+            })
         }
 
         await i.respond(
-      players.sort((a, b) => a.ovr - b.ovr)
-        .filter(p => {
-            if(p.name.toLowerCase().includes(value.toLowerCase())) return p
-        })
-        .slice(0, 25)
-        .map(p => ({ name: p.name, value: p.id }))
+            players.sort((a, b) => a.ovr - b.ovr)
+                .filter(p => {
+                    if(p.name.toLowerCase().includes(value.toLowerCase())) return p
+                })
+                .slice(0, 25)
+                .map(p => ({ name: p.name, value: p.id }))
         )
     }
 })

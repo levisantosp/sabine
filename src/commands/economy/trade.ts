@@ -94,14 +94,14 @@ export default createCommand({
                 {
                     type: 1,
                     components: [
-            new ButtonBuilder()
-              .defineStyle('green')
-              .setLabel(ctx.t('commands.trade.make_purchase'))
-              .setCustomId(`trade;${ctx.args[0]};buy;${ctx.interaction.user.id};${player.id};${ctx.args[2]}`),
-            new ButtonBuilder()
-              .defineStyle('red')
-              .setLabel(ctx.t('commands.trade.cancel'))
-              .setCustomId(`trade;${ctx.interaction.user.id};cancel`)
+                        new ButtonBuilder()
+                            .defineStyle('green')
+                            .setLabel(ctx.t('commands.trade.make_purchase'))
+                            .setCustomId(`trade;${ctx.args[0]};buy;${ctx.interaction.user.id};${player.id};${ctx.args[2]}`),
+                        new ButtonBuilder()
+                            .defineStyle('red')
+                            .setLabel(ctx.t('commands.trade.cancel'))
+                            .setCustomId(`trade;${ctx.interaction.user.id};cancel`)
                     ]
                 }
             ]
@@ -121,20 +121,20 @@ export default createCommand({
 
             const ovr = Math.floor(p.ovr)
 
-      players.push({
-          name: `${p.name} (${ovr})`,
-          ovr,
-          id: p_id
-      })
+            players.push({
+                name: `${p.name} (${ovr})`,
+                ovr,
+                id: p_id
+            })
         }
 
         await i.respond(
-      players.sort((a, b) => a.ovr - b.ovr)
-        .filter(p => {
-            if(p.name.toLowerCase().includes(value.toLowerCase())) return p
-        })
-        .slice(0, 25)
-        .map(p => ({ name: p.name, value: p.id }))
+            players.sort((a, b) => a.ovr - b.ovr)
+                .filter(p => {
+                    if(p.name.toLowerCase().includes(value.toLowerCase())) return p
+                })
+                .slice(0, 25)
+                .map(p => ({ name: p.name, value: p.id }))
         )
     },
     async createMessageComponentInteraction({ ctx, app }) {
@@ -156,51 +156,51 @@ export default createCommand({
                 })
             }
 
-      user.reserve_players.splice(i, 1)
-      user.coins += BigInt(ctx.args[5])
+            user.reserve_players.splice(i, 1)
+            user.coins += BigInt(ctx.args[5])
 
-      ctx.db.user.reserve_players.push(ctx.args[4])
-      ctx.db.user.coins -= BigInt(ctx.args[5])
+            ctx.db.user.reserve_players.push(ctx.args[4])
+            ctx.db.user.coins -= BigInt(ctx.args[5])
 
-      if(
-        user.arena_metadata?.lineup
-          .some(line => line.player === player.id.toString())
-      ) {
-          const index = user.arena_metadata.lineup
-          .findIndex(line => line.player === player.id.toString())
+            if(
+                user.arena_metadata?.lineup
+                    .some(line => line.player === player.id.toString())
+            ) {
+                const index = user.arena_metadata.lineup
+                    .findIndex(line => line.player === player.id.toString())
 
-        user.arena_metadata.lineup.splice(index, 1)
-      }
+                user.arena_metadata.lineup.splice(index, 1)
+            }
 
-      await Promise.allSettled([
-        user.save(),
-        ctx.db.user.save(),
-        app.prisma.transaction.createMany({
-            data: [
-                {
-                    type: 'TRADE_PLAYER',
-                    player: player.id,
-                    price: BigInt(ctx.args[5]),
-                    userId: ctx.db.user.id,
-                    to: user.id
-                },
-                {
-                    type: 'TRADE_PLAYER',
-                    player: player.id,
-                    price: BigInt(ctx.args[5]),
-                    userId: user.id,
-                    to: ctx.db.user.id
-                }
-            ]
-        })
-      ])
+            await Promise.allSettled([
+                user.save(),
+                ctx.db.user.save(),
+                app.prisma.transaction.createMany({
+                    data: [
+                        {
+                            type: 'TRADE_PLAYER',
+                            player: player.id,
+                            price: BigInt(ctx.args[5]),
+                            userId: ctx.db.user.id,
+                            to: user.id
+                        },
+                        {
+                            type: 'TRADE_PLAYER',
+                            player: player.id,
+                            price: BigInt(ctx.args[5]),
+                            userId: user.id,
+                            to: ctx.db.user.id
+                        }
+                    ]
+                })
+            ])
 
-      await ctx.edit('commands.trade.res', {
-          player: `${player.name} (${player.ovr})`,
-          collection: player.collection,
-          user: ctx.interaction.user.toString(),
-          coins: BigInt(ctx.args[5]).toLocaleString()
-      })
+            await ctx.edit('commands.trade.res', {
+                player: `${player.name} (${player.ovr})`,
+                collection: player.collection,
+                user: ctx.interaction.user.toString(),
+                coins: BigInt(ctx.args[5]).toLocaleString()
+            })
         }
         else {
             await ctx.edit('commands.trade.cancelled')

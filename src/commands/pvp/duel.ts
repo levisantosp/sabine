@@ -246,9 +246,9 @@ export default createCommand({
         }
 
         const button = new ButtonBuilder()
-      .defineStyle('green')
-      .setLabel(t('commands.duel.button'))
-      .setCustomId(`accept;${id};${ctx.interaction.user.id};${mode}${map}`)
+            .defineStyle('green')
+            .setLabel(t('commands.duel.button'))
+            .setCustomId(`accept;${id};${ctx.interaction.user.id};${mode}${map}`)
 
         await ctx.reply(button.build(t('commands.duel.request', {
             author: ctx.interaction.user.toString(),

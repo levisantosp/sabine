@@ -419,7 +419,7 @@ export class SabineGuild implements Guild {
                 }
             }
 
-            else(data as any)[key] = this[key]
+            else (data as any)[key] = this[key]
         }
 
         return await prisma.guild.upsert({

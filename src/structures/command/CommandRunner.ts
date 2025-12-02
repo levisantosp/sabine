@@ -83,7 +83,7 @@ export default class CommandRunner {
         if(group) args.push(group)
         if(sub) args.push(sub)
 
-        for(const option of(interaction.options as any)._hoistedOptions) {
+        for(const option of (interaction.options as any)._hoistedOptions) {
             if(
                 typeof option.value === 'string'
                 || typeof option.value === 'number'
@@ -179,7 +179,7 @@ export default class CommandRunner {
         }
 
         command.run({ ctx, app, t, id: interaction.commandId })
-            .then(async () => {
+            .then(async() => {
                 if(process.env.DEVS.includes(interaction.user.id)) return
 
                 const cmd: string[] = [command.name]

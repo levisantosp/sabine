@@ -161,14 +161,14 @@ export default createCommand({
         }
         else if(ctx.args[0] === 'language') {
             const options = {
-                en: async () => {
+                en: async() => {
                     ctx.db.guild!.lang = 'en'
 
                     await ctx.db.guild?.save()
 
                     await ctx.reply('Now I will interact in English on this server!')
                 },
-                pt: async () => {
+                pt: async() => {
                     ctx.db.guild!.lang = 'pt'
 
                     await ctx.db.guild?.save()
@@ -429,7 +429,7 @@ export default createCommand({
                     }
                 }
 
-                catch { }
+                catch{ }
             }
 
             const channelBatches = new Map<string, any[]>()
@@ -484,7 +484,7 @@ export default createCommand({
                     }
                 }
             }
-            catch { }
+            catch{ }
 
             for(const [channelId, matchesChunk] of channelBatches.entries()) {
                 const chunkSize = 10
@@ -642,7 +642,7 @@ export default createCommand({
                     }
                 }
 
-                catch { }
+                catch{ }
             }
 
             const channelBatches = new Map<string, any[]>()
@@ -690,7 +690,7 @@ export default createCommand({
                     }
                 }
             }
-            catch { }
+            catch{ }
 
             for(const [channelId, matchesChunk] of channelBatches.entries()) {
                 const chunkSize = 10

@@ -68,9 +68,9 @@ export default createCommand({
 
         if(guildKey) {
             const button = new ButtonBuilder()
-        .defineStyle('red')
-        .setLabel(t('commands.activatekey.button'))
-        .setCustomId(`activatekey;${ctx.interaction.user.id};${key.type};${ctx.args[0]}`)
+                .defineStyle('red')
+                .setLabel(t('commands.activatekey.button'))
+                .setCustomId(`activatekey;${ctx.interaction.user.id};${key.type};${ctx.args[0]}`)
 
             await ctx.reply(button.build(t('commands.activatekey.would_like_to_continue', { key: key.type })))
         }

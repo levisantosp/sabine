@@ -92,7 +92,7 @@ export const valorantResults = new Elysia()
                     const emoji2 = emojis.find(e =>
                         e?.name === data.teams[1].name.toLowerCase()
                         || e?.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()
-                    ))?.emoji ?? emojis[0]?.emoji
+                        ))?.emoji ?? emojis[0]?.emoji
 
                     const embed = new EmbedBuilder()
                         .setAuthor({
@@ -160,7 +160,7 @@ export const valorantResults = new Elysia()
 
                     if(!user) continue
 
-                    const transaction = async () => {
+                    const transaction = async() => {
                         if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
                             user.correct_predictions += 1
 
