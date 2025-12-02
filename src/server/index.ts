@@ -10,8 +10,11 @@ import { commands } from './routes/util/commands'
 import { players } from './routes/util/players'
 import { updates } from './routes/util/updates'
 import { vote } from './routes/util/vote'
+import Logger from '../util/Logger'
+import { auth } from './auth'
 
-export const server = new Elysia()
+new Elysia()
+    .use(auth)
     .use(cors({
         origin: true,
         methods: ['POST', 'GET', 'OPTIONS'],
@@ -30,3 +33,6 @@ export const server = new Elysia()
     .use(players)
     .use(updates)
     .use(vote)
+    .listen(3001)
+
+Logger.info('HTTP server running at 3001')

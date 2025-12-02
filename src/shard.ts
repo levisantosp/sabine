@@ -1,12 +1,12 @@
 import { REST, Routes, ShardingManager } from 'discord.js'
 import Redis from 'redis'
-import { server } from './server'
 import Logger from './util/Logger'
 import EmbedBuilder from './structures/builders/EmbedBuilder'
 import Bull from 'bull'
 import type { ArenaQueue } from './listeners/clientReady'
 import { valorant_maps } from './config'
 import { prisma } from '@db'
+import './server'
 
 const redis: Redis.RedisClientType = Redis.createClient({
     url: process.env.REDIS_URL
@@ -166,10 +166,6 @@ if(keys.length) {
 }
 
 await updateRedis()
-
-server.listen(3001)
-
-Logger.info('HTTP server running at 3001')
 
 const manager = new ShardingManager('src/index.ts', {
     token: process.env.BOT_TOKEN,
