@@ -1,14 +1,18 @@
-import type { FastifyInstance } from 'fastify'
+import { Elysia } from 'elysia'
 import { prisma } from '@db'
 
-export default async function(fastify: FastifyInstance) {
-  fastify.get('/updates', async() => {
-      const updates = await prisma.update.findMany({
-          include: {
-              content: true
-          }
-      })
+export const updates = new Elysia()
+    .get(
+        '/updates',
+        async({ set }) => {
+            const updates = await prisma.update.findMany({
+                include: {
+                    content: true
+                }
+            })
 
-      return updates
-  })
-}
+            set.status = 'OK'
+
+            return updates
+        }
+    )

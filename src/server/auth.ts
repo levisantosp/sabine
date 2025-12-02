@@ -1,9 +1,10 @@
-import type { preHandlerMetaHookHandler } from 'fastify/types/hooks.js'
+import { Elysia } from 'elysia'
 
-export const auth: preHandlerMetaHookHandler = (req, res, done) => {
-    if(req.headers.authorization !== process.env.AUTH) {
-        return res.status(403).send({ error: 'Forbidden' })
-    }
+export const auth = new Elysia()
+    .onBeforeHandle({ as: 'scoped' }, ({ headers, set }) => {
+        if(headers.authorization !== process.env.AUTH) {
+            set.status = 'Unauthorized'
 
-    return done()
-}
+            return { message: 'Unauthorized' }
+        }
+    })

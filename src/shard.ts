@@ -167,11 +167,9 @@ if(keys.length) {
 
 await updateRedis()
 
-server.listen({
-    host: process.env.HOST,
-    port: process.env.PORT
-})
-    .then(() => Logger.info(`HTTP server running at ${process.env.PORT}`))
+server.listen(3001)
+
+Logger.info('HTTP server running at 3001')
 
 const manager = new ShardingManager('src/index.ts', {
     token: process.env.BOT_TOKEN,

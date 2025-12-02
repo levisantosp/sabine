@@ -1,8 +1,12 @@
-import type { FastifyInstance } from 'fastify'
 import { getPlayers } from '@sabinelab/players'
+import { Elysia } from 'elysia'
 
-export default function(fastify: FastifyInstance) {
-  fastify.get('/players', () => {
-      return getPlayers()
-  })
-}
+export const players = new Elysia()
+    .get(
+        '/players',
+        async({ set }) => {
+            set.status = 'OK'
+            
+            return getPlayers()
+        }
+    )
