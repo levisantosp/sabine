@@ -19,8 +19,6 @@
     "license": "ISC",
     "dependencies": {
         "@elysiajs/cors": "^1.4.0",
-        "@fastify/cors": "^11.1.0",
-        "@fastify/type-provider-typebox": "^6.1.0",
         "@iamtraction/google-translate": "^2.0.1",
         "@prisma/adapter-pg": "^7.0.1",
         "@prisma/client": "^7.0.1",
@@ -28,7 +26,6 @@
         "bull": "^4.16.5",
         "discord.js": "^14.25.1",
         "elysia": "^1.4.16",
-        "fastify": "^5.6.2",
         "humanize-duration": "^3.33.1",
         "moment": "^2.30.1",
         "pino": "^10.1.0",
