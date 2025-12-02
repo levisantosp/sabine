@@ -13,6 +13,7 @@ import {
 } from 'discord.js'
 import type { $Enums } from '@generated'
 import { emojis } from '../../util/emojis'
+import Logger from '../../util/Logger'
 
 const service = new Service(process.env.AUTH)
 
@@ -424,12 +425,17 @@ export default createCommand({
                 try {
                     const messages = await channel.messages.fetch({ limit: 100 })
                     const messagesIds = messages.filter(m => m.author.id === app.user?.id).map(m => m.id)
-                    if(messagesIds.length) {
+                    
+                    if(messagesIds.length === 1) {
+                        await channel.messages.delete(messagesIds[0])
+                    }
+                    else if(messagesIds.length) {
                         await channel.bulkDelete(messagesIds)
                     }
                 }
-
-                catch{ }
+                catch(e) {
+                    new Logger(app).error(e as Error)
+                }
             }
 
             const channelBatches = new Map<string, any[]>()
@@ -484,7 +490,9 @@ export default createCommand({
                     }
                 }
             }
-            catch{ }
+            catch(e) {
+                new Logger(app).error(e as Error)
+            }
 
             for(const [channelId, matchesChunk] of channelBatches.entries()) {
                 const chunkSize = 10
@@ -637,12 +645,18 @@ export default createCommand({
                 try {
                     const messages = await channel.messages.fetch({ limit: 100 })
                     const messagesIds = messages.filter(m => m.author.id === app.user?.id).map(m => m.id)
-                    if(messagesIds.length) {
+
+                    if(messagesIds.length === 1) {
+                        await channel.messages.delete(messagesIds[0])
+                    }
+                    else if(messagesIds.length) {
                         await channel.bulkDelete(messagesIds)
                     }
                 }
 
-                catch{ }
+                catch(e) {
+                    new Logger(app).error(e as Error)
+                }
             }
 
             const channelBatches = new Map<string, any[]>()
@@ -690,7 +704,9 @@ export default createCommand({
                     }
                 }
             }
-            catch{ }
+            catch(e) {
+                new Logger(app).error(e as Error)
+            }
 
             for(const [channelId, matchesChunk] of channelBatches.entries()) {
                 const chunkSize = 10

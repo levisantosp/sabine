@@ -155,7 +155,10 @@ const sendValorantMatches = async(app: App) => {
 
                     const messagesIds = messages.filter(m => m.author.id === app.user?.id).map(m => m.id)
 
-                    if(messagesIds.length) {
+                    if(messagesIds.length === 1) {
+                        await rest.delete(Routes.channelMessage(e.channel1, messagesIds[0]))
+                    }
+                    else if(messagesIds.length) {
                         await rest.post(Routes.channelBulkDelete(e.channel1), {
                             body: {
                                 messages: messagesIds
@@ -163,7 +166,9 @@ const sendValorantMatches = async(app: App) => {
                         })
                     }
                 }
-                catch{ }
+                catch(e) {
+                    new Logger(app).error(e as Error)
+                }
             }
 
             bulkDeleteThunks.push(thunk)
@@ -221,7 +226,9 @@ const sendValorantMatches = async(app: App) => {
                 }
             }
         }
-        catch{ }
+        catch(e) {
+            new Logger(app).error(e as Error)
+        }
 
         for(const [channelId, matches] of channelBatches.entries()) {
             const chunkSize = 10
@@ -517,7 +524,10 @@ const sendLolMatches = async(app: App) => {
 
                     const messagesIds = messages.filter(m => m.author.id === app.user?.id).map(m => m.id)
 
-                    if(messagesIds.length) {
+                    if(messagesIds.length === 1) {
+                        await rest.delete(Routes.channelMessage(e.channel1, messagesIds[0]))
+                    }
+                    else if(messagesIds.length) {
                         await rest.post(Routes.channelBulkDelete(e.channel1), {
                             body: {
                                 messages: messagesIds
@@ -525,7 +535,9 @@ const sendLolMatches = async(app: App) => {
                         })
                     }
                 }
-                catch{ }
+                catch(e) {
+                    new Logger(app).error(e as Error)
+                }
             }
 
             bulkDeleteThunks.push(thunk)
@@ -576,7 +588,9 @@ const sendLolMatches = async(app: App) => {
                 }
             }
         }
-        catch{ }
+        catch(e) {
+            new Logger(app).error(e as Error)
+        }
 
         for(const [channelId, matches] of channelBatches.entries()) {
             const chunkSize = 10
