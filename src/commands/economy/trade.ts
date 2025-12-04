@@ -1,217 +1,209 @@
 import { ApplicationCommandOptionType } from 'discord.js'
-import createCommand from '../../structures/command/createCommand.ts'
-import { SabineUser } from '../../database/index.ts'
-import ButtonBuilder from '../../structures/builders/ButtonBuilder.ts'
+import createCommand from '../../structures/command/createCommand'
+import { SabineUser } from '@db'
+import ButtonBuilder from '../../structures/builders/ButtonBuilder'
+import { calcPlayerPrice } from '@sabinelab/players'
 
 export default createCommand({
-  name: 'trade',
-  nameLocalizations: {
-    'pt-BR': 'negociar'
-  },
-  description: 'Trade a player',
-  descriptionLocalizations: {
-    'pt-BR': 'Negocie um jogador'
-  },
-  category: 'economy',
-  userInstall: true,
-  options: [
-    {
-      type: ApplicationCommandOptionType.User,
-      name: 'user',
-      nameLocalizations: {
-        'pt-BR': 'usuário'
-      },
-      description: 'Insert a user',
-      descriptionLocalizations: {
-        'pt-BR': 'Informe o usuário'
-      },
-      required: true
+    name: 'trade',
+    nameLocalizations: {
+        'pt-BR': 'negociar'
     },
-    {
-      type: ApplicationCommandOptionType.String,
-      name: 'player',
-      nameLocalizations: {
-        'pt-BR': 'jogador'
-      },
-      description: 'Insert the player',
-      descriptionLocalizations: {
-        'pt-BR': 'Informe o jogador'
-      },
-      autocomplete: true,
-      required: true
+    description: 'Trade a player',
+    descriptionLocalizations: {
+        'pt-BR': 'Negocie um jogador'
     },
-    {
-      type: ApplicationCommandOptionType.Integer,
-      name: 'price',
-      nameLocalizations: {
-        'pt-BR': 'preço'
-      },
-      description: 'Insert a price',
-      descriptionLocalizations: {
-        'pt-BR': 'Informe o preço'
-      },
-      required: true
-    }
-  ],
-  messageComponentInteractionTime: 5 * 60 * 1000,
-  cooldown: true,
-  async run({ ctx, t, app }) {
-    if(
-      ctx.db.user.trade_time &&
-      ctx.db.user.trade_time.getTime() > Date.now()
-    ) {
-      return await ctx.reply('commands.trade.has_been_traded', {
-        t: `<t:${(ctx.db.user.trade_time.getTime() / 1000).toFixed(0)}:R>`
-      })
-    }
-
-    const user = await SabineUser.fetch(ctx.args[0].toString())
-
-    const player = app.players.get(ctx.args[1].toString())
-
-    if(BigInt(ctx.args[2]) < 0) {
-      return await ctx.reply('commands.trade.invalid_value')
-    }
-
-    if(ctx.args[0] === ctx.interaction.user.id) {
-      return await ctx.reply('commands.trade.cannot_trade')
-    }
-
-    if(!user || user.coins < BigInt(ctx.args[2])) {
-      return await ctx.reply('commands.trade.missing_coins', {
-        coins: (BigInt(ctx.args[2]) - (!user ? 0n : user.coins)).toLocaleString(),
-        user: `<@${ctx.args[0]}>`
-      })
-    }
-
-    if(!player) {
-      return await ctx.reply('commands.trade.player_not_found')
-    }
-
-    await ctx.reply({
-      content: t('commands.trade.request', {
-        player: `${player.name} (${player.ovr})`,
-        collection: player.collection,
-        user: `<@${ctx.args[0]}>`,
-        author: ctx.interaction.user.toString(),
-        coins: BigInt(ctx.args[2]).toLocaleString()
-      }),
-      components: [
+    category: 'economy',
+    userInstall: true,
+    options: [
         {
-          type: 1,
-          components: [
-            new ButtonBuilder()
-              .defineStyle('green')
-              .setLabel(t('commands.trade.make_purchase'))
-              .setCustomId(`trade;${ctx.args[0]};buy;${ctx.interaction.user.id};${player.id};${ctx.args[2]}`),
-            new ButtonBuilder()
-              .defineStyle('red')
-              .setLabel(t('commands.trade.cancel'))
-              .setCustomId(`trade;${ctx.interaction.user.id};cancel`)
-          ]
+            type: ApplicationCommandOptionType.User,
+            name: 'user',
+            nameLocalizations: {
+                'pt-BR': 'usuário'
+            },
+            description: 'Insert a user',
+            descriptionLocalizations: {
+                'pt-BR': 'Informe o usuário'
+            },
+            required: true
+        },
+        {
+            type: ApplicationCommandOptionType.String,
+            name: 'player',
+            nameLocalizations: {
+                'pt-BR': 'jogador'
+            },
+            description: 'Insert the player',
+            descriptionLocalizations: {
+                'pt-BR': 'Informe o jogador'
+            },
+            autocomplete: true,
+            required: true
+        },
+        {
+            type: ApplicationCommandOptionType.Integer,
+            name: 'price',
+            nameLocalizations: {
+                'pt-BR': 'preço'
+            },
+            description: 'Insert a price',
+            descriptionLocalizations: {
+                'pt-BR': 'Informe o preço'
+            },
+            required: true
         }
-      ]
-    })
-  },
-  async createAutocompleteInteraction({ i, app }) {
-    const user = (await SabineUser.fetch(i.user.id)) ?? new SabineUser(i.user.id)
+    ],
+    messageComponentInteractionTime: 5 * 60 * 1000,
+    cooldown: true,
+    async run({ ctx, app }) {
+        const user = await SabineUser.fetch(ctx.args[0].toString())
 
-    const players: Array<{ name: string, ovr: number, id: string }> = []
+        const player = app.players.get(ctx.args[1].toString())
 
-    const value = i.options.getString('player', true)
+        if(!player) {
+            return await ctx.reply('commands.trade.player_not_found')
+        }
 
-    for(const p_id of user.reserve_players) {
-      const p = app.players.get(p_id)
+        const price = calcPlayerPrice(player, true)
 
-      if(!p) continue
+        if(BigInt(ctx.args[2]) < price) {
+            return await ctx.reply('commands.trade.invalid_value', { value: price.toLocaleString() })
+        }
 
-      const ovr = Math.floor(p.ovr)
+        if(ctx.args[0] === ctx.interaction.user.id) {
+            return await ctx.reply('commands.trade.cannot_trade')
+        }
 
-      players.push({
-        name: `${p.name} (${ovr})`,
-        ovr,
-        id: p_id
-      })
-    }
+        if(!user || user.coins < BigInt(ctx.args[2])) {
+            return await ctx.reply('commands.trade.missing_coins', {
+                coins: (BigInt(ctx.args[2]) - (!user ? 0n : user.coins)).toLocaleString(),
+                user: `<@${ctx.args[0]}>`
+            })
+        }
 
-    await i.respond(
-      players.sort((a, b) => a.ovr - b.ovr)
-        .filter(p => {
-          if(p.name.toLowerCase().includes(value.toLowerCase())) return p
+        await ctx.reply({
+            content: ctx.t('commands.trade.request', {
+                player: `${player.name} (${player.ovr})`,
+                collection: player.collection,
+                user: `<@${ctx.args[0]}>`,
+                author: ctx.interaction.user.toString(),
+                coins: BigInt(ctx.args[2]).toLocaleString()
+            }),
+            components: [
+                {
+                    type: 1,
+                    components: [
+                        new ButtonBuilder()
+                            .defineStyle('green')
+                            .setLabel(ctx.t('commands.trade.make_purchase'))
+                            .setCustomId(`trade;${ctx.args[0]};buy;${ctx.interaction.user.id};${player.id};${ctx.args[2]}`),
+                        new ButtonBuilder()
+                            .defineStyle('red')
+                            .setLabel(ctx.t('commands.trade.cancel'))
+                            .setCustomId(`trade;${ctx.interaction.user.id};cancel`)
+                    ]
+                }
+            ]
         })
-        .slice(0, 25)
-        .map(p => ({ name: p.name, value: p.id }))
-    )
-  },
-  async createMessageComponentInteraction({ ctx, app }) {
-    if(
-      ctx.db.user.trade_time &&
-      ctx.db.user.trade_time.getTime() > Date.now()
-    ) {
-      ctx.setFlags(64)
+    },
+    async createAutocompleteInteraction({ i, app }) {
+        const user = (await SabineUser.fetch(i.user.id)) ?? new SabineUser(i.user.id)
 
-      return await ctx.reply('commands.trade.has_been_traded', {
-        t: `<t:${(ctx.db.user.trade_time.getTime() / 1000).toFixed(0)}:R>`
-      })
+        const players: Array<{ name: string, ovr: number, id: string }> = []
+
+        const value = i.options.getString('player', true)
+
+        for(const p_id of user.reserve_players) {
+            const p = app.players.get(p_id)
+
+            if(!p) continue
+
+            const ovr = Math.floor(p.ovr)
+
+            players.push({
+                name: `${p.name} (${ovr})`,
+                ovr,
+                id: p_id
+            })
+        }
+
+        await i.respond(
+            players.sort((a, b) => a.ovr - b.ovr)
+                .filter(p => {
+                    if(p.name.toLowerCase().includes(value.toLowerCase())) return p
+                })
+                .slice(0, 25)
+                .map(p => ({ name: p.name, value: p.id }))
+        )
+    },
+    async createMessageComponentInteraction({ ctx, app }) {
+        if(ctx.args[2] === 'buy') {
+            const user = await SabineUser.fetch(ctx.args[3])
+
+            const player = app.players.get(ctx.args[4])
+
+            if(!user || !player) return
+
+            const i = user.reserve_players.findIndex(p => p === ctx.args[4])
+
+            if(i === -1 || i === undefined) return
+
+            if(ctx.db.user.coins < BigInt(ctx.args[5])) {
+                return await ctx.edit('commands.trade.missing_coins', {
+                    coins: (BigInt(ctx.args[5]) - ctx.db.user.coins).toLocaleString(),
+                    user: `<@${ctx.interaction.user}>`
+                })
+            }
+
+            user.reserve_players.splice(i, 1)
+            user.coins += BigInt(ctx.args[5])
+
+            ctx.db.user.reserve_players.push(ctx.args[4])
+            ctx.db.user.coins -= BigInt(ctx.args[5])
+
+            if(
+                user.arena_metadata?.lineup
+                    .some(line => line.player === player.id.toString())
+            ) {
+                const index = user.arena_metadata.lineup
+                    .findIndex(line => line.player === player.id.toString())
+
+                user.arena_metadata.lineup.splice(index, 1)
+            }
+
+            await Promise.allSettled([
+                user.save(),
+                ctx.db.user.save(),
+                app.prisma.transaction.createMany({
+                    data: [
+                        {
+                            type: 'TRADE_PLAYER',
+                            player: player.id,
+                            price: BigInt(ctx.args[5]),
+                            userId: ctx.db.user.id,
+                            to: user.id
+                        },
+                        {
+                            type: 'TRADE_PLAYER',
+                            player: player.id,
+                            price: BigInt(ctx.args[5]),
+                            userId: user.id,
+                            to: ctx.db.user.id
+                        }
+                    ]
+                })
+            ])
+
+            await ctx.edit('commands.trade.res', {
+                player: `${player.name} (${player.ovr})`,
+                collection: player.collection,
+                user: ctx.interaction.user.toString(),
+                coins: BigInt(ctx.args[5]).toLocaleString()
+            })
+        }
+        else {
+            await ctx.edit('commands.trade.cancelled')
+        }
     }
-
-    if(ctx.args[2] === 'buy') {
-      const user = await SabineUser.fetch(ctx.args[3])
-
-      const player = app.players.get(ctx.args[4])
-
-      if(!user || !player) return
-
-      const i = user.reserve_players.findIndex(p => p === ctx.args[4])
-
-      if(i === -1 || i === undefined) return
-
-      if(ctx.db.user.coins < BigInt(ctx.args[5])) {
-        return await ctx.edit('commands.trade.missing_coins', {
-          coins: (BigInt(ctx.args[5]) - ctx.db.user.coins).toLocaleString(),
-          user: `<@${ctx.interaction.user}>`
-        })
-      }
-
-      user.reserve_players.splice(i, 1)
-      user.coins += BigInt(ctx.args[5])
-      user.trade_time = new Date(Date.now() + (60 * 60 * 1000))
-
-      ctx.db.user.reserve_players.push(ctx.args[4])
-      ctx.db.user.coins -= BigInt(ctx.args[5])
-      ctx.db.user.trade_time = new Date(Date.now() + (60 * 60 * 1000))
-
-      await app.prisma.transaction.createMany({
-        data: [
-          {
-            type: 'TRADE_PLAYER',
-            player: player.id,
-            price: BigInt(ctx.args[5]),
-            userId: ctx.db.user.id,
-            to: user.id
-          },
-          {
-            type: 'TRADE_PLAYER',
-            player: player.id,
-            price: BigInt(ctx.args[5]),
-            userId: user.id,
-            to: ctx.db.user.id
-          }
-        ]
-      })
-
-      await user.save()
-      await ctx.db.user.save()
-
-      await ctx.edit('commands.trade.res', {
-        player: `${player.name} (${player.ovr})`,
-        collection: player.collection,
-        user: ctx.interaction.user.toString(),
-        coins: BigInt(ctx.args[5]).toLocaleString()
-      })
-    }
-    else {
-      await ctx.edit('commands.trade.cancelled')
-    }
-  }
 })

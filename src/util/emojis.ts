@@ -1,7 +1,7 @@
 export type Emoji = {
-  name?: string
-  aliases?: string[]
-  emoji: string
+    name?: string
+    aliases?: string[]
+    emoji: string
 }
 
 export const emojis: Emoji[] = [

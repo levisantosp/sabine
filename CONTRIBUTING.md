@@ -8,8 +8,8 @@ Sabine is an open-source project dedicated to providing a top-tier esports cover
 
 ### Reporting Bugs
 
-* Ensure the bug hasn't already been reported by searching on GitHub under [Issues](https://github.com/levisantosp/sabine/issues).
-* If you're unable to find an open issue addressing the problem, [open a new one](https://github.com/levisantosp/sabine/issues/new). Be sure to include a title and clear description, as much relevant information as possible, and a code sample or an explicit set of steps to reproduce the issue.
+* Ensure the bug hasn't already been reported by searching on GitHub under [Issues](https://github.com/sabinelab/sabine/issues).
+* If you're unable to find an open issue addressing the problem, [open a new one](https://github.com/sabinelab/sabine/issues/new). Be sure to include a title and clear description, as much relevant information as possible, and a code sample or an explicit set of steps to reproduce the issue.
 
 ### Suggesting Enhancements
 

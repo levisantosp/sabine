@@ -16,7 +16,9 @@ declare global {
       DEVS: string[]
       HOST: string
       REDIS_URL: string
+      NODE_ENV?: 'production' | 'development'
     }
   }
 }
+
 export {}

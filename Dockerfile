@@ -1,12 +1,13 @@
-FROM oven/bun:1-alpine
+FROM oven/bun:1.3.3-alpine
 
 WORKDIR /app
 
-COPY package*.json bun.lock ./
+COPY package.json bun.lock /app/
 COPY . .
 
 RUN bun i --frozen-lockfile
-RUN bun compile
+RUN bun gen
 RUN bun push
+RUN bun compile
 
 CMD ["bun", "start"]
