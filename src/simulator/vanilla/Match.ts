@@ -151,8 +151,8 @@ export default class Match {
 
                 if(
                     (p.role !== 'flex' && p.agent.role !== p.role) &&
-          (p.role !== 'sentinel' && p.agent.name !== 'Viper') &&
-          (p.role !== 'duelist') && p.agent.name === 'Chamber'
+                    (p.role !== 'sentinel' && p.agent.name !== 'Viper') &&
+                    (p.role !== 'duelist') && p.agent.name === 'Chamber'
                 ) {
                     p.aim *= 0.85
                     p.HS *= 0.85
@@ -223,7 +223,7 @@ export default class Match {
 
                 if(
                     !valorant_maps.filter(m => m.name === this.map)[0].meta_agents
-            .includes(p.agent.name as typeof valorant_maps[number]['meta_agents'][number])
+                        .includes(p.agent.name as typeof valorant_maps[number]['meta_agents'][number])
                 ) {
                     p.aim *= 0.95
                     p.HS *= 0.95
@@ -296,29 +296,29 @@ export default class Match {
         this.content = content
 
         const embed = new EmbedBuilder()
-      .setTitle(this.t(`simulator.mode.${this.mode}`))
-      .setDesc(
-          `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n`
-        +
-        this.content
-      )
-      .setImage(this.mapImage)
-      .setFields(
-          {
-              name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
-              value: this.teams[0].roster
-            .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-            .join('\n'),
-              inline: true
-          },
-          {
-              name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
-              value: this.teams[1].roster
-            .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
-            .join('\n'),
-              inline: true
-          }
-      )
+            .setTitle(this.t(`simulator.mode.${this.mode}`))
+            .setDesc(
+                `### ${this.teams[0].name} ${this.rounds.filter(r => r.winning_team === 0).length} <:versus:1349105624180330516> ${this.rounds.filter(r => r.winning_team === 1).length} ${this.teams[1].name}\n`
+                +
+                this.content
+            )
+            .setImage(this.mapImage)
+            .setFields(
+                {
+                    name: `${this.teams[0].name} (${this.t(`simulator.sides.${this.teams[0].side}`)})`,
+                    value: this.teams[0].roster
+                        .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+                        .join('\n'),
+                    inline: true
+                },
+                {
+                    name: `${this.teams[1].name} (${this.t(`simulator.sides.${this.teams[1].side}`)})`,
+                    value: this.teams[1].roster
+                        .map(player => `${valorant_agents.find(a => a.name === player.agent.name)!.emoji} ${player.name} (${parseInt(player.ovr.toString())}) — \`${player.kills}/${player.deaths}\``)
+                        .join('\n'),
+                    inline: true
+                }
+            )
 
         await this.ctx.edit(embed.build(this.mentions) as MessageEditOptions)
 

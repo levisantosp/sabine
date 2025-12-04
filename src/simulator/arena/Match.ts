@@ -119,8 +119,8 @@ export default class Match {
 
                 if(
                     (p.role !== 'flex' && p.agent.role !== p.role) &&
-          (p.role !== 'sentinel' && p.agent.name !== 'Viper') &&
-          (p.role !== 'duelist') && p.agent.name === 'Chamber'
+                    (p.role !== 'sentinel' && p.agent.name !== 'Viper') &&
+                    (p.role !== 'duelist') && p.agent.name === 'Chamber'
                 ) {
                     p.aim *= 0.85
                     p.HS *= 0.85
@@ -191,7 +191,7 @@ export default class Match {
 
                 if(
                     !valorant_maps.filter(m => m.name === this.map)[0].meta_agents
-            .includes(p.agent.name as typeof valorant_maps[number]['meta_agents'][number])
+                        .includes(p.agent.name as typeof valorant_maps[number]['meta_agents'][number])
                 ) {
                     p.aim *= 0.95
                     p.HS *= 0.95
