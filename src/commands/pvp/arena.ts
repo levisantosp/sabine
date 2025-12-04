@@ -118,13 +118,8 @@ export default createCommand({
                 }
 
                 await Promise.all([
-                    ctx.app.redis.set(`arena:in_queue:${ctx.db.user.id}`, JSON.stringify(payload), {
-                        expiration: {
-                            type: 'EX',
-                            value: 1800
-                        }
-                    }),
-                    ctx.app.redis.lPush('arena:queue', JSON.stringify(payload))
+                    ctx.app.redis.set(`arena:in_queue:${ctx.db.user.id}`, JSON.stringify(payload), 'EX', 1800),
+                    ctx.app.redis.lpush('arena:queue', JSON.stringify(payload))
                 ])
 
                 await ctx.reply('commands.arena.joined')
@@ -138,7 +133,7 @@ export default createCommand({
 
                 await Promise.all([
                     ctx.app.redis.del(`arena:in_queue:${ctx.db.user.id}`),
-                    ctx.app.redis.lRem('arena:queue', 0, payload)
+                    ctx.app.redis.lrem('arena:queue', 0, payload)
                 ])
 
                 await ctx.reply('commands.arena.left')
@@ -380,12 +375,7 @@ export default createCommand({
                     content: t('commands.arena.select_agent', { player: player.name }),
                     components: [row1, row2, row3, row4]
                 }),
-                ctx.app.redis.set(`lineup:select:${ctx.db.user.id}`, ctx.interaction.message.id, {
-                    expiration: {
-                        type: 'EX',
-                        value: 300
-                    }
-                })
+                ctx.app.redis.set(`lineup:select:${ctx.db.user.id}`, ctx.interaction.message.id, 'EX', 300)
             ])
         }
         else if(ctx.args[2] === 'remove') {
@@ -557,6 +547,7 @@ export default createCommand({
                         role: agent.role
                     }
                 })
+                ctx.db.user.arena_metadata.map = (await ctx.app.redis.get('arena:map'))!
             }
 
             await ctx.db.user.save()

@@ -1,5 +1,4 @@
 import { REST, Routes, ShardingManager } from 'discord.js'
-import Redis from 'redis'
 import Logger from './util/Logger'
 import EmbedBuilder from './structures/builders/EmbedBuilder'
 import Bull from 'bull'
@@ -8,13 +7,7 @@ import { valorant_maps } from './config'
 import { prisma } from '@db'
 import './server'
 
-const redis: Redis.RedisClientType = Redis.createClient({
-    url: process.env.REDIS_URL
-})
-
-await redis.connect()
-
-const currentMap = await redis.get('arena:map')
+const currentMap = await Bun.redis.get('arena:map')
 const mapIndex = valorant_maps.findIndex(m => m.name === currentMap)
 const maps = valorant_maps.filter(m => m.current_map_pool).map(m => m.name)
 
@@ -24,13 +17,13 @@ if(mapIndex >= 0) {
 
 const map = maps[Math.floor(Math.random() * maps.length)]
 
-if(!currentMap) await redis.set('arena:map', map)
+if(!currentMap) await Bun.redis.set('arena:map', map)
 
 const arenaMatchQueue = new Bull<ArenaQueue>('arena', { redis: process.env.REDIS_URL })
 const changeMapQueue = new Bull('arena:map', { redis: process.env.REDIS_URL })
 
 changeMapQueue.process('arena:map', async() => {
-    const currentMap = await redis.get('arena:map')
+    const currentMap = await Bun.redis.get('arena:map')
     const mapIndex = valorant_maps.findIndex(m => m.name === currentMap)
     const maps = valorant_maps.filter(m => m.current_map_pool).map(m => m.name)
 
@@ -40,20 +33,20 @@ changeMapQueue.process('arena:map', async() => {
 
     const map = maps[Math.floor(Math.random() * maps.length)]
 
-    await redis.set('arena:map', map)
+    await Bun.redis.set('arena:map', map)
 })
 
 const processArenaQueue = async() => {
     try {
-        const queueLength = await redis.lLen('arena:queue')
+        const queueLength = await Bun.redis.llen('arena:queue')
 
         if(queueLength < 2) return
 
-        const payload1 = await redis.rPop('arena:queue')
-        const payload2 = await redis.rPop('arena:queue')
+        const payload1 = await Bun.redis.rpop('arena:queue')
+        const payload2 = await Bun.redis.rpop('arena:queue')
 
         if(!payload1 || !payload2) {
-            if(payload1) await redis.lPush('arena:queue', payload1)
+            if(payload1) await Bun.redis.lpush('arena:queue', payload1)
 
             return
         }
@@ -61,29 +54,29 @@ const processArenaQueue = async() => {
         const parsedData1 = JSON.parse(payload1)
         const parsedData2 = JSON.parse(payload2)
 
-        const p1InQueue = await redis.get(`arena:in_queue:${parsedData1.userId}`)
-        const p2InQueue = await redis.get(`arena:in_queue:${parsedData2.userId}`)
+        const p1InQueue = await Bun.redis.get(`arena:in_queue:${parsedData1.userId}`)
+        const p2InQueue = await Bun.redis.get(`arena:in_queue:${parsedData2.userId}`)
 
         if(!p1InQueue) {
             if(p2InQueue) {
-                await redis.lPush('arena:queue', payload2)
+                await Bun.redis.lpush('arena:queue', payload2)
             }
 
-            return await redis.del(`arena:in_queue:${parsedData1.userId}`)
+            return await Bun.redis.del(`arena:in_queue:${parsedData1.userId}`)
         }
 
         if(!p2InQueue) {
             if(p1InQueue) {
-                await redis.lPush('arena:queue', payload1)
+                await Bun.redis.lpush('arena:queue', payload1)
             }
 
-            return await redis.del(`arena:in_queue:${parsedData2.userId}`)
+            return await Bun.redis.del(`arena:in_queue:${parsedData2.userId}`)
         }
 
-        await redis.del([
+        await Bun.redis.del(
             `arena:in_queue:${parsedData1.userId}`,
             `arena:in_queue:${parsedData2.userId}`
-        ])
+        )
 
         await arenaMatchQueue.add('arena', { parsedData1, parsedData2 })
 
@@ -100,9 +93,9 @@ const updateRedis = async() => {
     const users = await prisma.user.findMany()
     const blacklist = await prisma.blacklist.findMany()
 
-    await redis.set('blacklist', JSON.stringify(blacklist))
+    await Bun.redis.set('blacklist', JSON.stringify(blacklist))
 
-    await redis.set(
+    await Bun.redis.set(
         'leaderboard:coins',
         JSON.stringify(
             {
@@ -117,7 +110,7 @@ const updateRedis = async() => {
         )
     )
 
-    await redis.set(
+    await Bun.redis.set(
         'leaderboard:predictions',
         JSON.stringify(
             {
@@ -131,7 +124,7 @@ const updateRedis = async() => {
         )
     )
 
-    await redis.set(
+    await Bun.redis.set(
         'leaderboard:rating',
         JSON.stringify(
             {
@@ -152,17 +145,24 @@ const patterns = ['*leaderboard:*', '*agent_selection:*', '*match:*']
 const keysToDelete = new Set<string>()
 
 for(const pattern of patterns) {
-    for await (const keys of redis.scanIterator({ MATCH: pattern, COUNT: 100 })) {
+    let cursor = '0'
+
+    do {
+        const [next, keys] = await Bun.redis.scan(cursor, 'MATCH', pattern, 'COUNT', 100)
+
         for(const key of keys) {
             keysToDelete.add(key)
         }
+
+        cursor = next
     }
+    while(cursor !== '0')
 }
 
 const keys = [...keysToDelete]
 
 if(keys.length) {
-    await redis.del(keys)
+    await Bun.redis.del(...keys)
 }
 
 await updateRedis()

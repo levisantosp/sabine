@@ -170,12 +170,7 @@ export default class CommandRunner {
                 })
             }
 
-            await app.redis.set(`cooldown:${interaction.user.id}`, Date.now() + 5000, {
-                expiration: {
-                    type: 'EX',
-                    value: 5
-                }
-            })
+            await app.redis.set(`cooldown:${interaction.user.id}`, (Date.now() + 5000).toString(), 'EX', 5)
         }
 
         command.run({ ctx, app, t, id: interaction.commandId })

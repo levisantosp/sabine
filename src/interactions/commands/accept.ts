@@ -164,11 +164,6 @@ export default createComponentInteraction({
                 image: map.image,
                 mode: ctx.args[3] === 'tournament' ? 'tournament' : ctx.args.slice(3).join(':')
             }
-        ), {
-            expiration: {
-                type: 'EX',
-                value: 300
-            }
-        })
+        ), 'EX', 300)
     }
 })

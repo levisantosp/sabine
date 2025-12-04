@@ -48,12 +48,7 @@ export default createComponentInteraction({
             }
         }
 
-        await app.redis.set(key, JSON.stringify(data), {
-            expiration: {
-                type: 'EX',
-                value: 600
-            }
-        })
+        await app.redis.set(key, JSON.stringify(data), 'EX', 600)
 
         data = JSON.parse((await app.redis.get(key))!)
 
@@ -230,8 +225,8 @@ export default createComponentInteraction({
 
                 try {
                     while(!match.finished) {
-                        await app.redis.set(`match:${ctx.db.user.id}`, 1)
-                        await app.redis.set(`match:${user.id}`, 1)
+                        await app.redis.set(`match:${ctx.db.user.id}`, '1')
+                        await app.redis.set(`match:${user.id}`, '1')
 
                         await match.wait(2500)
 

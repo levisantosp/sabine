@@ -3,7 +3,6 @@ import { readdirSync } from 'node:fs'
 import path from 'node:path'
 import type { Command } from '../command/createCommand'
 import { fileURLToPath } from 'node:url'
-import Redis from 'redis'
 import Logger from '../../util/Logger'
 import type { CreateInteractionOptions } from '../interaction/createComponentInteraction'
 import type { CreateModalSubmitInteractionOptions } from '../interaction/createModalSubmitInteraction'
@@ -24,10 +23,6 @@ type Reminder = {
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-const redis: Redis.RedisClientType = Redis.createClient({
-    url: process.env.REDIS_URL
-})
-
 const queue = new Queue<Reminder>('reminder', {
     redis: process.env.REDIS_URL
 })
@@ -37,14 +32,14 @@ const rest = new Discord.REST().setToken(process.env.BOT_TOKEN)
 export default class App extends Discord.Client {
     public commands: Map<string, Command> = new Map()
     public prisma!: typeof prisma
-    public redis: typeof redis
+    public redis: typeof Bun.redis
     public queue: typeof queue
     public interactions: Map<string, CreateInteractionOptions & CreateModalSubmitInteractionOptions> = new Map()
     public players: Map<string, Player> = new Map()
 
     public constructor(options: Discord.ClientOptions) {
         super(options)
-        this.redis = redis
+        this.redis = Bun.redis
         this.queue = queue
     }
 
