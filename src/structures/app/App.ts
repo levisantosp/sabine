@@ -62,7 +62,7 @@ export default class App extends Discord.Client {
                 const command: Command = (await import(`../../commands/${folder}/${file}`)).default
 
                 if(this.commands.get(command.name)) {
-                    Logger.warn(`There is already an interaction named '${command.name}'`)
+                    Logger.warn(`There is already a command named '${command.name}'`)
                 }
 
                 this.commands.set(command.name, command)
