@@ -1,6 +1,5 @@
-import { PrismaClient } from "@prisma/client"
+import { prisma } from '../src/database'
 
-const prisma = new PrismaClient()
 export default async function() {
   await prisma.user.updateMany({
     data: {
