@@ -8,141 +8,141 @@ import type { CreateInteractionOptions } from '../interaction/createComponentInt
 import type { CreateModalSubmitInteractionOptions } from '../interaction/createModalSubmitInteraction'
 import Queue from 'bull'
 import {
-    calcPlayerPrice,
-    getPlayers,
-    type Player
+  calcPlayerPrice,
+  getPlayers,
+  type Player
 } from '@sabinelab/players'
 import type { Listener } from './createListener'
 import { prisma } from '@db'
 
 type Reminder = {
-    user: string
-    channel: string
+  user: string
+  channel: string
 }
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const queue = new Queue<Reminder>('reminder', {
-    redis: process.env.REDIS_URL
+  redis: process.env.REDIS_URL
 })
 
 const rest = new Discord.REST().setToken(process.env.BOT_TOKEN)
 
 export default class App extends Discord.Client {
-    public commands: Map<string, Command> = new Map()
-    public prisma!: typeof prisma
-    public redis: typeof Bun.redis
-    public queue: typeof queue
-    public interactions: Map<string, CreateInteractionOptions & CreateModalSubmitInteractionOptions> = new Map()
-    public players: Map<string, Player> = new Map()
+  public commands: Map<string, Command> = new Map()
+  public prisma!: typeof prisma
+  public redis: typeof Bun.redis
+  public queue: typeof queue
+  public interactions: Map<string, CreateInteractionOptions & CreateModalSubmitInteractionOptions> = new Map()
+  public players: Map<string, Player> = new Map()
 
-    public constructor(options: Discord.ClientOptions) {
-        super(options)
-        this.redis = Bun.redis
-        this.queue = queue
+  public constructor(options: Discord.ClientOptions) {
+    super(options)
+    this.redis = Bun.redis
+    this.queue = queue
+  }
+
+  public async load() {
+    for(const file of readdirSync(path.resolve(__dirname, '../../listeners'))) {
+      const listener: Listener = (await import(`../../listeners/${file}`)).default
+
+      if(listener.name === 'ready') this.once('ready', () => listener.run(this).catch((e: Error) => new Logger(this).error(e)))
+
+      else this.on(listener.name, (...args) => listener.run(this, ...args).catch((e: Error) => new Logger(this).error(e)))
     }
 
-    public async load() {
-        for(const file of readdirSync(path.resolve(__dirname, '../../listeners'))) {
-            const listener: Listener = (await import(`../../listeners/${file}`)).default
+    for(const folder of readdirSync(path.resolve(__dirname, '../../commands'))) {
+      for(const file of readdirSync(path.resolve(__dirname, `../../commands/${folder}`))) {
+        const command: Command = (await import(`../../commands/${folder}/${file}`)).default
 
-            if(listener.name === 'ready') this.once('ready', () => listener.run(this).catch((e: Error) => new Logger(this).error(e)))
-
-            else this.on(listener.name, (...args) => listener.run(this, ...args).catch((e: Error) => new Logger(this).error(e)))
+        if(this.commands.get(command.name)) {
+          Logger.warn(`There is already a command named '${command.name}'`)
         }
 
-        for(const folder of readdirSync(path.resolve(__dirname, '../../commands'))) {
-            for(const file of readdirSync(path.resolve(__dirname, `../../commands/${folder}`))) {
-                const command: Command = (await import(`../../commands/${folder}/${file}`)).default
-
-                if(this.commands.get(command.name)) {
-                    Logger.warn(`There is already a command named '${command.name}'`)
-                }
-
-                this.commands.set(command.name, command)
-            }
-        }
-
-        for(const folder of readdirSync(path.resolve(__dirname, '../../interactions'))) {
-            for(const file of readdirSync(path.resolve(__dirname, `../../interactions/${folder}`))) {
-                const interaction = (await import(`../../interactions/${folder}/${file}`)).default
-
-                if(this.interactions.get(interaction.name)) {
-                    Logger.warn(`There is already an interaction named '${interaction.name}'`)
-                }
-
-                this.interactions.set(interaction.name, interaction)
-            }
-        }
+        this.commands.set(command.name, command)
+      }
     }
 
-    public async connect() {
-        this.prisma = prisma
+    for(const folder of readdirSync(path.resolve(__dirname, '../../interactions'))) {
+      for(const file of readdirSync(path.resolve(__dirname, `../../interactions/${folder}`))) {
+        const interaction = (await import(`../../interactions/${folder}/${file}`)).default
 
-        for(const player of getPlayers()) {
-            this.players.set(player.id.toString(), {
-                ...player,
-                price: calcPlayerPrice(player)
-            })
+        if(this.interactions.get(interaction.name)) {
+          Logger.warn(`There is already an interaction named '${interaction.name}'`)
         }
 
-        await this.load()
-
-        await super.login(process.env.BOT_TOKEN)
+        this.interactions.set(interaction.name, interaction)
+      }
     }
-    public async postCommands() {
-        const commands: Discord.ApplicationCommandData[] = []
+  }
 
-        this.commands.forEach(cmd => {
-            const integrationTypes = [
-                Discord.ApplicationIntegrationType.GuildInstall
-            ]
+  public async connect() {
+    this.prisma = prisma
 
-            const contexts = [
-                Discord.InteractionContextType.Guild
-            ]
-
-            if(cmd.userInstall) {
-                integrationTypes.push(Discord.ApplicationIntegrationType.UserInstall)
-                contexts.push(
-                    Discord.InteractionContextType.BotDM,
-                    Discord.InteractionContextType.PrivateChannel
-                )
-            }
-
-            commands.push({
-                name: cmd.name,
-                nameLocalizations: cmd.nameLocalizations,
-                description: cmd.description,
-                descriptionLocalizations: cmd.descriptionLocalizations,
-                options: cmd.options,
-                type: 1,
-                integrationTypes,
-                contexts
-            })
-        })
-
-        await rest.put(Discord.Routes.applicationCommands(this.user!.id), {
-            body: commands
-        })
+    for(const player of getPlayers()) {
+      this.players.set(player.id.toString(), {
+        ...player,
+        price: calcPlayerPrice(player)
+      })
     }
 
-    public async getUser(id: string) {
-        let user = this.users.cache.get(id)
+    await this.load()
 
-        if(!user) {
-            user = await this.users.fetch(id, { cache: true })
-        }
+    await super.login(process.env.BOT_TOKEN)
+  }
+  public async postCommands() {
+    const commands: Discord.ApplicationCommandData[] = []
 
-        return user
+    this.commands.forEach(cmd => {
+      const integrationTypes = [
+        Discord.ApplicationIntegrationType.GuildInstall
+      ]
+
+      const contexts = [
+        Discord.InteractionContextType.Guild
+      ]
+
+      if(cmd.userInstall) {
+        integrationTypes.push(Discord.ApplicationIntegrationType.UserInstall)
+        contexts.push(
+          Discord.InteractionContextType.BotDM,
+          Discord.InteractionContextType.PrivateChannel
+        )
+      }
+
+      commands.push({
+        name: cmd.name,
+        nameLocalizations: cmd.nameLocalizations,
+        description: cmd.description,
+        descriptionLocalizations: cmd.descriptionLocalizations,
+        options: cmd.options,
+        type: 1,
+        integrationTypes,
+        contexts
+      })
+    })
+
+    await rest.put(Discord.Routes.applicationCommands(this.user!.id), {
+      body: commands
+    })
+  }
+
+  public async getUser(id: string) {
+    let user = this.users.cache.get(id)
+
+    if(!user) {
+      user = await this.users.fetch(id, { cache: true })
     }
+
+    return user
+  }
 }
 
 export const app = new App({
-    intents: ['GuildMessages', 'Guilds', 'GuildMembers'],
-    allowedMentions: {
-        repliedUser: true,
-        parse: ['users', 'roles']
-    }
+  intents: ['GuildMessages', 'Guilds', 'GuildMembers'],
+  allowedMentions: {
+    repliedUser: true,
+    parse: ['users', 'roles']
+  }
 })

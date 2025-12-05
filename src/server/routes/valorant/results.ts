@@ -9,252 +9,256 @@ import { SabineUser } from '@db'
 import * as Discord from 'discord.js'
 
 const tournaments: { [key: string]: RegExp[] } = {
-    'Valorant Champions Tour': [
-        /valorant champions/,
-        /valorant masters/,
-        /vct \d{4}/
-    ],
-    'Valorant Challengers League': [
-        /challengers \d{4}/
-    ],
-    'Valorant Game Changers': [
-        /game changers \d{4}/
-    ]
+  'Valorant Champions Tour': [
+    /valorant champions/,
+    /valorant masters/,
+    /vct \d{4}/
+  ],
+  'Valorant Challengers League': [
+    /challengers \d{4}/
+  ],
+  'Valorant Game Changers': [
+    /game changers \d{4}/
+  ]
 }
 
 const rest = new Discord.REST().setToken(process.env.BOT_TOKEN)
 
 export const valorantResults = new Elysia()
-    .post(
-        '/webhooks/results/valorant',
-        async(req) => {
-            const guilds = await app.prisma.guild.findMany({
-                where: {
-                    events: {
-                        some: {
-                            type: 'valorant'
-                        }
-                    }
-                },
-                include: {
-                    events: {
-                        where: {
-                            type: 'valorant'
-                        }
-                    },
-                    key: true
-                }
-            })
-
-            const preds = await app.prisma.prediction.findMany({
-                where: {
-                    game: 'valorant'
-                },
-                include: {
-                    teams: true
-                }
-            })
-
-            if(!guilds.length) return
-
-            const messages: Promise<unknown>[] = []
-
-            for(
-                const data of req.body
-                    .map(body => ({
-                        ...body,
-                        when: new Date(body.when)
-                    }))
-            ) {
-                for(const guild of guilds) {
-                    const event = guild.events.find(e =>
-                        e.name === data.tournament.name ||
-                        tournaments[e.name]?.some(regex =>
-                            regex.test(data.tournament.name.replace(/\s+/g, ' ').trim().toLowerCase())
-                        )
-                    )
-
-                    if(!event) continue
-
-                    if(
-                        !guild.events.some(e => e.name === data.tournament.name) &&
-                        !guild.events.some(e =>
-                            tournaments[e.name]?.some(regex =>
-                                regex.test(data.tournament.name.replace(/\s+/g, ' ').trim().toLowerCase())
-                            )
-                        )
-                    ) continue
-
-                    const emoji1 = emojis.find(e =>
-                        e?.name === data.teams[0].name.toLowerCase()
-                        || e?.aliases?.find(alias => alias === data.teams[0].name.toLowerCase())
-                    )?.emoji ?? emojis[0]?.emoji
-                    const emoji2 = emojis.find(e =>
-                        e?.name === data.teams[1].name.toLowerCase()
-                        || e?.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()
-                        ))?.emoji ?? emojis[0]?.emoji
-
-                    const embed = new EmbedBuilder()
-                        .setAuthor({
-                            name: data.tournament.name,
-                            iconURL: data.tournament.image
-                        })
-                        .setField(
-                            `${emoji1} ${data.teams[0].name} \`${data.teams[0].score}\` <:versus:1349105624180330516> \`${data.teams[1].score}\` ${data.teams[1].name} ${emoji2}`,
-                            `<t:${data.when.getTime() / 1000}:F> | <t:${data.when.getTime() / 1000}:R>`,
-                            true
-                        )
-                        .setFooter({ text: data.stage })
-
-                    messages.push(
-                        rest.post(Discord.Routes.channelMessages(event.channel2), {
-                            body: {
-                                embeds: [embed.toJSON()],
-                                components: [
-                                    {
-                                        type: 1,
-                                        components: [
-                                            new ButtonBuilder()
-                                                .setLabel(locales(guild.lang, 'helper.stats'))
-                                                .defineStyle('link')
-                                                .setURL(`https://vlr.gg/${data.id}`),
-                                            new ButtonBuilder()
-                                                .setLabel(locales(guild.lang, 'helper.pickem.label'))
-                                                .defineStyle('blue')
-                                                .setCustomId('pickem')
-                                        ]
-                                    }
-                                ]
-                            }
-                        })
-                    )
-                }
+  .post(
+    '/webhooks/results/valorant',
+    async(req) => {
+      const guilds = await app.prisma.guild.findMany({
+        where: {
+          events: {
+            some: {
+              type: 'valorant'
             }
-
-            if(!preds.length) return
-
-            const usersIds = [...new Set(preds.map(pred => pred.userId))]
-
-            const usersData = await app.prisma.user.findMany({
-                where: {
-                    id: { in: usersIds }
-                }
-            })
-
-            const userMap = new Map<string, SabineUser>()
-
-            for(const data of usersData) {
-                let user = new SabineUser(data.id)
-                user = Object.assign(user, data)
-
-                userMap.set(user.id, user)
-            }
-
-            const transactions: Promise<unknown>[] = []
-
-            for(const data of req.body) {
-                for(const pred of preds) {
-                    if(data.id !== pred.match) continue
-
-                    const user = userMap.get(pred.userId)
-
-                    if(!user) continue
-
-                    const transaction = async() => {
-                        if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
-                            user.correct_predictions += 1
-
-                            let odd: number | null = null
-                            let bonus = 0
-
-                            if(pred.bet) {
-                                const winnerIndex = data.teams.findIndex(t => t.winner)
-
-                                if(pred.teams[winnerIndex].winner) {
-                                    let oddA = 0
-                                    let oddB = 0
-
-                                    for(const p of preds) {
-                                        if(p.teams[0].winner && p.bet) {
-                                            oddA += 1
-                                        }
-
-                                        else if(p.teams[1].winner && p.bet) {
-                                            oddB += 1
-                                        }
-                                    }
-
-                                    if(pred.teams[0].winner) {
-                                        odd = calcOdd(oddA)
-                                    }
-
-                                    else {
-                                        odd = calcOdd(oddB)
-                                    }
-
-                                    if(user.premium) {
-                                        bonus = Number(pred.bet) / 2
-                                    }
-                                }
-                            }
-
-                            const coins = BigInt(Number(pred.bet) * (odd ?? 1)) + BigInt(bonus)
-                            const fates = 5
-
-                            await Promise.allSettled([
-                                app.prisma.prediction.update({
-                                    where: {
-                                        id: pred.id
-                                    },
-                                    data: {
-                                        odd: odd,
-                                        status: 'correct'
-                                    }
-                                }),
-                                app.prisma.user.update({
-                                    where: { id: user.id },
-                                    data: {
-                                        correct_predictions: {
-                                            increment: 1
-                                        },
-                                        coins: { increment: coins },
-                                        fates: { increment: fates }
-                                    }
-                                })
-                            ])
-                        }
-                        else {
-                            await user.addIncorrectPrediction('valorant', data.id)
-                        }
-                    }
-
-                    transactions.push(transaction())
-                }
-            }
-
-            await Promise.allSettled([...messages, ...transactions])
-
-            req.set.status = 'OK'
-
-            return { ok: true }
+          }
         },
-        {
-            body: t.Array(t.Object({
-                id: t.String(),
-                status: t.String(),
-                stage: t.String(),
-                when: t.String(),
-                url: t.String(),
-                teams: t.Array(t.Object({
-                    name: t.String(),
-                    score: t.String(),
-                    country: t.String(),
-                    winner: t.String()
-                })),
-                tournament: t.Object({
-                    name: t.String(),
-                    image: t.String()
-                })
-            }))
+        include: {
+          events: {
+            where: {
+              type: 'valorant'
+            }
+          },
+          key: true
         }
-    )
+      })
+
+      const preds = await app.prisma.prediction.findMany({
+        where: {
+          game: 'valorant'
+        },
+        include: {
+          teams: true
+        }
+      })
+
+      if(!guilds.length) return
+
+      const messages: Promise<unknown>[] = []
+
+      for(
+        const data of req.body
+          .map(body => ({
+            ...body,
+            when: new Date(body.when)
+          }))
+      ) {
+        for(const guild of guilds) {
+          const event = guild.events.find(e =>
+            e.name === data.tournament.name ||
+            tournaments[e.name]?.some(regex =>
+              regex.test(data.tournament.name.replace(/\s+/g, ' ').trim().toLowerCase())
+            )
+          )
+
+          if(!event) continue
+
+          if(
+            !guild.events.some(e => e.name === data.tournament.name) &&
+            !guild.events.some(e =>
+              tournaments[e.name]?.some(regex =>
+                regex.test(data.tournament.name.replace(/\s+/g, ' ').trim().toLowerCase())
+              )
+            )
+          ) continue
+
+          const emoji1 = emojis.find(e =>
+            e.name === data.teams[0].name.toLowerCase()
+            || e.aliases?.find(alias =>
+              alias === data.teams[0].name.toLowerCase()
+            )
+          )?.emoji ?? emojis[0].emoji
+          const emoji2 = emojis.find(e =>
+            e?.name === data.teams[1].name.toLowerCase()
+            || e.aliases?.find(alias =>
+              alias === data.teams[1].name.toLowerCase()
+            )
+          )?.emoji ?? emojis[1]?.emoji
+
+          const embed = new EmbedBuilder()
+            .setAuthor({
+              name: data.tournament.name,
+              iconURL: data.tournament.image
+            })
+            .setField(
+              `${emoji1} ${data.teams[0].name} \`${data.teams[0].score}\` <:versus:1349105624180330516> \`${data.teams[1].score}\` ${data.teams[1].name} ${emoji2}`,
+              `<t:${data.when.getTime() / 1000}:F> | <t:${data.when.getTime() / 1000}:R>`,
+              true
+            )
+            .setFooter({ text: data.stage })
+
+          messages.push(
+            rest.post(Discord.Routes.channelMessages(event.channel2), {
+              body: {
+                embeds: [embed.toJSON()],
+                components: [
+                  {
+                    type: 1,
+                    components: [
+                      new ButtonBuilder()
+                        .setLabel(locales(guild.lang, 'helper.stats'))
+                        .defineStyle('link')
+                        .setURL(`https://vlr.gg/${data.id}`),
+                      new ButtonBuilder()
+                        .setLabel(locales(guild.lang, 'helper.pickem.label'))
+                        .defineStyle('blue')
+                        .setCustomId('pickem')
+                    ]
+                  }
+                ]
+              }
+            })
+          )
+        }
+      }
+
+      if(!preds.length) return
+
+      const usersIds = [...new Set(preds.map(pred => pred.userId))]
+
+      const usersData = await app.prisma.user.findMany({
+        where: {
+          id: { in: usersIds }
+        }
+      })
+
+      const userMap = new Map<string, SabineUser>()
+
+      for(const data of usersData) {
+        let user = new SabineUser(data.id)
+        user = Object.assign(user, data)
+
+        userMap.set(user.id, user)
+      }
+
+      const transactions: Promise<unknown>[] = []
+
+      for(const data of req.body) {
+        for(const pred of preds) {
+          if(data.id !== pred.match) continue
+
+          const user = userMap.get(pred.userId)
+
+          if(!user) continue
+
+          const transaction = async() => {
+            if(pred.teams[0].score === data.teams[0].score && pred.teams[1].score === data.teams[1].score) {
+              user.correct_predictions += 1
+
+              let odd: number | null = null
+              let bonus = 0
+
+              if(pred.bet) {
+                const winnerIndex = data.teams.findIndex(t => t.winner)
+
+                if(pred.teams[winnerIndex].winner) {
+                  let oddA = 0
+                  let oddB = 0
+
+                  for(const p of preds) {
+                    if(p.teams[0].winner && p.bet) {
+                      oddA += 1
+                    }
+
+                    else if(p.teams[1].winner && p.bet) {
+                      oddB += 1
+                    }
+                  }
+
+                  if(pred.teams[0].winner) {
+                    odd = calcOdd(oddA)
+                  }
+
+                  else {
+                    odd = calcOdd(oddB)
+                  }
+
+                  if(user.premium) {
+                    bonus = Number(pred.bet) / 2
+                  }
+                }
+              }
+
+              const coins = BigInt(Number(pred.bet) * (odd ?? 1)) + BigInt(bonus)
+              const fates = 5
+
+              await Promise.allSettled([
+                app.prisma.prediction.update({
+                  where: {
+                    id: pred.id
+                  },
+                  data: {
+                    odd: odd,
+                    status: 'correct'
+                  }
+                }),
+                app.prisma.user.update({
+                  where: { id: user.id },
+                  data: {
+                    correct_predictions: {
+                      increment: 1
+                    },
+                    coins: { increment: coins },
+                    fates: { increment: fates }
+                  }
+                })
+              ])
+            }
+            else {
+              await user.addIncorrectPrediction('valorant', data.id)
+            }
+          }
+
+          transactions.push(transaction())
+        }
+      }
+
+      await Promise.allSettled([...messages, ...transactions])
+
+      req.set.status = 'OK'
+
+      return { ok: true }
+    },
+    {
+      body: t.Array(t.Object({
+        id: t.String(),
+        status: t.String(),
+        stage: t.String(),
+        when: t.String(),
+        url: t.String(),
+        teams: t.Array(t.Object({
+          name: t.String(),
+          score: t.String(),
+          country: t.String(),
+          winner: t.String()
+        })),
+        tournament: t.Object({
+          name: t.String(),
+          image: t.String()
+        })
+      }))
+    }
+  )

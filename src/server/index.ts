@@ -14,25 +14,25 @@ import Logger from '../util/Logger'
 import { auth } from './auth'
 
 new Elysia()
-    .use(auth)
-    .use(cors({
-        origin: true,
-        methods: ['POST', 'GET', 'OPTIONS'],
-        allowedHeaders: [
-            'Content-Type',
-            'Authorization',
-            'x-dbl-signature',
-        ]
-    }))
-    .use(lolLive)
-    .use(lolResults)
-    .use(valorantLive)
-    .use(news)
-    .use(valorantResults)
-    .use(commands)
-    .use(players)
-    .use(updates)
-    .use(vote)
-    .listen(3001)
+  .use(auth)
+  .use(cors({
+    origin: true,
+    methods: ['POST', 'GET', 'OPTIONS'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'x-dbl-signature',
+    ]
+  }))
+  .use(lolLive)
+  .use(lolResults)
+  .use(valorantLive)
+  .use(news)
+  .use(valorantResults)
+  .use(commands)
+  .use(players)
+  .use(updates)
+  .use(vote)
+  .listen(3001)
 
 Logger.info('HTTP server running at 3001')
