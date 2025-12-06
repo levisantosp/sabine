@@ -24,7 +24,7 @@ Sabine is an open-source project dedicated to providing a top-tier esports cover
 5.  **Lint** your code: `bun lint`. Please ensure your code adheres to the project's ESLint rules.
 6.  **Commit** your changes with a descriptive message.
 7.  **Push** your branch to your fork: `git push origin my-feature-branch`
-8.  Open a **Pull Request** to the `master` branch of the main repository.
+8.  Open a **Pull Request** to the `main` branch of the main repository.
 
 ## Development Setup
 
