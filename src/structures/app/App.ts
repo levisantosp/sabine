@@ -14,6 +14,7 @@ import {
 } from '@sabinelab/players'
 import type { Listener } from './createListener'
 import { prisma } from '@db'
+import { emojis } from '@/util/emojis'
 
 type Reminder = {
   user: string
@@ -35,7 +36,9 @@ export default class App extends Discord.Client {
   public redis: typeof Bun.redis
   public queue: typeof queue
   public interactions: Map<string, CreateInteractionOptions & CreateModalSubmitInteractionOptions> = new Map()
-  public players: Map<string, Player> = new Map()
+  public players = new Map<string, Player>()
+  public emoji = new Map<string, string>()
+  public emojiAliases = new Map<string, string>()
 
   public constructor(options: Discord.ClientOptions) {
     super(options)
@@ -75,10 +78,6 @@ export default class App extends Discord.Client {
         this.interactions.set(interaction.name, interaction)
       }
     }
-  }
-
-  public async connect() {
-    this.prisma = prisma
 
     for(const player of getPlayers()) {
       this.players.set(player.id.toString(), {
@@ -87,8 +86,21 @@ export default class App extends Discord.Client {
       })
     }
 
-    await this.load()
+    for(const emoji of emojis) {
+      this.emoji.set(emoji.name, emoji.emoji)
 
+      if(emoji.aliases) {
+        for(const alias of emoji.aliases) {
+          this.emojiAliases.set(alias, emoji.name)
+        }
+      }
+    }
+  }
+
+  public async connect() {
+    this.prisma = prisma
+
+    await this.load()
     await super.login(process.env.BOT_TOKEN)
   }
   public async postCommands() {
