@@ -12,7 +12,6 @@ import {
   ButtonBuilder
 } from 'discord.js'
 import type { $Enums } from '@generated'
-import { emojis } from '../../util/emojis'
 import Logger from '../../util/Logger'
 
 const service = new Service(process.env.AUTH)
@@ -458,8 +457,12 @@ export default createCommand({
             ) {
               if(d.stage.toLowerCase().includes('showmatch')) continue
 
-              const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
-              const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
+              const emoji1 = app.emoji.get(d.teams[0].name.toLowerCase())
+                ?? app.emoji.get(app.emojiAliases.get(d.teams[0].name.toLowerCase()) ?? '')
+                ?? app.emoji.get('default')
+              const emoji2 = app.emoji.get(d.teams[1].name.toLowerCase())
+                ?? app.emoji.get(app.emojiAliases.get(d.teams[1].name.toLowerCase()) ?? '')
+                ?? app.emoji.get('default')
 
               const index = guild.valorant_matches.findIndex((m) => m === d.id)
 
@@ -558,27 +561,27 @@ export default createCommand({
         }
       }
 
-      await app.prisma.guild.update({
-        where: {
-          id: ctx.interaction.guildId!
-        },
-        data: {
-          valorant_matches: guild.valorant_matches,
-          tbd_matches: {
-            deleteMany: {
-              type: 'valorant'
-            },
-            create: matches.length
-              ? matches.map(m => ({
-                type: m.type,
-                matchId: m.matchId,
-                channel: m.channel
-              }))
-              : undefined
-          },
-          valorant_resend_time: guild.valorant_resend_time
-        }
-      })
+      // await app.prisma.guild.update({
+      //   where: {
+      //     id: ctx.interaction.guildId!
+      //   },
+      //   data: {
+      //     valorant_matches: guild.valorant_matches,
+      //     tbd_matches: {
+      //       deleteMany: {
+      //         type: 'valorant'
+      //       },
+      //       create: matches.length
+      //         ? matches.map(m => ({
+      //           type: m.type,
+      //           matchId: m.matchId,
+      //           channel: m.channel
+      //         }))
+      //         : undefined
+      //     },
+      //     valorant_resend_time: guild.valorant_resend_time
+      //   }
+      // })
 
       await ctx.edit('commands.admin.resent')
     }
@@ -674,8 +677,12 @@ export default createCommand({
             if(e.name === d.tournament.name) {
               if(d.stage.toLowerCase().includes('showmatch')) continue
 
-              const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
-              const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
+              const emoji1 = app.emoji.get(d.teams[0].name.toLowerCase())
+                ?? app.emoji.get(app.emojiAliases.get(d.teams[0].name.toLowerCase()) ?? '')
+                ?? app.emoji.get('default')
+              const emoji2 = app.emoji.get(d.teams[1].name.toLowerCase())
+                ?? app.emoji.get(app.emojiAliases.get(d.teams[1].name.toLowerCase()) ?? '')
+                ?? app.emoji.get('default')
 
               const index = guild.lol_matches.findIndex((m) => m === d.id)
 

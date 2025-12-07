@@ -6,9 +6,8 @@ import {
   ContainerBuilder,
   type APISelectMenuOption
 } from 'discord.js'
-import createCommand from '../../structures/command/createCommand'
-import { emojis } from '../../util/emojis'
-import SelectMenuBuilder from '../../structures/builders/SelectMenuBuilder'
+import createCommand from '@/structures/command/createCommand'
+import SelectMenuBuilder from '@/structures/builders/SelectMenuBuilder'
 
 export default createCommand({
   name: 'roster',
@@ -102,7 +101,7 @@ export default createCommand({
 
                   if(!player) return text
 
-                  const emoji = emojis.find(e => e.name === player.role)?.emoji
+                  const emoji = ctx.app.emoji.get(player.role)
                   const content = `${emoji} ${player.name} (${Math.floor(player.ovr)}) — ${player.collection}`
 
                   return text.setContent(content)
@@ -139,7 +138,7 @@ export default createCommand({
 
                   if(!player) return text
 
-                  const emoji = emojis.find(e => e.name === player.role)?.emoji
+                  const emoji = ctx.app.emoji.get(player.role)
                   const content = `${emoji} ${player.name} (${Math.floor(player.ovr)}) — ${player.collection}`
 
                   return text.setContent(content)
@@ -357,7 +356,7 @@ export default createCommand({
 
                     if(!player) return text
 
-                    const emoji = emojis.find(e => e.name === player.role)?.emoji
+                    const emoji = ctx.app.emoji.get(player.role)
                     const content = `${emoji} ${player.name} (${Math.floor(player.ovr)}) — ${player.collection}`
 
                     return text.setContent(content)
@@ -410,7 +409,7 @@ export default createCommand({
 
                     if(!player) return text
 
-                    const emoji = emojis.find(e => e.name === player.role)?.emoji
+                    const emoji = ctx.app.emoji.get(player.role)
                     const content = `${emoji} ${player.name} (${Math.floor(player.ovr)}) — ${player.collection}`
 
                     return text.setContent(content)

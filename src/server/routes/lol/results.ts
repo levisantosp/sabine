@@ -1,10 +1,9 @@
 import { Elysia, t } from 'elysia'
-import { app } from '../../../structures/app/App'
-import { emojis } from '../../../util/emojis'
-import EmbedBuilder from '../../../structures/builders/EmbedBuilder'
+import { app } from '@/structures/app/App'
+import EmbedBuilder from '@/structures/builders/EmbedBuilder'
 import locales from '@i18n'
-import ButtonBuilder from '../../../structures/builders/ButtonBuilder'
-import calcOdd from '../../../util/calcOdd'
+import ButtonBuilder from '@/structures/builders/ButtonBuilder'
+import calcOdd from '@/util/calcOdd'
 import { SabineUser } from '@db'
 import { REST, Routes } from 'discord.js'
 
@@ -59,18 +58,12 @@ export const lolResults = new Elysia()
 
           if(!guild.events.some(e => e.name === data.tournament.name)) continue
 
-          const emoji1 = emojis.find(e =>
-            e.name === data.teams[0].name.toLowerCase()
-            || e.aliases?.find(alias =>
-              alias === data.teams[0].name.toLowerCase()
-            )
-          )?.emoji ?? emojis[0].emoji
-          const emoji2 = emojis.find(e =>
-            e?.name === data.teams[1].name.toLowerCase()
-            || e.aliases?.find(alias =>
-              alias === data.teams[1].name.toLowerCase()
-            )
-          )?.emoji ?? emojis[1]?.emoji
+          const emoji1 = app.emoji.get(data.teams[0].name.toLowerCase())
+            ?? app.emoji.get(app.emojiAliases.get(data.teams[0].name.toLowerCase()) ?? '')
+            ?? app.emoji.get('default')
+          const emoji2 = app.emoji.get(data.teams[1].name.toLowerCase())
+            ?? app.emoji.get(app.emojiAliases.get(data.teams[1].name.toLowerCase()) ?? '')
+            ?? app.emoji.get('default')
 
           const embed = new EmbedBuilder()
             .setAuthor({

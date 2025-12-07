@@ -1,15 +1,24 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Collection, ContainerBuilder, Message, MessageFlags, REST, Routes } from 'discord.js'
-import Service from '../api'
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  Collection,
+  ContainerBuilder,
+  Message,
+  MessageFlags,
+  REST,
+  Routes
+} from 'discord.js'
+import Service from '@/api'
 import t from '@i18n'
-import type { MatchesData } from '../types'
-import createListener from '../structures/app/createListener'
-import Logger from '../util/Logger'
-import { emojis } from '../util/emojis'
-import App from '../structures/app/App'
+import type { MatchesData } from '@/types'
+import createListener from '@/structures/app/createListener'
+import Logger from '@/util/Logger'
+import App from '@/structures/app/App'
 import { SabineUser } from '@db'
 import type { $Enums } from '@generated'
 import Bull from 'bull'
-import Match from '../simulator/arena/Match'
+import Match from '@/simulator/arena/Match'
 
 const rest = new REST().setToken(process.env.BOT_TOKEN)
 const service = new Service(process.env.AUTH)
@@ -194,8 +203,12 @@ const sendValorantMatches = async(app: App) => {
           ) {
             if(d.stage.toLowerCase().includes('showmatch')) continue
 
-            const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
-            const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
+            const emoji1 = app.emoji.get(d.teams[0].name.toLowerCase())
+              ?? app.emoji.get(app.emojiAliases.get(d.teams[0].name.toLowerCase()) ?? '')
+              ?? app.emoji.get('default')
+            const emoji2 = app.emoji.get(d.teams[1].name.toLowerCase())
+              ?? app.emoji.get(app.emojiAliases.get(d.teams[1].name.toLowerCase()) ?? '')
+              ?? app.emoji.get('default')
 
             const index = guild.valorant_matches.findIndex((m) => m === d.id)
 
@@ -366,8 +379,12 @@ const sendValorantTBDMatches = async(app: App) => {
       if(!data) continue
 
       if(data.teams[0].name !== 'TBD' && data.teams[1].name !== 'TBD') {
-        const emoji1 = emojis.find(e => e?.name === data.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[0].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
-        const emoji2 = emojis.find(e => e?.name === data.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === data.teams[1].name.toLowerCase()))?.emoji ?? emojis[0]?.emoji
+        const emoji1 = app.emoji.get(data.teams[0].name.toLowerCase())
+          ?? app.emoji.get(app.emojiAliases.get(data.teams[0].name.toLowerCase()) ?? '')
+          ?? app.emoji.get('default')
+        const emoji2 = app.emoji.get(data.teams[1].name.toLowerCase())
+          ?? app.emoji.get(app.emojiAliases.get(data.teams[1].name.toLowerCase()) ?? '')
+          ?? app.emoji.get('default')
 
         if(!channelBatches.has(match.channel)) {
           channelBatches.set(match.channel, [])
@@ -556,8 +573,12 @@ const sendLolMatches = async(app: App) => {
 
         for(const e of guild.events) {
           if(e.name === d.tournament.name) {
-            const emoji1 = emojis.find(e => e?.name === d.teams[0].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[0].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
-            const emoji2 = emojis.find(e => e?.name === d.teams[1].name.toLowerCase() || e?.aliases?.find(alias => alias === d.teams[1].name.toLowerCase()))?.emoji ?? emojis[1]?.emoji
+            const emoji1 = app.emoji.get(d.teams[0].name.toLowerCase())
+              ?? app.emoji.get(app.emojiAliases.get(d.teams[0].name.toLowerCase()) ?? '')
+              ?? app.emoji.get('default')
+            const emoji2 = app.emoji.get(d.teams[1].name.toLowerCase())
+              ?? app.emoji.get(app.emojiAliases.get(d.teams[1].name.toLowerCase()) ?? '')
+              ?? app.emoji.get('default')
 
             const index = guild.lol_matches.findIndex((m) => m === d.id)
 
