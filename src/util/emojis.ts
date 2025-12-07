@@ -275,11 +275,11 @@ export const emojis: Emoji[] = [
   {
     name: 'team liquid',
     aliases: ['team liquid academy', 'team liquid brazil', 'team liquid honda'],
-    emoji: '<:liquid:1319735440919498776>'
+    emoji: '<:liquid:1439977533293592726>'
   },
   {
     name: 'team vitality',
-    emoji: '<:liquid:1439977533293592726>'
+    emoji: '<:vitality:1439977477605818498>'
   },
   {
     name: 'gentle mates',
