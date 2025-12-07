@@ -1,5 +1,5 @@
 export type Emoji = {
-  name?: string
+  name: string
   aliases?: string[]
   emoji: string
 }
@@ -7,6 +7,7 @@ export type Emoji = {
 export const emojis: Emoji[] = [
   // DEFAULT TEAM EMOJIS
   {
+    name: 'default',
     emoji: '<:team:1439977512074739713>'
   },
   // VCT CHINA
