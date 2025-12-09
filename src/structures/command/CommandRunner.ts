@@ -10,13 +10,6 @@ import { readFileSync } from 'node:fs'
 import Logger from '../../util/Logger'
 import type { Blacklist } from '@generated'
 
-const locale: {
-  [key: string]: string
-} = {
-  pt: 'br',
-  en: 'us'
-}
-
 const raw: {
   [key: string]: any
 } = {
@@ -155,7 +148,7 @@ export default class CommandRunner {
           .defineStyle('red')
           .setCustomId('dontshowagain')
           .build(t('helper.warn', {
-            link: `https://sabinebot.xyz/${locale[ctx.locale]}/changelog/v${update.id}`
+            link: `https://sabinebot.xyz/changelog/v${update.id}`
           }))
 
         await ctx.reply(button)
