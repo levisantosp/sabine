@@ -33,7 +33,7 @@ export default createCommand({
   async run({ ctx, t, app }) {
     const player = app.players.get(ctx.args[0].toString())
 
-    if(!player || !player.purchaseable) return await ctx.reply('commands.sign.player_not_found')
+    if(!player || !player.purchasable) return await ctx.reply('commands.sign.player_not_found')
 
     const price = player.price
 
@@ -60,7 +60,7 @@ export default createCommand({
     const value = i.options.getString('player', true)
 
     for(const p of app.players.values()) {
-      if(!p.purchaseable) continue
+      if(!p.purchasable) continue
 
       const ovr = Math.floor(p.ovr)
 

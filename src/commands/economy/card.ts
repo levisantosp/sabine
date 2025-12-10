@@ -49,7 +49,7 @@ export default createCommand({
         },
         {
           name: t('commands.card.purchaseable'),
-          value: player.purchaseable ? t('helper.yes') : t('helper.no'),
+          value: player.purchasable ? t('helper.yes') : t('helper.no'),
           inline: true
         },
         {
