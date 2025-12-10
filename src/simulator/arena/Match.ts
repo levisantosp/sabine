@@ -48,7 +48,7 @@ export type TeamRoster = {
   collection: string
   team: string
   country: string
-  purchaseable: boolean
+  purchasable: boolean
   life: number
   weapon?: PlayerWeapon
   kills?: number
