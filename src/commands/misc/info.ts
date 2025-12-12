@@ -1,8 +1,8 @@
 import ms from 'humanize-duration'
-import createCommand from '../../structures/command/createCommand'
-import EmbedBuilder from '../../structures/builders/EmbedBuilder'
-import ButtonBuilder from '../../structures/builders/ButtonBuilder'
-import pkg from '../../../package.json' with { type: 'json' }
+import createCommand from '@/structures/command/createCommand'
+import EmbedBuilder from '@/structures/builders/EmbedBuilder'
+import ButtonBuilder from '@/structures/builders/ButtonBuilder'
+import pkg from '../../../package.json'
 
 export default createCommand({
   name: 'info',
@@ -25,7 +25,7 @@ export default createCommand({
       .setFields(
         {
           name: 'Patch',
-          value: pkg.version,
+          value: `[${pkg.version}](https://sabinebot.xyz/changelog/v${pkg.version})`,
           inline: true
         },
         {
